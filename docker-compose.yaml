@@ -18,14 +18,20 @@ services:
     restart: unless-stopped
 
   backend:
-    build: backend
+    image: backend
     ports:
       - "8000:8000"
-    command: python3 manage.py runserver 0.0.0.0:8000
-    volumes:
-      - .:/app
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - backend-migration
+
+  backend-migration:
+    build: backend
+    image: backend
+    command: python manage.py migrate
     depends_on:
       - postgres
+
 
 volumes:
   postgres_data:
