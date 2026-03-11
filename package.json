@@ -42,8 +42,10 @@
 		"version": "echo 'Template version:' $npm_package_version",
 		"changelog": "echo 'See CHANGELOG.md for release notes'",
 		"release": "echo 'Use GitHub Releases for official releases'",
-		"lint": "eslint .",
-		"lint:fix": "bun run lint -- --fix",
+		"lint": "bun run --filter='*' lint",
+		"lint:fix": "bun run --filter='*' lint:fix",
+		"build": "bun run --filter='*' build",
+		"dev": "bun run --filter='*' dev",
 		"dev:web": "bun --filter @repo/webapp dev"
 	},
 	"civictechwr": {
