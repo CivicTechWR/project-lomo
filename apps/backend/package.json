@@ -1,0 +1,10 @@
+{
+	"name": "@repo/backend",
+	"private": true,
+	"scripts": {
+		"dev": "docker compose up --build",
+		"dev:stop": "docker compose down",
+		"dev:logs": "docker compose logs -f",
+		"dev:reset": "docker compose down -v"
+	}
+}

@@ -62,24 +62,21 @@ A platform for people to post asks and offers, matched with others in their comm
 ### Getting started
 
 ```bash
-# Install dependencies
 bun install
-
-# Start the database and backend
-docker compose up -d
-
-# Run the webapp in dev mode
-bun run dev:web
+bun run dev
 ```
 
-See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough.
+This starts the database, backend, and webapp all at once. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough.
 
 ### Other commands
 
 ```bash
-bun run build     # Build all packages
-bun run lint      # Lint all packages
-bun run lint:fix  # Auto-fix lint issues
+bun run dev:web    # Start only the webapp
+bun run dev:stop   # Stop Docker services
+bun run dev:reset  # Stop Docker services and wipe DB
+bun run build      # Build all packages
+bun run lint       # Lint all packages
+bun run lint:fix   # Auto-fix lint issues
 ```
 
 ## Community Impact

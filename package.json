@@ -45,7 +45,10 @@
 		"lint:fix": "bun run --filter='*' lint:fix",
 		"build": "bun run --filter='*' build",
 		"dev": "bun run --filter='*' dev",
-		"dev:web": "bun --filter @repo/webapp dev"
+		"dev:web": "bun --filter @repo/webapp dev",
+		"dev:stop": "bun --filter @repo/backend dev:stop",
+		"dev:logs": "bun --filter @repo/backend dev:logs",
+		"dev:reset": "bun --filter @repo/backend dev:reset"
 	},
 	"civictechwr": {
 		"template_version": "1.0.0",

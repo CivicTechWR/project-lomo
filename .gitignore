@@ -105,10 +105,6 @@ jspm_packages/
 .nuxt
 dist
 
-# Gatsby files
-.cache/
-public
-
 # Storybook build outputs
 .out
 .storybook-out
@@ -227,9 +223,6 @@ docker-compose.override.yml
 .dmypy.json
 dmypy.json
 
-# Local docker volumes
-postgres_data
-
 # Civic tech project specific patterns
 # (Uncomment and customize for your project)
 
@@ -273,28 +266,3 @@ postgres_data
 
 # Add any project-specific patterns below this line
 # (These will be unique to your specific civic tech project)
-# Logs
-
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

@@ -2,7 +2,6 @@ services:
   postgres:
     image: postgres:17
     container_name: project_lomo_postgres
-    env_file: .env-postgres
     environment:
       POSTGRES_DB: lomo
       POSTGRES_USER: postgres
@@ -19,10 +18,9 @@ services:
     restart: unless-stopped
 
   backend:
-    build: apps/backend
+    build: .
     image: backend
     container_name: project_lomo_backend
-    env_file: .env-backend
     environment:
       DJANGO_SUPERUSER_USERNAME: admin
       DJANGO_SUPERUSER_EMAIL: admin@example.com
@@ -30,7 +28,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
 
 volumes:

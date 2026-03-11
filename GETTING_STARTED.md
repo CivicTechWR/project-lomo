@@ -33,30 +33,19 @@ bun install
 
 This installs dependencies for all workspaces (`apps/webapp`, `packages/eslint-config`).
 
-### 3. Start the database and backend
+### 3. Start everything
 
 ```bash
-docker compose up -d
+bun run dev
 ```
 
 This starts:
 
 - **PostgreSQL 17** on port `5432` (User: `postgres`, Password: `postgres`, Database: `lomo`)
 - **Django backend** on port `8000`
+- **Vite dev server** (webapp) on port `5173`
 
-### 4. Start the webapp
-
-```bash
-bun run dev:web
-```
-
-The webapp will be available at `http://localhost:5173` (default Vite port).
-
-To run all apps at once:
-
-```bash
-bun run dev
-```
+> **Note:** The first run will be slower because Docker needs to build the backend image. Subsequent runs will be fast.
 
 ## Project Structure
 
@@ -64,24 +53,24 @@ bun run dev
 project-lomo/
 ├── apps/
 │   ├── webapp/               # React 19 + TypeScript + Vite frontend
-│   └── backend/              # Django 5 + DRF backend
+│   └── backend/              # Django 5 + DRF backend (Docker)
 ├── packages/
 │   └── eslint-config/        # Shared ESLint configuration
-├── docker-compose.yaml       # PostgreSQL + Django backend
 └── package.json              # Root workspace config (Bun)
 ```
 
 ## Common Commands
 
-| Command             | Description                        |
-| ------------------- | ---------------------------------- |
-| `bun run dev`       | Start all apps in dev mode         |
-| `bun run dev:web`   | Start only the webapp              |
-| `bun run build`     | Build all packages                 |
-| `bun run lint`      | Lint all packages                  |
-| `bun run lint:fix`  | Auto-fix lint issues               |
-| `docker compose up -d`   | Start the database and backend |
-| `docker compose down`    | Stop the database and backend  |
+| Command              | Description                                |
+| -------------------- | ------------------------------------------ |
+| `bun run dev`        | Start all apps in dev mode                 |
+| `bun run dev:web`    | Start only the webapp                      |
+| `bun run dev:stop`   | Stop Docker services (postgres + backend)  |
+| `bun run dev:logs`   | Tail Docker service logs                   |
+| `bun run dev:reset`  | Stop Docker services and wipe DB volumes   |
+| `bun run build`      | Build all packages                         |
+| `bun run lint`       | Lint all packages                          |
+| `bun run lint:fix`   | Auto-fix lint issues                       |
 
 ## Contributing
 
