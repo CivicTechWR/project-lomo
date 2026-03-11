@@ -43,8 +43,7 @@
 		"release": "echo 'Use GitHub Releases for official releases'",
 		"lint": "eslint .",
 		"lint:fix": "bun run lint -- --fix",
-		"format": "prettier \"**/*.{js,cjs,mjs,ts,json,yml,yaml}\" --check",
-		"format:fix": "npm run format -- --write"
+		"dev:web": "bun --filter @repo/webapp dev"
 	},
 	"civictechwr": {
 		"template_version": "1.0.0",
