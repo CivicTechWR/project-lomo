@@ -10,26 +10,26 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 
 Examples of behavior that contributes to a positive environment for our community include:
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience
-* Focusing on what is best not just for us as individuals, but for the overall community
-* **Centering community needs** in technology decisions
-* **Practicing inclusive design** that serves diverse users
-* **Protecting privacy and data** of community members and users
-* **Building accessible solutions** that work for everyone
+- Demonstrating empathy and kindness toward other people
+- Being respectful of differing opinions, viewpoints, and experiences
+- Giving and gracefully accepting constructive feedback
+- Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience
+- Focusing on what is best not just for us as individuals, but for the overall community
+- **Centering community needs** in technology decisions
+- **Practicing inclusive design** that serves diverse users
+- **Protecting privacy and data** of community members and users
+- **Building accessible solutions** that work for everyone
 
 Examples of unacceptable behavior include:
 
-* The use of sexualized language or imagery, and sexual attention or advances of any kind
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or email address, without their explicit permission
-* **Building technology that excludes or discriminates** against community members
-* **Ignoring accessibility requirements** or user feedback about barriers
-* **Exposing or mishandling sensitive data** about individuals or communities
-* Other conduct which could reasonably be considered inappropriate in a professional setting
+- The use of sexualized language or imagery, and sexual attention or advances of any kind
+- Trolling, insulting or derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information, such as a physical or email address, without their explicit permission
+- **Building technology that excludes or discriminates** against community members
+- **Ignoring accessibility requirements** or user feedback about barriers
+- **Exposing or mishandling sensitive data** about individuals or communities
+- Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ## Civic Tech Specific Guidelines
 
@@ -37,27 +37,27 @@ As civic technologists, we have additional responsibilities:
 
 ### Community-Centered Development
 
-* **Listen first** - Understand community needs before proposing solutions
+- **Listen first** - Understand community needs before proposing solutions
 
-* **Include affected voices** - Center the people your project aims to serve
-* **Build with, not for** - Collaborate with community members as partners
-* **Question assumptions** - Regularly validate your understanding with real users
+- **Include affected voices** - Center the people your project aims to serve
+- **Build with, not for** - Collaborate with community members as partners
+- **Question assumptions** - Regularly validate your understanding with real users
 
 ### Ethical Technology Practices
 
-* **Privacy by design** - Minimize data collection and protect user privacy
+- **Privacy by design** - Minimize data collection and protect user privacy
 
-* **Accessibility first** - Ensure your solutions work for people with diverse abilities
-* **Open by default** - Use open source tools and share your learnings
-* **Security consciousness** - Protect user data and system integrity
+- **Accessibility first** - Ensure your solutions work for people with diverse abilities
+- **Open by default** - Use open source tools and share your learnings
+- **Security consciousness** - Protect user data and system integrity
 
 ### Inclusive Participation
 
-* **Welcome newcomers** - Help people get started regardless of technical experience
+- **Welcome newcomers** - Help people get started regardless of technical experience
 
-* **Share knowledge** - Teach and mentor others in the community
-* **Amplify diverse voices** - Ensure all community members can contribute
-* **Bridge divides** - Connect technical and non-technical community members
+- **Share knowledge** - Teach and mentor others in the community
+- **Amplify diverse voices** - Ensure all community members can contribute
+- **Bridge divides** - Connect technical and non-technical community members
 
 ## Enforcement Responsibilities
 
@@ -71,12 +71,12 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 This includes:
 
-* CivicTechWR meetings and events
-* Project repositories and documentation
-* Communication channels (Slack, Discord, etc.)
-* Social media interactions representing CTWR
-* Community presentations and demos
-* Interactions with community partners
+- CivicTechWR meetings and events
+- Project repositories and documentation
+- Communication channels (Slack, Discord, etc.)
+- Social media interactions representing CTWR
+- Community presentations and demos
+- Interactions with community partners
 
 ## Reporting Guidelines
 
@@ -90,11 +90,11 @@ For urgent safety concerns, please contact local authorities.
 
 When reporting, please include:
 
-* Your contact information
-* Names (real or usernames) of any individuals involved
-* Your account of what occurred, including any relevant context
-* Whether you believe the incident is ongoing
-* Any additional information that would be helpful
+- Your contact information
+- Names (real or usernames) of any individuals involved
+- Your account of what occurred, including any relevant context
+- Whether you believe the incident is ongoing
+- Any additional information that would be helpful
 
 ### Response Process
 
@@ -140,40 +140,40 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 For issues specific to project development:
 
-* **Accessibility violations** - Required remediation before project continuation
-* **Privacy concerns** - Immediate review and correction required
-* **Exclusionary design** - Community discussion and redesign process
+- **Accessibility violations** - Required remediation before project continuation
+- **Privacy concerns** - Immediate review and correction required
+- **Exclusionary design** - Community discussion and redesign process
 
 ### Community-Level Issues
 
 For broader community concerns:
 
-* **Partner relationship issues** - Mediation and relationship repair process
-* **Resource access problems** - Review of community practices and policies
-* **Representation concerns** - Community listening sessions and process improvements
+- **Partner relationship issues** - Mediation and relationship repair process
+- **Resource access problems** - Review of community practices and policies
+- **Representation concerns** - Community listening sessions and process improvements
 
 ## Resources for Support
 
 ### Technical Support
 
-* **Accessibility guidance** - [Link to accessibility resources]
+- **Accessibility guidance** - [Link to accessibility resources]
 
-* **Privacy compliance** - [Link to privacy guidelines]
-* **Security best practices** - [Link to security resources]
+- **Privacy compliance** - [Link to privacy guidelines]
+- **Security best practices** - [Link to security resources]
 
 ### Community Support
 
-* **Conflict resolution** - [Link to mediation resources]
+- **Conflict resolution** - [Link to mediation resources]
 
-* **Mental health** - [Link to mental health resources]
-* **Professional development** - [Link to career and skill development]
+- **Mental health** - [Link to mental health resources]
+- **Professional development** - [Link to career and skill development]
 
 ### Local Resources
 
-* **Crisis support** - [Local crisis helpline numbers]
+- **Crisis support** - [Local crisis helpline numbers]
 
-* **Legal assistance** - [Legal aid resources for tech/privacy issues]
-* **Diversity and inclusion** - [Local D&I organizations]
+- **Legal assistance** - [Legal aid resources for tech/privacy issues]
+- **Diversity and inclusion** - [Local D&I organizations]
 
 ## Attribution
 
@@ -189,9 +189,9 @@ The civic tech specific guidelines were developed in collaboration with the Civi
 
 This Code of Conduct is a living document that evolves with our community. We welcome feedback and suggestions for improvement. Please submit suggestions through:
 
-* GitHub issues on this repository
-* Discussion at community meetings
-* Direct feedback to community leaders
+- GitHub issues on this repository
+- Discussion at community meetings
+- Direct feedback to community leaders
 
 **Last Updated**: [Date]
 **Next Review**: [Date - typically annual]

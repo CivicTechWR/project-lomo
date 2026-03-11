@@ -4,10 +4,10 @@
 
 This CivicTechWR project template is actively maintained. Security updates are provided for:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| Latest  | :white_check_mark: |
-| Previous| :x:                |
+| Version  | Supported          |
+| -------- | ------------------ |
+| Latest   | :white_check_mark: |
+| Previous | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -158,4 +158,4 @@ Contact us through:
 
 ---
 
-*This security policy is part of our commitment to building safe, trustworthy civic technology that serves our community responsibly.*
+_This security policy is part of our commitment to building safe, trustworthy civic technology that serves our community responsibly._

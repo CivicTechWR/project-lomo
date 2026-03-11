@@ -47,18 +47,19 @@ Members of the community interested in a sharing economy
 If we are to weather the coming climate change effects on our food systems and our personal security, we will need to come together and think in community ways, community wellbeing, community success, as opposed to individual success.
 
 ## Solution Overview
+
 A platform for people to ask for help, and match them with others to help
 
 ## Team
 
-| Name | Role | Skills | Weekly Commitment |
-|------|------|--------|------------------|
-| Rebecca Sargent | Project Owner | SME | |
-| Mohamed Fouda | Technical Product Manager | Product Management | |
-| Sara Ahmad | Project Manager | Project Management | |
-| Chen Lu | Designer | Design | |
-| Jay | Software Developer | Software Development | |
-| Chris Craig | Software Developer | Software Development | |
+| Name            | Role                      | Skills               | Weekly Commitment |
+| --------------- | ------------------------- | -------------------- | ----------------- |
+| Rebecca Sargent | Project Owner             | SME                  |                   |
+| Mohamed Fouda   | Technical Product Manager | Product Management   |                   |
+| Sara Ahmad      | Project Manager           | Project Management   |                   |
+| Chen Lu         | Designer                  | Design               |                   |
+| Jay             | Software Developer        | Software Development |                   |
+| Chris Craig     | Software Developer        | Software Development |                   |
 
 **What help do we need from the community?**
 [Data, introductions, volunteers with certain skills, user interviews, etc.]

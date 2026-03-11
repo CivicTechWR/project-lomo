@@ -255,4 +255,4 @@ Civic tech projects:
 
 ---
 
-*This getting started guide is part of the CivicTechWR Project Template - built for civic technologists by civic technologists.*
+_This getting started guide is part of the CivicTechWR Project Template - built for civic technologists by civic technologists._

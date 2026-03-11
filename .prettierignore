@@ -1,7 +1,0 @@
-node_modules/
-docs/_site/
-dist/
-vendor/
-
-# Generated files
-*.min.js
