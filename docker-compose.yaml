@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   backend:
-    build: backend
+    build: apps/backend
     image: backend
     container_name: project_lomo_backend
     env_file: .env-backend
