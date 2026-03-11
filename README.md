@@ -40,7 +40,7 @@ A platform for people to post asks and offers, matched with others in their comm
 **Technology Stack:**
 
 - Frontend: React 19 + TypeScript + Vite (`apps/webapp`)
-- Backend: TBD (`apps/backend-placeholder`)
+- Backend: Django 5 + Django REST Framework (`apps/backend`)
 - Database: PostgreSQL 17 (Docker)
 - Package Manager: Bun (monorepo workspaces)
 
@@ -57,7 +57,7 @@ A platform for people to post asks and offers, matched with others in their comm
 ### Prerequisites
 
 - [Bun](https://bun.sh) 1.0+
-- [Docker](https://www.docker.com) (for the database)
+- [Docker](https://www.docker.com) (for the database and backend)
 
 ### Getting started
 
@@ -65,14 +65,11 @@ A platform for people to post asks and offers, matched with others in their comm
 # Install dependencies
 bun install
 
-# Start the database
+# Start the database and backend
 docker compose up -d
 
 # Run the webapp in dev mode
 bun run dev:web
-
-# Or run everything
-bun run dev
 ```
 
 See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough.

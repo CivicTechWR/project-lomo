@@ -5,7 +5,7 @@ This guide walks you through setting up the LoMo project for local development.
 ## Prerequisites
 
 - **[Bun](https://bun.sh) 1.0+** — used as the package manager and runtime
-- **[Docker](https://www.docker.com)** — used to run PostgreSQL locally
+- **[Docker](https://www.docker.com)** — used to run PostgreSQL and the Django backend locally
 - **Git 2.30+**
 
 To verify:
@@ -31,19 +31,18 @@ cd project-lomo
 bun install
 ```
 
-This installs dependencies for all workspaces (`apps/webapp`, `apps/backend-placeholder`, `packages/eslint-config`).
+This installs dependencies for all workspaces (`apps/webapp`, `packages/eslint-config`).
 
-### 3. Start the database
+### 3. Start the database and backend
 
 ```bash
 docker compose up -d
 ```
 
-This starts a PostgreSQL 17 instance on port `5432` with:
+This starts:
 
-- User: `postgres`
-- Password: `postgres`
-- Database: `lomo`
+- **PostgreSQL 17** on port `5432` (User: `postgres`, Password: `postgres`, Database: `lomo`)
+- **Django backend** on port `8000`
 
 ### 4. Start the webapp
 
@@ -65,10 +64,10 @@ bun run dev
 project-lomo/
 ├── apps/
 │   ├── webapp/               # React 19 + TypeScript + Vite frontend
-│   └── backend-placeholder/  # Backend (not yet implemented)
+│   └── backend/              # Django 5 + DRF backend
 ├── packages/
 │   └── eslint-config/        # Shared ESLint configuration
-├── docker-compose.yaml       # PostgreSQL database
+├── docker-compose.yaml       # PostgreSQL + Django backend
 └── package.json              # Root workspace config (Bun)
 ```
 
@@ -81,8 +80,8 @@ project-lomo/
 | `bun run build`     | Build all packages                 |
 | `bun run lint`      | Lint all packages                  |
 | `bun run lint:fix`  | Auto-fix lint issues               |
-| `docker compose up -d`   | Start the database            |
-| `docker compose down`    | Stop the database             |
+| `docker compose up -d`   | Start the database and backend |
+| `docker compose down`    | Stop the database and backend  |
 
 ## Contributing
 
