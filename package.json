@@ -1,7 +1,7 @@
 {
-	"name": "@civictechwr/project-template",
-	"version": "1.0.0",
-	"description": "CivicTechWR comprehensive project template with 12-week lifecycle and GitHub automation",
+	"name": "@civictechwr/project-lomo",
+	"version": "0.1.0",
+	"description": "LoMo - a calm, consent-based platform for asking for and offering help in the community",
 	"author": {
 		"name": "CivicTechWR",
 		"email": "noreply@civictechwr.org",
@@ -20,20 +20,19 @@
 		}
 	],
 	"license": "MIT",
-	"homepage": "https://civictechwr.github.io/CTWR-Project-Template-New/",
+	"homepage": "https://github.com/CivicTechWR/project-lomo",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/CivicTechWR/CTWR-Project-Template-New.git"
+		"url": "https://github.com/CivicTechWR/project-lomo.git"
 	},
 	"bugs": {
-		"url": "https://github.com/CivicTechWR/CTWR-Project-Template-New/issues"
+		"url": "https://github.com/CivicTechWR/project-lomo/issues"
 	},
 	"keywords": [
 		"civic-tech",
-		"template",
-		"government",
+		"sharing-economy",
 		"community",
-		"github-template"
+		"mutual-aid"
 	],
 	"engines": {
 		"node": ">=22"
