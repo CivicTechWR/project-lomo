@@ -11,12 +11,15 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@tanstack/react-router": "1.166.7",
+		"@tanstack/react-router-devtools": "1.166.7",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",
 		"@repo/eslint-config": "workspace:*",
+		"@tanstack/router-plugin": "1.166.7",
 		"@types/node": "^24.10.1",
 		"@types/react": "^19.2.7",
 		"@types/react-dom": "^19.2.3",
