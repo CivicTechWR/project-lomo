@@ -67,6 +67,7 @@ bun run dev
 ```
 
 This starts the database, backend, and webapp all at once. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough.
+Turbo's TUI keeps each long-running process in its own log view.
 
 ### Other commands
 

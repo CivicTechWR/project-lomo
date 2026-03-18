@@ -2,6 +2,7 @@
 	"name": "@repo/backend",
 	"private": true,
 	"scripts": {
+		"pre:dev":"docker compose down",
 		"dev": "docker compose up --build",
 		"dev:stop": "docker compose down",
 		"dev:logs": "docker compose logs -f",
