@@ -3,7 +3,7 @@ FROM python:3.11.5-slim-bullseye
 # Set a few environment variables for sanity
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFERED 1
+ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 COPY . /app

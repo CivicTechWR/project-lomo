@@ -15,7 +15,7 @@ This CivicTechWR project template is actively maintained. Security updates are p
 
 If you discover a security vulnerability in this project template, please report it responsibly:
 
-**Email:** [security@civictechwr.org] (if available) or project maintainers
+**Contact:** Reach the project team via the LoMo channel in the CTWR Slack
 **Response Time:** We aim to respond within 48 hours
 
 ### For Project-Specific Security Issues
@@ -48,7 +48,6 @@ If you're using this template for your CTWR project and discover a security issu
 
 ### For Project Teams
 
-- **Review the [Security Guide](docs/SECURITY_GUIDE.md)** before starting development
 - **Use secure coding practices** throughout development
 - **Enable automated security scanning** in your repository
 - **Conduct security reviews** before major releases
@@ -87,9 +86,7 @@ When working with government partners:
 
 ### For CTWR Teams
 
-- **[Security Guide](docs/SECURITY_GUIDE.md)** - Comprehensive security documentation
-- **[Technical Design](docs/TECHNICAL_DESIGN.md)** - Security architecture guidance
-- **[Contributing Guidelines](docs/CONTRIBUTING.md)** - Security requirements for contributors
+Project-specific security guides will be added as the project matures.
 
 ### External Resources
 
@@ -104,16 +101,8 @@ When working with government partners:
 
 For critical security vulnerabilities that pose immediate risk:
 
-**Contact:** [Emergency contact information]
-**Available:** 24/7 for critical issues
-**Response:** Immediate acknowledgment, resolution within 24 hours
-
-### Non-Critical Security Issues
-
-For general security concerns or questions:
-
-**Contact:** [Regular contact information]
-**Response Time:** Within 48 hours during business days
+**Contact:** Reach the project team via the LoMo channel in the CTWR Slack or attend a weekly Wednesday CTWR meeting.
+**Response:** We aim for acknowledgment within 48 hours.
 
 ## Security Acknowledgments
 

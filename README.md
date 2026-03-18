@@ -39,7 +39,7 @@ A platform for people to post asks and offers, matched with others in their comm
 
 **Technology Stack:**
 
-- Frontend: React 19 + TypeScript + Vite (`apps/webapp`)
+- Frontend: React 19 + TypeScript + Vite + TanStack Router (`apps/webapp`)
 - Backend: Django 5 + Django REST Framework (`apps/backend`)
 - Database: PostgreSQL 17 (Docker)
 - Package Manager: Bun (monorepo workspaces)
@@ -66,7 +66,7 @@ bun install
 bun run dev
 ```
 
-This starts the database, backend, and webapp all at once. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough.
+This starts the database, backend, and webapp all at once. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 Turbo's TUI keeps each long-running process in its own log view.
 
 ### Other commands
@@ -84,6 +84,10 @@ bun run lint:fix   # Auto-fix lint issues
 
 **How this strengthens Waterloo Region's civic fabric:**
 By lowering the barrier to asking for and offering help, LoMo helps build the trust networks and mutual aid capacity that communities need to be resilient.
+
+## AI Agents
+
+See [AGENTS.md](AGENTS.md) for AI agent instructions (code style, conventions, project structure).
 
 ## License
 

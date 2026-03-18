@@ -1,15 +1,22 @@
-# eslint-config
+# @repo/eslint-config
 
-To install dependencies:
+Shared ESLint configuration for the LoMo monorepo, based on `@antfu/eslint-config`.
 
-```bash
-bun install
+## Usage
+
+This package is consumed as a workspace dependency. In your app's `eslint.config.js`:
+
+```js
+import { GetConfig } from "@repo/eslint-config/react";
+
+export default GetConfig({
+	ignores: ["dist/**"],
+});
 ```
 
-To run:
+## Style Rules
 
-```bash
-bun run base.js
-```
-
-This project was created using `bun init` in bun v1.3.8. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+- Indentation: tabs
+- Quotes: double
+- Semicolons: always
+- Formatters: enabled (no Prettier needed)

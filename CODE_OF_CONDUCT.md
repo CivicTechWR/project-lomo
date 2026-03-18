@@ -82,7 +82,7 @@ This includes:
 
 ### How to Report
 
-If you experience or witness unacceptable behavior, or have any other concerns, please report it by contacting the community leaders at [contact email]. All reports will be handled with discretion.
+If you experience or witness unacceptable behavior, or have any other concerns, please report it by contacting the community leaders at the LoMo channel in the CTWR Slack. All reports will be handled with discretion.
 
 For urgent safety concerns, please contact local authorities.
 
@@ -152,29 +152,6 @@ For broader community concerns:
 - **Resource access problems** - Review of community practices and policies
 - **Representation concerns** - Community listening sessions and process improvements
 
-## Resources for Support
-
-### Technical Support
-
-- **Accessibility guidance** - [Link to accessibility resources]
-
-- **Privacy compliance** - [Link to privacy guidelines]
-- **Security best practices** - [Link to security resources]
-
-### Community Support
-
-- **Conflict resolution** - [Link to mediation resources]
-
-- **Mental health** - [Link to mental health resources]
-- **Professional development** - [Link to career and skill development]
-
-### Local Resources
-
-- **Crisis support** - [Local crisis helpline numbers]
-
-- **Legal assistance** - [Legal aid resources for tech/privacy issues]
-- **Diversity and inclusion** - [Local D&I organizations]
-
 ## Attribution
 
 This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 2.0, available at <https://www.contributor-covenant.org/version/2/0/code_of_conduct.html>.
@@ -193,9 +170,9 @@ This Code of Conduct is a living document that evolves with our community. We we
 - Discussion at community meetings
 - Direct feedback to community leaders
 
-**Last Updated**: [Date]
-**Next Review**: [Date - typically annual]
+**Last Updated**: 2026-03-18
+**Next Review**: 2027-03-18
 
 ---
 
-Questions about this Code of Conduct? Contact us at [contact email] or discuss at our next community meeting.
+Questions about this Code of Conduct? Contact us at the LoMo channel in the CTWR Slack or discuss at our next community meeting.

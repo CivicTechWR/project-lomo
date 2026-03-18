@@ -76,7 +76,7 @@ project-lomo/
 
 ## Contributing
 
-1. Create a branch: `git checkout -b your-feature`
+1. Create a branch: `git checkout -b feat/your-feature`
 2. Make your changes
 3. Run `bun run lint` to check for issues
 4. Open a pull request against `main`
