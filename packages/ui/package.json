@@ -1,0 +1,32 @@
+{
+	"name": "@repo/ui",
+	"type": "module",
+	"version": "0.0.0",
+	"private": true,
+	"exports": {
+		".": "./src/index.ts",
+		"./button": "./src/button/index.ts",
+		"./theme.css": "./src/theme/theme.css"
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix"
+	},
+	"peerDependencies": {
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0"
+	},
+	"dependencies": {
+		"@radix-ui/colors": "3.0.0",
+		"react-aria-components": "1.16.0",
+		"tailwind-merge": "3.5.0",
+		"tailwind-variants": "3.2.2",
+		"tailwindcss": "4.2.2"
+	},
+	"devDependencies": {
+		"@repo/eslint-config": "workspace:*",
+		"@types/react": "^19.2.7",
+		"@types/react-dom": "^19.2.3",
+		"typescript": "~5.9.3"
+	}
+}

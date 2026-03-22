@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+/* Custom color palettes (generated via Radix color tool, renamed) */
+@import "./colors/gray.css";
+@import "./colors/terracotta.css";
+@import "./colors/sage.css";
+@import "./colors/yellow.css";
+
+/* Radix semantic colors */
+@import "@radix-ui/colors/red.css";
+@import "@radix-ui/colors/amber.css";
+
+/* Scan UI package source for Tailwind class usage */
+@source "../../src";
+
+@theme {
+	/* ── Gray 1-12 ── */
+	--color-gray-1: var(--gray-1);
+	--color-gray-2: var(--gray-2);
+	--color-gray-3: var(--gray-3);
+	--color-gray-4: var(--gray-4);
+	--color-gray-5: var(--gray-5);
+	--color-gray-6: var(--gray-6);
+	--color-gray-7: var(--gray-7);
+	--color-gray-8: var(--gray-8);
+	--color-gray-9: var(--gray-9);
+	--color-gray-10: var(--gray-10);
+	--color-gray-11: var(--gray-11);
+	--color-gray-12: var(--gray-12);
+
+	/* ── Gray Alpha a1-a12 ── */
+	--color-gray-a1: var(--gray-a1);
+	--color-gray-a2: var(--gray-a2);
+	--color-gray-a3: var(--gray-a3);
+	--color-gray-a4: var(--gray-a4);
+	--color-gray-a5: var(--gray-a5);
+	--color-gray-a6: var(--gray-a6);
+	--color-gray-a7: var(--gray-a7);
+	--color-gray-a8: var(--gray-a8);
+	--color-gray-a9: var(--gray-a9);
+	--color-gray-a10: var(--gray-a10);
+	--color-gray-a11: var(--gray-a11);
+	--color-gray-a12: var(--gray-a12);
+
+	/* ── Terracotta 1-12 ── */
+	--color-terracotta-1: var(--terracotta-1);
+	--color-terracotta-2: var(--terracotta-2);
+	--color-terracotta-3: var(--terracotta-3);
+	--color-terracotta-4: var(--terracotta-4);
+	--color-terracotta-5: var(--terracotta-5);
+	--color-terracotta-6: var(--terracotta-6);
+	--color-terracotta-7: var(--terracotta-7);
+	--color-terracotta-8: var(--terracotta-8);
+	--color-terracotta-9: var(--terracotta-9);
+	--color-terracotta-10: var(--terracotta-10);
+	--color-terracotta-11: var(--terracotta-11);
+	--color-terracotta-12: var(--terracotta-12);
+
+	/* ── Sage 1-12 ── */
+	--color-sage-1: var(--sage-1);
+	--color-sage-2: var(--sage-2);
+	--color-sage-3: var(--sage-3);
+	--color-sage-4: var(--sage-4);
+	--color-sage-5: var(--sage-5);
+	--color-sage-6: var(--sage-6);
+	--color-sage-7: var(--sage-7);
+	--color-sage-8: var(--sage-8);
+	--color-sage-9: var(--sage-9);
+	--color-sage-10: var(--sage-10);
+	--color-sage-11: var(--sage-11);
+	--color-sage-12: var(--sage-12);
+
+	/* ── Yellow 1-12 ── */
+	--color-yellow-1: var(--yellow-1);
+	--color-yellow-2: var(--yellow-2);
+	--color-yellow-3: var(--yellow-3);
+	--color-yellow-4: var(--yellow-4);
+	--color-yellow-5: var(--yellow-5);
+	--color-yellow-6: var(--yellow-6);
+	--color-yellow-7: var(--yellow-7);
+	--color-yellow-8: var(--yellow-8);
+	--color-yellow-9: var(--yellow-9);
+	--color-yellow-10: var(--yellow-10);
+	--color-yellow-11: var(--yellow-11);
+	--color-yellow-12: var(--yellow-12);
+
+	/* ── Red 1-12 (Radix semantic) ── */
+	--color-red-1: var(--red-1);
+	--color-red-2: var(--red-2);
+	--color-red-3: var(--red-3);
+	--color-red-4: var(--red-4);
+	--color-red-5: var(--red-5);
+	--color-red-6: var(--red-6);
+	--color-red-7: var(--red-7);
+	--color-red-8: var(--red-8);
+	--color-red-9: var(--red-9);
+	--color-red-10: var(--red-10);
+	--color-red-11: var(--red-11);
+	--color-red-12: var(--red-12);
+
+	/* ── Amber 1-12 (Radix semantic) ── */
+	--color-amber-1: var(--amber-1);
+	--color-amber-2: var(--amber-2);
+	--color-amber-3: var(--amber-3);
+	--color-amber-4: var(--amber-4);
+	--color-amber-5: var(--amber-5);
+	--color-amber-6: var(--amber-6);
+	--color-amber-7: var(--amber-7);
+	--color-amber-8: var(--amber-8);
+	--color-amber-9: var(--amber-9);
+	--color-amber-10: var(--amber-10);
+	--color-amber-11: var(--amber-11);
+	--color-amber-12: var(--amber-12);
+
+	/* ── Radius scale ── */
+	--radius-1: calc(3px * var(--radius-factor));
+	--radius-2: calc(4px * var(--radius-factor));
+	--radius-3: calc(6px * var(--radius-factor));
+	--radius-4: calc(8px * var(--radius-factor));
+	--radius-5: calc(12px * var(--radius-factor));
+	--radius-full: 9999px;
+
+	/* ── Typography ramp (font-size / line-height) ── */
+	--text-1: 0.75rem;
+	--text-1--line-height: 1rem;
+	--text-2: 0.875rem;
+	--text-2--line-height: 1.25rem;
+	--text-3: 1rem;
+	--text-3--line-height: 1.5rem;
+	--text-4: 1.125rem;
+	--text-4--line-height: 1.75rem;
+	--text-5: 1.25rem;
+	--text-5--line-height: 1.75rem;
+	--text-6: 1.5rem;
+	--text-6--line-height: 2rem;
+	--text-7: 1.875rem;
+	--text-7--line-height: 2.25rem;
+	--text-8: 2rem;
+	--text-8--line-height: 2.5rem;
+	--text-9: 2.5rem;
+	--text-9--line-height: 3rem;
+}
+
+:root {
+	--radius-factor: 1;
+}
+
+.dark {
+	/* Ready for future dark mode values */
+}

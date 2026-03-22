@@ -1,0 +1,73 @@
+:root,
+.light,
+.light-theme {
+	--sage-1: #fcfdfb;
+	--sage-2: #f6fbf6;
+	--sage-3: #e6fae6;
+	--sage-4: #d9f3d9;
+	--sage-5: #cfe9cf;
+	--sage-6: #c1dac1;
+	--sage-7: #b0c9b0;
+	--sage-8: #9ab29a;
+	--sage-9: #3c4a3c;
+	--sage-10: #4c5b4c;
+	--sage-11: #637a63;
+	--sage-12: #324032;
+
+	--sage-a1: #40800004;
+	--sage-a2: #008e0009;
+	--sage-a3: #00cc0019;
+	--sage-a4: #00af0026;
+	--sage-a5: #008b0030;
+	--sage-a6: #0067003e;
+	--sage-a7: #0051004f;
+	--sage-a8: #003d0065;
+	--sage-a9: #001200c3;
+	--sage-a10: #001600b3;
+	--sage-a11: #0026009c;
+	--sage-a12: #001200cd;
+
+	--sage-contrast: #fff;
+	--sage-surface: #f4faf4cc;
+	--sage-indicator: #3c4a3c;
+	--sage-track: #3c4a3c;
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+	@media (color-gamut: p3) {
+		:root,
+		.light,
+		.light-theme {
+			--sage-1: oklch(99.3% 0.0026 145);
+			--sage-2: oklch(98.4% 0.0086 145);
+			--sage-3: oklch(96.5% 0.033 145);
+			--sage-4: oklch(93.9% 0.0441 145);
+			--sage-5: oklch(90.7% 0.0441 145);
+			--sage-6: oklch(86.3% 0.0441 145);
+			--sage-7: oklch(80.9% 0.0441 145);
+			--sage-8: oklch(73.9% 0.0441 145);
+			--sage-9: oklch(39.2% 0.0294 145);
+			--sage-10: oklch(45.3% 0.0294 145);
+			--sage-11: oklch(55.4% 0.0441 145);
+			--sage-12: oklch(35.5% 0.0294 145);
+
+			--sage-a1: color(display-p3 0.2667 0.5137 0.0235 / 0.016);
+			--sage-a2: color(display-p3 0.1294 0.5647 0.0235 / 0.036);
+			--sage-a3: color(display-p3 0.098 0.7451 0.0118 / 0.091);
+			--sage-a4: color(display-p3 0.0902 0.6431 0.0078 / 0.142);
+			--sage-a5: color(display-p3 0.0706 0.502 0.0039 / 0.181);
+			--sage-a6: color(display-p3 0.0549 0.3686 0.0039 / 0.236);
+			--sage-a7: color(display-p3 0.0392 0.2863 0.0039 / 0.302);
+			--sage-a8: color(display-p3 0.0314 0.2157 0.0039 / 0.389);
+			--sage-a9: color(display-p3 0.0118 0.0667 0 / 0.761);
+			--sage-a10: color(display-p3 0.0118 0.0784 0 / 0.699);
+			--sage-a11: color(display-p3 0.0196 0.1294 0 / 0.604);
+			--sage-a12: color(display-p3 0.0118 0.0627 0 / 0.8);
+
+			--sage-contrast: #fff;
+			--sage-surface: color(display-p3 0.9608 0.9804 0.9608 / 0.8);
+			--sage-indicator: oklch(39.2% 0.0294 145);
+			--sage-track: oklch(39.2% 0.0294 145);
+		}
+	}
+}
