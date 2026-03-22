@@ -27,10 +27,10 @@ Runs at `http://localhost:5173`.
 
 ## Commands
 
-| Command          | Description              |
-| ---------------- | ------------------------ |
-| `bun run dev`    | Start dev server         |
-| `bun run build`  | Type-check and build     |
-| `bun run lint`   | Lint                     |
-| `bun run lint:fix` | Auto-fix lint issues   |
-| `bun run preview` | Preview production build |
+| Command            | Description              |
+| ------------------ | ------------------------ |
+| `bun run dev`      | Start dev server         |
+| `bun run build`    | Type-check and build     |
+| `bun run lint`     | Lint                     |
+| `bun run lint:fix` | Auto-fix lint issues     |
+| `bun run preview`  | Preview production build |
