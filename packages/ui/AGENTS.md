@@ -27,7 +27,7 @@ src/
 
 1. **Component structure:** Each component has `index.ts`, `name.variants.ts`, `name.component.tsx`
 2. **Props pattern:** Components extend RAC props + add `variant`, `size`, `color`
-3. **State selectors:** Use RAC `data-[hovered]`, `data-[pressed]`, `data-[focus-visible]`, `data-[disabled]`
+3. **State selectors:** Use RAC `data-hovered`, `data-pressed`, `data-focus-visible`, `data-disabled` (Tailwind v4 shorthand for `data-[attr]`)
 4. **Color scale:** 12 steps per color — 1-2 backgrounds, 3-5 interactive, 6-8 borders, 9-10 solid, 11 text, 12 high-contrast text
 5. **No accent indirection:** Colors are passed directly, no `--accent-*` CSS variables or ThemeProvider
 6. **Focus rings:** Color-matched step 8, 2px width, 2px offset
