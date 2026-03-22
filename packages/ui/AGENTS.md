@@ -32,6 +32,7 @@ src/
 5. **No accent indirection:** Colors are passed directly, no `--accent-*` CSS variables or ThemeProvider
 6. **Focus rings:** Color-matched step 8, 2px width, 2px offset
 7. **className merging:** Consumer `className` always wins via tv()'s built-in tailwind-merge
+8. **`tw()` for IntelliSense:** Wrap Tailwind class strings in `tw()` when they appear outside of `tv()` or `cn()` calls (e.g., in variant fragment files). It's an identity function that enables Tailwind IntelliSense via `classRegex`. See `.vscode/README.md` for details.
 
 ## Color Palette
 
