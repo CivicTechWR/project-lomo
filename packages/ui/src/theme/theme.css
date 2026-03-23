@@ -139,6 +139,21 @@
 	--text-8--line-height: 2.5rem;
 	--text-9: 2.5rem;
 	--text-9--line-height: 3rem;
+
+	/* ── Letter-spacing ramp ── */
+	--tracking-1: 0.0025em;
+	--tracking-2: 0em;
+	--tracking-3: 0em;
+	--tracking-4: -0.0025em;
+	--tracking-5: -0.005em;
+	--tracking-6: -0.00625em;
+	--tracking-7: -0.0075em;
+	--tracking-8: -0.01em;
+	--tracking-9: -0.025em;
+
+	/* ── Leading-trim offsets (Radix negative-margin approach) ── */
+	--leading-trim-start: 0.42em;
+	--leading-trim-end: 0.36em;
 }
 
 :root {
