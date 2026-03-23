@@ -268,3 +268,4 @@ dmypy.json
 # (These will be unique to your specific civic tech project)
 
 .turbo/
+.tanstack/

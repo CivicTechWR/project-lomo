@@ -1,4 +1,4 @@
-import type { Colors, TypographySize, Trim, Weight } from "../theme/types.ts";
+import type { Colors, Trim, TypographySize, Weight } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
 import {

@@ -12,6 +12,10 @@ function RootLayout() {
 				<Link to="/about" className="[&.active]:font-bold">
 					About
 				</Link>
+				{" "}
+				<Link to="/showcase" className="[&.active]:font-bold">
+					Showcase
+				</Link>
 			</div>
 			<hr />
 			<Outlet />

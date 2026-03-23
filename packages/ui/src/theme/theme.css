@@ -157,7 +157,7 @@
 }
 
 :root {
-	--radius-factor: 1;
+	--radius-factor: 100;
 }
 
 .dark {

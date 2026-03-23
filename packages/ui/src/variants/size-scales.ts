@@ -2,13 +2,13 @@ import { tw } from "../utils/tw.ts";
 
 export const interactiveSizes = {
 	1: tw(
-		"h-6 px-2",
+		"h-6 px-4",
 		"text-[length:var(--text-1)]",
 		"leading-[var(--text-1--line-height)]",
 		"rounded-[var(--radius-1)] gap-1",
 	),
 	2: tw(
-		"h-8 px-3",
+		"h-8 px-5",
 		"text-[length:var(--text-2)]",
 		"leading-[var(--text-2--line-height)]",
 		"rounded-[var(--radius-2)] gap-1.5",
