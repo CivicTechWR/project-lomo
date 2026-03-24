@@ -1,4 +1,4 @@
-import { Button, Heading, Text } from "@repo/ui";
+import { Badge, Button, Heading, Text } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/showcase")({
@@ -6,6 +6,8 @@ export const Route = createFileRoute("/showcase")({
 });
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
+const BADGE_VARIANTS = ["solid", "soft", "surface", "outline"] as const;
+const BADGE_SIZES = [1, 2, 3] as const;
 const BUTTON_VARIANTS = ["solid", "soft", "outline", "ghost"] as const;
 const BUTTON_SIZES = [1, 2, 3, 4] as const;
 const TEXT_SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
@@ -125,6 +127,73 @@ function ShowcasePage() {
 									{variant}
 								</Button>
 							</PropDisplay>
+						))}
+					</div>
+				</Section>
+			</div>
+
+			<hr className="border-gray-6" />
+
+			{/* ── BADGE ── */}
+			<div className="flex flex-col gap-8">
+				<Heading level={2}>Badge</Heading>
+
+				<Section title="Variants × Colors">
+					{BADGE_VARIANTS.map(variant => (
+						<div key={variant} className="flex flex-col gap-3">
+							<Text size={2} weight="medium" color="gray" highContrast>
+								{variant}
+							</Text>
+							<div className="flex flex-wrap items-center gap-3">
+								{COLORS.map(color => (
+									<PropDisplay key={color} props={{ variant, color }}>
+										<Badge variant={variant} color={color}>
+											{color.charAt(0).toUpperCase() + color.slice(1)}
+										</Badge>
+									</PropDisplay>
+								))}
+							</div>
+						</div>
+					))}
+				</Section>
+
+				<Section title="Sizes">
+					<div className="flex flex-wrap items-end gap-3">
+						{BADGE_SIZES.map(size => (
+							<PropDisplay key={size} props={{ size }}>
+								<Badge size={size}>
+									{`Size ${size}`}
+								</Badge>
+							</PropDisplay>
+						))}
+					</div>
+				</Section>
+
+				<Section
+					title="High Contrast"
+					description="Compares standard vs high contrast for each variant."
+				>
+					<div className="flex flex-col gap-4">
+						{BADGE_VARIANTS.map(variant => (
+							<div key={variant} className="flex flex-col gap-2">
+								<Text size={2} weight="medium" color="gray" highContrast>
+									{variant}
+								</Text>
+								<div className="flex flex-wrap items-center gap-3">
+									{COLORS.map(color => (
+										<div key={color} className="flex flex-col gap-1.5">
+											<Badge variant={variant} color={color}>
+												{color}
+											</Badge>
+											<Badge variant={variant} color={color} highContrast>
+												{color}
+												{" "}
+												HC
+											</Badge>
+										</div>
+									))}
+								</div>
+							</div>
 						))}
 					</div>
 				</Section>

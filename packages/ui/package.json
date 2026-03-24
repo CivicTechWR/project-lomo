@@ -5,6 +5,7 @@
 	"private": true,
 	"exports": {
 		".": "./src/index.ts",
+		"./badge": "./src/badge/index.ts",
 		"./button": "./src/button/index.ts",
 		"./text": "./src/text/index.ts",
 		"./heading": "./src/heading/index.ts",

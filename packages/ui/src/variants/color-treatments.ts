@@ -111,6 +111,87 @@ export const ghostColors: ColorMap = {
 	),
 };
 
+export const surfaceColors: ColorMap = {
+	terracotta: tw(
+		"bg-terracotta-2 text-terracotta-11",
+		"shadow-[inset_0_0_0_1px_var(--color-terracotta-6)]",
+	),
+	sage: tw(
+		"bg-sage-2 text-sage-11",
+		"shadow-[inset_0_0_0_1px_var(--color-sage-6)]",
+	),
+	yellow: tw(
+		"bg-yellow-2 text-yellow-11",
+		"shadow-[inset_0_0_0_1px_var(--color-yellow-6)]",
+	),
+	gray: tw(
+		"bg-gray-2 text-gray-11",
+		"shadow-[inset_0_0_0_1px_var(--color-gray-6)]",
+	),
+	red: tw(
+		"bg-red-2 text-red-11",
+		"shadow-[inset_0_0_0_1px_var(--color-red-6)]",
+	),
+	amber: tw(
+		"bg-amber-2 text-amber-11",
+		"shadow-[inset_0_0_0_1px_var(--color-amber-6)]",
+	),
+};
+
+export const solidColorsHighContrast: ColorMap = {
+	terracotta: tw("bg-terracotta-12 text-terracotta-1"),
+	sage: tw("bg-sage-12 text-sage-1"),
+	yellow: tw("bg-yellow-12 text-yellow-1"),
+	gray: tw("bg-gray-12 text-gray-1"),
+	red: tw("bg-red-12 text-red-1"),
+	amber: tw("bg-amber-12 text-amber-1"),
+};
+
+export const softColorsHighContrast: ColorMap = {
+	terracotta: tw("bg-terracotta-3 text-terracotta-12"),
+	sage: tw("bg-sage-3 text-sage-12"),
+	yellow: tw("bg-yellow-3 text-yellow-12"),
+	gray: tw("bg-gray-3 text-gray-12"),
+	red: tw("bg-red-3 text-red-12"),
+	amber: tw("bg-amber-3 text-amber-12"),
+};
+
+export const surfaceColorsHighContrast: ColorMap = {
+	terracotta: tw(
+		"bg-terracotta-2 text-terracotta-12",
+		"shadow-[inset_0_0_0_1px_var(--color-terracotta-6)]",
+	),
+	sage: tw(
+		"bg-sage-2 text-sage-12",
+		"shadow-[inset_0_0_0_1px_var(--color-sage-6)]",
+	),
+	yellow: tw(
+		"bg-yellow-2 text-yellow-12",
+		"shadow-[inset_0_0_0_1px_var(--color-yellow-6)]",
+	),
+	gray: tw(
+		"bg-gray-2 text-gray-12",
+		"shadow-[inset_0_0_0_1px_var(--color-gray-6)]",
+	),
+	red: tw(
+		"bg-red-2 text-red-12",
+		"shadow-[inset_0_0_0_1px_var(--color-red-6)]",
+	),
+	amber: tw(
+		"bg-amber-2 text-amber-12",
+		"shadow-[inset_0_0_0_1px_var(--color-amber-6)]",
+	),
+};
+
+export const outlineColorsHighContrast: ColorMap = {
+	terracotta: tw("border border-terracotta-11 text-terracotta-12"),
+	sage: tw("border border-sage-11 text-sage-12"),
+	yellow: tw("border border-yellow-11 text-yellow-12"),
+	gray: tw("border border-gray-11 text-gray-12"),
+	red: tw("border border-red-11 text-red-12"),
+	amber: tw("border border-amber-11 text-amber-12"),
+};
+
 export const focusRings: ColorMap = {
 	terracotta: tw(
 		"data-focus-visible:ring-2 data-focus-visible:ring-offset-2",
