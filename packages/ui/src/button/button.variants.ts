@@ -22,6 +22,11 @@ export const buttonVariants = tv({
 		},
 	},
 	compoundVariants: [
+		// Min-width (2× height) — keeps short-label buttons from looking circular
+		{ size: 1, class: "min-w-16" },
+		{ size: 2, class: "min-w-20" },
+		{ size: 3, class: "min-w-24" },
+		{ size: 4, class: "min-w-28" },
 		// Solid
 		{ variant: "solid", color: "terracotta", class: solidColors.terracotta },
 		{ variant: "solid", color: "sage", class: solidColors.sage },
