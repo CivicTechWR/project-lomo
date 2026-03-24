@@ -12,10 +12,11 @@ LoMo is a calm, consent-based community help platform (CivicTechWR Season 7). Bu
 project-lomo/
   apps/webapp/             @repo/webapp         React 19 + Vite + TanStack Router
   apps/backend/            @repo/backend        Django 5 + DRF (Dockerized)
+  packages/ui/             @repo/ui             Design system: Tailwind v4 + react-aria-components
   packages/eslint-config/  @repo/eslint-config  Shared ESLint config (antfu)
 ```
 
-See `apps/webapp/AGENTS.md` and `apps/backend/AGENTS.md` for app-specific instructions.
+See `apps/webapp/AGENTS.md`, `apps/backend/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
 
 ## Commands
 
@@ -38,7 +39,6 @@ Run all commands from the repo root.
 
 These are not yet decided. Do not introduce them without explicit instruction:
 
-- Component library: shadcn/ui vs custom React Aria components
 - OpenAPI documentation generator: drf-spectacular vs drf-yasg
 - Frontend hosting: Vercel vs Cloudflare vs Railway
 - Python linter/formatter: not yet chosen
