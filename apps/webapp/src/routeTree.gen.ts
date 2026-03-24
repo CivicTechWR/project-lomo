@@ -9,18 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ShowcaseRouteImport } from './routes/showcase'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ShowcaseRouteRouteImport } from './routes/showcase/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShowcaseIndexRouteImport } from './routes/showcase/index'
+import { Route as ShowcaseTextRouteImport } from './routes/showcase/text'
+import { Route as ShowcaseHeadingRouteImport } from './routes/showcase/heading'
+import { Route as ShowcaseButtonRouteImport } from './routes/showcase/button'
+import { Route as ShowcaseBadgeRouteImport } from './routes/showcase/badge'
 
-const ShowcaseRoute = ShowcaseRouteImport.update({
-  id: '/showcase',
-  path: '/showcase',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowcaseRouteRoute = ShowcaseRouteRouteImport.update({
+  id: '/showcase',
+  path: '/showcase',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -28,51 +33,114 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShowcaseIndexRoute = ShowcaseIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
+const ShowcaseTextRoute = ShowcaseTextRouteImport.update({
+  id: '/text',
+  path: '/text',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
+const ShowcaseHeadingRoute = ShowcaseHeadingRouteImport.update({
+  id: '/heading',
+  path: '/heading',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
+const ShowcaseButtonRoute = ShowcaseButtonRouteImport.update({
+  id: '/button',
+  path: '/button',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
+const ShowcaseBadgeRoute = ShowcaseBadgeRouteImport.update({
+  id: '/badge',
+  path: '/badge',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/showcase': typeof ShowcaseRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/showcase': typeof ShowcaseRoute
+  '/showcase/badge': typeof ShowcaseBadgeRoute
+  '/showcase/button': typeof ShowcaseButtonRoute
+  '/showcase/heading': typeof ShowcaseHeadingRoute
+  '/showcase/text': typeof ShowcaseTextRoute
+  '/showcase/': typeof ShowcaseIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/showcase': typeof ShowcaseRoute
+  '/showcase/badge': typeof ShowcaseBadgeRoute
+  '/showcase/button': typeof ShowcaseButtonRoute
+  '/showcase/heading': typeof ShowcaseHeadingRoute
+  '/showcase/text': typeof ShowcaseTextRoute
+  '/showcase': typeof ShowcaseIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/showcase': typeof ShowcaseRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/showcase': typeof ShowcaseRoute
+  '/showcase/badge': typeof ShowcaseBadgeRoute
+  '/showcase/button': typeof ShowcaseButtonRoute
+  '/showcase/heading': typeof ShowcaseHeadingRoute
+  '/showcase/text': typeof ShowcaseTextRoute
+  '/showcase/': typeof ShowcaseIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/showcase'
+  fullPaths:
+    | '/'
+    | '/showcase'
+    | '/about'
+    | '/showcase/badge'
+    | '/showcase/button'
+    | '/showcase/heading'
+    | '/showcase/text'
+    | '/showcase/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/showcase'
-  id: '__root__' | '/' | '/about' | '/showcase'
+  to:
+    | '/'
+    | '/about'
+    | '/showcase/badge'
+    | '/showcase/button'
+    | '/showcase/heading'
+    | '/showcase/text'
+    | '/showcase'
+  id:
+    | '__root__'
+    | '/'
+    | '/showcase'
+    | '/about'
+    | '/showcase/badge'
+    | '/showcase/button'
+    | '/showcase/heading'
+    | '/showcase/text'
+    | '/showcase/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ShowcaseRouteRoute: typeof ShowcaseRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  ShowcaseRoute: typeof ShowcaseRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/showcase': {
-      id: '/showcase'
-      path: '/showcase'
-      fullPath: '/showcase'
-      preLoaderRoute: typeof ShowcaseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/showcase': {
+      id: '/showcase'
+      path: '/showcase'
+      fullPath: '/showcase'
+      preLoaderRoute: typeof ShowcaseRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -82,13 +150,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/showcase/': {
+      id: '/showcase/'
+      path: '/'
+      fullPath: '/showcase/'
+      preLoaderRoute: typeof ShowcaseIndexRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
+    '/showcase/text': {
+      id: '/showcase/text'
+      path: '/text'
+      fullPath: '/showcase/text'
+      preLoaderRoute: typeof ShowcaseTextRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
+    '/showcase/heading': {
+      id: '/showcase/heading'
+      path: '/heading'
+      fullPath: '/showcase/heading'
+      preLoaderRoute: typeof ShowcaseHeadingRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
+    '/showcase/button': {
+      id: '/showcase/button'
+      path: '/button'
+      fullPath: '/showcase/button'
+      preLoaderRoute: typeof ShowcaseButtonRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
+    '/showcase/badge': {
+      id: '/showcase/badge'
+      path: '/badge'
+      fullPath: '/showcase/badge'
+      preLoaderRoute: typeof ShowcaseBadgeRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
   }
 }
 
+interface ShowcaseRouteRouteChildren {
+  ShowcaseBadgeRoute: typeof ShowcaseBadgeRoute
+  ShowcaseButtonRoute: typeof ShowcaseButtonRoute
+  ShowcaseHeadingRoute: typeof ShowcaseHeadingRoute
+  ShowcaseTextRoute: typeof ShowcaseTextRoute
+  ShowcaseIndexRoute: typeof ShowcaseIndexRoute
+}
+
+const ShowcaseRouteRouteChildren: ShowcaseRouteRouteChildren = {
+  ShowcaseBadgeRoute: ShowcaseBadgeRoute,
+  ShowcaseButtonRoute: ShowcaseButtonRoute,
+  ShowcaseHeadingRoute: ShowcaseHeadingRoute,
+  ShowcaseTextRoute: ShowcaseTextRoute,
+  ShowcaseIndexRoute: ShowcaseIndexRoute,
+}
+
+const ShowcaseRouteRouteWithChildren = ShowcaseRouteRoute._addFileChildren(
+  ShowcaseRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ShowcaseRouteRoute: ShowcaseRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  ShowcaseRoute: ShowcaseRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

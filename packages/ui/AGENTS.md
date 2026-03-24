@@ -56,3 +56,36 @@ This is a **reference, not a source of truth**. Our component behavior and acces
 - **Prop conventions** — numeric size scales, color-as-prop pattern
 
 Consult it when adding new components or extending the design token system. For how components are built (props, composition, accessibility), follow react-aria-components and this package's own conventions.
+
+## Adding a Component to the Showcase
+
+The showcase lives at `apps/webapp/src/routes/showcase/` and serves as a
+development-only documentation site for the design system. When you add a
+new component to `@repo/ui`, add a corresponding showcase page:
+
+1. **Create the component** in `packages/ui/src/<name>/` following the
+   existing structure (`index.ts`, `<name>.variants.ts`, `<name>.component.tsx`).
+
+2. **Export from the barrel** — add the component and its props type to
+   `packages/ui/src/index.ts`.
+
+3. **Create a showcase route** at `apps/webapp/src/routes/showcase/<name>.tsx`.
+   Follow the existing pages as a template. Each page should include:
+   - `PageHeader` — component name + one-line description
+   - `PropTable` — all public props with type and default value
+   - `DemoSection` blocks — one per prop dimension (variant, size, color, etc.),
+     each wrapped in a bordered card container
+
+   Import the shared helpers from `./-components`:
+
+   ```tsx
+   import { DemoSection, PageHeader, PropTable } from "./-components";
+   ```
+
+4. **Add to the sidebar** — in `showcase/route.tsx`, add an entry to the
+   appropriate group in the `NAV_GROUPS` array (either "Components" or
+   "Typography"). Keep items alphabetically sorted within each group.
+
+5. **Add to the overview grid** — in `showcase/index.tsx`, add a card to
+   the `COMPONENT_CARDS` array with a name, description, link, and a small
+   visual preview using the component.
