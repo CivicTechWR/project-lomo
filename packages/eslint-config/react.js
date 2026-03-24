@@ -12,6 +12,7 @@ export function GetConfig(options) {
 			overrides: {
 				...options.react?.overrides,
 				"react/prefer-shorthand-fragment": "off",
+				"react-refresh/only-export-components": "off",
 			},
 		},
 		rules: {
