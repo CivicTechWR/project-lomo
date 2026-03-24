@@ -11,7 +11,7 @@ src/
   button/
     index.ts              # Barrel export
     button.variants.ts    # tv() definition + type aliases
-    Button.component.tsx  # React component wrapping RAC primitive
+    button.component.tsx  # React component wrapping RAC primitive
 ```
 
 ## Props Contract
