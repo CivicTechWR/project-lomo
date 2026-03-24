@@ -1,7 +1,7 @@
 import { Button } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DemoSection, PageHeader, PropTable } from "./-components";
+import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
 const VARIANTS = ["solid", "soft", "outline", "ghost"] as const;
@@ -21,6 +21,29 @@ function ButtonPage() {
 				title="Button"
 				description="Triggers an action or event, such as submitting a form or opening a dialog."
 			/>
+
+			<Playground
+				componentName="Button"
+				childrenLabel="Button"
+				defaults={{ variant: "solid", size: 2, color: "terracotta", isDisabled: false }}
+				controls={[
+					{ name: "variant", type: "segment", options: VARIANTS },
+					{ name: "size", type: "segment", options: SIZES },
+					{ name: "color", type: "segment", options: COLORS },
+					{ name: "isDisabled", type: "toggle" },
+				]}
+			>
+				{props => (
+					<Button
+						variant={props.variant as any}
+						size={props.size as any}
+						color={props.color as any}
+						isDisabled={props.isDisabled as boolean}
+					>
+						Button
+					</Button>
+				)}
+			</Playground>
 
 			<PropTable data={PROPS} />
 

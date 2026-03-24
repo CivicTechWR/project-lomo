@@ -1,7 +1,7 @@
 import { Badge } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DemoSection, PageHeader, PropTable } from "./-components";
+import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
 const VARIANTS = ["solid", "soft", "surface", "outline"] as const;
@@ -21,6 +21,29 @@ function BadgePage() {
 				title="Badge"
 				description="Displays a short status indicator, count, or label."
 			/>
+
+			<Playground
+				componentName="Badge"
+				childrenLabel="Badge"
+				defaults={{ variant: "soft", size: 2, color: "gray", highContrast: false }}
+				controls={[
+					{ name: "variant", type: "segment", options: VARIANTS },
+					{ name: "size", type: "segment", options: SIZES },
+					{ name: "color", type: "segment", options: COLORS },
+					{ name: "highContrast", type: "toggle" },
+				]}
+			>
+				{props => (
+					<Badge
+						variant={props.variant as any}
+						size={props.size as any}
+						color={props.color as any}
+						highContrast={props.highContrast as boolean}
+					>
+						Badge
+					</Badge>
+				)}
+			</Playground>
 
 			<PropTable data={PROPS} />
 

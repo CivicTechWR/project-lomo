@@ -1,7 +1,7 @@
 import { Heading, Text } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DemoSection, PageHeader, PropTable } from "./-components";
+import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
 const LEVELS = [1, 2, 3, 4, 5, 6] as const;
@@ -26,6 +26,31 @@ function HeadingPage() {
 				title="Heading"
 				description="Semantic heading element with automatic size mapping from HTML level. Supports size override, weight, color, and leading trim."
 			/>
+
+			<Playground
+				componentName="Heading"
+				childrenLabel="The quick brown fox"
+				defaults={{ level: 3, weight: "bold", color: "gray", highContrast: true, trim: "normal" }}
+				controls={[
+					{ name: "level", type: "segment", options: LEVELS },
+					{ name: "weight", type: "segment", options: WEIGHTS },
+					{ name: "color", type: "segment", options: COLORS },
+					{ name: "trim", type: "segment", options: TRIMS },
+					{ name: "highContrast", type: "toggle" },
+				]}
+			>
+				{props => (
+					<Heading
+						level={props.level as any}
+						weight={props.weight as any}
+						color={props.color as any}
+						highContrast={props.highContrast as boolean}
+						trim={props.trim as any}
+					>
+						The quick brown fox
+					</Heading>
+				)}
+			</Playground>
 
 			<PropTable data={PROPS} />
 

@@ -1,7 +1,7 @@
 import { Text } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DemoSection, PageHeader, PropTable } from "./-components";
+import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
 const SIZES = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
@@ -24,6 +24,31 @@ function TextPage() {
 				title="Text"
 				description="Renders inline or block text with typographic controls for size, weight, color, and leading trim."
 			/>
+
+			<Playground
+				componentName="Text"
+				childrenLabel="The quick brown fox jumps over the lazy dog"
+				defaults={{ size: 3, weight: "regular", color: "gray", highContrast: false, trim: "normal" }}
+				controls={[
+					{ name: "size", type: "segment", options: SIZES },
+					{ name: "weight", type: "segment", options: WEIGHTS },
+					{ name: "color", type: "segment", options: COLORS },
+					{ name: "trim", type: "segment", options: TRIMS },
+					{ name: "highContrast", type: "toggle" },
+				]}
+			>
+				{props => (
+					<Text
+						size={props.size as any}
+						weight={props.weight as any}
+						color={props.color as any}
+						highContrast={props.highContrast as boolean}
+						trim={props.trim as any}
+					>
+						The quick brown fox jumps over the lazy dog
+					</Text>
+				)}
+			</Playground>
 
 			<PropTable data={PROPS} />
 
