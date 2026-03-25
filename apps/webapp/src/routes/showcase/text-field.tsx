@@ -13,16 +13,19 @@ import {
 	Input,
 	InputSlot,
 	Label,
+	Text,
 	TextArea,
 	TextField,
 } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { DemoSection, PageHeader, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
 const VARIANTS = ["surface", "classic", "soft"] as const;
 const SIZES = [1, 2, 3] as const;
+const SLOT_OPTIONS = ["none", "start", "end", "both"] as const;
 
 const TEXT_FIELD_PROPS = [
 	{ name: "variant", type: "\"surface\" | \"classic\" | \"soft\"", default: "\"surface\"" },
@@ -35,6 +38,185 @@ const TEXT_FIELD_PROPS = [
 	{ name: "isReadOnly", type: "boolean", default: "false" },
 ];
 
+function TextFieldPlayground() {
+	const [state, setState] = useState({
+		variant: "surface" as (typeof VARIANTS)[number],
+		size: 2 as (typeof SIZES)[number],
+		color: "gray" as (typeof COLORS)[number],
+		slots: "none" as (typeof SLOT_OPTIONS)[number],
+		isDisabled: false,
+		useTextArea: false,
+		label: "Email address",
+		description: "",
+		errorMessage: "",
+	});
+
+	const update = (key: string, value: string | number | boolean) => {
+		setState(prev => ({ ...prev, [key]: value }) as typeof prev);
+	};
+
+	const hasStart = state.slots === "start" || state.slots === "both";
+	const hasEnd = state.slots === "end" || state.slots === "both";
+	const isInvalid = state.errorMessage.length > 0;
+
+	function generateSnippet() {
+		const props: string[] = [];
+		if (state.variant !== "surface")
+			props.push(`variant="${state.variant}"`);
+		if (state.size !== 2)
+			props.push(`size={${state.size}}`);
+		if (state.color !== "gray")
+			props.push(`color="${state.color}"`);
+		if (isInvalid)
+			props.push("isInvalid");
+		if (state.isDisabled)
+			props.push("isDisabled");
+
+		const openTag = props.length > 0
+			? `<TextField ${props.join(" ")}>`
+			: "<TextField>";
+
+		const lines: string[] = [openTag];
+		lines.push(`  <Label>${state.label}</Label>`);
+		if (state.description)
+			lines.push(`  <Description>${state.description}</Description>`);
+		lines.push("  <Group>");
+		if (hasStart)
+			lines.push("    <InputSlot side=\"start\"><EnvelopeIcon /></InputSlot>");
+		if (state.useTextArea)
+			lines.push("    <TextArea rows={4} placeholder=\"Tell us more...\" />");
+		else
+			lines.push("    <Input placeholder=\"you@example.com\" />");
+		if (hasEnd)
+			lines.push("    <InputSlot side=\"end\"><XMarkIcon /></InputSlot>");
+		lines.push("  </Group>");
+		if (state.errorMessage)
+			lines.push(`  <FieldError>${state.errorMessage}</FieldError>`);
+		lines.push("</TextField>");
+		return lines.join("\n");
+	}
+
+	const segments: { name: string; options: readonly (string | number)[] }[] = [
+		{ name: "variant", options: VARIANTS },
+		{ name: "size", options: SIZES },
+		{ name: "color", options: COLORS },
+		{ name: "slots", options: SLOT_OPTIONS },
+	];
+
+	const toggles: { name: string; checked: boolean }[] = [
+		{ name: "isDisabled", checked: state.isDisabled },
+		{ name: "useTextArea", checked: state.useTextArea },
+	];
+
+	const textInputs: { name: string; value: string }[] = [
+		{ name: "label", value: state.label },
+		{ name: "description", value: state.description },
+		{ name: "errorMessage", value: state.errorMessage },
+	];
+
+	return (
+		<section className="flex flex-col gap-4">
+			<Text size={1} weight="medium" color="gray" className="uppercase tracking-wider">
+				Playground
+			</Text>
+
+			<div className="flex min-h-28 items-center justify-center rounded-lg border border-gray-6 bg-gray-2 p-8">
+				<div className="w-full max-w-md">
+					<TextField
+						variant={state.variant}
+						size={state.size}
+						color={state.color}
+						isDisabled={state.isDisabled}
+						isInvalid={isInvalid}
+					>
+						<Label>{state.label}</Label>
+						{state.description && <Description>{state.description}</Description>}
+						<Group>
+							{hasStart && (
+								<InputSlot side="start"><EnvelopeIcon /></InputSlot>
+							)}
+							{state.useTextArea
+								? <TextArea rows={4} placeholder="Tell us more..." />
+								: <Input placeholder="you@example.com" />}
+							{hasEnd && (
+								<InputSlot side="end"><XMarkIcon /></InputSlot>
+							)}
+						</Group>
+						{state.errorMessage && <FieldError>{state.errorMessage}</FieldError>}
+					</TextField>
+				</div>
+			</div>
+
+			<div className="flex flex-wrap gap-x-6 gap-y-4">
+				{segments.map(control => (
+					<div key={control.name} className="flex flex-col gap-1.5">
+						<span className="text-[length:var(--text-1)] font-medium text-gray-11">
+							{control.name}
+						</span>
+						<div className="inline-flex flex-wrap gap-0.5 rounded-md bg-gray-3 p-0.5">
+							{control.options.map(option => (
+								<button
+									key={String(option)}
+									type="button"
+									onClick={() => update(control.name, option)}
+									className={`rounded-[5px] px-2.5 py-1 text-[length:var(--text-1)] transition-colors ${
+										state[control.name as keyof typeof state] === option
+											? "bg-white font-medium text-gray-12 shadow-sm"
+											: "text-gray-11 hover:text-gray-12"
+									}`}
+								>
+									{String(option)}
+								</button>
+							))}
+						</div>
+					</div>
+				))}
+			</div>
+
+			<div className="flex flex-wrap gap-x-6 gap-y-4">
+				{toggles.map(control => (
+					<div key={control.name} className="flex flex-col gap-1.5">
+						<span className="text-[length:var(--text-1)] font-medium text-gray-11">
+							{control.name}
+						</span>
+						<label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-gray-3 px-3 py-1.5">
+							<input
+								type="checkbox"
+								checked={control.checked}
+								onChange={e => update(control.name, e.target.checked)}
+								className="h-3.5 w-3.5 rounded accent-terracotta-9"
+							/>
+							<span className="text-[length:var(--text-1)] text-gray-11">
+								{control.checked ? "On" : "Off"}
+							</span>
+						</label>
+					</div>
+				))}
+			</div>
+
+			<div className="flex flex-wrap gap-x-6 gap-y-4">
+				{textInputs.map(control => (
+					<div key={control.name} className="flex flex-col gap-1.5">
+						<span className="text-[length:var(--text-1)] font-medium text-gray-11">
+							{control.name}
+						</span>
+						<input
+							type="text"
+							value={control.value}
+							onChange={e => update(control.name, e.target.value)}
+							className="rounded-md bg-gray-3 px-3 py-1.5 text-[length:var(--text-1)] text-gray-12 outline-none"
+						/>
+					</div>
+				))}
+			</div>
+
+			<pre className="overflow-x-auto rounded-lg border border-gray-6 bg-gray-2 p-4 font-mono text-[length:var(--text-1)] leading-relaxed text-gray-12">
+				<code>{generateSnippet()}</code>
+			</pre>
+		</section>
+	);
+}
+
 function TextFieldPage() {
 	return (
 		<div className="flex flex-col gap-10">
@@ -42,6 +224,8 @@ function TextFieldPage() {
 				title="TextField"
 				description="Composable text input with label, description, validation, and slot support. Built from independent primitives orchestrated by a shared context."
 			/>
+
+			<TextFieldPlayground />
 
 			{/* ── Composition Guide ── */}
 			<DemoSection
