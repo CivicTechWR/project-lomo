@@ -38,6 +38,7 @@ const NAV_GROUPS = [
 		items: [
 			{ name: "Badge", to: "/showcase/badge" },
 			{ name: "Button", to: "/showcase/button" },
+			{ name: "Card", to: "/showcase/card" },
 		],
 	},
 	{

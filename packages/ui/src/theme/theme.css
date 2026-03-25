@@ -112,6 +112,20 @@
 	--color-amber-11: var(--amber-11);
 	--color-amber-12: var(--amber-12);
 
+	/* ── Card shadows ── */
+	--shadow-card-surface: inset 0 0 0 1px var(--color-gray-a5);
+	--shadow-card-surface-hover: inset 0 0 0 1px var(--color-gray-a7);
+	--shadow-card-surface-active: inset 0 0 0 1px var(--color-gray-a6);
+	--shadow-card-classic:
+		inset 0 0 0 1px var(--color-gray-a3), 0 0 0 0.5px var(--color-gray-a1), 0 1px 1px 0 var(--color-gray-a2),
+		0 2px 1px -1px var(--color-gray-a1), 0 1px 3px 0 var(--color-gray-a1);
+	--shadow-card-classic-hover:
+		inset 0 0 0 1px var(--color-gray-a3), 0 2px 3px -2px var(--color-gray-a1), 0 3px 12px -4px var(--color-gray-a3),
+		0 4px 16px -8px var(--color-gray-a1);
+	--shadow-card-classic-active:
+		inset 0 0 0 1px var(--color-gray-a4), 0 0 0 0.5px var(--color-gray-a1), 0 1px 1px 0 var(--color-gray-a4),
+		0 2px 1px -1px var(--color-gray-a1), 0 1px 3px 0 var(--color-gray-a1);
+
 	/* ── Radius scale ── */
 	--radius-1: calc(3px * var(--radius-factor));
 	--radius-2: calc(4px * var(--radius-factor));
@@ -157,7 +171,7 @@
 }
 
 :root {
-	--radius-factor: 100;
+	--radius-factor: 5;
 }
 
 .dark {

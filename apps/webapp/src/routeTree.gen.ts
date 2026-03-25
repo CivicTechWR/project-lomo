@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShowcaseIndexRouteImport } from './routes/showcase/index'
 import { Route as ShowcaseTextRouteImport } from './routes/showcase/text'
 import { Route as ShowcaseHeadingRouteImport } from './routes/showcase/heading'
+import { Route as ShowcaseCardRouteImport } from './routes/showcase/card'
 import { Route as ShowcaseButtonRouteImport } from './routes/showcase/button'
 import { Route as ShowcaseBadgeRouteImport } from './routes/showcase/badge'
 
@@ -48,6 +49,11 @@ const ShowcaseHeadingRoute = ShowcaseHeadingRouteImport.update({
   path: '/heading',
   getParentRoute: () => ShowcaseRouteRoute,
 } as any)
+const ShowcaseCardRoute = ShowcaseCardRouteImport.update({
+  id: '/card',
+  path: '/card',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
 const ShowcaseButtonRoute = ShowcaseButtonRouteImport.update({
   id: '/button',
   path: '/button',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/showcase/badge': typeof ShowcaseBadgeRoute
   '/showcase/button': typeof ShowcaseButtonRoute
+  '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/text': typeof ShowcaseTextRoute
   '/showcase/': typeof ShowcaseIndexRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/showcase/badge': typeof ShowcaseBadgeRoute
   '/showcase/button': typeof ShowcaseButtonRoute
+  '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/text': typeof ShowcaseTextRoute
   '/showcase': typeof ShowcaseIndexRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/showcase/badge': typeof ShowcaseBadgeRoute
   '/showcase/button': typeof ShowcaseButtonRoute
+  '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/text': typeof ShowcaseTextRoute
   '/showcase/': typeof ShowcaseIndexRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/showcase/badge'
     | '/showcase/button'
+    | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/text'
     | '/showcase/'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/showcase/badge'
     | '/showcase/button'
+    | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/text'
     | '/showcase'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/showcase/badge'
     | '/showcase/button'
+    | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/text'
     | '/showcase/'
@@ -171,6 +183,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShowcaseHeadingRouteImport
       parentRoute: typeof ShowcaseRouteRoute
     }
+    '/showcase/card': {
+      id: '/showcase/card'
+      path: '/card'
+      fullPath: '/showcase/card'
+      preLoaderRoute: typeof ShowcaseCardRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
     '/showcase/button': {
       id: '/showcase/button'
       path: '/button'
@@ -191,6 +210,7 @@ declare module '@tanstack/react-router' {
 interface ShowcaseRouteRouteChildren {
   ShowcaseBadgeRoute: typeof ShowcaseBadgeRoute
   ShowcaseButtonRoute: typeof ShowcaseButtonRoute
+  ShowcaseCardRoute: typeof ShowcaseCardRoute
   ShowcaseHeadingRoute: typeof ShowcaseHeadingRoute
   ShowcaseTextRoute: typeof ShowcaseTextRoute
   ShowcaseIndexRoute: typeof ShowcaseIndexRoute
@@ -199,6 +219,7 @@ interface ShowcaseRouteRouteChildren {
 const ShowcaseRouteRouteChildren: ShowcaseRouteRouteChildren = {
   ShowcaseBadgeRoute: ShowcaseBadgeRoute,
   ShowcaseButtonRoute: ShowcaseButtonRoute,
+  ShowcaseCardRoute: ShowcaseCardRoute,
   ShowcaseHeadingRoute: ShowcaseHeadingRoute,
   ShowcaseTextRoute: ShowcaseTextRoute,
   ShowcaseIndexRoute: ShowcaseIndexRoute,
