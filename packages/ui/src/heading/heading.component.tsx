@@ -11,12 +11,12 @@ import { headingVariants } from "./heading.variants.ts";
 
 // Level → default visual size (inverted: h1=largest, h6=smallest)
 const levelToSize: Record<HeadingLevel, HeadingSize> = {
-	1: 8,
-	2: 7,
-	3: 6,
-	4: 5,
-	5: 4,
-	6: 3,
+	1: 9,
+	2: 8,
+	3: 7,
+	4: 6,
+	5: 5,
+	6: 4,
 };
 
 export interface HeadingProps extends Omit<AriaHeadingProps, "level"> {

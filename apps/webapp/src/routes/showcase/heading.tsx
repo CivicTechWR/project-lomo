@@ -29,7 +29,7 @@ function HeadingPage() {
 
 			<Playground
 				componentName="Heading"
-				childrenLabel="The quick brown fox"
+				childrenLabel="The quick brown fox jumps over the lazy dog"
 				defaults={{ level: 3, weight: "bold", color: "gray", highContrast: true, trim: "normal" }}
 				controls={[
 					{ name: "level", type: "segment", options: LEVELS },
@@ -47,7 +47,7 @@ function HeadingPage() {
 						highContrast={props.highContrast as boolean}
 						trim={props.trim as any}
 					>
-						The quick brown fox
+						The quick brown fox jumps over the lazy dog
 					</Heading>
 				)}
 			</Playground>
