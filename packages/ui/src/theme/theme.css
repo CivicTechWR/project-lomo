@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 /* Custom color palettes (generated via Radix color tool, renamed) */
+@import "./colors/background.css";
 @import "./colors/gray.css";
 @import "./colors/terracotta.css";
 @import "./colors/sage.css";
