@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+
 import Availability from "../components/Availability";
 import BottomNav from "../components/BottomNav";
 import Header from "../components/Header";
 import RequestCard from "../components/RequestCard";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/home")({
 	component: Home,
 });
 

@@ -1,0 +1,102 @@
+body {
+	font-family: Arial, sans-serif;
+	background: #f7f7f7;
+	margin: 0;
+}
+
+.container {
+	max-width: 420px;
+	margin: auto;
+	padding: 16px;
+	background: white;
+	min-height: 100vh;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: 2px solid black;
+	padding: 8px 12px;
+	margin-bottom: 16px;
+}
+
+.availability {
+	display: flex;
+	gap: 10px;
+	margin: 10px 0;
+}
+
+.box {
+	flex: 1;
+	border: 2px solid black;
+	padding: 10px;
+	background: white;
+	cursor: pointer;
+}
+
+.requests-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.card {
+	border: 2px solid black;
+	padding: 10px;
+	margin: 10px 0;
+}
+
+.card-top {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.avatar {
+	width: 40px;
+	height: 40px;
+	background: #ddd;
+	border-radius: 50%;
+}
+
+.title {
+	flex: 1;
+	font-weight: bold;
+}
+
+.status {
+	font-size: 0.9em;
+}
+
+.note {
+	margin-top: 10px;
+}
+
+.note.small {
+	font-size: 0.85em;
+	color: gray;
+}
+
+.primary-btn {
+	width: 100%;
+	padding: 12px;
+	border: 2px solid black;
+	background: white;
+	margin-top: 12px;
+	cursor: pointer;
+}
+
+.bottom-nav {
+	display: flex;
+	justify-content: space-around;
+	border-top: 2px solid black;
+	margin-top: 20px;
+	padding-top: 10px;
+}
+
+.bottom-nav button {
+	background: none;
+	border: none;
+	font-size: 16px;
+}
