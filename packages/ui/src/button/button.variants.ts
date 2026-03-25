@@ -20,6 +20,7 @@ export const buttonVariants = tv({
 			red: focusRings.red,
 			amber: focusRings.amber,
 		},
+		icon: { true: "" },
 	},
 	compoundVariants: [
 		// Min-width (2× height) — keeps short-label buttons from looking circular
@@ -27,6 +28,11 @@ export const buttonVariants = tv({
 		{ size: 2, class: "min-w-20" },
 		{ size: 3, class: "min-w-24" },
 		{ size: 4, class: "min-w-28" },
+		// Icon — square dimensions, no horizontal padding
+		{ icon: true, size: 1, class: "w-8 min-w-0 px-0" },
+		{ icon: true, size: 2, class: "w-10 min-w-0 px-0" },
+		{ icon: true, size: 3, class: "w-12 min-w-0 px-0" },
+		{ icon: true, size: 4, class: "w-14 min-w-0 px-0" },
 		// Solid
 		{ variant: "solid", color: "terracotta", class: solidColors.terracotta },
 		{ variant: "solid", color: "sage", class: solidColors.sage },
@@ -60,6 +66,7 @@ export const buttonVariants = tv({
 		variant: "solid",
 		size: 2,
 		color: "terracotta",
+		icon: false,
 	},
 });
 

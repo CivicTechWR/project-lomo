@@ -13,10 +13,6 @@
 
 Components needed to implement the LoMo prototype, derived from the Stitch project "LOMO PROJECT [CLAUDE CODE]." Only generic design system primitives — app-level compositions (Navbar, Sidebar, RequestCard, etc.) live in `apps/webapp/`.
 
-### Existing component update
-
-- **Button `icon` prop** — Add an `icon` boolean prop to the existing Button component. When true, renders with square proportions and centered content for icon-only buttons.
-
 ### Tier 1 — Core (unlocks almost every screen)
 
 - **Card** — Tonal surface container for grouping content. Variants: `ghost` (no shadow/border, default), `surface` (subtle box-shadow ring), `classic` (layered box-shadow elevation). Sizes control padding + border-radius. No color prop — always neutral. Wraps a plain `div` (no RAC primitive). Reference: Radix Themes Card.

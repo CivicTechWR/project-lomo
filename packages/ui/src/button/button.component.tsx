@@ -3,18 +3,23 @@ import type { ButtonColor, ButtonSize, ButtonVariant } from "./button.variants.t
 import { Button as AriaButton, composeRenderProps } from "react-aria-components";
 import { buttonVariants } from "./button.variants.ts";
 
-export interface ButtonProps extends AriaButtonProps {
+interface ButtonBaseProps extends AriaButtonProps {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
 	color?: ButtonColor;
 }
 
-export function Button({ variant, size, color, className, ...props }: ButtonProps) {
+export type ButtonProps = ButtonBaseProps & (
+	| { icon?: false }
+	| { "icon": true; "aria-label": string }
+);
+
+export function Button({ variant, size, color, icon, className, ...props }: ButtonProps) {
 	return (
 		<AriaButton
 			{...props}
 			className={composeRenderProps(className, cls =>
-				buttonVariants({ variant, size, color, class: cls }))}
+				buttonVariants({ variant, size, color, icon, class: cls }))}
 		/>
 	);
 }

@@ -126,7 +126,7 @@ type PlaygroundControl = SegmentControl | ToggleControl;
 
 interface PlaygroundProps {
 	componentName: string;
-	childrenLabel: string;
+	childrenLabel: string | ((values: Record<string, string | number | boolean>) => string);
 	controls: PlaygroundControl[];
 	defaults: Record<string, string | number | boolean>;
 	children: (props: Record<string, string | number | boolean>) => React.ReactNode;
@@ -175,7 +175,8 @@ export function Playground({
 		setValues(prev => ({ ...prev, [name]: value }));
 	}
 
-	const snippet = formatCodeSnippet(componentName, values, defaults, childrenLabel);
+	const resolvedLabel = typeof childrenLabel === "function" ? childrenLabel(values) : childrenLabel;
+	const snippet = formatCodeSnippet(componentName, values, defaults, resolvedLabel);
 
 	return (
 		<section className="flex flex-col gap-4">
