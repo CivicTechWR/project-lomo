@@ -2,8 +2,8 @@
 
 ## Migrate outline variant from `border` to `box-shadow`
 
-- **What:** Change `outlineColors` and `outlineColorsHighContrast` in `color-treatments.ts` from using CSS `border` to `box-shadow: inset 0 0 0 1px`, matching the approach used by `surfaceColors`.
-- **Why:** Radix Themes uses `box-shadow` for all border-like treatments (outline, surface). This avoids layout shift from border width, and enables advanced patterns like the double-ring high-contrast outline (`accent-a7` + `gray-a11` layered). Our `surfaceColors` already uses `box-shadow`, so `outlineColors` is inconsistent.
+- **What:** Change `outlineColors` and `outlineColorsHighContrast` in `color-styles.ts` from using CSS `border` to `box-shadow: inset 0 0 0 1px`, matching the approach used by `surfaceColors`.
+- **Why:** Radix Themes uses `box-shadow` for all border-like styles (outline, surface). This avoids layout shift from border width, and enables advanced patterns like the double-ring high-contrast outline (`accent-a7` + `gray-a11` layered). Our `surfaceColors` already uses `box-shadow`, so `outlineColors` is inconsistent.
 - **How:** Replace `border border-{color}-7` with `shadow-[inset_0_0_0_1px_var(--color-{color}-7)]` in `outlineColors`. For `outlineColorsHighContrast`, implement the Radix double-ring pattern: `shadow-[inset_0_0_0_1px_var(--color-{color}-7),inset_0_0_0_1px_var(--color-gray-11)]`. Then audit the Button `outline` variant to ensure it still renders correctly.
 - **When:** After Badge component ships — this is a separate cleanup pass that touches Button too.
 
@@ -15,7 +15,6 @@ Components needed to implement the LoMo prototype, derived from the Stitch proje
 
 ### Tier 1 — Core (unlocks almost every screen)
 
-- **Card** — Tonal surface container for grouping content. Variants: `ghost` (no shadow/border, default), `surface` (subtle box-shadow ring), `classic` (layered box-shadow elevation). Sizes control padding + border-radius. No color prop — always neutral. Wraps a plain `div` (no RAC primitive). Reference: Radix Themes Card.
 - **TextField** — Single-line text input. Wraps RAC `TextField` + `Input`. Filled background using surface-container tokens, no CSS border. Focus state via box-shadow, not glow. Variants/sizes TBD during implementation.
 - **TextArea** — Multi-line text input. Wraps RAC `TextField` + `TextArea`. Same styling approach as TextField. Used in request detail forms.
 - **Link** — Inline and standalone navigation links. Wraps RAC `Link`. Color prop for theming. Integrates with TanStack Router.

@@ -51,7 +51,7 @@ The [Radix UI Themes](https://github.com/radix-ui/themes) repo is used as a desi
 This is a **reference, not a source of truth**. Our component behavior and accessibility come from react-aria-components. What we reference from Radix Themes:
 
 - **Color scale semantics** — which of the 12 steps to use for backgrounds, borders, solid fills, text
-- **Component variant naming** — e.g., solid/soft/outline/ghost treatments
+- **Component variant naming** — e.g., solid/soft/outline/ghost styles
 - **Token scales** — the structure of radius, typography, and spacing ramps
 - **Prop conventions** — numeric size scales, color-as-prop pattern
 

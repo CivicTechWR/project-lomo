@@ -20,7 +20,7 @@ Every interactive component exposes:
 
 | Prop        | Type                       | Default        | Description               |
 | ----------- | -------------------------- | -------------- | ------------------------- |
-| `variant`   | Component-specific union   | `"solid"`      | Visual treatment          |
+| `variant`   | Component-specific union   | `"solid"`      | Visual style              |
 | `size`      | `"1" \| "2" \| "3" \| "4"` | `"2"`          | Size scale                |
 | `color`     | `ScaleColor`               | `"terracotta"` | Color from the palette    |
 | `className` | `string`                   | —              | Merged via tailwind-merge |
@@ -108,7 +108,7 @@ All interactive components use `transition-colors duration-150`.
 3. Place in `src/theme/colors/mycolor.css`
 4. Import in `theme.css` and add `--color-mycolor-*` mappings in `@theme`
 5. Add the color name to `ScaleColor` union in `src/theme/types.ts`
-6. Add entries to each color treatment map in `src/variants/color-treatments.ts`
+6. Add entries to each color style map in `src/variants/color-styles.ts`
 7. Add compound variants in each component's `.variants.ts` file
 
 ## Adding a New Component
