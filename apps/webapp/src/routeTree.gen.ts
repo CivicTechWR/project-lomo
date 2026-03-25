@@ -13,6 +13,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ShowcaseRouteRouteImport } from './routes/showcase/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShowcaseIndexRouteImport } from './routes/showcase/index'
+import { Route as ShowcaseTextFieldRouteImport } from './routes/showcase/text-field'
 import { Route as ShowcaseTextRouteImport } from './routes/showcase/text'
 import { Route as ShowcaseHeadingRouteImport } from './routes/showcase/heading'
 import { Route as ShowcaseCardRouteImport } from './routes/showcase/card'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const ShowcaseIndexRoute = ShowcaseIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
+const ShowcaseTextFieldRoute = ShowcaseTextFieldRouteImport.update({
+  id: '/text-field',
+  path: '/text-field',
   getParentRoute: () => ShowcaseRouteRoute,
 } as any)
 const ShowcaseTextRoute = ShowcaseTextRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/text': typeof ShowcaseTextRoute
+  '/showcase/text-field': typeof ShowcaseTextFieldRoute
   '/showcase/': typeof ShowcaseIndexRoute
 }
 export interface FileRoutesByTo {
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/text': typeof ShowcaseTextRoute
+  '/showcase/text-field': typeof ShowcaseTextFieldRoute
   '/showcase': typeof ShowcaseIndexRoute
 }
 export interface FileRoutesById {
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/text': typeof ShowcaseTextRoute
+  '/showcase/text-field': typeof ShowcaseTextFieldRoute
   '/showcase/': typeof ShowcaseIndexRoute
 }
 export interface FileRouteTypes {
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/text'
+    | '/showcase/text-field'
     | '/showcase/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/text'
+    | '/showcase/text-field'
     | '/showcase'
   id:
     | '__root__'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/text'
+    | '/showcase/text-field'
     | '/showcase/'
   fileRoutesById: FileRoutesById
 }
@@ -167,6 +179,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/showcase/'
       preLoaderRoute: typeof ShowcaseIndexRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
+    '/showcase/text-field': {
+      id: '/showcase/text-field'
+      path: '/text-field'
+      fullPath: '/showcase/text-field'
+      preLoaderRoute: typeof ShowcaseTextFieldRouteImport
       parentRoute: typeof ShowcaseRouteRoute
     }
     '/showcase/text': {
@@ -213,6 +232,7 @@ interface ShowcaseRouteRouteChildren {
   ShowcaseCardRoute: typeof ShowcaseCardRoute
   ShowcaseHeadingRoute: typeof ShowcaseHeadingRoute
   ShowcaseTextRoute: typeof ShowcaseTextRoute
+  ShowcaseTextFieldRoute: typeof ShowcaseTextFieldRoute
   ShowcaseIndexRoute: typeof ShowcaseIndexRoute
 }
 
@@ -222,6 +242,7 @@ const ShowcaseRouteRouteChildren: ShowcaseRouteRouteChildren = {
   ShowcaseCardRoute: ShowcaseCardRoute,
   ShowcaseHeadingRoute: ShowcaseHeadingRoute,
   ShowcaseTextRoute: ShowcaseTextRoute,
+  ShowcaseTextFieldRoute: ShowcaseTextFieldRoute,
   ShowcaseIndexRoute: ShowcaseIndexRoute,
 }
 

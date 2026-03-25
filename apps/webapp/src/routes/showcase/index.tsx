@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Heading, Text } from "@repo/ui";
+import { Badge, Button, Card, Group, Heading, Input, Label, Text, TextField } from "@repo/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const COMPONENT_CARDS = [
@@ -58,6 +58,21 @@ const COMPONENT_CARDS = [
 			<div className="flex flex-col gap-1">
 				<Text size={3} weight="medium" highContrast>Body text in medium weight</Text>
 				<Text size={2} color="gray">Secondary description text</Text>
+			</div>
+		),
+	},
+	{
+		name: "TextField",
+		description: "Composable text input with label, description, and validation.",
+		to: "/showcase/text-field",
+		preview: (
+			<div className="flex flex-col gap-2 w-full max-w-xs">
+				<TextField size={1} color="sage">
+					<Label>Email</Label>
+					<Group>
+						<Input placeholder="you@example.com" />
+					</Group>
+				</TextField>
 			</div>
 		),
 	},
