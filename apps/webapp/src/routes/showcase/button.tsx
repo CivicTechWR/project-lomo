@@ -55,7 +55,7 @@ function ButtonPage() {
 
 			<PropTable data={PROPS} />
 
-			<DemoSection title="Variant" description="Four visual treatments for different levels of emphasis.">
+			<DemoSection title="Variant" description="Four visual styles for different levels of emphasis.">
 				<div className="flex flex-wrap items-center gap-3">
 					{VARIANTS.map(variant => (
 						<Button key={variant} variant={variant}>
