@@ -1,36 +1,36 @@
 :root,
 .light,
 .light-theme {
-	--terracotta-1: #fffcfb;
-	--terracotta-2: #fff4ee;
-	--terracotta-3: #ffe8da;
-	--terracotta-4: #ffd7c3;
-	--terracotta-5: #ffc9af;
-	--terracotta-6: #ffb99a;
-	--terracotta-7: #ffa077;
-	--terracotta-8: #f48d65;
-	--terracotta-9: #71361e;
-	--terracotta-10: #5f260d;
-	--terracotta-11: #bf5e36;
-	--terracotta-12: #60270e;
+	--terracotta-1: #f9f7f6;
+	--terracotta-2: #f9f1ee;
+	--terracotta-3: #f7e5df;
+	--terracotta-4: #f4d9cf;
+	--terracotta-5: #f2ccbe;
+	--terracotta-6: #f0bdaa;
+	--terracotta-7: #eca88f;
+	--terracotta-8: #e38a69;
+	--terracotta-9: #8f4d34;
+	--terracotta-10: #7f3f26;
+	--terracotta-11: #8d4b32;
+	--terracotta-12: #392924;
 
-	--terracotta-a1: #ff400004;
-	--terracotta-a2: #ff5a0011;
-	--terracotta-a3: #ff610025;
-	--terracotta-a4: #ff55003c;
-	--terracotta-a5: #ff530050;
-	--terracotta-a6: #ff4f0065;
-	--terracotta-a7: #ff4d0088;
-	--terracotta-a8: #ed43009a;
-	--terracotta-a9: #5e1b00e1;
-	--terracotta-a10: #561a00f2;
-	--terracotta-a11: #ae3300c9;
-	--terracotta-a12: #571a00f1;
+	--terracotta-a1: #eef3ff4f;
+	--terracotta-a2: #71178109;
+	--terracotta-a3: #aa070c15;
+	--terracotta-a4: #ba1d0125;
+	--terracotta-a5: #c7290137;
+	--terracotta-a6: #d030014c;
+	--terracotta-a7: #d3350269;
+	--terracotta-a8: #ce360291;
+	--terracotta-a9: #711f01c9;
+	--terracotta-a10: #671d00d7;
+	--terracotta-a11: #701e01cb;
+	--terracotta-a12: #1c0700d3;
 
 	--terracotta-contrast: #fff;
-	--terracotta-surface: #fff1eacc;
-	--terracotta-indicator: #71361e;
-	--terracotta-track: #71361e;
+	--terracotta-surface: #f8efeecc;
+	--terracotta-indicator: #8f4d34;
+	--terracotta-track: #8f4d34;
 }
 
 @supports (color: color(display-p3 1 1 1)) {
@@ -38,36 +38,36 @@
 		:root,
 		.light,
 		.light-theme {
-			--terracotta-1: oklch(99.2% 0.0035 41.9);
-			--terracotta-2: oklch(97.9% 0.0203 41.9);
-			--terracotta-3: oklch(95.8% 0.0488 41.9);
-			--terracotta-4: oklch(92% 0.1074 41.9);
-			--terracotta-5: oklch(89% 0.1364 41.9);
-			--terracotta-6: oklch(85.7% 0.1364 41.9);
-			--terracotta-7: oklch(80.5% 0.1364 41.9);
-			--terracotta-8: oklch(74.5% 0.1364 41.9);
-			--terracotta-9: oklch(40.6% 0.0909 41.9);
-			--terracotta-10: oklch(34.6% 0.0909 41.9);
-			--terracotta-11: oklch(59.2% 0.1364 41.9);
-			--terracotta-12: oklch(35% 0.0909 41.9);
+			--terracotta-1: oklch(97.7% 0.0025 41.13);
+			--terracotta-2: oklch(96.5% 0.0096 41.13);
+			--terracotta-3: oklch(93.4% 0.0212 41.13);
+			--terracotta-4: oklch(90.5% 0.0336 41.13);
+			--terracotta-5: oklch(87.4% 0.0475 41.13);
+			--terracotta-6: oklch(83.9% 0.0647 41.13);
+			--terracotta-7: oklch(79.1% 0.088 41.13);
+			--terracotta-8: oklch(72.1% 0.1187 41.13);
+			--terracotta-9: oklch(49.4% 0.0967 41.13);
+			--terracotta-10: oklch(44.4% 0.0967 41.13);
+			--terracotta-11: oklch(48.7% 0.0967 41.13);
+			--terracotta-12: oklch(29.9% 0.0299 41.13);
 
-			--terracotta-a1: color(display-p3 0.7569 0.2667 0.0235 / 0.016);
-			--terracotta-a2: color(display-p3 0.8784 0.3176 0.0078 / 0.063);
-			--terracotta-a3: color(display-p3 0.8902 0.3765 0.0078 / 0.138);
-			--terracotta-a4: color(display-p3 0.898 0.3176 0.0039 / 0.224);
-			--terracotta-a5: color(display-p3 0.898 0.3176 0.0039 / 0.299);
-			--terracotta-a6: color(display-p3 0.8863 0.3059 0.0039 / 0.377);
-			--terracotta-a7: color(display-p3 0.902 0.2902 0 / 0.502);
-			--terracotta-a8: color(display-p3 0.8314 0.2549 0 / 0.573);
-			--terracotta-a9: color(display-p3 0.3137 0.098 0 / 0.859);
-			--terracotta-a10: color(display-p3 0.2902 0.0902 0 / 0.922);
-			--terracotta-a11: color(display-p3 0.6 0.1843 0 / 0.75);
-			--terracotta-a12: color(display-p3 0.2902 0.0902 0 / 0.918);
+			--terracotta-a1: color(display-p3 0.9294 0.9451 1 / 0.25);
+			--terracotta-a2: color(display-p3 0.4 0.0275 0.3608 / 0.033);
+			--terracotta-a3: color(display-p3 0.549 0.0353 0.0118 / 0.079);
+			--terracotta-a4: color(display-p3 0.6157 0.1412 0.0078 / 0.145);
+			--terracotta-a5: color(display-p3 0.6784 0.1569 0.0039 / 0.21);
+			--terracotta-a6: color(display-p3 0.7098 0.1922 0.0039 / 0.289);
+			--terracotta-a7: color(display-p3 0.7255 0.2078 0.0039 / 0.396);
+			--terracotta-a8: color(display-p3 0.7216 0.2039 0 / 0.544);
+			--terracotta-a9: color(display-p3 0.3843 0.1137 0 / 0.766);
+			--terracotta-a10: color(display-p3 0.349 0.102 0 / 0.819);
+			--terracotta-a11: color(display-p3 0.3804 0.1137 0 / 0.774);
+			--terracotta-a12: color(display-p3 0.0902 0.0275 0 / 0.824);
 
 			--terracotta-contrast: #fff;
-			--terracotta-surface: color(display-p3 1 0.9529 0.9216 / 0.8);
-			--terracotta-indicator: oklch(40.6% 0.0909 41.9);
-			--terracotta-track: oklch(40.6% 0.0909 41.9);
+			--terracotta-surface: color(display-p3 0.9647 0.9412 0.9333 / 0.8);
+			--terracotta-indicator: oklch(49.4% 0.0967 41.13);
+			--terracotta-track: oklch(49.4% 0.0967 41.13);
 		}
 	}
 }

@@ -1,36 +1,36 @@
 :root,
 .light,
 .light-theme {
-	--sage-1: #fcfdfb;
-	--sage-2: #f6fbf6;
-	--sage-3: #e6fae6;
-	--sage-4: #d9f3d9;
-	--sage-5: #cfe9cf;
-	--sage-6: #c1dac1;
-	--sage-7: #b0c9b0;
-	--sage-8: #9ab29a;
-	--sage-9: #3c4a3c;
-	--sage-10: #4c5b4c;
-	--sage-11: #637a63;
-	--sage-12: #324032;
+	--sage-1: #f5f8f5;
+	--sage-2: #f0f5f0;
+	--sage-3: #e6ece6;
+	--sage-4: #dde4dd;
+	--sage-5: #d5dcd5;
+	--sage-6: #ccd4cc;
+	--sage-7: #c0c9c0;
+	--sage-8: #acb7ac;
+	--sage-9: #546354;
+	--sage-10: #465546;
+	--sage-11: #526152;
+	--sage-12: #172417;
 
-	--sage-a1: #40800004;
-	--sage-a2: #008e0009;
-	--sage-a3: #00cc0019;
-	--sage-a4: #00af0026;
-	--sage-a5: #008b0030;
-	--sage-a6: #0067003e;
-	--sage-a7: #0051004f;
-	--sage-a8: #003d0065;
-	--sage-a9: #001200c3;
-	--sage-a10: #001600b3;
-	--sage-a11: #0026009c;
-	--sage-a12: #001200cd;
+	--sage-a1: #d8f5ff3b;
+	--sage-a2: #10b6d10f;
+	--sage-a3: #0a757819;
+	--sage-a4: #075c5522;
+	--sage-a5: #0649422a;
+	--sage-a6: #04403433;
+	--sage-a7: #0437283f;
+	--sage-a8: #032f1b53;
+	--sage-a9: #001a06ab;
+	--sage-a10: #001705b9;
+	--sage-a11: #001906ad;
+	--sage-a12: #000f01e8;
 
 	--sage-contrast: #fff;
-	--sage-surface: #f4faf4cc;
-	--sage-indicator: #3c4a3c;
-	--sage-track: #3c4a3c;
+	--sage-surface: #ecf4f0cc;
+	--sage-indicator: #546354;
+	--sage-track: #546354;
 }
 
 @supports (color: color(display-p3 1 1 1)) {
@@ -38,36 +38,36 @@
 		:root,
 		.light,
 		.light-theme {
-			--sage-1: oklch(99.3% 0.0026 145);
-			--sage-2: oklch(98.4% 0.0086 145);
-			--sage-3: oklch(96.5% 0.033 145);
-			--sage-4: oklch(93.9% 0.0441 145);
-			--sage-5: oklch(90.7% 0.0441 145);
-			--sage-6: oklch(86.3% 0.0441 145);
-			--sage-7: oklch(80.9% 0.0441 145);
-			--sage-8: oklch(73.9% 0.0441 145);
-			--sage-9: oklch(39.2% 0.0294 145);
-			--sage-10: oklch(45.3% 0.0294 145);
-			--sage-11: oklch(55.4% 0.0441 145);
-			--sage-12: oklch(35.5% 0.0294 145);
+			--sage-1: oklch(97.6% 0.0041 145.1);
+			--sage-2: oklch(96.4% 0.009 145.1);
+			--sage-3: oklch(93.6% 0.0099 145.1);
+			--sage-4: oklch(91.1% 0.0113 145.1);
+			--sage-5: oklch(88.7% 0.0122 145.1);
+			--sage-6: oklch(86.2% 0.0151 145.1);
+			--sage-7: oklch(82.7% 0.0152 145.1);
+			--sage-8: oklch(76.6% 0.0192 145.1);
+			--sage-9: oklch(48.2% 0.03 145.1);
+			--sage-10: oklch(43.1% 0.03 145.1);
+			--sage-11: oklch(47.5% 0.03 145.1);
+			--sage-12: oklch(24.2% 0.03 145.1);
 
-			--sage-a1: color(display-p3 0.2667 0.5137 0.0235 / 0.016);
-			--sage-a2: color(display-p3 0.1294 0.5647 0.0235 / 0.036);
-			--sage-a3: color(display-p3 0.098 0.7451 0.0118 / 0.091);
-			--sage-a4: color(display-p3 0.0902 0.6431 0.0078 / 0.142);
-			--sage-a5: color(display-p3 0.0706 0.502 0.0039 / 0.181);
-			--sage-a6: color(display-p3 0.0549 0.3686 0.0039 / 0.236);
-			--sage-a7: color(display-p3 0.0392 0.2863 0.0039 / 0.302);
-			--sage-a8: color(display-p3 0.0314 0.2157 0.0039 / 0.389);
-			--sage-a9: color(display-p3 0.0118 0.0667 0 / 0.761);
-			--sage-a10: color(display-p3 0.0118 0.0784 0 / 0.699);
-			--sage-a11: color(display-p3 0.0196 0.1294 0 / 0.604);
-			--sage-a12: color(display-p3 0.0118 0.0627 0 / 0.8);
+			--sage-a1: color(display-p3 0.8314 0.9569 1 / 0.167);
+			--sage-a2: color(display-p3 0.0157 0.651 0.7098 / 0.048);
+			--sage-a3: color(display-p3 0.0039 0.3922 0.3686 / 0.087);
+			--sage-a4: color(display-p3 0.0039 0.3098 0.2863 / 0.123);
+			--sage-a5: color(display-p3 0.0078 0.2431 0.2196 / 0.155);
+			--sage-a6: color(display-p3 0.0039 0.2157 0.1686 / 0.19);
+			--sage-a7: color(display-p3 0.0039 0.1725 0.1176 / 0.234);
+			--sage-a8: color(display-p3 0.0039 0.1529 0.0784 / 0.313);
+			--sage-a9: color(display-p3 0 0.0824 0.0118 / 0.657);
+			--sage-a10: color(display-p3 0 0.0706 0.0078 / 0.712);
+			--sage-a11: color(display-p3 0 0.0824 0.0118 / 0.665);
+			--sage-a12: color(display-p3 0.0039 0.051 0 / 0.902);
 
 			--sage-contrast: #fff;
-			--sage-surface: color(display-p3 0.9608 0.9804 0.9608 / 0.8);
-			--sage-indicator: oklch(39.2% 0.0294 145);
-			--sage-track: oklch(39.2% 0.0294 145);
+			--sage-surface: color(display-p3 0.9255 0.9569 0.9373 / 0.8);
+			--sage-indicator: oklch(48.2% 0.03 145.1);
+			--sage-track: oklch(48.2% 0.03 145.1);
 		}
 	}
 }
