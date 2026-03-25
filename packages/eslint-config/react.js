@@ -18,6 +18,7 @@ export function GetConfig(options) {
 		rules: {
 			...options.rules,
 			"react/prefer-shorthand-fragment": "off",
+			"react-refresh/only-export-components": "off",
 		},
 		stylistic: {
 			...options.stylistic,
