@@ -10,6 +10,7 @@
 		"./card": "./src/card/index.ts",
 		"./text": "./src/text/index.ts",
 		"./heading": "./src/heading/index.ts",
+		"./link": "./src/link/index.ts",
 		"./theme.css": "./src/theme/theme.css"
 	},
 	"scripts": {

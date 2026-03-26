@@ -8,7 +8,9 @@
 
 /* Radix semantic colors */
 @import "@radix-ui/colors/red.css";
+@import "@radix-ui/colors/red-alpha.css";
 @import "@radix-ui/colors/amber.css";
+@import "@radix-ui/colors/amber-alpha.css";
 
 /* Scan UI package source for Tailwind class usage */
 @source "../../src";
@@ -111,6 +113,102 @@
 	--color-amber-10: var(--amber-10);
 	--color-amber-11: var(--amber-11);
 	--color-amber-12: var(--amber-12);
+
+	/* ── Terracotta Alpha a1-a12 ── */
+	--color-terracotta-a1: var(--terracotta-a1);
+	--color-terracotta-a2: var(--terracotta-a2);
+	--color-terracotta-a3: var(--terracotta-a3);
+	--color-terracotta-a4: var(--terracotta-a4);
+	--color-terracotta-a5: var(--terracotta-a5);
+	--color-terracotta-a6: var(--terracotta-a6);
+	--color-terracotta-a7: var(--terracotta-a7);
+	--color-terracotta-a8: var(--terracotta-a8);
+	--color-terracotta-a9: var(--terracotta-a9);
+	--color-terracotta-a10: var(--terracotta-a10);
+	--color-terracotta-a11: var(--terracotta-a11);
+	--color-terracotta-a12: var(--terracotta-a12);
+
+	/* ── Sage Alpha a1-a12 ── */
+	--color-sage-a1: var(--sage-a1);
+	--color-sage-a2: var(--sage-a2);
+	--color-sage-a3: var(--sage-a3);
+	--color-sage-a4: var(--sage-a4);
+	--color-sage-a5: var(--sage-a5);
+	--color-sage-a6: var(--sage-a6);
+	--color-sage-a7: var(--sage-a7);
+	--color-sage-a8: var(--sage-a8);
+	--color-sage-a9: var(--sage-a9);
+	--color-sage-a10: var(--sage-a10);
+	--color-sage-a11: var(--sage-a11);
+	--color-sage-a12: var(--sage-a12);
+
+	/* ── Yellow Alpha a1-a12 ── */
+	--color-yellow-a1: var(--yellow-a1);
+	--color-yellow-a2: var(--yellow-a2);
+	--color-yellow-a3: var(--yellow-a3);
+	--color-yellow-a4: var(--yellow-a4);
+	--color-yellow-a5: var(--yellow-a5);
+	--color-yellow-a6: var(--yellow-a6);
+	--color-yellow-a7: var(--yellow-a7);
+	--color-yellow-a8: var(--yellow-a8);
+	--color-yellow-a9: var(--yellow-a9);
+	--color-yellow-a10: var(--yellow-a10);
+	--color-yellow-a11: var(--yellow-a11);
+	--color-yellow-a12: var(--yellow-a12);
+
+	/* ── Red Alpha a1-a12 (Radix semantic) ── */
+	--color-red-a1: var(--red-a1);
+	--color-red-a2: var(--red-a2);
+	--color-red-a3: var(--red-a3);
+	--color-red-a4: var(--red-a4);
+	--color-red-a5: var(--red-a5);
+	--color-red-a6: var(--red-a6);
+	--color-red-a7: var(--red-a7);
+	--color-red-a8: var(--red-a8);
+	--color-red-a9: var(--red-a9);
+	--color-red-a10: var(--red-a10);
+	--color-red-a11: var(--red-a11);
+	--color-red-a12: var(--red-a12);
+
+	/* ── Amber Alpha a1-a12 (Radix semantic) ── */
+	--color-amber-a1: var(--amber-a1);
+	--color-amber-a2: var(--amber-a2);
+	--color-amber-a3: var(--amber-a3);
+	--color-amber-a4: var(--amber-a4);
+	--color-amber-a5: var(--amber-a5);
+	--color-amber-a6: var(--amber-a6);
+	--color-amber-a7: var(--amber-a7);
+	--color-amber-a8: var(--amber-a8);
+	--color-amber-a9: var(--amber-a9);
+	--color-amber-a10: var(--amber-a10);
+	--color-amber-a11: var(--amber-a11);
+	--color-amber-a12: var(--amber-a12);
+
+	/* ── Muted alpha tokens (color-mix for Link underlines) ── */
+	--color-terracotta-a5-muted: color-mix(in oklab, var(--terracotta-a5), var(--gray-a6));
+	--color-terracotta-a6-muted: color-mix(in oklab, var(--terracotta-a6), var(--gray-a6));
+	--color-terracotta-a7-muted: color-mix(in oklab, var(--terracotta-a7), var(--gray-a6));
+	--color-terracotta-a8-muted: color-mix(in oklab, var(--terracotta-a8), var(--gray-a6));
+	--color-sage-a5-muted: color-mix(in oklab, var(--sage-a5), var(--gray-a6));
+	--color-sage-a6-muted: color-mix(in oklab, var(--sage-a6), var(--gray-a6));
+	--color-sage-a7-muted: color-mix(in oklab, var(--sage-a7), var(--gray-a6));
+	--color-sage-a8-muted: color-mix(in oklab, var(--sage-a8), var(--gray-a6));
+	--color-yellow-a5-muted: color-mix(in oklab, var(--yellow-a5), var(--gray-a6));
+	--color-yellow-a6-muted: color-mix(in oklab, var(--yellow-a6), var(--gray-a6));
+	--color-yellow-a7-muted: color-mix(in oklab, var(--yellow-a7), var(--gray-a6));
+	--color-yellow-a8-muted: color-mix(in oklab, var(--yellow-a8), var(--gray-a6));
+	--color-gray-a5-muted: color-mix(in oklab, var(--gray-a5), var(--gray-a6));
+	--color-gray-a6-muted: color-mix(in oklab, var(--gray-a6), var(--gray-a6));
+	--color-gray-a7-muted: color-mix(in oklab, var(--gray-a7), var(--gray-a6));
+	--color-gray-a8-muted: color-mix(in oklab, var(--gray-a8), var(--gray-a6));
+	--color-red-a5-muted: color-mix(in oklab, var(--red-a5), var(--gray-a6));
+	--color-red-a6-muted: color-mix(in oklab, var(--red-a6), var(--gray-a6));
+	--color-red-a7-muted: color-mix(in oklab, var(--red-a7), var(--gray-a6));
+	--color-red-a8-muted: color-mix(in oklab, var(--red-a8), var(--gray-a6));
+	--color-amber-a5-muted: color-mix(in oklab, var(--amber-a5), var(--gray-a6));
+	--color-amber-a6-muted: color-mix(in oklab, var(--amber-a6), var(--gray-a6));
+	--color-amber-a7-muted: color-mix(in oklab, var(--amber-a7), var(--gray-a6));
+	--color-amber-a8-muted: color-mix(in oklab, var(--amber-a8), var(--gray-a6));
 
 	/* ── Card shadows ── */
 	--shadow-card-surface: inset 0 0 0 1px var(--color-gray-a5);

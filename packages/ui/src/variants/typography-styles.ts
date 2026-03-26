@@ -30,3 +30,11 @@ export const textColorsHighContrast: ColorMap = {
 	red: tw("text-red-12"),
 	amber: tw("text-amber-12"),
 };
+
+// ── Trim (negative-margin leading trim) ──
+export const trimVariants = {
+	normal: "",
+	start: tw("mt-[calc(var(--leading-trim-start)*-1)]"),
+	end: tw("mb-[calc(var(--leading-trim-end)*-1)]"),
+	both: tw("mt-[calc(var(--leading-trim-start)*-1)] mb-[calc(var(--leading-trim-end)*-1)]"),
+} as const;

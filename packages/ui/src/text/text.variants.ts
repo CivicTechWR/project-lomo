@@ -1,10 +1,10 @@
 import type { Colors, Trim, TypographySize, Weight } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
-import { tw } from "../utils/tw.ts";
 import {
 	fontWeights,
 	textColors,
 	textColorsHighContrast,
+	trimVariants,
 	typographySizes,
 } from "../variants/index.ts";
 
@@ -12,12 +12,7 @@ export const textVariants = tv({
 	variants: {
 		size: typographySizes,
 		weight: fontWeights,
-		trim: {
-			normal: "",
-			start: tw("mt-[calc(var(--leading-trim-start)*-1)]"),
-			end: tw("mb-[calc(var(--leading-trim-end)*-1)]"),
-			both: tw("mt-[calc(var(--leading-trim-start)*-1)] mb-[calc(var(--leading-trim-end)*-1)]"),
-		},
+		trim: trimVariants,
 		color: {
 			terracotta: "",
 			sage: "",

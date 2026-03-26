@@ -15,6 +15,9 @@ export type { FieldColor, FieldContextValue, FieldSize, FieldVariant } from "./f
 
 export { Heading } from "./heading/index.ts";
 export type { HeadingProps } from "./heading/index.ts";
+
+export { Link } from "./link/index.ts";
+export type { LinkProps } from "./link/index.ts";
 export { Input, TextArea, TextField } from "./text-field/index.ts";
 export type { InputProps, TextAreaProps, TextFieldProps } from "./text-field/index.ts";
 
