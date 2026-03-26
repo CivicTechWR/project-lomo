@@ -15,8 +15,6 @@ Components needed to implement the LoMo prototype, derived from the Stitch proje
 
 ### Tier 1 — Core (unlocks almost every screen)
 
-- **TextField** — Single-line text input. Wraps RAC `TextField` + `Input`. Filled background using surface-container tokens, no CSS border. Focus state via box-shadow, not glow. Variants/sizes TBD during implementation.
-- **TextArea** — Multi-line text input. Wraps RAC `TextField` + `TextArea`. Same styling approach as TextField. Used in request detail forms.
 - **Link** — Inline and standalone navigation links. Wraps RAC `Link`. Color prop for theming. Integrates with TanStack Router.
 - **Dialog** — Modal overlay for confirmations, detail views, multi-step flows. Wraps RAC `Modal` + `ModalOverlay` + `Dialog`. Glassmorphism overlay with semi-transparent warm cream backdrop-blur per the design system.
 
