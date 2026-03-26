@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Group, Heading, Input, Label, Text, TextField } from "@repo/ui";
+import { Badge, Button, Card, Group, Heading, Input, Label, Text, TextField, Link as UILink } from "@repo/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const COMPONENT_CARDS = [
@@ -36,6 +36,18 @@ const COMPONENT_CARDS = [
 				<Card size={1} variant="surface"><Text size={1}>Surface</Text></Card>
 				<Card size={1} variant="classic"><Text size={1}>Classic</Text></Card>
 				<Card size={1} variant="ghost" color="terracotta"><Text size={1}>Ghost</Text></Card>
+			</div>
+		),
+	},
+	{
+		name: "Link",
+		description: "Typographic navigation element with underline styling.",
+		to: "/showcase/link",
+		preview: (
+			<div className="flex flex-wrap items-center gap-4">
+				<UILink href="#" color="terracotta" underline="always">Terracotta</UILink>
+				<UILink href="#" color="sage" underline="always">Sage</UILink>
+				<UILink href="#" color="gray" underline="auto" highContrast>High contrast</UILink>
 			</div>
 		),
 	},

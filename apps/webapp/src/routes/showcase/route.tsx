@@ -46,6 +46,7 @@ const NAV_GROUPS = [
 		label: "Typography",
 		items: [
 			{ name: "Heading", to: "/showcase/heading" },
+			{ name: "Link", to: "/showcase/link" },
 			{ name: "Text", to: "/showcase/text" },
 		],
 	},
