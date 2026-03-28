@@ -1,4 +1,3 @@
-import type { Colors } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
 import {
@@ -122,7 +121,3 @@ export const badgeVariants = tv({
 		highContrast: false,
 	},
 });
-
-export type BadgeVariant = "solid" | "soft" | "surface" | "outline";
-export type BadgeColor = Colors;
-export type BadgeSize = 1 | 2 | 3;

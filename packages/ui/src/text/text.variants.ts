@@ -1,4 +1,3 @@
-import type { Colors, Trim, TypographySize, Weight } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import {
 	fontWeights,
@@ -51,8 +50,4 @@ export const textVariants = tv({
 	},
 });
 
-export type TextSize = TypographySize;
-export type TextWeight = Weight;
-export type TextColor = Colors;
-export type TextTrim = Trim;
 export type TextElementType = "span" | "p" | "div" | "label";

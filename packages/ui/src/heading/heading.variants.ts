@@ -1,4 +1,3 @@
-import type { Colors, Trim, TypographySize, Weight } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
 import {
@@ -56,8 +55,4 @@ export const headingVariants = tv({
 	},
 });
 
-export type HeadingSize = TypographySize;
-export type HeadingWeight = Weight;
-export type HeadingColor = Colors;
-export type HeadingTrim = Trim;
 export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;

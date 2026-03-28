@@ -20,5 +20,3 @@ export const textAreaVariants = tv({
 		resize: "vertical",
 	},
 });
-
-export type TextAreaResize = "none" | "vertical" | "horizontal" | "both";

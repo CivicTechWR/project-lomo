@@ -1,4 +1,3 @@
-import type { Colors } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import { cardBase, cardClassicColors, cardGhostColors, cardSizes, cardSurfaceColors } from "../variants/index.ts";
 
@@ -49,7 +48,3 @@ export const cardVariants = tv({
 		color: "gray",
 	},
 });
-
-export type CardVariant = "ghost" | "surface" | "classic";
-export type CardColor = Colors;
-export type CardSize = 1 | 2 | 3 | 4 | 5;

@@ -1,16 +1,14 @@
 import type { TextFieldProps as AriaTextFieldProps } from "react-aria-components";
-import type { FieldColor, FieldSize, FieldVariant } from "../field/index.ts";
-import type { TextFieldOrientation } from "./text-field.variants.ts";
+import type { VariantProps } from "tailwind-variants";
+import type { FieldColor, FieldVariant } from "../field/index.ts";
 import { TextField as AriaTextField, composeRenderProps } from "react-aria-components";
 import { FieldContext } from "../field/index.ts";
 import { textFieldVariants } from "./text-field.variants.ts";
 
-export interface TextFieldProps extends AriaTextFieldProps {
+export type TextFieldProps = AriaTextFieldProps & VariantProps<typeof textFieldVariants> & {
 	variant?: FieldVariant;
-	size?: FieldSize;
 	color?: FieldColor;
-	orientation?: TextFieldOrientation;
-}
+};
 
 export function TextField({
 	variant = "surface",

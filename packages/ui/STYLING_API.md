@@ -10,7 +10,7 @@ Each component lives in its own directory under `src/`:
 src/
   button/
     index.ts              # Barrel export
-    button.variants.ts    # tv() definition + type aliases
+    button.variants.ts    # tv() definition (prop types inferred via VariantProps)
     button.component.tsx  # React component wrapping RAC primitive
 ```
 
@@ -54,6 +54,26 @@ export const myComponentVariants = tv({
 		// ... repeat for each variant × color combination
 	],
 });
+```
+
+## Props Typing via VariantProps
+
+Variant prop types are inferred from the `tv()` definition using `VariantProps` from tailwind-variants. Do **not** manually define type aliases for variant props — the `tv()` call is the single source of truth.
+
+```tsx
+import type { VariantProps } from "tailwind-variants";
+import { myComponentVariants } from "./my-component.variants.ts";
+
+// Intersect RAC/HTML base props with VariantProps
+export type MyComponentProps = AriaButtonProps & VariantProps<typeof myComponentVariants>;
+```
+
+For components with non-variant props (e.g., `elementType`, `level`), add them manually:
+
+```tsx
+export type TextProps = Omit<AriaTextProps, "elementType"> & VariantProps<typeof textVariants> & {
+	elementType?: TextElementType;
+};
 ```
 
 ## React Aria Integration
@@ -114,7 +134,7 @@ All interactive components use `transition-colors duration-150`.
 ## Adding a New Component
 
 1. Create directory: `src/mycomponent/`
-2. Create `mycomponent.variants.ts` — import shared fragments, define `tv()`, export type aliases
+2. Create `mycomponent.variants.ts` — import shared fragments, define `tv()` (variant prop types are inferred via `VariantProps`, no manual type aliases needed)
 3. Create `my-component.component.tsx` — wrap RAC primitive, forward all RAC props
 4. Create `index.ts` — barrel export component and types
 5. Add export to `src/index.ts`

@@ -1,13 +1,9 @@
 import type { ButtonProps as AriaButtonProps } from "react-aria-components";
-import type { ButtonColor, ButtonSize, ButtonVariant } from "./button.variants.ts";
+import type { VariantProps } from "tailwind-variants";
 import { Button as AriaButton, composeRenderProps } from "react-aria-components";
 import { buttonVariants } from "./button.variants.ts";
 
-interface ButtonBaseProps extends AriaButtonProps {
-	variant?: ButtonVariant;
-	size?: ButtonSize;
-	color?: ButtonColor;
-}
+type ButtonBaseProps = AriaButtonProps & Omit<VariantProps<typeof buttonVariants>, "icon">;
 
 export type ButtonProps = ButtonBaseProps & (
 	| { icon?: false }

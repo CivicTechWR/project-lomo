@@ -1,4 +1,3 @@
-import type { Colors, Size } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import { focusRings, ghostColors, interactiveBase, interactiveSizes, outlineColors, softColors, solidColors } from "../variants/index.ts";
 
@@ -69,7 +68,3 @@ export const buttonVariants = tv({
 		icon: false,
 	},
 });
-
-export type ButtonVariant = "solid" | "soft" | "outline" | "ghost";
-export type ButtonColor = Colors;
-export type ButtonSize = Size;
