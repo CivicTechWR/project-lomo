@@ -15,7 +15,6 @@ Components needed to implement the LoMo prototype, derived from the Stitch proje
 
 ### Tier 1 — Core (unlocks almost every screen)
 
-- **Link** — Inline and standalone navigation links. Wraps RAC `Link`. Color prop for theming. Integrates with TanStack Router.
 - **Dialog** — Modal overlay for confirmations, detail views, multi-step flows. Wraps RAC `Modal` + `ModalOverlay` + `Dialog`. Glassmorphism overlay with semi-transparent warm cream backdrop-blur per the design system.
 
 ### Tier 2 — Forms (unlocks onboarding + request creation)
