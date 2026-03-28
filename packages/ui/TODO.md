@@ -13,10 +13,6 @@
 
 Components needed to implement the LoMo prototype, derived from the Stitch project "LOMO PROJECT [CLAUDE CODE]." Only generic design system primitives — app-level compositions (Navbar, Sidebar, RequestCard, etc.) live in `apps/webapp/`.
 
-### Tier 1 — Core (unlocks almost every screen)
-
-- **Dialog** — Modal overlay for confirmations, detail views, multi-step flows. Wraps RAC `Modal` + `ModalOverlay` + `Dialog`. Glassmorphism overlay with semi-transparent warm cream backdrop-blur per the design system.
-
 ### Tier 2 — Forms (unlocks onboarding + request creation)
 
 - **Checkbox** — Single checkbox with label. Wraps RAC `Checkbox`. Used for consent/terms agreement and preference selection.
