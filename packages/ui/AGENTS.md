@@ -34,6 +34,59 @@ src/
 7. **className merging:** Consumer `className` always wins via tv()'s built-in tailwind-merge
 8. **`tw()` for IntelliSense:** Wrap Tailwind class strings in `tw()` when they appear outside of `tv()` or `cn()` calls (e.g., in variant fragment files). It's an identity function that enables Tailwind IntelliSense via `classRegex`. See `.vscode/README.md` for details.
 
+## Radius System
+
+The design system uses a 6-step radius scale with named presets, modeled after Radix UI Themes.
+
+### Tokens
+
+| Token           | Base px | Default (factor=2) | Usage                                                               |
+| --------------- | ------- | ------------------ | ------------------------------------------------------------------- |
+| `--radius-1`    | 3px     | 6px                | Small interactive elements (size 1 buttons, badges, fields)         |
+| `--radius-2`    | 4px     | 8px                | Medium interactive elements (size 2 buttons, badges, fields)        |
+| `--radius-3`    | 6px     | 12px               | Large interactive / small containers (size 3 buttons, size 1 cards) |
+| `--radius-4`    | 8px     | 16px               | XL interactive / medium containers (size 4 buttons, size 2-3 cards) |
+| `--radius-5`    | 12px    | 24px               | Large containers (size 4-5 cards, dialogs)                          |
+| `--radius-6`    | 16px    | 32px               | Reserved for extra-large containers                                 |
+| `--radius-full` | —       | 0px or 9999px      | Pill shape toggle (controlled by preset)                            |
+
+### Presets
+
+Set via `data-radius` attribute on `:root` (default: `medium`):
+
+| Preset   | `--radius-factor` | `--radius-full` | Effect                           |
+| -------- | ----------------- | --------------- | -------------------------------- |
+| `none`   | 0                 | 0px             | Square corners                   |
+| `small`  | 1.5               | 0px             | Subtle rounding                  |
+| `medium` | 2                 | 0px             | Default — proportional rounding  |
+| `large`  | 2.5               | 0px             | More pronounced rounding         |
+| `full`   | 2.5               | 9999px          | Pill-shaped interactive elements |
+
+### Adding Radius to New Components
+
+Determine the component category and apply the correct pattern:
+
+**Compact interactive elements** (buttons, badges, selects, text fields — anything with a fixed height):
+
+```ts
+// Use max() to opt in to pill behavior at the "full" preset
+"rounded-[max(var(--radius-2),var(--radius-full))]";
+```
+
+**Containers and multi-line elements** (cards, dialogs, text areas, popovers):
+
+```ts
+// Use plain var() — containers never pill-ify
+"rounded-[var(--radius-4)]";
+```
+
+**Token selection by component size:**
+
+- Size 1 → `--radius-1` (interactive) or `--radius-3` (container)
+- Size 2 → `--radius-2` (interactive) or `--radius-4` (container)
+- Size 3 → `--radius-3` (interactive) or `--radius-4` (container)
+- Size 4 → `--radius-4` (interactive) or `--radius-5` (container)
+
 ## Color Palette
 
 - **Brand:** terracotta, sage, yellow (custom generated, in `src/theme/colors/`)

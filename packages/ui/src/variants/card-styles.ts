@@ -12,11 +12,11 @@ export const cardBase = tw(
 /* ── Card sizes (padding + border-radius) ── */
 
 export const cardSizes = {
-	1: tw("p-3 rounded-[var(--radius-2)]"),
-	2: tw("p-4 rounded-[var(--radius-2)]"),
-	3: tw("p-6 rounded-[var(--radius-2)]"),
-	4: tw("p-8 rounded-[var(--radius-2)]"),
-	5: tw("p-12 rounded-[var(--radius-2)]"),
+	1: tw("p-3 rounded-[var(--radius-3)]"),
+	2: tw("p-4 rounded-[var(--radius-4)]"),
+	3: tw("p-6 rounded-[var(--radius-4)]"),
+	4: tw("p-8 rounded-[var(--radius-5)]"),
+	5: tw("p-12 rounded-[var(--radius-5)]"),
 };
 
 /* ── Ghost colors — tinted background only, no chrome ── */

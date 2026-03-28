@@ -233,7 +233,8 @@
 	--radius-3: calc(6px * var(--radius-factor));
 	--radius-4: calc(8px * var(--radius-factor));
 	--radius-5: calc(12px * var(--radius-factor));
-	--radius-full: 9999px;
+	--radius-6: calc(16px * var(--radius-factor));
+	--radius-full: 0px;
 
 	/* ── Typography ramp (font-size / line-height) ── */
 	--text-1: 0.75rem;
@@ -271,8 +272,30 @@
 	--leading-trim-end: 0.36em;
 }
 
-:root {
+:root,
+[data-radius="medium"] {
+	--radius-factor: 2;
+	--radius-full: 0px;
+}
+
+[data-radius="none"] {
+	--radius-factor: 0;
+	--radius-full: 0px;
+}
+
+[data-radius="small"] {
+	--radius-factor: 1.5;
+	--radius-full: 0px;
+}
+
+[data-radius="large"] {
 	--radius-factor: 2.5;
+	--radius-full: 0px;
+}
+
+[data-radius="full"] {
+	--radius-factor: 2.5;
+	--radius-full: 9999px;
 }
 
 .dark {

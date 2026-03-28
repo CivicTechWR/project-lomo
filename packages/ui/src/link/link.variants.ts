@@ -16,7 +16,7 @@ export const linkVariants = tv({
 		"cursor-pointer outline-none transition-colors",
 		"decoration-solid [text-decoration-thickness:min(2px,max(1px,0.05em))] [text-underline-offset:calc(0.025em+2px)]",
 		"data-disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:no-underline",
-		"data-focus-visible:no-underline data-focus-visible:rounded-[calc(0.07em*var(--radius-factor))]",
+		"data-focus-visible:no-underline data-focus-visible:rounded-[calc(0.15em*var(--radius-factor))]",
 	),
 	variants: {
 		size: typographySizes,

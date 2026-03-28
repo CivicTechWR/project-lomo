@@ -13,19 +13,19 @@ export const fieldGroupSizes = {
 		"min-h-8 px-2 py-1.5 gap-1.5",
 		"text-[length:var(--text-1)]",
 		"leading-[var(--text-1--line-height)]",
-		"rounded-[var(--radius-1)]",
+		"rounded-[max(var(--radius-1),var(--radius-full))]",
 	),
 	2: tw(
 		"min-h-10 px-3 py-2 gap-2",
 		"text-[length:var(--text-2)]",
 		"leading-[var(--text-2--line-height)]",
-		"rounded-[var(--radius-2)]",
+		"rounded-[max(var(--radius-2),var(--radius-full))]",
 	),
 	3: tw(
 		"min-h-12 px-3.5 py-2.5 gap-2.5",
 		"text-[length:var(--text-3)]",
 		"leading-[var(--text-3--line-height)]",
-		"rounded-[var(--radius-3)]",
+		"rounded-[max(var(--radius-3),var(--radius-full))]",
 	),
 } as const;
 

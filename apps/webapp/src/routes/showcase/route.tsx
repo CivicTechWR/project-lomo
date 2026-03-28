@@ -31,6 +31,7 @@
 
 import { Heading, Text } from "@repo/ui";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
+import { useState } from "react";
 
 const NAV_GROUPS = [
 	{
@@ -52,6 +53,56 @@ const NAV_GROUPS = [
 		],
 	},
 ] as const;
+
+const RADIUS_PRESETS = ["none", "small", "medium", "large", "full"] as const;
+
+function ThemePanel() {
+	const [open, setOpen] = useState(false);
+	const [radius, setRadius] = useState<string>("medium");
+
+	function selectRadius(preset: string) {
+		setRadius(preset);
+		document.documentElement.setAttribute("data-radius", preset);
+	}
+
+	return (
+		<div className="fixed right-4 bottom-4 z-50">
+			{open && (
+				<div className="mb-2 rounded-lg border border-gray-6 bg-gray-1 p-3 shadow-lg">
+					<Text size={1} weight="medium" color="gray" className="mb-2 block uppercase tracking-wider">
+						Radius
+					</Text>
+					<div className="flex gap-0.5 rounded-md bg-gray-3 p-0.5">
+						{RADIUS_PRESETS.map(preset => (
+							<button
+								key={preset}
+								type="button"
+								onClick={() => selectRadius(preset)}
+								className={`rounded-[5px] px-2.5 py-1 text-[length:var(--text-1)] capitalize transition-colors ${
+									radius === preset
+										? "bg-white font-medium text-gray-12 shadow-sm"
+										: "text-gray-11 hover:text-gray-12"
+								}`}
+							>
+								{preset}
+							</button>
+						))}
+					</div>
+				</div>
+			)}
+			<button
+				type="button"
+				onClick={() => setOpen(prev => !prev)}
+				className="flex size-10 items-center justify-center rounded-full border border-gray-6 bg-gray-2 text-gray-11 shadow-md transition-colors hover:bg-gray-3 hover:text-gray-12"
+				aria-label="Toggle theme panel"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="size-5">
+					<path fillRule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+				</svg>
+			</button>
+		</div>
+	);
+}
 
 function ShowcaseLayout() {
 	return (
@@ -88,6 +139,8 @@ function ShowcaseLayout() {
 					<Outlet />
 				</div>
 			</main>
+
+			<ThemePanel />
 		</div>
 	);
 }

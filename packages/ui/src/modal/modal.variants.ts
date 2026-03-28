@@ -1,5 +1,6 @@
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
+import { cardSizes } from "../variants/card-styles.ts";
 
 export const modalVariants = tv({
 	base: tw(
@@ -12,12 +13,7 @@ export const modalVariants = tv({
 		"data-exiting:motion-safe:duration-100",
 	),
 	variants: {
-		size: {
-			1: "rounded-[var(--radius-4)]",
-			2: "rounded-[var(--radius-4)]",
-			3: "rounded-[var(--radius-5)]",
-			4: "rounded-[var(--radius-5)]",
-		},
+		size: cardSizes,
 	},
 	defaultVariants: { size: 3 },
 });

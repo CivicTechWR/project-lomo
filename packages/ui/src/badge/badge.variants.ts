@@ -28,19 +28,19 @@ export const badgeVariants = tv({
 				"px-3 py-1",
 				"text-[length:var(--text-1)]",
 				"leading-[var(--text-1--line-height)]",
-				"rounded-[var(--radius-1)] gap-1",
+				"rounded-[max(var(--radius-1),var(--radius-full))] gap-1",
 			),
 			2: tw(
 				"px-4 py-1.5",
 				"text-[length:var(--text-2)]",
 				"leading-[var(--text-2--line-height)]",
-				"rounded-[var(--radius-2)] gap-1.5",
+				"rounded-[max(var(--radius-2),var(--radius-full))] gap-1.5",
 			),
 			3: tw(
 				"px-6 py-2",
 				"text-[length:var(--text-3)]",
 				"leading-[var(--text-3--line-height)]",
-				"rounded-[var(--radius-2)] gap-1.5",
+				"rounded-[max(var(--radius-2),var(--radius-full))] gap-1.5",
 			),
 		},
 		color: {
