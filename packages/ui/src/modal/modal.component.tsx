@@ -1,7 +1,7 @@
 import type { DialogProps, ModalOverlayProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import { Dialog as AriaDialog, Modal as AriaModal, composeRenderProps } from "react-aria-components";
-import { modalVariants } from "./modal.variants.ts";
+import { modalDialogVariants, modalVariants } from "./modal.variants.ts";
 
 export type ModalProps
 	= & Pick<ModalOverlayProps, "className" | "style">
@@ -15,7 +15,7 @@ export function Modal({ size, role, className, children, style, ...props }: Moda
 			className={composeRenderProps(className, cls =>
 				modalVariants({ size, class: cls }))}
 		>
-			<AriaDialog role={role} {...props}>
+			<AriaDialog role={role} className={modalDialogVariants({ size })} {...props}>
 				{children}
 			</AriaDialog>
 		</AriaModal>
