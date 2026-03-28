@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShowcaseIndexRouteImport } from './routes/showcase/index'
 import { Route as ShowcaseTextFieldRouteImport } from './routes/showcase/text-field'
 import { Route as ShowcaseTextRouteImport } from './routes/showcase/text'
+import { Route as ShowcaseModalRouteImport } from './routes/showcase/modal'
 import { Route as ShowcaseLinkRouteImport } from './routes/showcase/link'
 import { Route as ShowcaseHeadingRouteImport } from './routes/showcase/heading'
 import { Route as ShowcaseCardRouteImport } from './routes/showcase/card'
@@ -49,6 +50,11 @@ const ShowcaseTextFieldRoute = ShowcaseTextFieldRouteImport.update({
 const ShowcaseTextRoute = ShowcaseTextRouteImport.update({
   id: '/text',
   path: '/text',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
+const ShowcaseModalRoute = ShowcaseModalRouteImport.update({
+  id: '/modal',
+  path: '/modal',
   getParentRoute: () => ShowcaseRouteRoute,
 } as any)
 const ShowcaseLinkRoute = ShowcaseLinkRouteImport.update({
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/link': typeof ShowcaseLinkRoute
+  '/showcase/modal': typeof ShowcaseModalRoute
   '/showcase/text': typeof ShowcaseTextRoute
   '/showcase/text-field': typeof ShowcaseTextFieldRoute
   '/showcase/': typeof ShowcaseIndexRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/link': typeof ShowcaseLinkRoute
+  '/showcase/modal': typeof ShowcaseModalRoute
   '/showcase/text': typeof ShowcaseTextRoute
   '/showcase/text-field': typeof ShowcaseTextFieldRoute
   '/showcase': typeof ShowcaseIndexRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/link': typeof ShowcaseLinkRoute
+  '/showcase/modal': typeof ShowcaseModalRoute
   '/showcase/text': typeof ShowcaseTextRoute
   '/showcase/text-field': typeof ShowcaseTextFieldRoute
   '/showcase/': typeof ShowcaseIndexRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/link'
+    | '/showcase/modal'
     | '/showcase/text'
     | '/showcase/text-field'
     | '/showcase/'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/link'
+    | '/showcase/modal'
     | '/showcase/text'
     | '/showcase/text-field'
     | '/showcase'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/showcase/card'
     | '/showcase/heading'
     | '/showcase/link'
+    | '/showcase/modal'
     | '/showcase/text'
     | '/showcase/text-field'
     | '/showcase/'
@@ -207,6 +219,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShowcaseTextRouteImport
       parentRoute: typeof ShowcaseRouteRoute
     }
+    '/showcase/modal': {
+      id: '/showcase/modal'
+      path: '/modal'
+      fullPath: '/showcase/modal'
+      preLoaderRoute: typeof ShowcaseModalRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
     '/showcase/link': {
       id: '/showcase/link'
       path: '/link'
@@ -251,6 +270,7 @@ interface ShowcaseRouteRouteChildren {
   ShowcaseCardRoute: typeof ShowcaseCardRoute
   ShowcaseHeadingRoute: typeof ShowcaseHeadingRoute
   ShowcaseLinkRoute: typeof ShowcaseLinkRoute
+  ShowcaseModalRoute: typeof ShowcaseModalRoute
   ShowcaseTextRoute: typeof ShowcaseTextRoute
   ShowcaseTextFieldRoute: typeof ShowcaseTextFieldRoute
   ShowcaseIndexRoute: typeof ShowcaseIndexRoute
@@ -262,6 +282,7 @@ const ShowcaseRouteRouteChildren: ShowcaseRouteRouteChildren = {
   ShowcaseCardRoute: ShowcaseCardRoute,
   ShowcaseHeadingRoute: ShowcaseHeadingRoute,
   ShowcaseLinkRoute: ShowcaseLinkRoute,
+  ShowcaseModalRoute: ShowcaseModalRoute,
   ShowcaseTextRoute: ShowcaseTextRoute,
   ShowcaseTextFieldRoute: ShowcaseTextFieldRoute,
   ShowcaseIndexRoute: ShowcaseIndexRoute,
