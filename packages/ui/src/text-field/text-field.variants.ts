@@ -15,5 +15,3 @@ export const textFieldVariants = tv({
 		size: 2,
 	},
 });
-
-export type TextFieldOrientation = "vertical" | "horizontal";

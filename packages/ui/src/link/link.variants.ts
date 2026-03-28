@@ -1,4 +1,3 @@
-import type { Colors, Trim, TypographySize, Weight } from "../theme/types.ts";
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
 import {
@@ -84,9 +83,3 @@ export const linkVariants = tv({
 		wrap: "wrap",
 	},
 });
-
-export type LinkSize = TypographySize;
-export type LinkWeight = Weight;
-export type LinkColor = Colors;
-export type LinkUnderline = "auto" | "always" | "hover" | "none";
-export type LinkTrim = Trim;

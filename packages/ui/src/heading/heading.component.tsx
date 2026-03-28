@@ -1,13 +1,10 @@
 import type { HeadingProps as AriaHeadingProps } from "react-aria-components";
-import type {
-	HeadingColor,
-	HeadingLevel,
-	HeadingSize,
-	HeadingTrim,
-	HeadingWeight,
-} from "./heading.variants.ts";
+import type { VariantProps } from "tailwind-variants";
+import type { HeadingLevel } from "./heading.variants.ts";
 import { Heading as AriaHeading } from "react-aria-components";
 import { headingVariants } from "./heading.variants.ts";
+
+type HeadingSize = NonNullable<VariantProps<typeof headingVariants>["size"]>;
 
 // Level → default visual size (inverted: h1=largest, h6=smallest)
 const levelToSize: Record<HeadingLevel, HeadingSize> = {
@@ -19,14 +16,9 @@ const levelToSize: Record<HeadingLevel, HeadingSize> = {
 	6: 4,
 };
 
-export interface HeadingProps extends Omit<AriaHeadingProps, "level"> {
+export type HeadingProps = Omit<AriaHeadingProps, "level"> & VariantProps<typeof headingVariants> & {
 	level?: HeadingLevel;
-	size?: HeadingSize;
-	weight?: HeadingWeight;
-	color?: HeadingColor;
-	highContrast?: boolean;
-	trim?: HeadingTrim;
-}
+};
 
 export function Heading({
 	level = 3,

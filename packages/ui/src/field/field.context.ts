@@ -1,9 +1,11 @@
-import type { Colors } from "../theme/types.ts";
+import type { VariantProps } from "tailwind-variants";
+import type { groupVariants } from "./group.variants.ts";
 import { createContext, use } from "react";
 
-export type FieldVariant = "surface" | "classic" | "soft";
-export type FieldSize = 1 | 2 | 3;
-export type FieldColor = Colors;
+type GroupVP = VariantProps<typeof groupVariants>;
+export type FieldVariant = NonNullable<GroupVP["variant"]>;
+export type FieldSize = NonNullable<GroupVP["size"]>;
+export type FieldColor = NonNullable<GroupVP["color"]>;
 
 export interface FieldContextValue {
 	variant: FieldVariant;

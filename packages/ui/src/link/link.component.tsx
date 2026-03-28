@@ -1,18 +1,9 @@
 import type { LinkProps as AriaLinkProps } from "react-aria-components";
-import type { LinkColor, LinkSize, LinkTrim, LinkUnderline, LinkWeight } from "./link.variants.ts";
+import type { VariantProps } from "tailwind-variants";
 import { Link as AriaLink, composeRenderProps } from "react-aria-components";
 import { linkVariants } from "./link.variants.ts";
 
-export interface LinkProps extends AriaLinkProps {
-	color?: LinkColor;
-	size?: LinkSize;
-	weight?: LinkWeight;
-	underline?: LinkUnderline;
-	highContrast?: boolean;
-	trim?: LinkTrim;
-	truncate?: boolean;
-	wrap?: "wrap" | "nowrap" | "pretty" | "balance";
-}
+export type LinkProps = AriaLinkProps & VariantProps<typeof linkVariants>;
 
 export function Link({
 	color,

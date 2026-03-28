@@ -1,13 +1,8 @@
 import type { ComponentPropsWithRef } from "react";
-import type { BadgeColor, BadgeSize, BadgeVariant } from "./badge.variants.ts";
+import type { VariantProps } from "tailwind-variants";
 import { badgeVariants } from "./badge.variants.ts";
 
-export interface BadgeProps extends ComponentPropsWithRef<"span"> {
-	variant?: BadgeVariant;
-	size?: BadgeSize;
-	color?: BadgeColor;
-	highContrast?: boolean;
-}
+export type BadgeProps = ComponentPropsWithRef<"span"> & VariantProps<typeof badgeVariants>;
 
 export function Badge({ variant, size, color, highContrast, className, ...props }: BadgeProps) {
 	return (

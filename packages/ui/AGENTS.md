@@ -16,7 +16,7 @@ src/
   theme/
     colors/        # Custom color palette CSS files (Radix format, renamed)
     theme.css      # Main theme: imports, @theme tokens, radius/typography
-    types.ts       # Shared type definitions (ScaleColor, Size, etc.)
+    types.ts       # Shared type definitions (Colors)
   variants/        # Shared variant fragments (reusable across components)
   utils/           # Utility functions (cn, etc.)
   button/          # Reference component
@@ -26,7 +26,7 @@ src/
 ## Key Conventions
 
 1. **Component structure:** Each component has `index.ts`, `name.variants.ts`, `name.component.tsx`
-2. **Props pattern:** Components extend RAC props + add `variant`, `size`, `color`
+2. **Props pattern:** Component props are typed via `VariantProps<typeof xVariants>` intersected with RAC/HTML base props. Do not manually define type aliases for variant props — the `tv()` call is the single source of truth.
 3. **State selectors:** Use RAC `data-hovered`, `data-pressed`, `data-focus-visible`, `data-disabled` (Tailwind v4 shorthand for `data-[attr]`)
 4. **Color scale:** 12 steps per color — 1-2 backgrounds, 3-5 interactive, 6-8 borders, 9-10 solid, 11 text, 12 high-contrast text
 5. **No accent indirection:** Colors are passed directly, no `--accent-*` CSS variables or ThemeProvider
