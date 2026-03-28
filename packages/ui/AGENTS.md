@@ -73,12 +73,24 @@ Determine the component category and apply the correct pattern:
 "rounded-[max(var(--radius-2),var(--radius-full))]";
 ```
 
-**Containers and multi-line elements** (cards, dialogs, text areas, popovers):
+**Containers and multi-line elements** (cards, dialogs, popovers):
 
 ```ts
 // Use plain var() — containers never pill-ify
 "rounded-[var(--radius-4)]";
 ```
+
+**Multi-line field elements** (TextArea inside a shared Group):
+
+The `Group` component is shared between single-line inputs (should pill) and TextArea (should not). Use CSS `has-[textarea]` to strip pill behavior:
+
+```ts
+// In fieldGroupSizes — pill for inputs, plain radius for textareas
+"rounded-[max(var(--radius-2),var(--radius-full))]";
+"has-[textarea]:rounded-[var(--radius-2)]";
+```
+
+Extend this pattern for any future multi-line field types that share the Group wrapper.
 
 **Token selection by component size:**
 

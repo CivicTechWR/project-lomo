@@ -14,18 +14,21 @@ export const fieldGroupSizes = {
 		"text-[length:var(--text-1)]",
 		"leading-[var(--text-1--line-height)]",
 		"rounded-[max(var(--radius-1),var(--radius-full))]",
+		"has-[textarea]:rounded-[var(--radius-1)]",
 	),
 	2: tw(
 		"min-h-10 px-3 py-2 gap-2",
 		"text-[length:var(--text-2)]",
 		"leading-[var(--text-2--line-height)]",
 		"rounded-[max(var(--radius-2),var(--radius-full))]",
+		"has-[textarea]:rounded-[var(--radius-2)]",
 	),
 	3: tw(
 		"min-h-12 px-3.5 py-2.5 gap-2.5",
 		"text-[length:var(--text-3)]",
 		"leading-[var(--text-3--line-height)]",
 		"rounded-[max(var(--radius-3),var(--radius-full))]",
+		"has-[textarea]:rounded-[var(--radius-3)]",
 	),
 } as const;
 
