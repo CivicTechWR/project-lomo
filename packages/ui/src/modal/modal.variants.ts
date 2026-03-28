@@ -26,6 +26,7 @@ export const modalDialogVariants = tv({
 			2: "p-4",
 			3: "p-5",
 			4: "p-6",
+			5: "p-6",
 		},
 	},
 	defaultVariants: { size: 3 },
