@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Group, Heading, Input, Label, Text, TextField, Link as UILink } from "@repo/ui";
+import { Badge, Button, Card, DialogTrigger, Group, Heading, Input, Label, Modal, ModalOverlay, Text, TextField, Link as UILink } from "@repo/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const COMPONENT_CARDS = [
@@ -36,6 +36,27 @@ const COMPONENT_CARDS = [
 				<Card size={1} variant="surface"><Text size={1}>Surface</Text></Card>
 				<Card size={1} variant="classic"><Text size={1}>Classic</Text></Card>
 				<Card size={1} variant="ghost" color="terracotta"><Text size={1}>Ghost</Text></Card>
+			</div>
+		),
+	},
+	{
+		name: "Modal",
+		description: "Modal overlay for confirmations, detail views, and multi-step flows.",
+		to: "/showcase/modal",
+		preview: (
+			<div className="flex flex-wrap items-center gap-2">
+				<DialogTrigger>
+					<Button variant="soft" size={1}>Open</Button>
+					<ModalOverlay isDismissable>
+						<Modal size={2} className="max-w-xs">
+							<Heading slot="title" size={4}>Dialog</Heading>
+							<Text elementType="p" size={2} color="gray" className="mt-1">A simple modal dialog.</Text>
+							<div className="mt-3 flex justify-end">
+								<Button slot="close" variant="soft" color="gray" size={1}>Close</Button>
+							</div>
+						</Modal>
+					</ModalOverlay>
+				</DialogTrigger>
 			</div>
 		),
 	},

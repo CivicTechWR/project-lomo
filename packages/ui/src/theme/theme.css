@@ -210,6 +210,9 @@
 	--color-amber-a7-muted: color-mix(in oklab, var(--amber-a7), var(--gray-a6));
 	--color-amber-a8-muted: color-mix(in oklab, var(--amber-a8), var(--gray-a6));
 
+	/* ── Overlay ── */
+	--color-overlay: var(--gray-a6);
+
 	/* ── Card shadows ── */
 	--shadow-card-surface: inset 0 0 0 1px var(--color-gray-a5);
 	--shadow-card-surface-hover: inset 0 0 0 1px var(--color-gray-a7);

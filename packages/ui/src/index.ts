@@ -18,6 +18,9 @@ export type { HeadingProps } from "./heading/index.ts";
 
 export { Link } from "./link/index.ts";
 export type { LinkProps } from "./link/index.ts";
+
+export { DialogTrigger, Modal, ModalOverlay } from "./modal/index.ts";
+export type { ModalOverlayProps, ModalProps } from "./modal/index.ts";
 export { Input, TextArea, TextField } from "./text-field/index.ts";
 export type { InputProps, TextAreaProps, TextFieldProps } from "./text-field/index.ts";
 
