@@ -3,7 +3,6 @@ import { tw } from "../utils/tw.ts";
 import {
 	cardBase,
 	cardClassicColors,
-	cardGhostColors,
 	cardSurfaceColors,
 	focusRings,
 } from "../variants/index.ts";
@@ -18,7 +17,6 @@ export const checkboxCardVariants = tv({
 	),
 	variants: {
 		variant: {
-			ghost: "",
 			surface: "",
 			classic: "",
 		},
@@ -55,14 +53,6 @@ export const checkboxCardVariants = tv({
 		},
 	},
 	compoundVariants: [
-		/* ── Ghost variant ── */
-		{ variant: "ghost", color: "terracotta", class: cardGhostColors.terracotta },
-		{ variant: "ghost", color: "sage", class: cardGhostColors.sage },
-		{ variant: "ghost", color: "yellow", class: cardGhostColors.yellow },
-		{ variant: "ghost", color: "gray", class: cardGhostColors.gray },
-		{ variant: "ghost", color: "red", class: cardGhostColors.red },
-		{ variant: "ghost", color: "amber", class: cardGhostColors.amber },
-
 		/* ── Surface variant ── */
 		{ variant: "surface", color: "terracotta", class: cardSurfaceColors.terracotta },
 		{ variant: "surface", color: "sage", class: cardSurfaceColors.sage },

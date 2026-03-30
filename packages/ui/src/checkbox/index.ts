@@ -1,8 +1,8 @@
+export { CheckboxCardGroup } from "./checkbox-card-group.component.tsx";
+export type { CheckboxCardGroupProps } from "./checkbox-card-group.component.tsx";
+
 export { CheckboxCard } from "./checkbox-card.component.tsx";
 export type { CheckboxCardProps } from "./checkbox-card.component.tsx";
-
-export { CheckboxCards } from "./checkbox-cards.component.tsx";
-export type { CheckboxCardsProps } from "./checkbox-cards.component.tsx";
 
 export { CheckboxGroup } from "./checkbox-group.component.tsx";
 export type { CheckboxGroupProps } from "./checkbox-group.component.tsx";

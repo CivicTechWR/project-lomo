@@ -5,9 +5,9 @@ import { tv } from "tailwind-variants";
 import { FieldContext } from "../field/index.ts";
 import { tw } from "../utils/tw.ts";
 import { fieldGaps } from "../variants/index.ts";
-import { CheckboxCardsContext } from "./checkbox.context.ts";
+import { CheckboxGroupStyleContext } from "./checkbox.context.ts";
 
-const checkboxCardsVariants = tv({
+const checkboxCardGroupVariants = tv({
 	base: tw("grid"),
 	variants: {
 		size: fieldGaps,
@@ -17,14 +17,14 @@ const checkboxCardsVariants = tv({
 	},
 });
 
-export type CheckboxCardsProps = AriaCheckboxGroupProps & {
-	variant?: "ghost" | "surface" | "classic";
+export type CheckboxCardGroupProps = AriaCheckboxGroupProps & {
+	variant?: "surface" | "classic";
 	size?: 1 | 2 | 3;
 	color?: Colors;
 	columns?: string;
 };
 
-export function CheckboxCards({
+export function CheckboxCardGroup({
 	variant = "surface",
 	size = 2,
 	color = "terracotta",
@@ -32,9 +32,9 @@ export function CheckboxCards({
 	className,
 	style,
 	...props
-}: CheckboxCardsProps) {
+}: CheckboxCardGroupProps) {
 	return (
-		<CheckboxCardsContext value={{ variant, size, color }}>
+		<CheckboxGroupStyleContext value={{ variant, size, color }}>
 			<FieldContext value={{ variant: "surface", size, color }}>
 				<AriaCheckboxGroup
 					{...props}
@@ -44,9 +44,9 @@ export function CheckboxCards({
 						...style,
 					}}
 					className={composeRenderProps(className, cls =>
-						checkboxCardsVariants({ size, class: cls }))}
+						checkboxCardGroupVariants({ size, class: cls }))}
 				/>
 			</FieldContext>
-		</CheckboxCardsContext>
+		</CheckboxGroupStyleContext>
 	);
 }

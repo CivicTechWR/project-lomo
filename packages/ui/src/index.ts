@@ -7,8 +7,8 @@ export type { ButtonProps } from "./button/index.ts";
 export { Card } from "./card/index.ts";
 export type { CardProps } from "./card/index.ts";
 
-export { Checkbox, CheckboxCard, CheckboxCards, CheckboxGroup, CheckboxIndicator } from "./checkbox/index.ts";
-export type { CheckboxCardProps, CheckboxCardsProps, CheckboxGroupProps, CheckboxIndicatorProps, CheckboxProps } from "./checkbox/index.ts";
+export { Checkbox, CheckboxCard, CheckboxCardGroup, CheckboxGroup, CheckboxIndicator } from "./checkbox/index.ts";
+export type { CheckboxCardGroupProps, CheckboxCardProps, CheckboxGroupProps, CheckboxIndicatorProps, CheckboxProps } from "./checkbox/index.ts";
 
 export { Description, FieldError, Group, InputSlot, Label } from "./field/index.ts";
 export type { DescriptionProps, FieldErrorProps, GroupProps, InputSlotProps, LabelProps } from "./field/index.ts";

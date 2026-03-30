@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Checkbox, CheckboxIndicator, DialogTrigger, Group, Heading, Input, Label, Modal, ModalOverlay, Text, TextField, Link as UILink } from "@repo/ui";
+import { Badge, Button, Card, Checkbox, CheckboxCard, CheckboxCardGroup, CheckboxIndicator, DialogTrigger, Group, Heading, Input, Label, Modal, ModalOverlay, Text, TextField, Link as UILink } from "@repo/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const COMPONENT_CARDS = [
@@ -54,6 +54,21 @@ const COMPONENT_CARDS = [
 					Unchecked
 				</Checkbox>
 			</div>
+		),
+	},
+	{
+		name: "Checkbox Card",
+		description: "Card-style selection control for multi-option grids.",
+		to: "/showcase/checkbox-card",
+		preview: (
+			<CheckboxCardGroup color="sage" columns="repeat(2, 1fr)" className="w-full">
+				<CheckboxCard value="a" defaultSelected>
+					<Text size={1} weight="medium">Selected</Text>
+				</CheckboxCard>
+				<CheckboxCard value="b">
+					<Text size={1} weight="medium">Option</Text>
+				</CheckboxCard>
+			</CheckboxCardGroup>
 		),
 	},
 	{

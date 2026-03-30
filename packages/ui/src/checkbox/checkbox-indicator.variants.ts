@@ -10,23 +10,22 @@ export const checkboxIndicatorVariants = tv({
 		variant: {
 			surface: "",
 			classic: "",
-			soft: "",
 		},
 		size: {
 			1: tw(
 				"size-3.5",
 				"[&>svg]:size-2.5",
-				"rounded-[max(var(--radius-1),var(--radius-full))]",
+				"rounded-[var(--radius-1)]",
 			),
 			2: tw(
 				"size-4",
 				"[&>svg]:size-3",
-				"rounded-[max(var(--radius-1),var(--radius-full))]",
+				"rounded-[var(--radius-1)]",
 			),
 			3: tw(
 				"size-5",
 				"[&>svg]:size-3.5",
-				"rounded-[max(var(--radius-2),var(--radius-full))]",
+				"rounded-[var(--radius-1)]",
 			),
 		},
 		color: {
@@ -67,14 +66,6 @@ export const checkboxIndicatorVariants = tv({
 
 		/* ── Unchecked: classic variant (color-neutral) ── */
 		{ variant: "classic", class: tw("bg-gray-2 shadow-sm") },
-
-		/* ── Unchecked: soft variant ── */
-		{ variant: "soft", color: "terracotta", class: "bg-terracotta-3" },
-		{ variant: "soft", color: "sage", class: "bg-sage-3" },
-		{ variant: "soft", color: "yellow", class: "bg-yellow-3" },
-		{ variant: "soft", color: "gray", class: "bg-gray-3" },
-		{ variant: "soft", color: "red", class: "bg-red-3" },
-		{ variant: "soft", color: "amber", class: "bg-amber-3" },
 	],
 	defaultVariants: {
 		variant: "surface",

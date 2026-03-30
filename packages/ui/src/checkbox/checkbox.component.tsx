@@ -5,12 +5,12 @@ import { Checkbox as AriaCheckbox, composeRenderProps } from "react-aria-compone
 import { FieldContext } from "../field/index.ts";
 import { cn } from "../utils/cn.ts";
 import { focusRings } from "../variants/index.ts";
-import { useCheckboxGroupContext } from "./checkbox.context.ts";
+import { useCheckboxGroupStyleContext } from "./checkbox.context.ts";
 import { checkboxVariants } from "./checkbox.variants.ts";
 
 export type CheckboxProps = AriaCheckboxProps
 	& VariantProps<typeof checkboxVariants> & {
-		variant?: "surface" | "classic" | "soft";
+		variant?: "surface" | "classic";
 		color?: Colors;
 	};
 
@@ -21,7 +21,7 @@ export function Checkbox({
 	className,
 	...props
 }: CheckboxProps) {
-	const groupCtx = useCheckboxGroupContext();
+	const groupCtx = useCheckboxGroupStyleContext();
 	const v = variant ?? groupCtx?.variant ?? "surface";
 	const s = size ?? groupCtx?.size ?? 2;
 	const c = color ?? groupCtx?.color ?? "terracotta";

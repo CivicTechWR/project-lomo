@@ -4,18 +4,12 @@ import type { Colors } from "../theme/types.ts";
 import { Checkbox as AriaCheckbox, composeRenderProps, TextContext } from "react-aria-components";
 import { FieldContext } from "../field/index.ts";
 import { checkboxCardVariants } from "./checkbox-card.variants.ts";
-import { useCheckboxCardsContext } from "./checkbox.context.ts";
+import { useCheckboxGroupStyleContext } from "./checkbox.context.ts";
 
 export type CheckboxCardProps = AriaCheckboxProps
 	& Partial<VariantProps<typeof checkboxCardVariants>> & {
 		color?: Colors;
 	};
-
-const CARD_TO_INDICATOR_VARIANT = {
-	ghost: "soft",
-	surface: "surface",
-	classic: "surface",
-} as const;
 
 export function CheckboxCard({
 	variant,
@@ -24,15 +18,15 @@ export function CheckboxCard({
 	className,
 	...props
 }: CheckboxCardProps) {
-	const cardsCtx = useCheckboxCardsContext();
-	const v = variant ?? cardsCtx?.variant ?? "surface";
-	const s = size ?? cardsCtx?.size ?? 2;
-	const c = color ?? cardsCtx?.color ?? "terracotta";
+	const groupCtx = useCheckboxGroupStyleContext();
+	const v = variant ?? groupCtx?.variant ?? "surface";
+	const s = size ?? groupCtx?.size ?? 2;
+	const c = color ?? groupCtx?.color ?? "terracotta";
 
 	return (
 		<FieldContext
 			value={{
-				variant: CARD_TO_INDICATOR_VARIANT[v],
+				variant: "surface",
 				size: s,
 				color: c,
 			}}

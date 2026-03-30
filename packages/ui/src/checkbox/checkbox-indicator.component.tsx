@@ -17,7 +17,8 @@ export function CheckboxIndicator({
 	className,
 }: CheckboxIndicatorProps) {
 	const ctx = useFieldContext();
-	const v = variant ?? ctx.variant ?? "surface";
+	const ctxVariant = ctx.variant === "surface" || ctx.variant === "classic" ? ctx.variant : "surface";
+	const v = variant ?? ctxVariant;
 	const s = size ?? ctx.size ?? 2;
 	const c = color ?? ctx.color ?? "terracotta";
 

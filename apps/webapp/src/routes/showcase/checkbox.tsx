@@ -1,13 +1,10 @@
 import {
 	Checkbox,
-	CheckboxCard,
-	CheckboxCards,
 	CheckboxGroup,
 	CheckboxIndicator,
 	Description,
 	FieldError,
 	Label,
-	Text,
 } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
@@ -15,12 +12,11 @@ import { useState } from "react";
 import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
-const INDICATOR_VARIANTS = ["surface", "classic", "soft"] as const;
-const CARD_VARIANTS = ["ghost", "surface", "classic"] as const;
+const VARIANTS = ["surface", "classic"] as const;
 const SIZES = [1, 2, 3] as const;
 
 const CHECKBOX_PROPS = [
-	{ name: "variant", type: "\"surface\" | \"classic\" | \"soft\"", default: "\"surface\"" },
+	{ name: "variant", type: "\"surface\" | \"classic\"", default: "\"surface\"" },
 	{ name: "size", type: "1 | 2 | 3", default: "2" },
 	{ name: "color", type: "\"terracotta\" | \"sage\" | ... | \"amber\"", default: "\"terracotta\"" },
 	{ name: "isDisabled", type: "boolean", default: "false" },
@@ -42,36 +38,57 @@ function CheckboxPage() {
 			<Playground
 				componentName="Checkbox"
 				childrenLabel={"<CheckboxIndicator />\n  Checkbox"}
-				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, isIndeterminate: false }}
+				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, isIndeterminate: false, grouped: false }}
 				controls={[
-					{ name: "variant", type: "segment", options: INDICATOR_VARIANTS },
+					{ name: "variant", type: "segment", options: VARIANTS },
 					{ name: "size", type: "segment", options: SIZES },
 					{ name: "color", type: "segment", options: COLORS },
 					{ name: "isDisabled", type: "toggle" },
 					{ name: "isIndeterminate", type: "toggle" },
+					{ name: "grouped", type: "toggle" },
 				]}
 			>
-				{props => (
-					<Checkbox
-						variant={props.variant as any}
-						size={props.size as any}
-						color={props.color as any}
-						isDisabled={props.isDisabled as boolean}
-						isIndeterminate={props.isIndeterminate as boolean}
-						defaultSelected
-					>
-						<CheckboxIndicator />
-						Checkbox
-					</Checkbox>
-				)}
+				{(props) => {
+					const checkbox = (label: string, value?: string) => (
+						<Checkbox
+							variant={props.variant as "surface" | "classic"}
+							size={props.size as 1 | 2 | 3}
+							color={props.color as any}
+							isDisabled={props.isDisabled as boolean}
+							isIndeterminate={props.isIndeterminate as boolean}
+							defaultSelected
+							value={value}
+						>
+							<CheckboxIndicator />
+							{label}
+						</Checkbox>
+					);
+
+					if (props.grouped) {
+						return (
+							<CheckboxGroup
+								variant={props.variant as "surface" | "classic"}
+								size={props.size as 1 | 2 | 3}
+								color={props.color as any}
+							>
+								<Label>Group label</Label>
+								{checkbox("Option A", "a")}
+								{checkbox("Option B", "b")}
+								{checkbox("Option C", "c")}
+							</CheckboxGroup>
+						);
+					}
+
+					return checkbox("Checkbox");
+				}}
 			</Playground>
 
 			<PropTable data={CHECKBOX_PROPS} />
 
 			{/* ── Variants ── */}
-			<DemoSection title="Variant" description="Three visual styles for the indicator box.">
+			<DemoSection title="Variant" description="Two visual styles for the indicator box.">
 				<div className="flex flex-col gap-3">
-					{INDICATOR_VARIANTS.map(variant => (
+					{VARIANTS.map(variant => (
 						<Checkbox key={variant} variant={variant} defaultSelected>
 							<CheckboxIndicator />
 							{variant.charAt(0).toUpperCase() + variant.slice(1)}
@@ -117,7 +134,7 @@ function CheckboxPage() {
 			{/* ── Indeterminate ── */}
 			<DemoSection title="Indeterminate" description="Dash indicator for partially selected state.">
 				<div className="flex flex-col gap-3">
-					{INDICATOR_VARIANTS.map(variant => (
+					{VARIANTS.map(variant => (
 						<Checkbox key={variant} variant={variant} isIndeterminate>
 							<CheckboxIndicator />
 							{`Indeterminate (${variant})`}
@@ -172,72 +189,6 @@ function CheckboxPage() {
 						</Checkbox>
 						<FieldError>You must agree to continue.</FieldError>
 					</CheckboxGroup>
-				</div>
-			</DemoSection>
-
-			<Playground
-				componentName="CheckboxCard"
-				childrenLabel={"<Text weight=\"medium\">Option</Text>"}
-				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false }}
-				controls={[
-					{ name: "variant", type: "segment", options: CARD_VARIANTS },
-					{ name: "size", type: "segment", options: SIZES },
-					{ name: "color", type: "segment", options: COLORS },
-					{ name: "isDisabled", type: "toggle" },
-				]}
-			>
-				{props => (
-					<CheckboxCard
-						variant={props.variant as any}
-						size={props.size as any}
-						color={props.color as any}
-						isDisabled={props.isDisabled as boolean}
-						defaultSelected
-						value="demo"
-					>
-						<Text weight="medium">Option</Text>
-					</CheckboxCard>
-				)}
-			</Playground>
-
-			{/* ── CheckboxCards ── */}
-			<DemoSection title="CheckboxCards" description="Card-style selection with optional indicator.">
-				<div className="flex flex-col gap-6">
-					<CheckboxCards variant="surface" color="terracotta" columns="repeat(3, 1fr)">
-						<CheckboxCard value="housing">
-							<section className="flex flex-col gap-2">
-								<Text weight="medium">Housing</Text>
-								<Text size={1} color="gray">Find housing support</Text>
-							</section>
-						</CheckboxCard>
-						<CheckboxCard value="food">
-							<section className="flex flex-col gap-2">
-								<Text weight="medium">Food</Text>
-								<Text size={1} color="gray">Food bank access</Text>
-							</section>
-						</CheckboxCard>
-						<CheckboxCard value="transport">
-							<section className="flex flex-col gap-2">
-								<Text weight="medium">Transport</Text>
-								<Text size={1} color="gray">Transit assistance</Text>
-							</section>
-						</CheckboxCard>
-					</CheckboxCards>
-
-					<Text size={2} weight="medium" color="gray">Card variants:</Text>
-					{CARD_VARIANTS.map(variant => (
-						<CheckboxCards key={variant} variant={variant} color="sage" columns="repeat(3, 1fr)">
-							<CheckboxCard value="a">
-								<Text weight="medium">{variant.charAt(0).toUpperCase() + variant.slice(1)}</Text>
-							</CheckboxCard>
-							<CheckboxCard value="b" defaultSelected>
-								<Text weight="medium">Selected</Text>
-							</CheckboxCard>
-							<CheckboxCard value="c">
-								<Text weight="medium">Option C</Text>
-							</CheckboxCard>
-						</CheckboxCards>
-					))}
 				</div>
 			</DemoSection>
 		</div>

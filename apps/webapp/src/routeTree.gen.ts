@@ -18,6 +18,7 @@ import { Route as ShowcaseTextRouteImport } from './routes/showcase/text'
 import { Route as ShowcaseModalRouteImport } from './routes/showcase/modal'
 import { Route as ShowcaseLinkRouteImport } from './routes/showcase/link'
 import { Route as ShowcaseHeadingRouteImport } from './routes/showcase/heading'
+import { Route as ShowcaseCheckboxCardRouteImport } from './routes/showcase/checkbox-card'
 import { Route as ShowcaseCheckboxRouteImport } from './routes/showcase/checkbox'
 import { Route as ShowcaseCardRouteImport } from './routes/showcase/card'
 import { Route as ShowcaseButtonRouteImport } from './routes/showcase/button'
@@ -68,6 +69,11 @@ const ShowcaseHeadingRoute = ShowcaseHeadingRouteImport.update({
   path: '/heading',
   getParentRoute: () => ShowcaseRouteRoute,
 } as any)
+const ShowcaseCheckboxCardRoute = ShowcaseCheckboxCardRouteImport.update({
+  id: '/checkbox-card',
+  path: '/checkbox-card',
+  getParentRoute: () => ShowcaseRouteRoute,
+} as any)
 const ShowcaseCheckboxRoute = ShowcaseCheckboxRouteImport.update({
   id: '/checkbox',
   path: '/checkbox',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/showcase/button': typeof ShowcaseButtonRoute
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/checkbox': typeof ShowcaseCheckboxRoute
+  '/showcase/checkbox-card': typeof ShowcaseCheckboxCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/link': typeof ShowcaseLinkRoute
   '/showcase/modal': typeof ShowcaseModalRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/showcase/button': typeof ShowcaseButtonRoute
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/checkbox': typeof ShowcaseCheckboxRoute
+  '/showcase/checkbox-card': typeof ShowcaseCheckboxCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/link': typeof ShowcaseLinkRoute
   '/showcase/modal': typeof ShowcaseModalRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/showcase/button': typeof ShowcaseButtonRoute
   '/showcase/card': typeof ShowcaseCardRoute
   '/showcase/checkbox': typeof ShowcaseCheckboxRoute
+  '/showcase/checkbox-card': typeof ShowcaseCheckboxCardRoute
   '/showcase/heading': typeof ShowcaseHeadingRoute
   '/showcase/link': typeof ShowcaseLinkRoute
   '/showcase/modal': typeof ShowcaseModalRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/showcase/button'
     | '/showcase/card'
     | '/showcase/checkbox'
+    | '/showcase/checkbox-card'
     | '/showcase/heading'
     | '/showcase/link'
     | '/showcase/modal'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/showcase/button'
     | '/showcase/card'
     | '/showcase/checkbox'
+    | '/showcase/checkbox-card'
     | '/showcase/heading'
     | '/showcase/link'
     | '/showcase/modal'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/showcase/button'
     | '/showcase/card'
     | '/showcase/checkbox'
+    | '/showcase/checkbox-card'
     | '/showcase/heading'
     | '/showcase/link'
     | '/showcase/modal'
@@ -252,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShowcaseHeadingRouteImport
       parentRoute: typeof ShowcaseRouteRoute
     }
+    '/showcase/checkbox-card': {
+      id: '/showcase/checkbox-card'
+      path: '/checkbox-card'
+      fullPath: '/showcase/checkbox-card'
+      preLoaderRoute: typeof ShowcaseCheckboxCardRouteImport
+      parentRoute: typeof ShowcaseRouteRoute
+    }
     '/showcase/checkbox': {
       id: '/showcase/checkbox'
       path: '/checkbox'
@@ -288,6 +307,7 @@ interface ShowcaseRouteRouteChildren {
   ShowcaseButtonRoute: typeof ShowcaseButtonRoute
   ShowcaseCardRoute: typeof ShowcaseCardRoute
   ShowcaseCheckboxRoute: typeof ShowcaseCheckboxRoute
+  ShowcaseCheckboxCardRoute: typeof ShowcaseCheckboxCardRoute
   ShowcaseHeadingRoute: typeof ShowcaseHeadingRoute
   ShowcaseLinkRoute: typeof ShowcaseLinkRoute
   ShowcaseModalRoute: typeof ShowcaseModalRoute
@@ -301,6 +321,7 @@ const ShowcaseRouteRouteChildren: ShowcaseRouteRouteChildren = {
   ShowcaseButtonRoute: ShowcaseButtonRoute,
   ShowcaseCardRoute: ShowcaseCardRoute,
   ShowcaseCheckboxRoute: ShowcaseCheckboxRoute,
+  ShowcaseCheckboxCardRoute: ShowcaseCheckboxCardRoute,
   ShowcaseHeadingRoute: ShowcaseHeadingRoute,
   ShowcaseLinkRoute: ShowcaseLinkRoute,
   ShowcaseModalRoute: ShowcaseModalRoute,
