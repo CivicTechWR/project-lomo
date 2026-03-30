@@ -19,6 +19,9 @@ export type { FieldColor, FieldContextValue, FieldSize, FieldVariant } from "./f
 export { Heading } from "./heading/index.ts";
 export type { HeadingProps } from "./heading/index.ts";
 
+export { LoaderIcon } from "./icons/index.ts";
+export type { LoaderIconProps } from "./icons/index.ts";
+
 export { Link } from "./link/index.ts";
 export type { LinkProps } from "./link/index.ts";
 
