@@ -588,7 +588,7 @@ Work through these one at a time. After each, run `bun run lint:fix` and `bun ru
 - [x] Text
 - [x] Heading
 - [ ] Link
-- [ ] Checkbox
+- [x] Checkbox
 - [ ] Checkbox Card
 - [ ] TextField (restructure existing, remove TextArea content)
 - [ ] TextArea (new page)
