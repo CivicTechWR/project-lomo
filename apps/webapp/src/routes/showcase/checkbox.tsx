@@ -12,7 +12,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { DemoSection, PageHeader, PropTable } from "./-components";
+import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
 const COLORS = ["terracotta", "sage", "yellow", "gray", "red", "amber"] as const;
 const INDICATOR_VARIANTS = ["surface", "classic", "soft"] as const;
@@ -38,6 +38,33 @@ function CheckboxPage() {
 				title="Checkbox"
 				description="Allows a user to select one or more items, or toggle a single option."
 			/>
+
+			<Playground
+				componentName="Checkbox"
+				childrenLabel={"<CheckboxIndicator />\n  Checkbox"}
+				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, isIndeterminate: false }}
+				controls={[
+					{ name: "variant", type: "segment", options: INDICATOR_VARIANTS },
+					{ name: "size", type: "segment", options: SIZES },
+					{ name: "color", type: "segment", options: COLORS },
+					{ name: "isDisabled", type: "toggle" },
+					{ name: "isIndeterminate", type: "toggle" },
+				]}
+			>
+				{props => (
+					<Checkbox
+						variant={props.variant as any}
+						size={props.size as any}
+						color={props.color as any}
+						isDisabled={props.isDisabled as boolean}
+						isIndeterminate={props.isIndeterminate as boolean}
+						defaultSelected
+					>
+						<CheckboxIndicator />
+						Checkbox
+					</Checkbox>
+				)}
+			</Playground>
 
 			<PropTable data={CHECKBOX_PROPS} />
 
@@ -148,24 +175,52 @@ function CheckboxPage() {
 				</div>
 			</DemoSection>
 
+			<Playground
+				componentName="CheckboxCard"
+				childrenLabel={"<Text weight=\"medium\">Option</Text>"}
+				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false }}
+				controls={[
+					{ name: "variant", type: "segment", options: CARD_VARIANTS },
+					{ name: "size", type: "segment", options: SIZES },
+					{ name: "color", type: "segment", options: COLORS },
+					{ name: "isDisabled", type: "toggle" },
+				]}
+			>
+				{props => (
+					<CheckboxCard
+						variant={props.variant as any}
+						size={props.size as any}
+						color={props.color as any}
+						isDisabled={props.isDisabled as boolean}
+						defaultSelected
+						value="demo"
+					>
+						<Text weight="medium">Option</Text>
+					</CheckboxCard>
+				)}
+			</Playground>
+
 			{/* ── CheckboxCards ── */}
 			<DemoSection title="CheckboxCards" description="Card-style selection with optional indicator.">
 				<div className="flex flex-col gap-6">
 					<CheckboxCards variant="surface" color="terracotta" columns="repeat(3, 1fr)">
 						<CheckboxCard value="housing">
-							<CheckboxIndicator />
-							<Text weight="medium">Housing</Text>
-							<Text size={1} color="gray">Find housing support</Text>
+							<section className="flex flex-col gap-2">
+								<Text weight="medium">Housing</Text>
+								<Text size={1} color="gray">Find housing support</Text>
+							</section>
 						</CheckboxCard>
 						<CheckboxCard value="food">
-							<CheckboxIndicator />
-							<Text weight="medium">Food</Text>
-							<Text size={1} color="gray">Food bank access</Text>
+							<section className="flex flex-col gap-2">
+								<Text weight="medium">Food</Text>
+								<Text size={1} color="gray">Food bank access</Text>
+							</section>
 						</CheckboxCard>
 						<CheckboxCard value="transport">
-							<CheckboxIndicator />
-							<Text weight="medium">Transport</Text>
-							<Text size={1} color="gray">Transit assistance</Text>
+							<section className="flex flex-col gap-2">
+								<Text weight="medium">Transport</Text>
+								<Text size={1} color="gray">Transit assistance</Text>
+							</section>
 						</CheckboxCard>
 					</CheckboxCards>
 

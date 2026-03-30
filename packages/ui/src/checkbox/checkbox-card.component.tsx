@@ -1,7 +1,7 @@
 import type { CheckboxProps as AriaCheckboxProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import type { Colors } from "../theme/types.ts";
-import { Checkbox as AriaCheckbox, composeRenderProps } from "react-aria-components";
+import { Checkbox as AriaCheckbox, composeRenderProps, TextContext } from "react-aria-components";
 import { FieldContext } from "../field/index.ts";
 import { checkboxCardVariants } from "./checkbox-card.variants.ts";
 import { useCheckboxCardsContext } from "./checkbox.context.ts";
@@ -37,16 +37,18 @@ export function CheckboxCard({
 				color: c,
 			}}
 		>
-			<AriaCheckbox
-				{...props}
-				className={composeRenderProps(className, cls =>
-					checkboxCardVariants({
-						variant: v,
-						size: s,
-						color: c,
-						class: cls,
-					}))}
-			/>
+			<TextContext value={null}>
+				<AriaCheckbox
+					{...props}
+					className={composeRenderProps(className, cls =>
+						checkboxCardVariants({
+							variant: v,
+							size: s,
+							color: c,
+							class: cls,
+						}))}
+				/>
+			</TextContext>
 		</FieldContext>
 	);
 }
