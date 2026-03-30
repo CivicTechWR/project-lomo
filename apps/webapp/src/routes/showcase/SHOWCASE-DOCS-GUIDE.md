@@ -583,8 +583,8 @@ Work through these one at a time. After each, run `bun run lint:fix` and `bun ru
 
 - [x] Create `-doc-components.tsx` (shared doc components)
 - [x] Button (reference implementation)
-- [ ] Badge
-- [ ] Card
+- [x] Badge
+- [x] Card
 - [ ] Text
 - [ ] Heading
 - [ ] Link
