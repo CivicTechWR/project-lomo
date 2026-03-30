@@ -5,6 +5,7 @@ import {
 	Description,
 	FieldError,
 	Label,
+	Text,
 } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
@@ -27,6 +28,8 @@ const CHECKBOX_PROPS = [
 
 function CheckboxPage() {
 	const [groupValue, setGroupValue] = useState<string[]>([]);
+	const [singleChecked, setSingleChecked] = useState(true);
+	const [groupSelected, setGroupSelected] = useState<string[]>(["email", "digest"]);
 
 	return (
 		<div className="flex flex-col gap-10">
@@ -36,8 +39,29 @@ function CheckboxPage() {
 			/>
 
 			<Playground
-				componentName="Checkbox"
-				childrenLabel={"<CheckboxIndicator />\n  Remember my preferences"}
+				componentName={values => values.grouped ? "CheckboxGroup" : "Checkbox"}
+				childrenLabel={(values) => {
+					if (values.grouped) {
+						return [
+							"<Label>How would you like to be notified?</Label>",
+							"<Checkbox value=\"email\">",
+							"  <CheckboxIndicator />",
+							"  Email when someone responds to my request",
+							"</Checkbox>",
+							"<Checkbox value=\"sms\">",
+							"  <CheckboxIndicator />",
+							"  SMS for urgent matches nearby",
+							"</Checkbox>",
+							"<Checkbox value=\"digest\">",
+							"  <CheckboxIndicator />",
+							"  Weekly digest of community activity",
+							"</Checkbox>",
+							"<Description>You can change these anytime in your settings.</Description>",
+						].join("\n  ");
+					}
+					return "<CheckboxIndicator />\n  Remember my preferences";
+				}}
+				snippetExclude={["grouped"]}
 				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, isIndeterminate: false, grouped: false }}
 				controls={[
 					{ name: "variant", type: "segment", options: VARIANTS },
@@ -47,6 +71,27 @@ function CheckboxPage() {
 					{ name: "isIndeterminate", type: "toggle" },
 					{ name: "grouped", type: "toggle" },
 				]}
+				footer={values => (
+					<Text size={1} color="gray">
+						<code className="font-mono">
+							{values.grouped
+								? `Selected: ${JSON.stringify(groupSelected)}`
+								: `State: ${singleChecked}`}
+						</code>
+					</Text>
+				)}
+				snippetPrefix={(values) => {
+					if (values.grouped) {
+						return "const [selected, setSelected] = useState([\"email\", \"digest\"]);";
+					}
+					return "const [checked, setChecked] = useState(true);";
+				}}
+				snippetExtraProps={(values) => {
+					if (values.grouped) {
+						return ["value={selected}", "onChange={setSelected}"];
+					}
+					return ["isSelected={checked}", "onChange={setChecked}"];
+				}}
 			>
 				{(props) => {
 					const v = props.variant as "surface" | "classic";
@@ -58,9 +103,9 @@ function CheckboxPage() {
 					if (props.grouped) {
 						return (
 							<div className="w-full max-w-sm">
-								<CheckboxGroup variant={v} size={s} color={c}>
+								<CheckboxGroup variant={v} size={s} color={c} value={groupSelected} onChange={setGroupSelected}>
 									<Label>How would you like to be notified?</Label>
-									<Checkbox value="email" defaultSelected isDisabled={disabled} isIndeterminate={indeterminate}>
+									<Checkbox value="email" isDisabled={disabled} isIndeterminate={indeterminate}>
 										<CheckboxIndicator />
 										Email when someone responds to my request
 									</Checkbox>
@@ -68,7 +113,7 @@ function CheckboxPage() {
 										<CheckboxIndicator />
 										SMS for urgent matches nearby
 									</Checkbox>
-									<Checkbox value="digest" defaultSelected isDisabled={disabled} isIndeterminate={indeterminate}>
+									<Checkbox value="digest" isDisabled={disabled} isIndeterminate={indeterminate}>
 										<CheckboxIndicator />
 										Weekly digest of community activity
 									</Checkbox>
@@ -85,7 +130,8 @@ function CheckboxPage() {
 							color={c}
 							isDisabled={disabled}
 							isIndeterminate={indeterminate}
-							defaultSelected
+							isSelected={singleChecked}
+							onChange={setSingleChecked}
 						>
 							<CheckboxIndicator />
 							Remember my preferences

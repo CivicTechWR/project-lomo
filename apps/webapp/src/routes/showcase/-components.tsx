@@ -125,11 +125,15 @@ interface ToggleControl {
 type PlaygroundControl = SegmentControl | ToggleControl;
 
 interface PlaygroundProps {
-	componentName: string;
+	componentName: string | ((values: Record<string, string | number | boolean>) => string);
 	childrenLabel: string | ((values: Record<string, string | number | boolean>) => string);
 	controls: PlaygroundControl[];
 	defaults: Record<string, string | number | boolean>;
 	children: (props: Record<string, string | number | boolean>) => React.ReactNode;
+	snippetExclude?: string[];
+	footer?: React.ReactNode | ((values: Record<string, string | number | boolean>) => React.ReactNode);
+	snippetPrefix?: string | ((values: Record<string, string | number | boolean>) => string);
+	snippetExtraProps?: string[] | ((values: Record<string, string | number | boolean>) => string[]);
 }
 
 function formatCodeSnippet(
@@ -137,16 +141,21 @@ function formatCodeSnippet(
 	values: Record<string, string | number | boolean>,
 	defaults: Record<string, string | number | boolean>,
 	childrenLabel: string,
+	exclude: string[] = [],
+	extraProps: string[] = [],
 ): string {
-	const propEntries = Object.entries(values)
-		.filter(([key, value]) => value !== defaults[key])
-		.map(([key, value]) => {
-			if (typeof value === "boolean")
-				return value ? key : `${key}={false}`;
-			if (typeof value === "number")
-				return `${key}={${value}}`;
-			return `${key}="${value}"`;
-		});
+	const propEntries = [
+		...Object.entries(values)
+			.filter(([key, value]) => !exclude.includes(key) && value !== defaults[key])
+			.map(([key, value]) => {
+				if (typeof value === "boolean")
+					return value ? key : `${key}={false}`;
+				if (typeof value === "number")
+					return `${key}={${value}}`;
+				return `${key}="${value}"`;
+			}),
+		...extraProps,
+	];
 
 	if (propEntries.length === 0) {
 		return `<${componentName}>\n  ${childrenLabel}\n</${componentName}>`;
@@ -168,6 +177,10 @@ export function Playground({
 	controls,
 	defaults,
 	children,
+	snippetExclude,
+	footer,
+	snippetPrefix,
+	snippetExtraProps,
 }: PlaygroundProps) {
 	const [values, setValues] = useState<Record<string, string | number | boolean>>({ ...defaults });
 
@@ -175,8 +188,13 @@ export function Playground({
 		setValues(prev => ({ ...prev, [name]: value }));
 	}
 
+	const resolvedName = typeof componentName === "function" ? componentName(values) : componentName;
 	const resolvedLabel = typeof childrenLabel === "function" ? childrenLabel(values) : childrenLabel;
-	const snippet = formatCodeSnippet(componentName, values, defaults, resolvedLabel);
+	const resolvedExtraProps = typeof snippetExtraProps === "function" ? snippetExtraProps(values) : snippetExtraProps ?? [];
+	const resolvedPrefix = typeof snippetPrefix === "function" ? snippetPrefix(values) : snippetPrefix;
+	const resolvedFooter = typeof footer === "function" ? footer(values) : footer;
+	const rawSnippet = formatCodeSnippet(resolvedName, values, defaults, resolvedLabel, snippetExclude, resolvedExtraProps);
+	const snippet = resolvedPrefix ? `${resolvedPrefix}\n\n${rawSnippet}` : rawSnippet;
 
 	return (
 		<section className="flex flex-col gap-4">
@@ -187,6 +205,8 @@ export function Playground({
 			<div className="flex min-h-28 items-center justify-center rounded-lg border border-gray-6 bg-gray-2 p-8">
 				{children(values)}
 			</div>
+
+			{resolvedFooter}
 
 			<div className="flex flex-wrap gap-x-6 gap-y-4">
 				{controls.map(control =>

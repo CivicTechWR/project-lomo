@@ -6,6 +6,7 @@ import {
 	Text,
 } from "@repo/ui";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { DemoSection, PageHeader, Playground, PropTable } from "./-components";
 
@@ -62,6 +63,9 @@ const HELP_CATEGORIES = [
 ];
 
 function CheckboxCardPage() {
+	const [singleChecked, setSingleChecked] = useState(true);
+	const [groupSelected, setGroupSelected] = useState<string[]>(["housing", "food"]);
+
 	return (
 		<div className="flex flex-col gap-10">
 			<PageHeader
@@ -70,8 +74,33 @@ function CheckboxCardPage() {
 			/>
 
 			<Playground
-				componentName="CheckboxCard"
-				childrenLabel={"<Text weight=\"medium\">Housing</Text>\n  <Text size={1} color=\"gray\">Shelter, rent assistance, ...</Text>"}
+				componentName={values => values.grouped ? "CheckboxCardGroup" : "CheckboxCard"}
+				childrenLabel={(values) => {
+					if (values.grouped) {
+						return [
+							"<Label>What kind of support are you looking for?</Label>",
+							"<div className=\"mt-2 grid grid-cols-3 gap-3\">",
+							"  <CheckboxCard value=\"housing\">",
+							"    <section className=\"flex flex-col gap-1\">",
+							"      <Text weight=\"medium\">Housing</Text>",
+							"      <Text size={1} color=\"gray\">Shelter, rent assistance, ...</Text>",
+							"    </section>",
+							"  </CheckboxCard>",
+							"  {/* ... more cards */}",
+							"</div>",
+						].join("\n  ");
+					}
+					return [
+						"<section className=\"flex items-start gap-3\">",
+						"  <CheckboxIndicator />",
+						"  <div className=\"flex flex-col gap-1\">",
+						"    <Text weight=\"medium\">Housing</Text>",
+						"    <Text size={1} color=\"gray\">Shelter, rent assistance, ...</Text>",
+						"  </div>",
+						"</section>",
+					].join("\n  ");
+				}}
+				snippetExclude={["grouped"]}
 				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, grouped: false }}
 				controls={[
 					{ name: "variant", type: "segment", options: VARIANTS },
@@ -80,6 +109,27 @@ function CheckboxCardPage() {
 					{ name: "isDisabled", type: "toggle" },
 					{ name: "grouped", type: "toggle" },
 				]}
+				footer={values => (
+					<Text size={1} color="gray">
+						<code className="font-mono">
+							{values.grouped
+								? `Selected: ${JSON.stringify(groupSelected)}`
+								: `State: ${singleChecked}`}
+						</code>
+					</Text>
+				)}
+				snippetPrefix={(values) => {
+					if (values.grouped) {
+						return "const [selected, setSelected] = useState([\"housing\", \"food\"]);";
+					}
+					return "const [checked, setChecked] = useState(true);";
+				}}
+				snippetExtraProps={(values) => {
+					if (values.grouped) {
+						return ["value={selected}", "onChange={setSelected}"];
+					}
+					return ["isSelected={checked}", "onChange={setChecked}"];
+				}}
 			>
 				{(props) => {
 					const v = props.variant as "surface" | "classic";
@@ -90,7 +140,7 @@ function CheckboxCardPage() {
 					if (props.grouped) {
 						return (
 							<div className="w-full">
-								<CheckboxCardGroup variant={v} size={s} color={c}>
+								<CheckboxCardGroup variant={v} size={s} color={c} value={groupSelected} onChange={setGroupSelected}>
 									<Label>What kind of support are you looking for?</Label>
 									<div className="mt-2 grid grid-cols-3 gap-3">
 										{HELP_CATEGORIES.slice(0, 6).map(cat => (
@@ -98,7 +148,6 @@ function CheckboxCardPage() {
 												key={cat.value}
 												value={cat.value}
 												isDisabled={disabled}
-												defaultSelected={cat.value === "housing" || cat.value === "food"}
 											>
 												<section className="flex flex-col gap-1">
 													<div className="flex items-center gap-2">
@@ -121,7 +170,8 @@ function CheckboxCardPage() {
 							size={s}
 							color={c}
 							isDisabled={disabled}
-							defaultSelected
+							isSelected={singleChecked}
+							onChange={setSingleChecked}
 							value="housing"
 							className="w-full max-w-xs"
 						>
