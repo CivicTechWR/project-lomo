@@ -8,6 +8,7 @@
 		"./badge": "./src/badge/index.ts",
 		"./button": "./src/button/index.ts",
 		"./card": "./src/card/index.ts",
+		"./checkbox": "./src/checkbox/index.ts",
 		"./text": "./src/text/index.ts",
 		"./heading": "./src/heading/index.ts",
 		"./link": "./src/link/index.ts",

@@ -1,4 +1,4 @@
-import { Badge, Button, Card, DialogTrigger, Group, Heading, Input, Label, Modal, ModalOverlay, Text, TextField, Link as UILink } from "@repo/ui";
+import { Badge, Button, Card, Checkbox, CheckboxIndicator, DialogTrigger, Group, Heading, Input, Label, Modal, ModalOverlay, Text, TextField, Link as UILink } from "@repo/ui";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const COMPONENT_CARDS = [
@@ -36,6 +36,23 @@ const COMPONENT_CARDS = [
 				<Card size={1} variant="surface"><Text size={1}>Surface</Text></Card>
 				<Card size={1} variant="classic"><Text size={1}>Classic</Text></Card>
 				<Card size={1} variant="ghost" color="terracotta"><Text size={1}>Ghost</Text></Card>
+			</div>
+		),
+	},
+	{
+		name: "Checkbox",
+		description: "Toggleable selection control with composable indicator.",
+		to: "/showcase/checkbox",
+		preview: (
+			<div className="flex flex-col gap-2">
+				<Checkbox defaultSelected color="terracotta">
+					<CheckboxIndicator />
+					Selected
+				</Checkbox>
+				<Checkbox color="sage">
+					<CheckboxIndicator />
+					Unchecked
+				</Checkbox>
 			</div>
 		),
 	},
