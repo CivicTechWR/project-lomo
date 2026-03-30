@@ -585,7 +585,7 @@ Work through these one at a time. After each, run `bun run lint:fix` and `bun ru
 - [x] Button (reference implementation)
 - [x] Badge
 - [x] Card
-- [ ] Text
+- [x] Text
 - [ ] Heading
 - [ ] Link
 - [ ] Checkbox
