@@ -46,15 +46,34 @@ These are not yet decided. Do not introduce them without explicit instruction:
 
 ## External References
 
-The [Radix UI Themes](https://github.com/radix-ui/themes) repo is used as a design reference. If cloned locally, place it at `~/refs/themes` — when present, prefer this over fetching from the internet.
+Two reference repos are cloned locally. Always prefer reading these over fetching from the internet.
 
-The [React Aria components](https://github.com/adobe/react-spectrum) repo is used as building blocks for our shared UI for web. If cloned locally, place it at `~/refs/react-spectrum` — when present, prefer this over fetching from the internet.
+### Radix UI Themes — design reference
 
-This is a **reference, not a source of truth**. Our component behavior and accessibility come from react-aria-components. What we reference from Radix Themes:
+- **Repo:** [radix-ui/themes](https://github.com/radix-ui/themes)
+- **Local path:** `~/refs/themes`
+- **Role:** Visual design patterns only — we do not depend on Radix at runtime.
+
+What we reference:
 
 - **Color scale semantics** — which of the 12 steps to use for backgrounds, borders, solid fills, text
 - **Component variant naming** — e.g., solid/soft/outline/ghost styles
 - **Token scales** — the structure of radius, typography, and spacing ramps
 - **Prop conventions** — numeric size scales, color-as-prop pattern
 
-Consult it when adding new components or extending the design token system. For how components are built (props, composition, accessibility), follow react-aria-components and this package's own conventions.
+Consult when adding new components or extending the design token system.
+
+### React Spectrum — component reference
+
+- **Repo:** [adobe/react-spectrum](https://github.com/adobe/react-spectrum) (includes React Aria, React Stately, and React Aria Components)
+- **Local path:** `~/refs/react-spectrum`
+- **Role:** We depend on the `react-aria-components` npm package at runtime for accessible primitives. The repo is a reference for understanding internals, composition patterns, and context architecture.
+
+What we reference:
+
+- **Component composition** — how primitives are composed (slots, render props, context providers)
+- **Context patterns** — how group components pass state and style to children
+- **Accessibility** — ARIA roles, keyboard navigation, focus management
+- **Architecture patterns** — separation of concerns (e.g., layout vs semantics, hooks vs components)
+
+For how our components are built (props, styling, variants), follow `@repo/ui`'s own conventions in `packages/ui/AGENTS.md`. React Aria Components provides the accessible foundation; Radix Themes informs the visual design language.
