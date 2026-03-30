@@ -61,7 +61,7 @@ const COMPONENT_CARDS = [
 		description: "Card-style selection control for multi-option grids.",
 		to: "/showcase/checkbox-card",
 		preview: (
-			<CheckboxCardGroup color="sage" columns="repeat(2, 1fr)" className="w-full">
+			<CheckboxCardGroup color="sage" className="grid w-full grid-cols-2 gap-2">
 				<CheckboxCard value="a" defaultSelected>
 					<Text size={1} weight="medium">Selected</Text>
 				</CheckboxCard>

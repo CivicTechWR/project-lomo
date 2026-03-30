@@ -37,7 +37,7 @@ function CheckboxPage() {
 
 			<Playground
 				componentName="Checkbox"
-				childrenLabel={"<CheckboxIndicator />\n  Checkbox"}
+				childrenLabel={"<CheckboxIndicator />\n  Remember my preferences"}
 				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, isIndeterminate: false, grouped: false }}
 				controls={[
 					{ name: "variant", type: "segment", options: VARIANTS },
@@ -49,37 +49,48 @@ function CheckboxPage() {
 				]}
 			>
 				{(props) => {
-					const checkbox = (label: string, value?: string) => (
-						<Checkbox
-							variant={props.variant as "surface" | "classic"}
-							size={props.size as 1 | 2 | 3}
-							color={props.color as any}
-							isDisabled={props.isDisabled as boolean}
-							isIndeterminate={props.isIndeterminate as boolean}
-							defaultSelected
-							value={value}
-						>
-							<CheckboxIndicator />
-							{label}
-						</Checkbox>
-					);
+					const v = props.variant as "surface" | "classic";
+					const s = props.size as 1 | 2 | 3;
+					const c = props.color as any;
+					const disabled = props.isDisabled as boolean;
+					const indeterminate = props.isIndeterminate as boolean;
 
 					if (props.grouped) {
 						return (
-							<CheckboxGroup
-								variant={props.variant as "surface" | "classic"}
-								size={props.size as 1 | 2 | 3}
-								color={props.color as any}
-							>
-								<Label>Group label</Label>
-								{checkbox("Option A", "a")}
-								{checkbox("Option B", "b")}
-								{checkbox("Option C", "c")}
-							</CheckboxGroup>
+							<div className="w-full max-w-sm">
+								<CheckboxGroup variant={v} size={s} color={c}>
+									<Label>How would you like to be notified?</Label>
+									<Checkbox value="email" defaultSelected isDisabled={disabled} isIndeterminate={indeterminate}>
+										<CheckboxIndicator />
+										Email when someone responds to my request
+									</Checkbox>
+									<Checkbox value="sms" isDisabled={disabled} isIndeterminate={indeterminate}>
+										<CheckboxIndicator />
+										SMS for urgent matches nearby
+									</Checkbox>
+									<Checkbox value="digest" defaultSelected isDisabled={disabled} isIndeterminate={indeterminate}>
+										<CheckboxIndicator />
+										Weekly digest of community activity
+									</Checkbox>
+									<Description>You can change these anytime in your settings.</Description>
+								</CheckboxGroup>
+							</div>
 						);
 					}
 
-					return checkbox("Checkbox");
+					return (
+						<Checkbox
+							variant={v}
+							size={s}
+							color={c}
+							isDisabled={disabled}
+							isIndeterminate={indeterminate}
+							defaultSelected
+						>
+							<CheckboxIndicator />
+							Remember my preferences
+						</Checkbox>
+					);
 				}}
 			</Playground>
 

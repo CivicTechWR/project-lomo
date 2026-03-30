@@ -33,6 +33,7 @@ src/
 6. **Focus rings:** Color-matched step 8, 2px width, 2px offset
 7. **className merging:** Consumer `className` always wins via tv()'s built-in tailwind-merge
 8. **`tw()` for IntelliSense:** Wrap Tailwind class strings in `tw()` when they appear outside of `tv()` or `cn()` calls (e.g., in variant fragment files). It's an identity function that enables Tailwind IntelliSense via `classRegex`. See `.vscode/README.md` for details.
+9. **No inline styles for layout:** Components must not accept props that apply inline styles for layout (e.g., `columns`, `gridTemplateColumns`). Layout is the consumer's responsibility via `className` and Tailwind utilities. Inline styles are a last resort, reserved for truly dynamic values that cannot be expressed as utility classes.
 
 ## Radius System
 

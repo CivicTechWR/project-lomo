@@ -1,6 +1,7 @@
 import {
 	CheckboxCard,
 	CheckboxCardGroup,
+	CheckboxIndicator,
 	Label,
 	Text,
 } from "@repo/ui";
@@ -21,6 +22,45 @@ const CHECKBOX_CARD_PROPS = [
 	{ name: "value", type: "string", default: "undefined" },
 ];
 
+const HELP_CATEGORIES = [
+	{
+		value: "housing",
+		label: "Housing",
+		description: "Shelter, rent assistance, or finding a place to stay",
+		icon: "\u{1F3E0}",
+	},
+	{
+		value: "food",
+		label: "Food & Meals",
+		description: "Food banks, community kitchens, and meal programs",
+		icon: "\u{1F96A}",
+	},
+	{
+		value: "transport",
+		label: "Getting Around",
+		description: "Bus passes, rides to appointments, or route planning",
+		icon: "\u{1F68C}",
+	},
+	{
+		value: "legal",
+		label: "Legal Aid",
+		description: "Free consultations, tenant rights, and immigration help",
+		icon: "\u{2696}\u{FE0F}",
+	},
+	{
+		value: "health",
+		label: "Health & Wellness",
+		description: "Clinics, mental health support, and harm reduction",
+		icon: "\u{1FA7A}",
+	},
+	{
+		value: "employment",
+		label: "Employment",
+		description: "Job search, resume help, and skills training",
+		icon: "\u{1F4BC}",
+	},
+];
+
 function CheckboxCardPage() {
 	return (
 		<div className="flex flex-col gap-10">
@@ -31,7 +71,7 @@ function CheckboxCardPage() {
 
 			<Playground
 				componentName="CheckboxCard"
-				childrenLabel={"<Text weight=\"medium\">Option</Text>"}
+				childrenLabel={"<Text weight=\"medium\">Housing</Text>\n  <Text size={1} color=\"gray\">Shelter, rent assistance, ...</Text>"}
 				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, grouped: false }}
 				controls={[
 					{ name: "variant", type: "segment", options: VARIANTS },
@@ -42,36 +82,58 @@ function CheckboxCardPage() {
 				]}
 			>
 				{(props) => {
-					const card = (label: string, value: string, selected?: boolean) => (
-						<CheckboxCard
-							variant={props.variant as "surface" | "classic"}
-							size={props.size as 1 | 2 | 3}
-							color={props.color as any}
-							isDisabled={props.isDisabled as boolean}
-							defaultSelected={selected}
-							value={value}
-						>
-							<Text weight="medium">{label}</Text>
-						</CheckboxCard>
-					);
+					const v = props.variant as "surface" | "classic";
+					const s = props.size as 1 | 2 | 3;
+					const c = props.color as any;
+					const disabled = props.isDisabled as boolean;
 
 					if (props.grouped) {
 						return (
-							<CheckboxCardGroup
-								variant={props.variant as "surface" | "classic"}
-								size={props.size as 1 | 2 | 3}
-								color={props.color as any}
-								columns="repeat(3, 1fr)"
-							>
-								<Label>Choose categories</Label>
-								{card("Housing", "housing", true)}
-								{card("Food", "food")}
-								{card("Transport", "transport")}
-							</CheckboxCardGroup>
+							<div className="w-full">
+								<CheckboxCardGroup variant={v} size={s} color={c}>
+									<Label>What kind of support are you looking for?</Label>
+									<div className="mt-2 grid grid-cols-3 gap-3">
+										{HELP_CATEGORIES.slice(0, 6).map(cat => (
+											<CheckboxCard
+												key={cat.value}
+												value={cat.value}
+												isDisabled={disabled}
+												defaultSelected={cat.value === "housing" || cat.value === "food"}
+											>
+												<section className="flex flex-col gap-1">
+													<div className="flex items-center gap-2">
+														<span className="text-[length:var(--text-3)]">{cat.icon}</span>
+														<Text weight="medium">{cat.label}</Text>
+													</div>
+													<Text size={1} color="gray">{cat.description}</Text>
+												</section>
+											</CheckboxCard>
+										))}
+									</div>
+								</CheckboxCardGroup>
+							</div>
 						);
 					}
 
-					return card("Option", "demo", true);
+					return (
+						<CheckboxCard
+							variant={v}
+							size={s}
+							color={c}
+							isDisabled={disabled}
+							defaultSelected
+							value="housing"
+							className="w-full max-w-xs"
+						>
+							<section className="flex items-start gap-3">
+								<CheckboxIndicator />
+								<div className="flex flex-col gap-1">
+									<Text weight="medium">Housing</Text>
+									<Text size={1} color="gray">Shelter, rent assistance, or finding a place to stay</Text>
+								</div>
+							</section>
+						</CheckboxCard>
+					);
 				}}
 			</Playground>
 
@@ -82,7 +144,10 @@ function CheckboxCardPage() {
 				<div className="grid grid-cols-2 gap-3">
 					{VARIANTS.map(variant => (
 						<CheckboxCard key={variant} variant={variant} defaultSelected value={variant}>
-							<Text weight="medium">{variant.charAt(0).toUpperCase() + variant.slice(1)}</Text>
+							<section className="flex flex-col gap-1">
+								<Text weight="medium">{variant.charAt(0).toUpperCase() + variant.slice(1)}</Text>
+								<Text size={1} color="gray">Card variant style</Text>
+							</section>
 						</CheckboxCard>
 					))}
 				</div>
@@ -127,42 +192,36 @@ function CheckboxCardPage() {
 			</DemoSection>
 
 			{/* ── CheckboxCardGroup ── */}
-			<DemoSection title="CheckboxCardGroup" description="Grid layout group with label and responsive columns.">
+			<DemoSection title="CheckboxCardGroup" description="Semantic group with consumer-owned grid layout.">
 				<div className="flex flex-col gap-6">
-					<CheckboxCardGroup variant="surface" color="terracotta" columns="repeat(3, 1fr)">
-						<Label>What kind of help are you looking for?</Label>
-						<CheckboxCard value="housing">
-							<section className="flex flex-col gap-2">
-								<Text weight="medium">Housing</Text>
-								<Text size={1} color="gray">Find housing support</Text>
-							</section>
-						</CheckboxCard>
-						<CheckboxCard value="food">
-							<section className="flex flex-col gap-2">
-								<Text weight="medium">Food</Text>
-								<Text size={1} color="gray">Food bank access</Text>
-							</section>
-						</CheckboxCard>
-						<CheckboxCard value="transport">
-							<section className="flex flex-col gap-2">
-								<Text weight="medium">Transport</Text>
-								<Text size={1} color="gray">Transit assistance</Text>
-							</section>
-						</CheckboxCard>
+					<CheckboxCardGroup color="sage">
+						<Label>What kind of support are you looking for?</Label>
+						<div className="mt-2 grid grid-cols-3 gap-3">
+							{HELP_CATEGORIES.map(cat => (
+								<CheckboxCard key={cat.value} value={cat.value}>
+									<section className="flex flex-col gap-1">
+										<div className="flex items-center gap-2">
+											<span className="text-[length:var(--text-3)]">{cat.icon}</span>
+											<Text weight="medium">{cat.label}</Text>
+										</div>
+										<Text size={1} color="gray">{cat.description}</Text>
+									</section>
+								</CheckboxCard>
+							))}
+						</div>
 					</CheckboxCardGroup>
 
 					<Text size={2} weight="medium" color="gray">Card variants:</Text>
 					{VARIANTS.map(variant => (
-						<CheckboxCardGroup key={variant} variant={variant} color="sage" columns="repeat(3, 1fr)">
-							<CheckboxCard value="a">
-								<Text weight="medium">{variant.charAt(0).toUpperCase() + variant.slice(1)}</Text>
-							</CheckboxCard>
-							<CheckboxCard value="b" defaultSelected>
-								<Text weight="medium">Selected</Text>
-							</CheckboxCard>
-							<CheckboxCard value="c">
-								<Text weight="medium">Option C</Text>
-							</CheckboxCard>
+						<CheckboxCardGroup key={variant} variant={variant} color="terracotta" className="grid grid-cols-3 gap-3">
+							{HELP_CATEGORIES.slice(0, 3).map((cat, i) => (
+								<CheckboxCard key={cat.value} value={cat.value} defaultSelected={i === 0}>
+									<div className="flex items-center gap-2">
+										<span>{cat.icon}</span>
+										<Text weight="medium">{cat.label}</Text>
+									</div>
+								</CheckboxCard>
+							))}
 						</CheckboxCardGroup>
 					))}
 				</div>

@@ -1,51 +1,26 @@
 import type { CheckboxGroupProps as AriaCheckboxGroupProps } from "react-aria-components";
 import type { Colors } from "../theme/types.ts";
-import { CheckboxGroup as AriaCheckboxGroup, composeRenderProps } from "react-aria-components";
-import { tv } from "tailwind-variants";
+import { CheckboxGroup as AriaCheckboxGroup } from "react-aria-components";
 import { FieldContext } from "../field/index.ts";
-import { tw } from "../utils/tw.ts";
-import { fieldGaps } from "../variants/index.ts";
 import { CheckboxGroupStyleContext } from "./checkbox.context.ts";
-
-const checkboxCardGroupVariants = tv({
-	base: tw("grid"),
-	variants: {
-		size: fieldGaps,
-	},
-	defaultVariants: {
-		size: 2,
-	},
-});
 
 export type CheckboxCardGroupProps = AriaCheckboxGroupProps & {
 	variant?: "surface" | "classic";
 	size?: 1 | 2 | 3;
 	color?: Colors;
-	columns?: string;
 };
 
 export function CheckboxCardGroup({
 	variant = "surface",
 	size = 2,
 	color = "terracotta",
-	columns,
 	className,
-	style,
 	...props
 }: CheckboxCardGroupProps) {
 	return (
 		<CheckboxGroupStyleContext value={{ variant, size, color }}>
 			<FieldContext value={{ variant: "surface", size, color }}>
-				<AriaCheckboxGroup
-					{...props}
-					style={{
-						gridTemplateColumns:
-							columns ?? "repeat(auto-fit, minmax(200px, 1fr))",
-						...style,
-					}}
-					className={composeRenderProps(className, cls =>
-						checkboxCardGroupVariants({ size, class: cls }))}
-				/>
+				<AriaCheckboxGroup {...props} className={className} />
 			</FieldContext>
 		</CheckboxGroupStyleContext>
 	);

@@ -15,17 +15,17 @@ export const checkboxIndicatorVariants = tv({
 			1: tw(
 				"size-3.5",
 				"[&>svg]:size-2.5",
-				"rounded-[var(--radius-1)]",
+				"rounded-[min(var(--radius-1),5px)]",
 			),
 			2: tw(
 				"size-4",
 				"[&>svg]:size-3",
-				"rounded-[var(--radius-1)]",
+				"rounded-[min(var(--radius-1),6px)]",
 			),
 			3: tw(
 				"size-5",
 				"[&>svg]:size-3.5",
-				"rounded-[var(--radius-1)]",
+				"rounded-[min(var(--radius-1),8px)]",
 			),
 		},
 		color: {
