@@ -42,3 +42,38 @@ These are not yet decided. Do not introduce them without explicit instruction:
 - OpenAPI documentation generator: drf-spectacular vs drf-yasg
 - Frontend hosting: Vercel vs Cloudflare vs Railway
 - Python linter/formatter: not yet chosen
+
+
+## External References
+
+Two reference repos are cloned locally. Always prefer reading these over fetching from the internet.
+
+### Radix UI Themes — design reference
+
+- **Repo:** [radix-ui/themes](https://github.com/radix-ui/themes)
+- **Local path:** `~/refs/themes`
+- **Role:** Visual design patterns only — we do not depend on Radix at runtime.
+
+What we reference:
+
+- **Color scale semantics** — which of the 12 steps to use for backgrounds, borders, solid fills, text
+- **Component variant naming** — e.g., solid/soft/outline/ghost styles
+- **Token scales** — the structure of radius, typography, and spacing ramps
+- **Prop conventions** — numeric size scales, color-as-prop pattern
+
+Consult when adding new components or extending the design token system.
+
+### React Spectrum — component reference
+
+- **Repo:** [adobe/react-spectrum](https://github.com/adobe/react-spectrum) (includes React Aria, React Stately, and React Aria Components)
+- **Local path:** `~/refs/react-spectrum`
+- **Role:** We depend on the `react-aria-components` npm package at runtime for accessible primitives. The repo is a reference for understanding internals, composition patterns, and context architecture.
+
+What we reference:
+
+- **Component composition** — how primitives are composed (slots, render props, context providers)
+- **Context patterns** — how group components pass state and style to children
+- **Accessibility** — ARIA roles, keyboard navigation, focus management
+- **Architecture patterns** — separation of concerns (e.g., layout vs semantics, hooks vs components)
+
+For how our components are built (props, styling, variants), follow `@repo/ui`'s own conventions in `packages/ui/AGENTS.md`. React Aria Components provides the accessible foundation; Radix Themes informs the visual design language.

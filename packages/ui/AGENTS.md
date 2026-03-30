@@ -33,6 +33,7 @@ src/
 6. **Focus rings:** Color-matched step 8, 2px width, 2px offset
 7. **className merging:** Consumer `className` always wins via tv()'s built-in tailwind-merge
 8. **`tw()` for IntelliSense:** Wrap Tailwind class strings in `tw()` when they appear outside of `tv()` or `cn()` calls (e.g., in variant fragment files). It's an identity function that enables Tailwind IntelliSense via `classRegex`. See `.vscode/README.md` for details.
+9. **No inline styles for layout:** Components must not accept props that apply inline styles for layout (e.g., `columns`, `gridTemplateColumns`). Layout is the consumer's responsibility via `className` and Tailwind utilities. Inline styles are a last resort, reserved for truly dynamic values that cannot be expressed as utility classes.
 
 ## Radius System
 
@@ -108,19 +109,6 @@ Extend this pattern for any future multi-line field types that share the Group w
 ## Reference
 
 See [STYLING_API.md](./STYLING_API.md) for the full component authoring contract.
-
-## External References
-
-The [Radix UI Themes](https://github.com/radix-ui/themes) repo is used as a design reference. If cloned locally, place it at `~/refs/themes` — when present, prefer this over fetching from the internet.
-
-This is a **reference, not a source of truth**. Our component behavior and accessibility come from react-aria-components. What we reference from Radix Themes:
-
-- **Color scale semantics** — which of the 12 steps to use for backgrounds, borders, solid fills, text
-- **Component variant naming** — e.g., solid/soft/outline/ghost styles
-- **Token scales** — the structure of radius, typography, and spacing ramps
-- **Prop conventions** — numeric size scales, color-as-prop pattern
-
-Consult it when adding new components or extending the design token system. For how components are built (props, composition, accessibility), follow react-aria-components and this package's own conventions.
 
 ## Adding a Component to the Showcase
 

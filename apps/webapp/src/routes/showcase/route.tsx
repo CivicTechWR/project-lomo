@@ -40,6 +40,8 @@ const NAV_GROUPS = [
 			{ name: "Badge", to: "/showcase/badge" },
 			{ name: "Button", to: "/showcase/button" },
 			{ name: "Card", to: "/showcase/card" },
+			{ name: "Checkbox", to: "/showcase/checkbox" },
+			{ name: "Checkbox Card", to: "/showcase/checkbox-card" },
 			{ name: "Modal", to: "/showcase/modal" },
 			{ name: "TextField", to: "/showcase/text-field" },
 		],
@@ -106,8 +108,8 @@ function ThemePanel() {
 
 function ShowcaseLayout() {
 	return (
-		<div className="flex h-screen min-h-0">
-			<nav className="flex w-56 shrink-0 flex-col gap-6 overflow-y-auto border-r border-gray-6 bg-gray-1 px-4 py-6">
+		<div className="flex min-h-screen">
+			<nav className="sticky top-0 flex max-h-screen w-56 shrink-0 flex-col gap-6 overflow-y-auto border-r border-gray-6 bg-gray-1 px-4 py-6">
 				<Link to="/showcase" className="px-2">
 					<Heading level={4} size={3}>
 						Design System
@@ -134,7 +136,7 @@ function ShowcaseLayout() {
 				))}
 			</nav>
 
-			<main className="flex-1 overflow-y-auto bg-gray-1 p-8 lg:p-12">
+			<main className="flex-1 bg-gray-1 p-8 lg:p-12">
 				<div className="mx-auto max-w-3xl">
 					<Outlet />
 				</div>
