@@ -589,7 +589,7 @@ Work through these one at a time. After each, run `bun run lint:fix` and `bun ru
 - [x] Heading
 - [ ] Link
 - [x] Checkbox
-- [ ] Checkbox Card
+- [x] Checkbox Card
 - [ ] TextField (restructure existing, remove TextArea content)
 - [ ] TextArea (new page)
 - [ ] Modal
