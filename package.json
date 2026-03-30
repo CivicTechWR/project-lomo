@@ -45,11 +45,7 @@
 		"lint": "turbo run lint",
 		"lint:fix": "bun run --filter='*' lint:fix",
 		"build": "turbo run build",
-		"dev": "turbo run dev --ui=tui",
-		"dev:web": "bun --filter @repo/webapp dev",
-		"dev:stop": "bun --filter @repo/backend dev:stop",
-		"dev:logs": "bun --filter @repo/backend dev:logs",
-		"dev:reset": "bun --filter @repo/backend dev:reset"
+		"dev": "turbo run dev --ui=tui"
 	},
 	"civictechwr": {
 		"template_version": "1.0.0",
