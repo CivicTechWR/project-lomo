@@ -1,5 +1,6 @@
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
+import { CHECKBOX_DEFAULTS } from "./checkbox.context.ts";
 
 export const checkboxIndicatorVariants = tv({
 	base: tw(
@@ -32,26 +33,32 @@ export const checkboxIndicatorVariants = tv({
 			terracotta: tw(
 				"group-data-selected:bg-terracotta-9 group-data-selected:text-white group-data-selected:shadow-none",
 				"group-data-indeterminate:bg-terracotta-9 group-data-indeterminate:text-white group-data-indeterminate:shadow-none",
+				"group-data-focus-visible:ring-2 group-data-focus-visible:ring-offset-2 group-data-focus-visible:ring-terracotta-8",
 			),
 			sage: tw(
 				"group-data-selected:bg-sage-9 group-data-selected:text-white group-data-selected:shadow-none",
 				"group-data-indeterminate:bg-sage-9 group-data-indeterminate:text-white group-data-indeterminate:shadow-none",
+				"group-data-focus-visible:ring-2 group-data-focus-visible:ring-offset-2 group-data-focus-visible:ring-sage-8",
 			),
 			yellow: tw(
 				"group-data-selected:bg-yellow-9 group-data-selected:text-[var(--yellow-contrast)] group-data-selected:shadow-none",
 				"group-data-indeterminate:bg-yellow-9 group-data-indeterminate:text-[var(--yellow-contrast)] group-data-indeterminate:shadow-none",
+				"group-data-focus-visible:ring-2 group-data-focus-visible:ring-offset-2 group-data-focus-visible:ring-yellow-8",
 			),
 			gray: tw(
 				"group-data-selected:bg-gray-9 group-data-selected:text-white group-data-selected:shadow-none",
 				"group-data-indeterminate:bg-gray-9 group-data-indeterminate:text-white group-data-indeterminate:shadow-none",
+				"group-data-focus-visible:ring-2 group-data-focus-visible:ring-offset-2 group-data-focus-visible:ring-gray-8",
 			),
 			red: tw(
 				"group-data-selected:bg-red-9 group-data-selected:text-white group-data-selected:shadow-none",
 				"group-data-indeterminate:bg-red-9 group-data-indeterminate:text-white group-data-indeterminate:shadow-none",
+				"group-data-focus-visible:ring-2 group-data-focus-visible:ring-offset-2 group-data-focus-visible:ring-red-8",
 			),
 			amber: tw(
 				"group-data-selected:bg-amber-9 group-data-selected:text-[var(--amber-contrast)] group-data-selected:shadow-none",
 				"group-data-indeterminate:bg-amber-9 group-data-indeterminate:text-[var(--amber-contrast)] group-data-indeterminate:shadow-none",
+				"group-data-focus-visible:ring-2 group-data-focus-visible:ring-offset-2 group-data-focus-visible:ring-amber-8",
 			),
 		},
 	},
@@ -68,8 +75,8 @@ export const checkboxIndicatorVariants = tv({
 		{ variant: "classic", class: tw("bg-gray-2 shadow-sm") },
 	],
 	defaultVariants: {
-		variant: "surface",
-		size: 2,
-		color: "terracotta",
+		variant: CHECKBOX_DEFAULTS.variant,
+		size: CHECKBOX_DEFAULTS.size,
+		color: CHECKBOX_DEFAULTS.color,
 	},
 });

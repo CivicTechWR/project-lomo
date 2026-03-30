@@ -1,5 +1,6 @@
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
+import { CHECKBOX_DEFAULTS } from "./checkbox.context.ts";
 
 export const checkboxVariants = tv({
 	base: tw(
@@ -8,6 +9,10 @@ export const checkboxVariants = tv({
 		"data-disabled:opacity-50 data-disabled:cursor-not-allowed",
 	),
 	variants: {
+		variant: {
+			surface: "",
+			classic: "",
+		},
 		size: {
 			1: tw(
 				"gap-1.5",
@@ -25,8 +30,18 @@ export const checkboxVariants = tv({
 				"leading-[var(--text-3--line-height)]",
 			),
 		},
+		color: {
+			terracotta: "",
+			sage: "",
+			yellow: "",
+			gray: "",
+			red: "",
+			amber: "",
+		},
 	},
 	defaultVariants: {
-		size: 2,
+		variant: CHECKBOX_DEFAULTS.variant,
+		size: CHECKBOX_DEFAULTS.size,
+		color: CHECKBOX_DEFAULTS.color,
 	},
 });

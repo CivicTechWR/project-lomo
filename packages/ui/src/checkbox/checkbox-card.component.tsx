@@ -1,15 +1,12 @@
 import type { CheckboxProps as AriaCheckboxProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
-import type { Colors } from "../theme/types.ts";
 import { Checkbox as AriaCheckbox, composeRenderProps, TextContext } from "react-aria-components";
 import { FieldContext } from "../field/index.ts";
 import { checkboxCardVariants } from "./checkbox-card.variants.ts";
-import { useCheckboxGroupStyleContext } from "./checkbox.context.ts";
+import { CHECKBOX_DEFAULTS, useCheckboxGroupStyleContext } from "./checkbox.context.ts";
 
 export type CheckboxCardProps = AriaCheckboxProps
-	& Partial<VariantProps<typeof checkboxCardVariants>> & {
-		color?: Colors;
-	};
+	& VariantProps<typeof checkboxCardVariants>;
 
 export function CheckboxCard({
 	variant,
@@ -19,9 +16,9 @@ export function CheckboxCard({
 	...props
 }: CheckboxCardProps) {
 	const groupCtx = useCheckboxGroupStyleContext();
-	const v = variant ?? groupCtx?.variant ?? "surface";
-	const s = size ?? groupCtx?.size ?? 2;
-	const c = color ?? groupCtx?.color ?? "terracotta";
+	const v = variant ?? groupCtx?.variant ?? CHECKBOX_DEFAULTS.variant;
+	const s = size ?? groupCtx?.size ?? CHECKBOX_DEFAULTS.size;
+	const c = color ?? groupCtx?.color ?? CHECKBOX_DEFAULTS.color;
 
 	return (
 		<FieldContext

@@ -5,7 +5,7 @@ import { tv } from "tailwind-variants";
 import { FieldContext } from "../field/index.ts";
 import { tw } from "../utils/tw.ts";
 import { fieldGaps } from "../variants/index.ts";
-import { CheckboxGroupStyleContext } from "./checkbox.context.ts";
+import { CHECKBOX_DEFAULTS, CheckboxGroupStyleContext } from "./checkbox.context.ts";
 
 const checkboxGroupVariants = tv({
 	base: tw("flex flex-col"),
@@ -13,7 +13,7 @@ const checkboxGroupVariants = tv({
 		size: fieldGaps,
 	},
 	defaultVariants: {
-		size: 2,
+		size: CHECKBOX_DEFAULTS.size,
 	},
 });
 
@@ -24,9 +24,9 @@ export type CheckboxGroupProps = AriaCheckboxGroupProps & {
 };
 
 export function CheckboxGroup({
-	variant = "surface",
-	size = 2,
-	color = "terracotta",
+	variant = CHECKBOX_DEFAULTS.variant,
+	size = CHECKBOX_DEFAULTS.size,
+	color = CHECKBOX_DEFAULTS.color,
 	className,
 	...props
 }: CheckboxGroupProps) {

@@ -2,7 +2,7 @@ import type { CheckboxGroupProps as AriaCheckboxGroupProps } from "react-aria-co
 import type { Colors } from "../theme/types.ts";
 import { CheckboxGroup as AriaCheckboxGroup } from "react-aria-components";
 import { FieldContext } from "../field/index.ts";
-import { CheckboxGroupStyleContext } from "./checkbox.context.ts";
+import { CHECKBOX_DEFAULTS, CheckboxGroupStyleContext } from "./checkbox.context.ts";
 
 export type CheckboxCardGroupProps = AriaCheckboxGroupProps & {
 	variant?: "surface" | "classic";
@@ -11,9 +11,9 @@ export type CheckboxCardGroupProps = AriaCheckboxGroupProps & {
 };
 
 export function CheckboxCardGroup({
-	variant = "surface",
-	size = 2,
-	color = "terracotta",
+	variant = CHECKBOX_DEFAULTS.variant,
+	size = CHECKBOX_DEFAULTS.size,
+	color = CHECKBOX_DEFAULTS.color,
 	className,
 	...props
 }: CheckboxCardGroupProps) {

@@ -6,6 +6,7 @@ import {
 	cardSurfaceColors,
 	focusRings,
 } from "../variants/index.ts";
+import { CHECKBOX_DEFAULTS } from "./checkbox.context.ts";
 
 export const checkboxCardVariants = tv({
 	base: tw(
@@ -70,8 +71,8 @@ export const checkboxCardVariants = tv({
 		{ variant: "classic", color: "amber", class: cardClassicColors.amber },
 	],
 	defaultVariants: {
-		variant: "surface",
-		size: 2,
-		color: "terracotta",
+		variant: CHECKBOX_DEFAULTS.variant,
+		size: CHECKBOX_DEFAULTS.size,
+		color: CHECKBOX_DEFAULTS.color,
 	},
 });

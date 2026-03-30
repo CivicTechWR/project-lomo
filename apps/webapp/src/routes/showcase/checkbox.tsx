@@ -1,7 +1,6 @@
 import {
 	Checkbox,
 	CheckboxGroup,
-	CheckboxIndicator,
 	Description,
 	FieldError,
 	Label,
@@ -45,21 +44,18 @@ function CheckboxPage() {
 						return [
 							"<Label>How would you like to be notified?</Label>",
 							"<Checkbox value=\"email\">",
-							"  <CheckboxIndicator />",
 							"  Email when someone responds to my request",
 							"</Checkbox>",
 							"<Checkbox value=\"sms\">",
-							"  <CheckboxIndicator />",
 							"  SMS for urgent matches nearby",
 							"</Checkbox>",
 							"<Checkbox value=\"digest\">",
-							"  <CheckboxIndicator />",
 							"  Weekly digest of community activity",
 							"</Checkbox>",
 							"<Description>You can change these anytime in your settings.</Description>",
 						].join("\n  ");
 					}
-					return "<CheckboxIndicator />\n  Remember my preferences";
+					return "Remember my preferences";
 				}}
 				snippetExclude={["grouped"]}
 				defaults={{ variant: "surface", size: 2, color: "terracotta", isDisabled: false, isIndeterminate: false, grouped: false }}
@@ -106,15 +102,12 @@ function CheckboxPage() {
 								<CheckboxGroup variant={v} size={s} color={c} value={groupSelected} onChange={setGroupSelected}>
 									<Label>How would you like to be notified?</Label>
 									<Checkbox value="email" isDisabled={disabled} isIndeterminate={indeterminate}>
-										<CheckboxIndicator />
 										Email when someone responds to my request
 									</Checkbox>
 									<Checkbox value="sms" isDisabled={disabled} isIndeterminate={indeterminate}>
-										<CheckboxIndicator />
 										SMS for urgent matches nearby
 									</Checkbox>
 									<Checkbox value="digest" isDisabled={disabled} isIndeterminate={indeterminate}>
-										<CheckboxIndicator />
 										Weekly digest of community activity
 									</Checkbox>
 									<Description>You can change these anytime in your settings.</Description>
@@ -133,7 +126,6 @@ function CheckboxPage() {
 							isSelected={singleChecked}
 							onChange={setSingleChecked}
 						>
-							<CheckboxIndicator />
 							Remember my preferences
 						</Checkbox>
 					);
@@ -147,7 +139,6 @@ function CheckboxPage() {
 				<div className="flex flex-col gap-3">
 					{VARIANTS.map(variant => (
 						<Checkbox key={variant} variant={variant} defaultSelected>
-							<CheckboxIndicator />
 							{variant.charAt(0).toUpperCase() + variant.slice(1)}
 						</Checkbox>
 					))}
@@ -159,7 +150,6 @@ function CheckboxPage() {
 				<div className="flex flex-col gap-3">
 					{SIZES.map(size => (
 						<Checkbox key={size} size={size} defaultSelected>
-							<CheckboxIndicator />
 							Size
 							{" "}
 							{size}
@@ -173,7 +163,6 @@ function CheckboxPage() {
 				<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
 					{COLORS.map(color => (
 						<Checkbox key={color} color={color} defaultSelected>
-							<CheckboxIndicator />
 							{color.charAt(0).toUpperCase() + color.slice(1)}
 						</Checkbox>
 					))}
@@ -181,7 +170,6 @@ function CheckboxPage() {
 				<div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
 					{COLORS.map(color => (
 						<Checkbox key={color} color={color}>
-							<CheckboxIndicator />
 							{color.charAt(0).toUpperCase() + color.slice(1)}
 						</Checkbox>
 					))}
@@ -193,7 +181,6 @@ function CheckboxPage() {
 				<div className="flex flex-col gap-3">
 					{VARIANTS.map(variant => (
 						<Checkbox key={variant} variant={variant} isIndeterminate>
-							<CheckboxIndicator />
 							{`Indeterminate (${variant})`}
 						</Checkbox>
 					))}
@@ -204,11 +191,9 @@ function CheckboxPage() {
 			<DemoSection title="Disabled" description="Disabled state with reduced opacity.">
 				<div className="flex flex-col gap-3">
 					<Checkbox isDisabled>
-						<CheckboxIndicator />
 						Unchecked disabled
 					</Checkbox>
 					<Checkbox isDisabled defaultSelected>
-						<CheckboxIndicator />
 						Checked disabled
 					</Checkbox>
 				</div>
@@ -224,15 +209,12 @@ function CheckboxPage() {
 					>
 						<Label>Notification preferences</Label>
 						<Checkbox value="email">
-							<CheckboxIndicator />
 							Email notifications
 						</Checkbox>
 						<Checkbox value="sms">
-							<CheckboxIndicator />
 							SMS notifications
 						</Checkbox>
 						<Checkbox value="push">
-							<CheckboxIndicator />
 							Push notifications
 						</Checkbox>
 						<Description>Choose how you'd like to be contacted.</Description>
@@ -241,7 +223,6 @@ function CheckboxPage() {
 					<CheckboxGroup color="red" isInvalid isRequired>
 						<Label>Terms</Label>
 						<Checkbox value="terms">
-							<CheckboxIndicator />
 							I agree to the terms and conditions
 						</Checkbox>
 						<FieldError>You must agree to continue.</FieldError>
