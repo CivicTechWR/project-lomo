@@ -65,6 +65,10 @@
 	},
 	"devDependencies": {
 		"eslint": "catalog:",
+		"eslint-config-next": "16.2.1",
 		"turbo": "^2.8.16"
+	},
+	"dependencies": {
+		"next": "16.2.1"
 	}
 }
