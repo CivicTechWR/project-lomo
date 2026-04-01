@@ -52,8 +52,19 @@
 		"season_lifecycle": "12-weeks",
 		"last_updated": "2025-09-28"
 	},
-	"devDependencies": {
+	"catalog": {
+		"react": "19.2.4",
+		"react-dom": "19.2.4",
+		"@types/react": "19.2.14",
+		"@types/react-dom": "19.2.3",
+		"typescript": "5.9.3",
 		"eslint": "10.1.0",
+		"tailwindcss": "4.2.2",
+		"@tailwindcss/vite": "4.2.2",
+		"vite": "7.3.1"
+	},
+	"devDependencies": {
+		"eslint": "catalog:",
 		"turbo": "^2.8.16"
 	}
 }
