@@ -9,6 +9,10 @@ function RootLayout() {
 					Home
 				</Link>
 				{" "}
+				<Link to="/requests" className="[&.active]:font-bold">
+					Requests
+				</Link>
+				{" "}
 				<Link to="/about" className="[&.active]:font-bold">
 					About
 				</Link>

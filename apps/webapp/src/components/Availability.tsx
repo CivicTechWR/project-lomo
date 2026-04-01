@@ -1,9 +1,15 @@
-export default function Availability() {
+interface AvailabilityProps {
+	onRequestSupport: () => void;
+}
+
+export default function Availability({ onRequestSupport }: AvailabilityProps) {
 	return (
 		<div>
 			<h4>Your availability</h4>
 			<div className="availability">
-				<button className="box">Request Support</button>
+				<button className="box" onClick={onRequestSupport}>
+					Request Support
+				</button>
 				<button className="box">Offer Support</button>
 				<button className="box">Resting</button>
 			</div>

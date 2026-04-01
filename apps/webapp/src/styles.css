@@ -33,6 +33,26 @@ body {
 	padding: 10px;
 	background: white;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 14px;
+	text-align: center;
+}
+
+.box:hover {
+	background: #f0f0f0;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.box:active {
+	background: #e0e0e0;
+	transform: translateY(0);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.box:focus {
+	outline: 2px solid #007bff;
+	outline-offset: 2px;
 }
 
 .requests-header {
@@ -85,6 +105,26 @@ body {
 	background: white;
 	margin-top: 12px;
 	cursor: pointer;
+	transition: all 0.2s ease;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.primary-btn:hover {
+	background: #f0f0f0;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.primary-btn:active {
+	background: #e0e0e0;
+	transform: translateY(0);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.primary-btn:focus {
+	outline: 2px solid #007bff;
+	outline-offset: 2px;
 }
 
 .bottom-nav {
@@ -99,4 +139,144 @@ body {
 	background: none;
 	border: none;
 	font-size: 16px;
+}
+
+/* Request Form Styles */
+.request-form-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.request-form {
+	background: white;
+	border: 2px solid black;
+	padding: 20px;
+	max-width: 400px;
+	width: 90%;
+	max-height: 80vh;
+	overflow-y: auto;
+}
+
+.request-form h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.form-group {
+	margin-bottom: 16px;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 4px;
+	font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+	width: 100%;
+	padding: 8px;
+	border: 2px solid black;
+	font-size: 16px;
+}
+
+.form-group textarea {
+	resize: vertical;
+	min-height: 80px;
+}
+
+.form-actions {
+	display: flex;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.cancel-btn,
+.submit-btn {
+	flex: 1;
+	padding: 10px;
+	border: 2px solid black;
+	font-size: 16px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-weight: bold;
+}
+
+.cancel-btn {
+	background: white;
+}
+
+.cancel-btn:hover {
+	background: #f8f8f8;
+}
+
+.cancel-btn:active {
+	background: #e8e8e8;
+}
+
+.submit-btn {
+	background: black;
+	color: white;
+}
+
+.submit-btn:hover {
+	background: #333;
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.submit-btn:active {
+	background: #000;
+	transform: translateY(0);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Success Message */
+.success-message {
+	background: #d4edda;
+	color: #155724;
+	border: 2px solid #c3e6cb;
+	padding: 12px;
+	margin: 10px 0;
+	border-radius: 4px;
+	font-weight: bold;
+	animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Priority Tag */
+.priority-tag {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 12px;
+	color: white;
+	font-size: 0.8em;
+	font-weight: bold;
+	margin-top: 4px;
+}
+
+.timestamp {
+	font-size: 0.8em;
+	color: #666;
+	margin-top: 8px;
 }
