@@ -18,6 +18,13 @@ project-lomo/
 
 See `apps/webapp/AGENTS.md`, `apps/backend/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
 
+## Code Quality Standards
+
+- When you run lint/typecheck/tests and they fail, fix ALL failures — even in files you didn't touch. You own the build, not just your diff.
+- After creating or modifying any rule, config, or behavior — VERIFY it works. Write a test, create a mock, or run a concrete example. Never assume correctness.
+- If you can't verify something in the current environment, say so explicitly and explain what verification is needed — don't just say "should be fine."
+- Treat every change as if the person won't revisit it later. If something related is broken or unverified, handle it now.
+
 ## Commands
 
 Run all commands from the repo root.
