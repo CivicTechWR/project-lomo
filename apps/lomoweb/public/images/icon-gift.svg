@@ -1,0 +1,5 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Container">
+<path id="Icon" d="M2.4 16V8.68C1.72 8.49333 1.15 8.12 0.69 7.56C0.23 7 0 6.34667 0 5.6V0H1.6V5.6H2.4V0H4V5.6H4.8V0H6.4V5.6C6.4 6.34667 6.17 7 5.71 7.56C5.25 8.12 4.68 8.49333 4 8.68V16H2.4ZM10.4 16V9.6H8V4C8 2.89333 8.39 1.95 9.17 1.17C9.95 0.39 10.8933 0 12 0V16H10.4Z" fill="var(--fill-0, #8F4D34)"/>
+</g>
+</svg>

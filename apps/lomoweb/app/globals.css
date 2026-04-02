@@ -1,2 +1,9 @@
 @import "@repo/ui/theme.css";
 @source "../src";
+
+button,
+a,
+[role="button"],
+[role="link"] {
+	cursor: pointer;
+}
