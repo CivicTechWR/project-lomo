@@ -3,7 +3,8 @@
 	"type": "module",
 	"exports": {
 		"./react": "./react.js",
-		"./next": "./next.js"
+		"./next": "./next.js",
+		"./convex": "./convex.js"
 	},
 	"scripts": {
 		"clean": "rm -rf dist .turbo ./tsbuildinfo.json",
