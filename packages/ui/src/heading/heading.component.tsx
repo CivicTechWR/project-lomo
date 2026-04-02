@@ -1,3 +1,5 @@
+"use client";
+
 import type { HeadingProps as AriaHeadingProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import type { HeadingLevel } from "./heading.variants.ts";

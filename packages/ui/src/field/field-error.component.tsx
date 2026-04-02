@@ -1,3 +1,5 @@
+"use client";
+
 import type { FieldErrorProps as AriaFieldErrorProps } from "react-aria-components";
 import { FieldError as AriaFieldError, composeRenderProps } from "react-aria-components";
 import { cn } from "../utils/cn.ts";

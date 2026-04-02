@@ -1,3 +1,5 @@
+"use client";
+
 import type { TextAreaProps as AriaTextAreaProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import { TextArea as AriaTextArea, composeRenderProps } from "react-aria-components";

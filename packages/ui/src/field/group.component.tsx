@@ -1,3 +1,5 @@
+"use client";
+
 import type { GroupProps as AriaGroupProps } from "react-aria-components";
 import * as React from "react";
 import { mergeProps } from "react-aria";

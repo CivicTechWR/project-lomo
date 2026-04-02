@@ -1,3 +1,5 @@
+"use client";
+
 import type { TextProps as AriaTextProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import type { TextElementType } from "./text.variants.ts";

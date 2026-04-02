@@ -1,3 +1,5 @@
+"use client";
+
 import type { CheckboxGroupProps as AriaCheckboxGroupProps } from "react-aria-components";
 import type { Colors } from "../theme/types.ts";
 import { CheckboxGroup as AriaCheckboxGroup } from "react-aria-components";

@@ -1,3 +1,5 @@
+"use client";
+
 import type { VariantProps } from "tailwind-variants";
 import { useFieldContext } from "../field/index.ts";
 import { checkboxIndicatorVariants } from "./checkbox-indicator.variants.ts";

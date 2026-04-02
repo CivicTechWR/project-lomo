@@ -1,3 +1,5 @@
+"use client";
+
 import type { LabelProps as AriaLabelProps } from "react-aria-components";
 import { Label as AriaLabel } from "react-aria-components";
 import { cn } from "../utils/cn.ts";
