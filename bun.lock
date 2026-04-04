@@ -16,6 +16,7 @@
         "@convex-dev/better-auth": "0.11.4",
         "better-auth": "1.5.6",
         "convex": "^1.33.1",
+        "zod": "catalog:",
       },
       "devDependencies": {
         "@repo/eslint-config": "workspace:*",
@@ -60,6 +61,8 @@
         "next": "16.2.1",
         "react": "19.2.4",
         "react-dom": "19.2.4",
+        "server-only": "0.0.1",
+        "zod": "catalog:",
       },
       "devDependencies": {
         "@repo/eslint-config": "workspace:*",
@@ -122,6 +125,7 @@
     "tailwindcss": "4.2.2",
     "typescript": "5.9.3",
     "vite": "7.3.1",
+    "zod": "4.3.6",
   },
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
@@ -1735,6 +1739,8 @@
     "seroval": ["seroval@1.5.1", "", {}, "sha512-OwrZRZAfhHww0WEnKHDY8OM0U/Qs8OTfIDWhUD4BLpNJUfXK4cGmjiagGze086m+mhI+V2nD0gfbHEnJjb9STA=="],
 
     "seroval-plugins": ["seroval-plugins@1.5.1", "", { "peerDependencies": { "seroval": "^1.0" } }, "sha512-4FbuZ/TMl02sqv0RTFexu0SP6V+ywaIe5bAWCCEik0fk17BhALgwvUDVF7e3Uvf9pxmwCEJsRPmlkUE6HdzLAw=="],
+
+    "server-only": ["server-only@0.0.1", "", {}, "sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA=="],
 
     "set-cookie-parser": ["set-cookie-parser@3.1.0", "", {}, "sha512-kjnC1DXBHcxaOaOXBHBeRtltsDG2nUiUni+jP92M9gYdW12rsmx92UsfpH7o5tDRs7I1ZZPSQJQGv3UaRfCiuw=="],
 
