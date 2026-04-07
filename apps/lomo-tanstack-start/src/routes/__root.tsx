@@ -12,6 +12,7 @@ export const Route = createRootRoute({
 			{ name: "description", content: "A calm, consent-based community help platform" },
 		],
 		links: [
+			{ rel: "icon", type: "image/svg+xml", href: "/icon.svg" },
 			{ rel: "stylesheet", href: appCss },
 		],
 	}),
