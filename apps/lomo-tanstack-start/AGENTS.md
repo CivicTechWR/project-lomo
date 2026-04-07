@@ -72,10 +72,11 @@ When adding a new env var:
 ```ts
 // Client code (routes, components)
 import { clientEnv } from "#/lib/env-client";
-clientEnv.VITE_CONVEX_URL;
 
 // Server code (server functions, API routes)
 import { serverEnv } from "#/lib/env-server";
+
+clientEnv.VITE_CONVEX_URL;
 serverEnv.VITE_CONVEX_SITE_URL;
 ```
 
@@ -91,10 +92,10 @@ import { something } from "#/utils/helpers";
 
 Run from the app directory or repo root:
 
-| Command            | Description                   |
-| ------------------ | ----------------------------- |
-| `bun run dev`      | Start dev server on port 3001 |
-| `bun run build`    | Production build              |
-| `bun run lint`     | Run ESLint                    |
-| `bun run lint:fix` | Auto-fix lint issues          |
-| `bun run typecheck`| Run TypeScript type check     |
+| Command             | Description                   |
+| ------------------- | ----------------------------- |
+| `bun run dev`       | Start dev server on port 3001 |
+| `bun run build`     | Production build              |
+| `bun run lint`      | Run ESLint                    |
+| `bun run lint:fix`  | Auto-fix lint issues          |
+| `bun run typecheck` | Run TypeScript type check     |
