@@ -11,6 +11,10 @@
 			],
 			"outputs": [
 				"dist/**"
+			],
+			"env": [
+				"VITE_*",
+				"NEXT_PUBLIC_*"
 			]
 		},
 		"lint": {

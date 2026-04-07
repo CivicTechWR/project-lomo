@@ -10,7 +10,8 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"lint": "eslint .",
-		"lint:fix": "eslint . --fix"
+		"lint:fix": "eslint . --fix",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@convex-dev/better-auth": "0.11.4",
@@ -27,7 +28,8 @@
 		"convex": "1.34.1",
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"tailwindcss": "catalog:"
+		"tailwindcss": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
