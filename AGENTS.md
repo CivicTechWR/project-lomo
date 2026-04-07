@@ -10,13 +10,14 @@ LoMo is a calm, consent-based community help platform (CivicTechWR Season 7). Bu
 
 ```
 project-lomo/
-  apps/webapp/             @repo/webapp         React 19 + Vite + TanStack Router
-  apps/backend/            @repo/backend        Django 5 + DRF (Dockerized)
-  packages/ui/             @repo/ui             Design system: Tailwind v4 + react-aria-components
-  packages/eslint-config/  @repo/eslint-config  Shared ESLint config (antfu)
+  apps/lomoweb/                  @repo/lomoweb                Next.js 16 + Convex + Better Auth
+  apps/lomo-tanstack-start/      @repo/lomo-tanstack-start    React 19 + TanStack Start (experimental)
+  apps/convex-backend/           @repo/convex-backend         Convex backend-as-a-service
+  packages/ui/                   @repo/ui                     Design system: Tailwind v4 + react-aria-components
+  packages/eslint-config/        @repo/eslint-config          Shared ESLint config (antfu)
 ```
 
-See `apps/webapp/AGENTS.md`, `apps/backend/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
+See `apps/lomoweb/AGENTS.md`, `apps/lomo-tanstack-start/AGENTS.md`, `apps/convex-backend/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
 
 ## Code Quality Standards
 
@@ -27,20 +28,46 @@ See `apps/webapp/AGENTS.md`, `apps/backend/AGENTS.md`, and `packages/ui/AGENTS.m
 
 ## Commands
 
-Run all commands from the repo root.
+Run all commands from the repo root. **Always target specific packages** using `bun --filter=<package_name>` instead of running monorepo-wide commands or cd-ing into directories.
+
+### Targeting a specific package
+
+```bash
+bun --filter=@repo/lomo-tanstack-start run lint
+bun --filter=@repo/lomoweb run build
+bun --filter=@repo/ui run lint:fix
+```
+
+### Monorepo-wide commands (via Turbo)
 
 | Command | Description |
 |---------|-------------|
-| `bun install` | Install all workspace dependencies |
 | `bun run dev` | Start everything (Postgres, Django, Vite) in Turbo TUI |
 | `bun run dev:web` | Start only the webapp |
 | `bun run build` | Build all packages |
 | `bun run lint` | Lint all packages |
 | `bun run lint:fix` | Auto-fix lint issues |
 
+### Fixing lint errors
+
+1. **Always run `lint:fix` first** — most issues (formatting, import order, quotes, semicolons) are auto-fixable:
+   ```bash
+   bun --filter=@repo/<package> run lint:fix
+   ```
+2. **Then run `lint`** to see what remains:
+   ```bash
+   bun --filter=@repo/<package> run lint
+   ```
+3. Only manually resolve errors that survive auto-fix.
+
+### Installing dependencies
+
+**Do NOT run `bun install` directly.** Ask the user to review dependency changes and run it themselves.
+
 ## Do NOT
 
 - Do NOT commit `.env` files
+- Do NOT run `bun install` — the user reviews and installs dependencies themselves
 
 ## Pending Decisions
 
