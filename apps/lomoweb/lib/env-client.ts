@@ -6,4 +6,6 @@ export const clientSchema = z.object({
 });
 
 // Each var must be a static process.env.X reference — Next.js inlines these at build time
-export const clientEnv = clientSchema.parse(process.env);
+export const clientEnv = clientSchema.parse({
+	NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
+});
