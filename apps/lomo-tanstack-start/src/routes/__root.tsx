@@ -1,9 +1,29 @@
+import type { ConvexQueryClient } from "@convex-dev/react-query";
+import type { QueryClient } from "@tanstack/react-query";
+import { authClient } from "#/lib/auth-client";
+import { getToken } from "#/lib/auth-server";
+import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
 import { LomoLogo } from "@repo/ui/icons";
 import { Text } from "@repo/ui/text";
-import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Outlet,
+	Scripts,
+	useRouteContext,
+} from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import appCss from "../styles.css?url";
 
-export const Route = createRootRoute({
+// Get auth information for SSR using available cookies
+const getAuth = createServerFn({ method: "GET" }).handler(async () => {
+	return await getToken();
+});
+
+export const Route = createRootRouteWithContext<{
+	queryClient: QueryClient;
+	convexQueryClient: ConvexQueryClient;
+}>()({
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },
@@ -16,10 +36,38 @@ export const Route = createRootRoute({
 			{ rel: "stylesheet", href: appCss },
 		],
 	}),
+	async beforeLoad(ctx) {
+		const token = await getAuth();
+		// all queries, mutations and actions through TanStack Query will be
+		// authenticated during SSR if we have a valid token
+		if (token) {
+			// During SSR only (the only time serverHttpClient exists),
+			// set the auth token to make HTTP queries with.
+			ctx.context.convexQueryClient.serverHttpClient?.setAuth(token);
+		}
+		return {
+			isAuthenticated: !!token,
+			token,
+		};
+	},
 	component: RootComponent,
 });
 
 function RootComponent() {
+	const context = useRouteContext({ from: Route.id });
+
+	return (
+		<ConvexBetterAuthProvider
+			client={context.convexQueryClient.convexClient}
+			authClient={authClient}
+			initialToken={context.token}
+		>
+			<RootDocument />
+		</ConvexBetterAuthProvider>
+	);
+}
+
+function RootDocument() {
 	return (
 		<html lang="en" className="h-full antialiased">
 			<head>
