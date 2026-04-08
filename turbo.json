@@ -11,11 +11,9 @@
 			],
 			"outputs": [
 				"dist/**",
-				".output/**",
 				".next/**"
 			],
 			"env": [
-				"VITE_*",
 				"NEXT_PUBLIC_*",
 				"CONVEX_DEPLOYMENT"
 			]

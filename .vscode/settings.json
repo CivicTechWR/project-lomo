@@ -99,9 +99,6 @@
         "apps/lomoweb/app/globals.css": [
             "apps/lomoweb/**"
         ],
-        "apps/lomo-tanstack-start/src/styles.css": [
-            "apps/lomo-tanstack-start/**"
-        ],
         "packages/ui/src/theme/theme.css": [
             "packages/ui/**"
         ]
@@ -116,13 +113,4 @@
             "[\"'`]([^\"'`]*)[\"'`]"
         ]
     ],
-    "files.watcherExclude": {
-        "**/routeTree.gen.ts": true
-    },
-    "search.exclude": {
-        "**/routeTree.gen.ts": true
-    },
-    "files.readonlyInclude": {
-        "**/routeTree.gen.ts": true
-    }
 }
