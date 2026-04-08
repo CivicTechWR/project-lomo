@@ -21,7 +21,7 @@ interface RequestData {
 	status: string;
 }
 
-function Request() {
+export default function Request() {
 	const navigate = useNavigate();
 
 	const handleFormSubmit = (data: any) => {
@@ -32,7 +32,6 @@ function Request() {
 			status: "Active",
 		};
 
-		// Save to localStorage
 		const existingRequests = JSON.parse(localStorage.getItem("requests") || "[]");
 		const updatedRequests = [newRequest, ...existingRequests];
 		localStorage.setItem("requests", JSON.stringify(updatedRequests));
@@ -45,10 +44,32 @@ function Request() {
 	};
 
 	return (
-		<div className="container">
+		<div className="home-container">
 			<Header />
 
-			<MultiStepRequestForm onSubmit={handleFormSubmit} onCancel={handleFormCancel} />
+			<div className="home-content">
+				{/* Page Header */}
+				<div className="home-header">
+					<h2>Create a Request</h2>
+					<p>Fill out the form to request help from your community.</p>
+				</div>
+
+				{/* Form Card */}
+				<div className="card form-card">
+					<div className="form-fields">
+						<MultiStepRequestForm
+							onSubmit={handleFormSubmit}
+							onCancel={handleFormCancel}
+						/>
+					</div>
+				</div>
+
+				{/* Optional Tip Card */}
+				<div className="card stats-card">
+					<h4>Quick Tip</h4>
+					<p>Double-check your details to make it easier for helpers to assist you quickly.</p>
+				</div>
+			</div>
 
 			<BottomNav />
 		</div>

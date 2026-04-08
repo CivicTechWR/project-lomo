@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import Availability from "../components/Availability";
 import BottomNav from "../components/BottomNav";
 import Header from "../components/Header";
 import RequestCard from "../components/RequestCard";
@@ -25,27 +24,28 @@ interface RequestData {
 
 function Home() {
 	const navigate = useNavigate();
+
 	const [requests, setRequests] = useState<RequestData[]>(() => {
-		const savedRequests = localStorage.getItem("requests");
-		if (savedRequests) {
-			return JSON.parse(savedRequests).map((req: any) => ({
-				...req,
-				timestamp: new Date(req.timestamp),
+		const saved = localStorage.getItem("requests");
+		if (saved) {
+			return JSON.parse(saved).map((r: any) => ({
+				...r,
+				timestamp: new Date(r.timestamp),
 			}));
 		}
 		return [];
 	});
 
-	// Check for new request on page focus (when returning from request page)
 	useEffect(() => {
 		const handleFocus = () => {
-			const savedRequests = localStorage.getItem("requests");
-			if (savedRequests) {
-				const parsedRequests = JSON.parse(savedRequests).map((req: any) => ({
-					...req,
-					timestamp: new Date(req.timestamp),
-				}));
-				setRequests(parsedRequests);
+			const saved = localStorage.getItem("requests");
+			if (saved) {
+				setRequests(
+					JSON.parse(saved).map((r: any) => ({
+						...r,
+						timestamp: new Date(r.timestamp),
+					})),
+				);
 			}
 		};
 
@@ -53,51 +53,81 @@ function Home() {
 		return () => window.removeEventListener("focus", handleFocus);
 	}, []);
 
-	const handleRequestSupport = () => {
-		navigate({ to: "/request" });
-	};
+	const [mode, setMode] = useState("can-help");
 
 	return (
-		<div className="container">
+		<div className="home-container">
 			<Header />
 
-			<h2>Hey, [Name]!</h2>
-			<p>How do you want to connect today?</p>
+			<div className="home-content">
+				{/* Greeting */}
+				<div className="home-header">
+					<h2>Hey, Name</h2>
+					<p>Thanks for being here</p>
+				</div>
 
-			<Availability onRequestSupport={handleRequestSupport} />
+				{/* Mode selector */}
+				<div className="mode-selector">
+					<button
+						className={`mode ${mode === "need-help" ? "active" : ""}`}
+						onClick={() => {
+							setMode("need-help");
+							navigate({ to: "/request" });
+						}}
+					>
+						Need Help
+					</button>
 
-			<div className="requests-header">
-				<h3>My Requests</h3>
-				<span>{requests.length}</span>
+					<button
+						className={`mode ${mode === "can-help" ? "active" : ""}`}
+						onClick={() => setMode("can-help")}
+					>
+						Can Help
+					</button>
+
+					<button
+						className={`mode ${mode === "resting" ? "active" : ""}`}
+						onClick={() => setMode("resting")}
+					>
+						Resting
+					</button>
+				</div>
+
+				{/* Availability */}
+				<div className="card availability-card">
+					<div>
+						<h4>Available to help</h4>
+						<p>You can be assigned requests</p>
+					</div>
+					<div className="toggle" />
+				</div>
+
+				{/* Stats */}
+				<div className="card stats-card">
+					<h1>1</h1>
+					<p>person helped so far</p>
+				</div>
+
+				{/* Action */}
+				<div className="card action-card">
+					<h3>Make a request</h3>
+					<p>Need groceries, a ride, or tools? The community is here.</p>
+					<button onClick={() => navigate({ to: "/request" })}>
+						Create Now
+					</button>
+				</div>
+
+				{/* Requests */}
+				<div className="requests-section">
+					<h3>My Active Requests</h3>
+
+					{requests.length === 0 && <p>No requests yet</p>}
+
+					{requests.map(req => (
+						<RequestCard key={req.id} {...req} />
+					))}
+				</div>
 			</div>
-
-			{requests.map(request => (
-				<RequestCard
-					key={request.id}
-					groceries={request.groceries}
-					helpful={request.helpful}
-					allergies={request.allergies}
-					dietary={request.dietary}
-					people={request.people}
-					delivery={request.delivery}
-					address={request.address}
-					instructions={request.instructions}
-					status={request.status}
-					timestamp={request.timestamp}
-				/>
-			))}
-
-			<p className="note">
-				You can pause or stop this request at any time.
-			</p>
-
-			<p className="note small">
-				If it helps, a small reset can sometimes make this easier: water · a stretch · a breath · a snack · a text to someone safe.
-			</p>
-
-			<button className="primary-btn" onClick={handleRequestSupport}>
-				Request Support
-			</button>
 
 			<BottomNav />
 		</div>
