@@ -13,6 +13,9 @@ export default defineSchema(
 				subFieldOne: v.array(v.number()),
 			}),
 		}),
+		countsTable: defineTable({
+			value: v.number(),
+		}),
 	},
 	// If you ever get an error about schema mismatch
 	// between your data and your schema, and you cannot

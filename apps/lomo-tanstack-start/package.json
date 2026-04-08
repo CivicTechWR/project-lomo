@@ -16,6 +16,8 @@
 	"dependencies": {
 		"@convex-dev/better-auth": "0.11.4",
 		"@convex-dev/react-query": "0.1.0",
+		"@heroicons/react": "2.2.0",
+		"@hookform/resolvers": "5.2.2",
 		"@repo/convex-backend": "workspace:*",
 		"@repo/ui": "workspace:*",
 		"@tailwindcss/vite": "catalog:",
@@ -28,6 +30,7 @@
 		"convex": "1.34.1",
 		"react": "catalog:",
 		"react-dom": "catalog:",
+		"react-hook-form": "7.72.1",
 		"tailwindcss": "catalog:",
 		"zod": "catalog:"
 	},

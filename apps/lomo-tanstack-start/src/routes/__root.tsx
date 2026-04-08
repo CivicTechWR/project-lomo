@@ -8,6 +8,7 @@ import { Text } from "@repo/ui/text";
 import {
 	createRootRouteWithContext,
 	HeadContent,
+	Link,
 	Outlet,
 	Scripts,
 	useRouteContext,
@@ -93,6 +94,7 @@ function Header() {
 					<LomoLogo className="size-8" />
 					<span className="text-base font-semibold tracking-tight">LoMo</span>
 				</a>
+				<Link to="/app">App Route</Link>
 			</div>
 		</header>
 	);
