@@ -1,3 +1,5 @@
+"use client";
+
 import type { TextProps as AriaTextProps } from "react-aria-components";
 import { Text as AriaText } from "react-aria-components";
 import { cn } from "../utils/cn.ts";

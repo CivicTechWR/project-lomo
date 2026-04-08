@@ -1,3 +1,4 @@
+"use client";
 import type { VariantProps } from "tailwind-variants";
 import type { groupVariants } from "./group.variants.ts";
 import { createContext, use } from "react";

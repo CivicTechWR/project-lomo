@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "../utils/cn.ts";
 import { fieldSlotSizes } from "../variants/index.ts";
 import { useFieldContext } from "./field.context.ts";

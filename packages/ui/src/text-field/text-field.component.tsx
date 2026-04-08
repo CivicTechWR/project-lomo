@@ -1,3 +1,5 @@
+"use client";
+
 import type { TextFieldProps as AriaTextFieldProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import type { FieldColor, FieldVariant } from "../field/index.ts";

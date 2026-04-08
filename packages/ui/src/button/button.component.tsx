@@ -1,3 +1,5 @@
+"use client";
+
 import type { ButtonProps as AriaButtonProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import { Button as AriaButton, composeRenderProps } from "react-aria-components";

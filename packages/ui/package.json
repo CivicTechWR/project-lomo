@@ -13,6 +13,9 @@
 		"./heading": "./src/heading/index.ts",
 		"./link": "./src/link/index.ts",
 		"./modal": "./src/modal/index.ts",
+		"./field": "./src/field/index.ts",
+		"./text-field": "./src/text-field/index.ts",
+		"./icons": "./src/icons/index.ts",
 		"./theme.css": "./src/theme/theme.css"
 	},
 	"scripts": {

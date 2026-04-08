@@ -1,10 +1,5 @@
-"use client";
-import { Button } from "@repo/ui/button";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-   <div>
-    <Button>Hello world!</Button>
-   </div>
-  );
+export default function RootPage() {
+	redirect("/app");
 }

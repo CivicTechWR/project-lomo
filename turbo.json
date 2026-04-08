@@ -10,7 +10,12 @@
 				"^build"
 			],
 			"outputs": [
-				"dist/**"
+				"dist/**",
+				".next/**"
+			],
+			"env": [
+				"NEXT_PUBLIC_*",
+				"CONVEX_DEPLOYMENT"
 			]
 		},
 		"lint": {

@@ -96,8 +96,12 @@
         "*.py"
     ],
     "tailwindCSS.experimental.configFile": {
-        "apps/webapp/src/app.css": ["apps/webapp/**"],
-        "packages/ui/src/theme/theme.css": ["packages/ui/**"]
+        "apps/lomoweb/app/globals.css": [
+            "apps/lomoweb/**"
+        ],
+        "packages/ui/src/theme/theme.css": [
+            "packages/ui/**"
+        ]
     },
     "tailwindCSS.experimental.classRegex": [
         [

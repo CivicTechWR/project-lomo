@@ -10,38 +10,68 @@ LoMo is a calm, consent-based community help platform (CivicTechWR Season 7). Bu
 
 ```
 project-lomo/
-  apps/webapp/             @repo/webapp         React 19 + Vite + TanStack Router
-  apps/backend/            @repo/backend        Django 5 + DRF (Dockerized)
-  packages/ui/             @repo/ui             Design system: Tailwind v4 + react-aria-components
-  packages/eslint-config/  @repo/eslint-config  Shared ESLint config (antfu)
+  apps/lomoweb/                  @repo/lomoweb                Next.js 16 + Convex + Better Auth
+  apps/convex-backend/           @repo/convex-backend         Convex backend-as-a-service
+  packages/ui/                   @repo/ui                     Design system: Tailwind v4 + react-aria-components
+  packages/eslint-config/        @repo/eslint-config          Shared ESLint config (antfu)
 ```
 
-See `apps/webapp/AGENTS.md`, `apps/backend/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
+See `apps/lomoweb/AGENTS.md` and `packages/ui/AGENTS.md` for app-specific instructions.
+
+## Code Quality Standards
+
+- When you run lint/typecheck/tests and they fail, fix ALL failures — even in files you didn't touch. You own the build, not just your diff.
+- After creating or modifying any rule, config, or behavior — VERIFY it works. Write a test, create a mock, or run a concrete example. Never assume correctness.
+- If you can't verify something in the current environment, say so explicitly and explain what verification is needed — don't just say "should be fine."
+- Treat every change as if the person won't revisit it later. If something related is broken or unverified, handle it now.
 
 ## Commands
 
-Run all commands from the repo root.
+Run all commands from the repo root. **Always target specific packages** using `bun --filter=<package_name>` instead of running monorepo-wide commands or cd-ing into directories.
+
+### Targeting a specific package
+
+```bash
+bun --filter=@repo/lomoweb run lint
+bun --filter=@repo/convex-backend run build
+bun --filter=@repo/ui run lint:fix
+```
+
+### Monorepo-wide commands (via Turbo)
 
 | Command | Description |
 |---------|-------------|
-| `bun install` | Install all workspace dependencies |
-| `bun run dev` | Start everything (Postgres, Django, Vite) in Turbo TUI |
-| `bun run dev:web` | Start only the webapp |
+| `bun run dev` | Start all apps in Turbo TUI |
 | `bun run build` | Build all packages |
 | `bun run lint` | Lint all packages |
 | `bun run lint:fix` | Auto-fix lint issues |
 
+### Fixing lint errors
+
+1. **Always run `lint:fix` first** — most issues (formatting, import order, quotes, semicolons) are auto-fixable:
+   ```bash
+   bun --filter=@repo/<package> run lint:fix
+   ```
+2. **Then run `lint`** to see what remains:
+   ```bash
+   bun --filter=@repo/<package> run lint
+   ```
+3. Only manually resolve errors that survive auto-fix.
+
+### Installing dependencies
+
+**Do NOT run `bun install` directly.** Ask the user to review dependency changes and run it themselves.
+
 ## Do NOT
 
 - Do NOT commit `.env` files
+- Do NOT run `bun install` — the user reviews and installs dependencies themselves
 
 ## Pending Decisions
 
 These are not yet decided. Do not introduce them without explicit instruction:
 
-- OpenAPI documentation generator: drf-spectacular vs drf-yasg
 - Frontend hosting: Vercel vs Cloudflare vs Railway
-- Python linter/formatter: not yet chosen
 
 
 ## External References

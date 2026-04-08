@@ -1,3 +1,5 @@
+"use client";
+
 export { ModalOverlay } from "./modal-overlay.component.tsx";
 export type { ModalOverlayProps } from "./modal-overlay.component.tsx";
 

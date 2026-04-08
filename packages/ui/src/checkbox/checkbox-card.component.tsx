@@ -1,3 +1,5 @@
+"use client";
+
 import type { CheckboxProps as AriaCheckboxProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import { Checkbox as AriaCheckbox, composeRenderProps, TextContext } from "react-aria-components";

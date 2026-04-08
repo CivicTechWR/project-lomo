@@ -1,3 +1,5 @@
+"use client";
+
 import type { LinkProps as AriaLinkProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
 import { Link as AriaLink, composeRenderProps } from "react-aria-components";
