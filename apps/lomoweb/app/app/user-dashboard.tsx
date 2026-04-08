@@ -19,7 +19,7 @@ export function UserDashboard({
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
 
-	if (!user || user === "No USER FOUND") {
+	if (!user) {
 		return null;
 	}
 
