@@ -96,10 +96,10 @@
         "*.py"
     ],
     "tailwindCSS.experimental.configFile": {
-        "apps/lomo-tanstack-start/src/styles.css": [
-            "apps/lomo-tanstack-start/**"
+        "apps/lomoweb/app/globals.css": [
+            "apps/lomoweb/**"
         ],
-        "apps/documentation/src/app.css": [
+        "apps/lomo-tanstack-start/src/styles.css": [
             "apps/lomo-tanstack-start/**"
         ],
         "packages/ui/src/theme/theme.css": [

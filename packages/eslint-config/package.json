@@ -3,6 +3,7 @@
 	"type": "module",
 	"exports": {
 		"./react": "./react.js",
+		"./next": "./next.js",
 		"./convex": "./convex.js"
 	},
 	"scripts": {

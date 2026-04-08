@@ -10,13 +10,14 @@ LoMo is a calm, consent-based community help platform (CivicTechWR Season 7). Bu
 
 ```
 project-lomo/
+  apps/lomoweb/                  @repo/lomoweb                Next.js 16 + Convex + Better Auth
   apps/lomo-tanstack-start/      @repo/lomo-tanstack-start    React 19 + TanStack Start
   apps/convex-backend/           @repo/convex-backend         Convex backend-as-a-service
   packages/ui/                   @repo/ui                     Design system: Tailwind v4 + react-aria-components
   packages/eslint-config/        @repo/eslint-config          Shared ESLint config (antfu)
 ```
 
-See `apps/lomo-tanstack-start/AGENTS.md` and `packages/ui/AGENTS.md` for app-specific instructions.
+See `apps/lomoweb/AGENTS.md`, `apps/lomo-tanstack-start/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
 
 ## Code Quality Standards
 
