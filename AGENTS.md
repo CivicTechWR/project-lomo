@@ -10,14 +10,13 @@ LoMo is a calm, consent-based community help platform (CivicTechWR Season 7). Bu
 
 ```
 project-lomo/
-  apps/lomoweb/                  @repo/lomoweb                Next.js 16 + Convex + Better Auth
-  apps/lomo-tanstack-start/      @repo/lomo-tanstack-start    React 19 + TanStack Start (experimental)
+  apps/lomo-tanstack-start/      @repo/lomo-tanstack-start    React 19 + TanStack Start
   apps/convex-backend/           @repo/convex-backend         Convex backend-as-a-service
   packages/ui/                   @repo/ui                     Design system: Tailwind v4 + react-aria-components
   packages/eslint-config/        @repo/eslint-config          Shared ESLint config (antfu)
 ```
 
-See `apps/lomoweb/AGENTS.md`, `apps/lomo-tanstack-start/AGENTS.md`, `apps/convex-backend/AGENTS.md`, and `packages/ui/AGENTS.md` for app-specific instructions.
+See `apps/lomo-tanstack-start/AGENTS.md` and `packages/ui/AGENTS.md` for app-specific instructions.
 
 ## Code Quality Standards
 
@@ -34,7 +33,7 @@ Run all commands from the repo root. **Always target specific packages** using `
 
 ```bash
 bun --filter=@repo/lomo-tanstack-start run lint
-bun --filter=@repo/lomoweb run build
+bun --filter=@repo/convex-backend run build
 bun --filter=@repo/ui run lint:fix
 ```
 
@@ -42,8 +41,7 @@ bun --filter=@repo/ui run lint:fix
 
 | Command | Description |
 |---------|-------------|
-| `bun run dev` | Start everything (Postgres, Django, Vite) in Turbo TUI |
-| `bun run dev:web` | Start only the webapp |
+| `bun run dev` | Start all apps in Turbo TUI |
 | `bun run build` | Build all packages |
 | `bun run lint` | Lint all packages |
 | `bun run lint:fix` | Auto-fix lint issues |
@@ -73,9 +71,7 @@ bun --filter=@repo/ui run lint:fix
 
 These are not yet decided. Do not introduce them without explicit instruction:
 
-- OpenAPI documentation generator: drf-spectacular vs drf-yasg
 - Frontend hosting: Vercel vs Cloudflare vs Railway
-- Python linter/formatter: not yet chosen
 
 
 ## External References

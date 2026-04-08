@@ -10,4 +10,5 @@ dist-ssr
 .output
 .vinxi
 __unconfig*
+routeTree.gen.ts
 todos.json

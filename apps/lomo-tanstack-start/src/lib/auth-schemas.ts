@@ -22,5 +22,10 @@ export const signUpSchema = z.object({
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export const authSearchSchema = z.object({
-	redirect: z.string().optional().catch(undefined),
+	redirect: z.string()
+		.refine(val => val.startsWith("/") && !val.startsWith("//"), {
+			message: "Redirect must be a relative path",
+		})
+		.optional()
+		.catch(undefined),
 });
