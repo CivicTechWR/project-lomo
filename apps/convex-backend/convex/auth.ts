@@ -6,7 +6,7 @@ import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
-import { env } from "./env";
+import { getSiteEnv } from "./lib/siteEnv";
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
@@ -14,7 +14,7 @@ export const authComponent = createClient<DataModel>(components.betterAuth);
 
 export function createAuth(ctx: GenericCtx<DataModel>) {
 	return betterAuth({
-		baseURL: env.SITE_URL,
+		baseURL: getSiteEnv().SITE_URL,
 		database: authComponent.adapter(ctx),
 		// Configure simple, non-verified email/password to get started
 		emailAndPassword: {
