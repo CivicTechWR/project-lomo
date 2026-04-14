@@ -30,6 +30,8 @@ export type { LinkProps } from "./link/index.ts";
 
 export { DialogTrigger, Modal, ModalOverlay } from "./modal/index.ts";
 export type { ModalOverlayProps, ModalProps } from "./modal/index.ts";
+export { Switch } from "./switch/index.ts";
+export type { SwitchProps } from "./switch/index.ts";
 export { Input, TextArea, TextField } from "./text-field/index.ts";
 export type { InputProps, TextAreaProps, TextFieldProps } from "./text-field/index.ts";
 

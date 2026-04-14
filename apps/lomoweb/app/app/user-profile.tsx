@@ -11,7 +11,7 @@ import { Text } from "@repo/ui/text";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
-export function UserDashboard({
+export function UserProfile({
 	preloadedUser,
 }: {
 	preloadedUser: Preloaded<typeof api.auth.getCurrentUser>;
@@ -31,9 +31,9 @@ export function UserDashboard({
 	return (
 		<Card size={3} variant="surface" className="w-full max-w-md">
 			<div className="flex flex-col gap-5 p-6">
-				<div className="flex items-center justify-between">
+				<div className="flex items-center justify-between gap-3">
 					<Heading level={2} size={6}>
-						Your Profile
+						Your profile
 					</Heading>
 					<Button
 						variant="soft"
@@ -62,6 +62,15 @@ export function UserDashboard({
 					</div>
 					{user.issuer && <DetailRow label="Issuer" value={user.issuer} />}
 				</div>
+
+				<Button
+					variant="outline"
+					color="gray"
+					className="w-full"
+					onPress={() => router.push("/app")}
+				>
+					Back to requests
+				</Button>
 			</div>
 		</Card>
 	);

@@ -1,3 +1,9 @@
+/**
+ * Example edge guard — not active unless re-exported from `middleware.ts`.
+ * Convex Better Auth typically uses the `convex_jwt` cookie; `getSessionCookie()` from
+ * `better-auth/cookies` targets Better Auth’s default session cookie. Using this as-is
+ * often yields false “no session” and causes /app ↔ /signin redirect loops.
+ */
 import type { NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 import { NextResponse } from "next/server";
