@@ -35,11 +35,33 @@ export function OfferRequestDetailView() {
 	);
 
 	const acceptRequest = useMutation(api.helpRequests.accept);
+	const declineAssigned = useMutation(api.helpRequests.declineAssigned);
 	const [accepting, setAccepting] = useState(false);
+	const [declining, setDeclining] = useState(false);
 
 	function goHomeOffering() {
 		writeStoredHomeMode("offer_help");
 		router.push("/app");
+	}
+
+	async function handleDecline() {
+		if (!requestId || !doc) {
+			return;
+		}
+		setDeclining(true);
+		try {
+			await declineAssigned({ requestId: requestId as Id<"helpRequests"> });
+			goHomeOffering();
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not decline this request.",
+			);
+		}
+		finally {
+			setDeclining(false);
+		}
 	}
 
 	async function handleAccept() {
@@ -92,7 +114,7 @@ export function OfferRequestDetailView() {
 	}
 
 	const st = doc.status as HelpRequestStatus;
-	const isPending = st === "pending";
+	const isAwaitingVolunteer = st === "assigned";
 
 	return (
 		<div className="flex w-full max-w-lg flex-col gap-6">
@@ -128,22 +150,39 @@ export function OfferRequestDetailView() {
 				</Text>
 			</div>
 
-			{isPending && (
-				<Button
-					variant="solid"
-					color="sage"
-					className="w-full"
-					isDisabled={accepting}
-					onPress={handleAccept}
-				>
-					{accepting ? "Accepting…" : "Accept request"}
-				</Button>
+			{isAwaitingVolunteer && (
+				<div className="flex w-full gap-3">
+					<Button
+						variant="solid"
+						color="sage"
+						className="min-w-0 flex-1"
+						isDisabled={accepting || declining}
+						onPress={handleAccept}
+					>
+						{accepting ? "Accepting…" : "Accept request"}
+					</Button>
+					<Button
+						variant="outline"
+						color="red"
+						className="min-w-0 flex-1"
+						isDisabled={accepting || declining}
+						onPress={handleDecline}
+					>
+						{declining ? "Declining…" : "Decline"}
+					</Button>
+				</div>
+			)}
+
+			{st === "awaiting_requester_acceptance" && (
+				<CardNotice>
+					You accepted this request. Waiting for the requester to confirm the
+					match.
+				</CardNotice>
 			)}
 
 			{st === "in_progress" && (
 				<CardNotice>
-					You&apos;re helping with this request. The requester has been
-					notified it&apos;s in progress.
+					This request is in progress.
 				</CardNotice>
 			)}
 		</div>

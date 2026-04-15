@@ -51,6 +51,7 @@ export function RequestsHome({
 		= statusFilter === null ? {} : { statusFilter };
 
 	const myRequests = useQuery(api.helpRequests.listMine, listArgs);
+	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
 	const openForOthers = useQuery(
 		api.helpRequests.listPendingFromOthers,
 		mode === "offer_help" ? {} : "skip",
@@ -62,6 +63,17 @@ export function RequestsHome({
 
 	return (
 		<div className="flex w-full max-w-lg flex-col gap-6">
+			{isAdmin && (
+				<Button
+					variant="soft"
+					color="terracotta"
+					size={2}
+					className="self-start"
+					onPress={() => router.push("/app/admin")}
+				>
+					Admin dashboard
+				</Button>
+			)}
 			<div
 				className="flex rounded-[max(var(--radius-3),12px)] border border-gray-6 bg-gray-2 p-1"
 				role="tablist"

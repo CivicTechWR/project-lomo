@@ -36,7 +36,10 @@ export function RequestDetailView() {
 	);
 
 	const cancelRequest = useMutation(api.helpRequests.cancel);
+	const acceptMatch = useMutation(api.helpRequests.requesterAcceptMatch);
+	const declineMatch = useMutation(api.helpRequests.requesterDeclineMatch);
 	const [cancelling, setCancelling] = useState(false);
+	const [updatingMatch, setUpdatingMatch] = useState(false);
 
 	async function handleCancel() {
 		if (!requestId || !doc) {
@@ -61,6 +64,45 @@ export function RequestDetailView() {
 		}
 		finally {
 			setCancelling(false);
+		}
+	}
+
+	async function handleAcceptMatch() {
+		if (!requestId) {
+			return;
+		}
+		setUpdatingMatch(true);
+		try {
+			await acceptMatch({ requestId: requestId as Id<"helpRequests"> });
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not accept the match.",
+			);
+		}
+		finally {
+			setUpdatingMatch(false);
+		}
+	}
+
+	async function handleDeclineMatch() {
+		if (!requestId) {
+			return;
+		}
+		setUpdatingMatch(true);
+		try {
+			await declineMatch({ requestId: requestId as Id<"helpRequests"> });
+			router.push("/app");
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not decline the match.",
+			);
+		}
+		finally {
+			setUpdatingMatch(false);
 		}
 	}
 
@@ -133,6 +175,29 @@ export function RequestDetailView() {
 				<Text size={2} color="gray">
 					A community member has accepted your request and is helping out.
 				</Text>
+			)}
+
+			{st === "awaiting_requester_acceptance" && (
+				<div className="flex gap-3">
+					<Button
+						variant="solid"
+						color="sage"
+						className="min-w-0 flex-1"
+						isDisabled={updatingMatch}
+						onPress={handleAcceptMatch}
+					>
+						Accept match
+					</Button>
+					<Button
+						variant="outline"
+						color="red"
+						className="min-w-0 flex-1"
+						isDisabled={updatingMatch}
+						onPress={handleDeclineMatch}
+					>
+						Decline match
+					</Button>
+				</div>
 			)}
 
 			{canCancelRequest(st) && (

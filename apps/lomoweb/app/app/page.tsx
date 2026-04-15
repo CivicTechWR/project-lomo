@@ -1,5 +1,6 @@
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { preloadAuthQuery } from "@/lib/auth-server";
+import { NotificationsPanel } from "./notifications-panel";
 import { RequestsHome } from "./requests-home";
 
 export default async function AppPage() {
@@ -7,6 +8,7 @@ export default async function AppPage() {
 
 	return (
 		<div className="mx-auto min-h-screen max-w-lg px-4 py-8">
+			<NotificationsPanel />
 			<RequestsHome preloadedUser={preloadedUser} />
 		</div>
 	);
