@@ -17,6 +17,14 @@ export const notificationType = v.union(
 	v.literal("volunteer_accepted_match"),
 	v.literal("requester_accept_match_prompt"),
 	v.literal("requester_declined_match"),
+	v.literal("volunteer_offered_help"),
+	v.literal("help_request_completed"),
+	v.literal("request_new_message"),
+);
+
+export const requestMessageSource = v.union(
+	v.literal("web"),
+	v.literal("email"),
 );
 
 export default defineSchema(
@@ -38,15 +46,39 @@ export default defineSchema(
 			status: requestStatus,
 			/** Optional JSON payload for structured client data (e.g. food draft). */
 			payload: v.optional(v.string()),
+			/**
+			 * Opaque token for masked email relay (local-part only; domain from EMAIL_RELAY_DOMAIN).
+			 * Set when the requester accepts the match (in_progress).
+			 */
+			emailRelayToken: v.optional(v.string()),
 		})
 			.index("by_owner", ["ownerSubject"])
 			.index("by_status", ["status"])
-			.index("by_assigned_helper", ["assignedHelperSubject"]),
+			.index("by_assigned_helper", ["assignedHelperSubject"])
+			.index("by_email_relay_token", ["emailRelayToken"]),
+
+		requestMessages: defineTable({
+			requestId: v.id("helpRequests"),
+			/** Present for web posts and for email relay once sender is matched to a subject. */
+			authorSubject: v.optional(v.string()),
+			body: v.string(),
+			source: requestMessageSource,
+		}).index("by_request", ["requestId"]),
+
+		processedInboundEmails: defineTable({
+			/** Resend `email_id` from webhook / receiving API — idempotency for retries. */
+			resendEmailId: v.string(),
+		}).index("by_resend_email_id", ["resendEmailId"]),
 
 		users: defineTable({
 			subject: v.string(),
 			email: v.optional(v.string()),
 			name: v.optional(v.string()),
+			/** Shown to requesters when you offer to help (falls back to first word of `name`). */
+			firstName: v.optional(v.string()),
+			pronouns: v.optional(v.string()),
+			/** Optional; only shared with someone you are matched with on a request. */
+			phone: v.optional(v.string()),
 			image: v.optional(v.string()),
 			isVolunteer: v.optional(v.boolean()),
 			bio: v.optional(v.string()),

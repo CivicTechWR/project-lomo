@@ -6,7 +6,7 @@
 export type RequestCategoryId =
 	| "food"
 	| "items"
-	| "ride"
+	| "other"
 	| "support"
 	| "paperwork"
 	| "ceremony";
@@ -59,22 +59,17 @@ export const emptyItemsDetails = (): ItemsRequestDetails => ({
 	deliveryInstructions: "",
 });
 
-export interface RideRequestDetails {
-	pickupLocation: string;
-	dropoffLocation: string;
-	needsReturnRide: boolean;
+/** Custom / miscellaneous help (replaces deprecated ride flow in the UI). */
+export interface OtherRequestDetails {
+	whatNeed: string;
 	whenText: string;
-	accessibilityNeeded: boolean;
-	accessibilityAccommodation: string;
+	location: string;
 }
 
-export const emptyRideDetails = (): RideRequestDetails => ({
-	pickupLocation: "",
-	dropoffLocation: "",
-	needsReturnRide: false,
+export const emptyOtherDetails = (): OtherRequestDetails => ({
+	whatNeed: "",
 	whenText: "",
-	accessibilityNeeded: false,
-	accessibilityAccommodation: "",
+	location: "",
 });
 
 export type PublicWalkLengthId = "10_15" | "20_30" | "45_60";
@@ -171,7 +166,7 @@ export interface RequestDraft {
 	foodKind: FoodKindId | null;
 	foodDetails: FoodRequestDetails;
 	itemsDetails: ItemsRequestDetails;
-	rideDetails: RideRequestDetails;
+	otherDetails: OtherRequestDetails;
 	publicWalkDetails: PublicWalkRequestDetails;
 	micrograntDetails: MicrograntRequestDetails;
 	ceremonyDetails: CeremonyRequestDetails;
@@ -183,7 +178,7 @@ export const emptyDraft = (): RequestDraft => ({
 	foodKind: null,
 	foodDetails: emptyFoodDetails(),
 	itemsDetails: emptyItemsDetails(),
-	rideDetails: emptyRideDetails(),
+	otherDetails: emptyOtherDetails(),
 	publicWalkDetails: emptyPublicWalkDetails(),
 	micrograntDetails: emptyMicrograntDetails(),
 	ceremonyDetails: emptyCeremonyDetails(),

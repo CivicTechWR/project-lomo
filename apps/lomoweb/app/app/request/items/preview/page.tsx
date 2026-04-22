@@ -60,20 +60,20 @@ export default function ItemsPreviewPage() {
 			<div className="flex flex-1 flex-col gap-5">
 				<Heading size={7}>Request preview</Heading>
 
-				<div className="flex gap-3">
+				<div className="flex flex-col gap-3 sm:flex-row sm:items-start">
 					<div
 						className="size-14 shrink-0 rounded-full bg-gray-4"
 						aria-hidden
 					/>
-					<div className="min-w-0 flex-1">
+					<div className="flex min-w-0 flex-1 flex-col gap-1">
 						<Text size={4} weight="medium">
 							{title}
 						</Text>
 						<Text size={2} color="gray">
 							From you
 						</Text>
-						<Text size={2} weight="medium" className="mt-1 text-terracotta-11">
-							{urgencyLabel}
+						<Text size={2} weight="medium" className="text-terracotta-11">
+							{`Urgency: ${urgencyLabel}`}
 						</Text>
 					</div>
 				</div>
@@ -82,19 +82,9 @@ export default function ItemsPreviewPage() {
 					<Text size={2} className="whitespace-pre-wrap">
 						{body}
 					</Text>
-					<div className="mt-4 flex gap-6 border-t border-gray-5 pt-3">
-						<div>
-							<Text size={1} color="gray" weight="medium">
-								Time
-							</Text>
-							<Text size={2}>When you&apos;re matched</Text>
-						</div>
-						<div>
-							<Text size={1} color="gray" weight="medium">
-								Duration
-							</Text>
-							<Text size={2}>As needed</Text>
-						</div>
+					<div className="mt-4 flex flex-col gap-2 border-t border-gray-5 pt-3">
+						<Text size={2}>Time: When you&apos;re matched</Text>
+						<Text size={2}>Duration: As needed</Text>
 					</div>
 				</div>
 

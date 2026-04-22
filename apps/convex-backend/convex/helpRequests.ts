@@ -2,6 +2,7 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { redactHelpRequestForVolunteer } from "./redactHelpRequest";
 import { requestStatus } from "./schema";
 
 type Identity = {
@@ -63,6 +64,12 @@ async function upsertCurrentUser(ctx: any, identity: Identity) {
 	await ctx.db.patch(existing._id, patch);
 }
 
+function randomRelayToken(): string {
+	const bytes = new Uint8Array(24);
+	crypto.getRandomValues(bytes);
+	return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+}
+
 async function createNotification(ctx: any, args: {
 	recipientSubject: string;
 	type:
@@ -70,7 +77,10 @@ async function createNotification(ctx: any, args: {
 		| "volunteer_assignment_declined"
 		| "volunteer_accepted_match"
 		| "requester_accept_match_prompt"
-		| "requester_declined_match";
+		| "requester_declined_match"
+		| "volunteer_offered_help"
+		| "help_request_completed"
+		| "request_new_message";
 	title: string;
 	body: string;
 	requestId?: any;
@@ -149,7 +159,7 @@ export const listPendingFromOthers = query({
 			r => r.ownerSubject !== identity.subject,
 		);
 		mine.sort((a, b) => b._creationTime - a._creationTime);
-		return mine;
+		return mine.map(r => redactHelpRequestForVolunteer(r));
 	},
 });
 
@@ -172,16 +182,76 @@ export const getAsHelper = query({
 		if (doc.ownerSubject === identity.subject) {
 			return null;
 		}
+		const me = identity.subject;
+		const isAssignedVolunteer
+			= doc.status === "assigned" && doc.assignedHelperSubject === me;
+		const isOfferingVolunteer
+			= doc.status === "awaiting_requester_acceptance"
+				&& doc.helperSubject === me;
+		const isHelperInProgress
+			= doc.status === "in_progress" && doc.helperSubject === me;
+
 		if (doc.status === "pending") {
-			return doc;
+			return redactHelpRequestForVolunteer(doc);
 		}
-		if (
-			doc.status === "in_progress"
-			&& doc.helperSubject === identity.subject
-		) {
+		if (isAssignedVolunteer) {
+			return redactHelpRequestForVolunteer(doc);
+		}
+		if (isOfferingVolunteer) {
+			return redactHelpRequestForVolunteer(doc);
+		}
+		if (isHelperInProgress) {
 			return doc;
 		}
 		return null;
+	},
+});
+
+function volunteerLabelForNotification(helper: {
+	firstName?: string;
+	name?: string;
+	pronouns?: string;
+} | null): string {
+	const first
+		= helper?.firstName?.trim()
+			|| helper?.name?.trim().split(/\s+/)[0]
+			|| "";
+	const pron = helper?.pronouns?.trim();
+	if (first && pron) {
+		return `${first} (${pron})`;
+	}
+	if (first) {
+		return first;
+	}
+	return "A community member";
+}
+
+/** Public helper fields for the requester while reviewing an offer. */
+export const getOfferHelperPreview = query({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		const identity = await ctx.auth.getUserIdentity() as Identity | null;
+		if (!identity) {
+			return null;
+		}
+		await upsertCurrentUser(ctx, identity);
+		const doc = await ctx.db.get(requestId);
+		if (!doc || doc.ownerSubject !== identity.subject) {
+			return null;
+		}
+		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperSubject) {
+			return null;
+		}
+		const helper = await ctx.db
+			.query("users")
+			.withIndex("by_subject", (q: any) => q.eq("subject", doc.helperSubject))
+			.unique();
+		const firstName
+			= helper?.firstName?.trim()
+				|| helper?.name?.trim().split(/\s+/)[0]
+				|| null;
+		const pronouns = helper?.pronouns?.trim() || null;
+		return { firstName, pronouns };
 	},
 });
 
@@ -219,6 +289,53 @@ export const accept = mutation({
 				to: owner.email,
 				subject: "Your LoMo match is ready to accept",
 				text: `A volunteer accepted your request "${doc.title}". Open LoMo to accept the match.`,
+			});
+		}
+	},
+});
+
+export const volunteerOfferHelp = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		const identity = await requireIdentity(ctx);
+		await upsertCurrentUser(ctx, identity);
+		const doc = await ctx.db.get(requestId);
+		if (!doc || doc.ownerSubject === identity.subject) {
+			throw new Error("Not found");
+		}
+		if (doc.status !== "pending") {
+			throw new Error("This request is not open for offers right now.");
+		}
+		if (doc.assignedHelperSubject) {
+			throw new Error("This request is being matched by a coordinator.");
+		}
+		await ctx.db.patch(requestId, {
+			status: "awaiting_requester_acceptance",
+			helperSubject: identity.subject,
+		});
+		const helper = await ctx.db
+			.query("users")
+			.withIndex("by_subject", (q: any) => q.eq("subject", identity.subject))
+			.unique();
+		const label = volunteerLabelForNotification(helper);
+		await createNotification(ctx, {
+			recipientSubject: doc.ownerSubject,
+			type: "volunteer_offered_help",
+			title: "Someone offered to help",
+			body: `${label} offered to help with "${doc.title}". Open your request to accept or decline.`,
+			requestId,
+			ctaLabel: "Review offer",
+			ctaAction: "open_request",
+		});
+		const owner = await ctx.db
+			.query("users")
+			.withIndex("by_subject", (q: any) => q.eq("subject", doc.ownerSubject))
+			.unique();
+		if (owner?.email) {
+			await ctx.scheduler.runAfter(0, internal.notifications.sendEmail, {
+				to: owner.email,
+				subject: "Someone offered to help on LoMo",
+				text: `${label} offered to help with "${doc.title}". Open LoMo to review the offer.`,
 			});
 		}
 	},
@@ -262,7 +379,10 @@ export const requesterAcceptMatch = mutation({
 		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperSubject) {
 			throw new Error("No match to accept.");
 		}
-		await ctx.db.patch(requestId, { status: "in_progress" });
+		await ctx.db.patch(requestId, {
+			status: "in_progress",
+			emailRelayToken: randomRelayToken(),
+		});
 		await createNotification(ctx, {
 			recipientSubject: doc.helperSubject,
 			type: "volunteer_accepted_match",
@@ -450,6 +570,46 @@ export const cancel = mutation({
 			|| doc.status === "cancelled"
 		) {
 			throw new Error("Cannot cancel this request");
+		}
+	},
+});
+
+export const markComplete = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		const identity = await requireIdentity(ctx);
+		await upsertCurrentUser(ctx, identity);
+		const doc = await ctx.db.get(requestId);
+		if (!doc) {
+			throw new Error("Not found");
+		}
+		if (doc.status !== "in_progress") {
+			throw new Error("Only in-progress requests can be marked complete.");
+		}
+		const isOwner = doc.ownerSubject === identity.subject;
+		const isHelper = doc.helperSubject === identity.subject;
+		if (!isOwner && !isHelper) {
+			throw new Error("Forbidden");
+		}
+		await ctx.db.patch(requestId, { status: "complete" });
+		const snippet = `"${doc.title}"`;
+		if (isOwner && doc.helperSubject) {
+			await createNotification(ctx, {
+				recipientSubject: doc.helperSubject,
+				type: "help_request_completed",
+				title: "Request marked complete",
+				body: `The requester marked ${snippet} complete.`,
+				requestId,
+			});
+		}
+		if (isHelper) {
+			await createNotification(ctx, {
+				recipientSubject: doc.ownerSubject,
+				type: "help_request_completed",
+				title: "Request marked complete",
+				body: `Your helper marked ${snippet} complete.`,
+				requestId,
+			});
 		}
 	},
 });

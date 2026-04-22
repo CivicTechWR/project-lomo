@@ -12,8 +12,13 @@ import type * as auth from "../auth.js";
 import type * as helpRequests from "../helpRequests.js";
 import type * as http from "../http.js";
 import type * as lib_siteEnv from "../lib/siteEnv.js";
+import type * as lib_verifyResendWebhook from "../lib/verifyResendWebhook.js";
 import type * as notifications from "../notifications.js";
 import type * as numbers from "../numbers.js";
+import type * as redactHelpRequest from "../redactHelpRequest.js";
+import type * as requestMessages from "../requestMessages.js";
+import type * as resendInboundHttp from "../resendInboundHttp.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -26,8 +31,13 @@ declare const fullApi: ApiFromModules<{
   helpRequests: typeof helpRequests;
   http: typeof http;
   "lib/siteEnv": typeof lib_siteEnv;
+  "lib/verifyResendWebhook": typeof lib_verifyResendWebhook;
   notifications: typeof notifications;
   numbers: typeof numbers;
+  redactHelpRequest: typeof redactHelpRequest;
+  requestMessages: typeof requestMessages;
+  resendInboundHttp: typeof resendInboundHttp;
+  users: typeof users;
 }>;
 
 /**

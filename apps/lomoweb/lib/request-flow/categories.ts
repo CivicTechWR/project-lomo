@@ -22,10 +22,9 @@ export const REQUEST_CATEGORIES: RequestCategoryMeta[] = [
 		implemented: true,
 	},
 	{
-		id: "ride",
-		title: "Ride",
-		description:
-			"Help getting from one place to another. Do not use for emergency transport.",
+		id: "other",
+		title: "Other",
+		description: "Anything else — describe what you need in your own words.",
 		implemented: true,
 	},
 	{

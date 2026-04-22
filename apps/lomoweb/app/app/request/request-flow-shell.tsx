@@ -32,13 +32,10 @@ function filledSegmentsForPath(pathname: string): number {
 	) {
 		return 3;
 	}
-	if (pathname.endsWith("/ride/details")) {
+	if (pathname.endsWith("/other/details")) {
 		return 2;
 	}
-	if (
-		pathname.endsWith("/ride/urgency")
-		|| pathname.endsWith("/ride/preview")
-	) {
+	if (pathname.endsWith("/other/preview")) {
 		return 3;
 	}
 	if (pathname.endsWith("/support/details")) {
@@ -73,9 +70,9 @@ export function RequestFlowShell({ children }: { children: ReactNode }) {
 	const filled = filledSegmentsForPath(pathname);
 
 	return (
-		<div className="flex min-h-screen flex-col bg-gray-1">
+		<div className="flex min-h-screen flex-col bg-gray-1 lg:min-h-0">
 			<header className="border-b border-gray-5 bg-gray-1 px-4 py-3">
-				<div className="mx-auto flex w-full max-w-lg items-center justify-between">
+				<div className="mx-auto flex w-full max-w-lg items-center justify-between lg:max-w-none">
 					<div className="flex items-center gap-2">
 						<LomoLogo className="size-8 shrink-0" aria-hidden />
 						<Text size={4} weight="medium">
@@ -92,11 +89,13 @@ export function RequestFlowShell({ children }: { children: ReactNode }) {
 				</div>
 			</header>
 
-			<div className="mx-auto w-full max-w-lg flex-1 px-4 pb-8 pt-4">
+			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-8 pt-4 lg:max-w-none lg:flex-none">
 				<div className="mb-6 flex justify-center">
 					<RequestProgress filledCount={filled} />
 				</div>
-				<div className="flex min-h-[calc(100vh-12rem)] flex-col">{children}</div>
+				<div className="flex min-h-[calc(100vh-12rem)] flex-col lg:min-h-0">
+					{children}
+				</div>
 			</div>
 		</div>
 	);

@@ -7,11 +7,11 @@ import type {
 	FoodRequestDetails,
 	ItemsRequestDetails,
 	MicrograntRequestDetails,
+	OtherRequestDetails,
 	PublicWalkRequestDetails,
 	RequestCategoryId,
 	RequestDraft,
 	RequestUrgencyId,
-	RideRequestDetails,
 } from "@/lib/request-flow/types";
 import {
 	createContext,
@@ -30,8 +30,8 @@ type RequestDraftContextValue = {
 	setFoodDetailsAll: (details: FoodRequestDetails) => void;
 	setItemsDetails: (patch: Partial<ItemsRequestDetails>) => void;
 	setItemsDetailsAll: (details: ItemsRequestDetails) => void;
-	setRideDetails: (patch: Partial<RideRequestDetails>) => void;
-	setRideDetailsAll: (details: RideRequestDetails) => void;
+	setOtherDetails: (patch: Partial<OtherRequestDetails>) => void;
+	setOtherDetailsAll: (details: OtherRequestDetails) => void;
 	setPublicWalkDetails: (patch: Partial<PublicWalkRequestDetails>) => void;
 	setPublicWalkDetailsAll: (details: PublicWalkRequestDetails) => void;
 	setMicrograntDetails: (patch: Partial<MicrograntRequestDetails>) => void;
@@ -79,15 +79,15 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 		setDraft(prev => ({ ...prev, itemsDetails: { ...details } }));
 	}, []);
 
-	const setRideDetails = useCallback((patch: Partial<RideRequestDetails>) => {
+	const setOtherDetails = useCallback((patch: Partial<OtherRequestDetails>) => {
 		setDraft(prev => ({
 			...prev,
-			rideDetails: { ...prev.rideDetails, ...patch },
+			otherDetails: { ...prev.otherDetails, ...patch },
 		}));
 	}, []);
 
-	const setRideDetailsAll = useCallback((details: RideRequestDetails) => {
-		setDraft(prev => ({ ...prev, rideDetails: { ...details } }));
+	const setOtherDetailsAll = useCallback((details: OtherRequestDetails) => {
+		setDraft(prev => ({ ...prev, otherDetails: { ...details } }));
 	}, []);
 
 	const setPublicWalkDetails = useCallback((patch: Partial<PublicWalkRequestDetails>) => {
@@ -141,8 +141,8 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 				setFoodDetailsAll,
 				setItemsDetails,
 				setItemsDetailsAll,
-				setRideDetails,
-				setRideDetailsAll,
+				setOtherDetails,
+				setOtherDetailsAll,
 				setPublicWalkDetails,
 				setPublicWalkDetailsAll,
 				setMicrograntDetails,
@@ -160,8 +160,8 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 			setFoodDetailsAll,
 			setItemsDetails,
 			setItemsDetailsAll,
-			setRideDetails,
-			setRideDetailsAll,
+			setOtherDetails,
+			setOtherDetailsAll,
 			setPublicWalkDetails,
 			setPublicWalkDetailsAll,
 			setMicrograntDetails,

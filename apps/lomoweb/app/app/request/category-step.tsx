@@ -32,8 +32,8 @@ export function CategoryStep() {
 		if (cat.id === "items") {
 			router.push("/app/request/items/details");
 		}
-		if (cat.id === "ride") {
-			router.push("/app/request/ride/details");
+		if (cat.id === "other") {
+			router.push("/app/request/other/details");
 		}
 		if (cat.id === "support") {
 			router.push("/app/request/support/details");

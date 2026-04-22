@@ -61,3 +61,13 @@
 .font-display {
 	font-family: var(--font-display), Georgia, serif;
 }
+
+/* Desktop app chrome: fixed width, height grows with content (see app/app/layout.tsx). */
+@media (min-width: 1024px) {
+	.lomo-desktop-app-frame {
+		--lomo-app-width: min(32rem, calc(100vw - 2rem));
+		width: var(--lomo-app-width);
+		max-width: var(--lomo-app-width);
+	}
+}
+

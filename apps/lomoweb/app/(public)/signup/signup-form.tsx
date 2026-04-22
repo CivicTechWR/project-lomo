@@ -1,23 +1,47 @@
 "use client";
 
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
+import { useMutation } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
 
-const signupSchema = z.object({
-	name: z.string().min(1, "Name is required"),
-	email: z.string().email("Please enter a valid email address"),
-	password: z.string().min(8, "Password must be at least 8 characters"),
-});
+const signupSchema = z
+	.object({
+		name: z.string().min(1, "Name is required"),
+		email: z.string().email("Please enter a valid email address"),
+		password: z.string().min(8, "Password must be at least 8 characters"),
+		phone: z.string(),
+	})
+	.superRefine((data, ctx) => {
+		const t = data.phone.trim();
+		if (t.length === 0) {
+			return;
+		}
+		if (t.length < 7) {
+			ctx.addIssue({
+				code: "custom",
+				path: ["phone"],
+				message: "If you add a phone number, enter at least 7 characters.",
+			});
+		}
+		if (t.length > 32) {
+			ctx.addIssue({
+				code: "custom",
+				path: ["phone"],
+				message: "Phone number looks too long. Try a shorter entry.",
+			});
+		}
+	});
 
-type FieldErrors = Partial<Record<"name" | "email" | "password", string>>;
+type FieldErrors = Partial<Record<"name" | "email" | "password" | "phone", string>>;
 
 const SERVER_ERROR_MAP: Record<string, { field?: keyof FieldErrors; message: string }> = {
 	INVALID_EMAIL: { field: "email", message: "Please enter a valid email address" },
@@ -42,16 +66,18 @@ export function SignUpForm() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [phone, setPhone] = useState("");
 	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 	const [formError, setFormError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const updatePublicProfile = useMutation(api.users.updatePublicProfile);
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setFieldErrors({});
 		setFormError(null);
 
-		const result = signupSchema.safeParse({ name, email, password });
+		const result = signupSchema.safeParse({ name, email, password, phone });
 		if (!result.success) {
 			const errors: FieldErrors = {};
 			for (const issue of result.error.issues) {
@@ -85,6 +111,19 @@ export function SignUpForm() {
 			}
 			setIsSubmitting(false);
 			return;
+		}
+
+		const phoneTrimmed = result.data.phone.trim();
+		if (phoneTrimmed.length > 0) {
+			try {
+				await updatePublicProfile({ phone: phoneTrimmed });
+			}
+			catch (e) {
+				console.error(e);
+				window.alert(
+					"Your account was created, but we could not save your phone number. You can add it under Profile in the app.",
+				);
+			}
 		}
 
 		router.push(getRedirectPath(searchParams));
@@ -153,6 +192,30 @@ export function SignUpForm() {
 					<FieldError>{fieldErrors.password}</FieldError>
 				)}
 			</TextField>
+
+			<div className="flex flex-col gap-2">
+				<TextField
+					name="phone"
+					type="tel"
+					autoComplete="tel"
+					isInvalid={!!fieldErrors.phone}
+					value={phone}
+					onChange={setPhone}
+				>
+					<Label>Mobile number (optional)</Label>
+					<Group>
+						<Input placeholder="e.g. +1 519 555 0100" />
+					</Group>
+					{fieldErrors.phone && <FieldError>{fieldErrors.phone}</FieldError>}
+				</TextField>
+				<Text size={1} color="gray" className="leading-relaxed">
+					If you add a number, we only share it with someone after you are matched
+					on a request, so you can coordinate by text outside LoMo. LoMo does not
+					send texts or host chat in the app. If you skip this, a matched
+					volunteer will reach you by email using a masked address so your real
+					email stays private.
+				</Text>
+			</div>
 
 			{/* Form-level error */}
 			{formError && (

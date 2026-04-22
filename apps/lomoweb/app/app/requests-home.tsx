@@ -62,7 +62,7 @@ export function RequestsHome({
 	}
 
 	return (
-		<div className="flex w-full max-w-lg flex-col gap-6">
+		<div className="flex w-full max-w-lg flex-col gap-6 lg:max-w-none">
 			{isAdmin && (
 				<Button
 					variant="soft"
@@ -269,7 +269,7 @@ function OfferingHelpPanel(props: {
 					</Heading>
 					<Text size={2} color="gray" className="mt-1">
 						People in the community are looking for support. Open a request
-						to read more — if it feels like a fit, you can accept it.
+						to read more — if it feels like a fit, you can offer to help.
 					</Text>
 				</div>
 				<Button

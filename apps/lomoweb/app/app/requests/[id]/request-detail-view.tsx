@@ -9,14 +9,37 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
 import {
 	HELP_REQUEST_STATUS_LABEL,
 	type HelpRequestStatus,
 	statusBadgeColor,
 } from "@/lib/help-request-status";
 
+function formatHelperIntro(preview: {
+	firstName: string | null;
+	pronouns: string | null;
+}): string {
+	const name = preview.firstName?.trim();
+	const pron = preview.pronouns?.trim();
+	const tail
+		= " offered to help with your request. If you accept, they will see your full details, including location.";
+	if (name && pron) {
+		return `${name} (${pron})${tail}`;
+	}
+	if (name) {
+		return `${name}${tail}`;
+	}
+	return `Someone${tail}`;
+}
+
 function canCancelRequest(status: HelpRequestStatus): boolean {
-	return status === "pending" || status === "in_progress";
+	return (
+		status === "pending"
+		|| status === "in_progress"
+		|| status === "assigned"
+		|| status === "awaiting_requester_acceptance"
+	);
 }
 
 export function RequestDetailView() {
@@ -35,11 +58,18 @@ export function RequestDetailView() {
 		requestId ? { requestId: requestId as Id<"helpRequests"> } : "skip",
 	);
 
+	const offerHelperPreview = useQuery(
+		api.helpRequests.getOfferHelperPreview,
+		requestId ? { requestId: requestId as Id<"helpRequests"> } : "skip",
+	);
+
 	const cancelRequest = useMutation(api.helpRequests.cancel);
 	const acceptMatch = useMutation(api.helpRequests.requesterAcceptMatch);
 	const declineMatch = useMutation(api.helpRequests.requesterDeclineMatch);
+	const markComplete = useMutation(api.helpRequests.markComplete);
 	const [cancelling, setCancelling] = useState(false);
 	const [updatingMatch, setUpdatingMatch] = useState(false);
+	const [completing, setCompleting] = useState(false);
 
 	async function handleCancel() {
 		if (!requestId || !doc) {
@@ -106,6 +136,26 @@ export function RequestDetailView() {
 		}
 	}
 
+	async function handleMarkComplete() {
+		if (!requestId) {
+			return;
+		}
+		setCompleting(true);
+		try {
+			await markComplete({ requestId: requestId as Id<"helpRequests"> });
+			router.push("/app");
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not mark this complete.",
+			);
+		}
+		finally {
+			setCompleting(false);
+		}
+	}
+
 	if (!requestId) {
 		return (
 			<Text size={3} color="gray">
@@ -137,8 +187,13 @@ export function RequestDetailView() {
 
 	const st = doc.status as HelpRequestStatus;
 
+	const helperIntro
+		= st === "awaiting_requester_acceptance" && offerHelperPreview
+			? formatHelperIntro(offerHelperPreview)
+			: null;
+
 	return (
-		<div className="flex w-full max-w-lg flex-col gap-6">
+		<div className="flex w-full max-w-full flex-col gap-6">
 			<Button
 				variant="ghost"
 				color="gray"
@@ -173,31 +228,56 @@ export function RequestDetailView() {
 
 			{st === "in_progress" && doc.helperSubject && (
 				<Text size={2} color="gray">
-					A community member has accepted your request and is helping out.
+					A community member is helping with this request.
 				</Text>
 			)}
 
+			{st === "in_progress" && (
+				<RequestMessagesPanel requestId={requestId as Id<"helpRequests">} />
+			)}
+
 			{st === "awaiting_requester_acceptance" && (
-				<div className="flex gap-3">
-					<Button
-						variant="solid"
-						color="sage"
-						className="min-w-0 flex-1"
-						isDisabled={updatingMatch}
-						onPress={handleAcceptMatch}
-					>
-						Accept match
-					</Button>
-					<Button
-						variant="outline"
-						color="red"
-						className="min-w-0 flex-1"
-						isDisabled={updatingMatch}
-						onPress={handleDeclineMatch}
-					>
-						Decline match
-					</Button>
+				<div className="flex flex-col gap-4">
+					{helperIntro && (
+						<div className="rounded-lg border border-sage-6 bg-sage-2 px-4 py-3">
+							<Text size={2} color="gray">
+								{helperIntro}
+							</Text>
+						</div>
+					)}
+					<div className="flex gap-3">
+						<Button
+							variant="solid"
+							color="sage"
+							className="min-w-0 flex-1"
+							isDisabled={updatingMatch}
+							onPress={handleAcceptMatch}
+						>
+							Accept match
+						</Button>
+						<Button
+							variant="outline"
+							color="red"
+							className="min-w-0 flex-1"
+							isDisabled={updatingMatch}
+							onPress={handleDeclineMatch}
+						>
+							Decline match
+						</Button>
+					</div>
 				</div>
+			)}
+
+			{st === "in_progress" && (
+				<Button
+					variant="outline"
+					color="sage"
+					className="w-full"
+					isDisabled={completing}
+					onPress={handleMarkComplete}
+				>
+					{completing ? "Saving…" : "Mark complete"}
+				</Button>
 			)}
 
 			{canCancelRequest(st) && (

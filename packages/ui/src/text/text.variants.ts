@@ -8,6 +8,8 @@ import {
 } from "../variants/index.ts";
 
 export const textVariants = tv({
+	// Block-level so consecutive <Text> lines stack and long words wrap in flex layouts.
+	base: "block min-w-0 max-w-full break-words",
 	variants: {
 		size: typographySizes,
 		weight: fontWeights,

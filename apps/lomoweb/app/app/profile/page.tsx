@@ -6,7 +6,7 @@ export default async function ProfilePage() {
 	const preloadedUser = await preloadAuthQuery(api.auth.getCurrentUser);
 
 	return (
-		<div className="flex min-h-screen items-center justify-center px-4 py-10">
+		<div className="flex min-h-screen items-center justify-center px-4 py-10 lg:min-h-0 lg:w-full lg:py-8">
 			<UserProfile preloadedUser={preloadedUser} />
 		</div>
 	);

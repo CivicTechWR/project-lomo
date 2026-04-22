@@ -9,9 +9,10 @@
 	--sage-6: #ccd4cc;
 	--sage-7: #c0c9c0;
 	--sage-8: #acb7ac;
-	--sage-9: #546354;
-	--sage-10: #465546;
-	--sage-11: #526152;
+	/* 9–11: solid buttons, labels — slightly brighter green than prior sage */
+	--sage-9: #4f9162;
+	--sage-10: #3f7a50;
+	--sage-11: #477a56;
 	--sage-12: #172417;
 
 	--sage-a1: #d8f5ff3b;
@@ -29,8 +30,8 @@
 
 	--sage-contrast: #fff;
 	--sage-surface: #ecf4f0cc;
-	--sage-indicator: #546354;
-	--sage-track: #546354;
+	--sage-indicator: #4f9162;
+	--sage-track: #4f9162;
 }
 
 @supports (color: color(display-p3 1 1 1)) {
@@ -46,9 +47,9 @@
 			--sage-6: oklch(86.2% 0.0151 145.1);
 			--sage-7: oklch(82.7% 0.0152 145.1);
 			--sage-8: oklch(76.6% 0.0192 145.1);
-			--sage-9: oklch(48.2% 0.03 145.1);
-			--sage-10: oklch(43.1% 0.03 145.1);
-			--sage-11: oklch(47.5% 0.03 145.1);
+			--sage-9: oklch(54% 0.068 150);
+			--sage-10: oklch(47% 0.062 150);
+			--sage-11: oklch(51% 0.056 150);
 			--sage-12: oklch(24.2% 0.03 145.1);
 
 			--sage-a1: color(display-p3 0.8314 0.9569 1 / 0.167);
@@ -66,8 +67,8 @@
 
 			--sage-contrast: #fff;
 			--sage-surface: color(display-p3 0.9255 0.9569 0.9373 / 0.8);
-			--sage-indicator: oklch(48.2% 0.03 145.1);
-			--sage-track: oklch(48.2% 0.03 145.1);
+			--sage-indicator: oklch(54% 0.068 150);
+			--sage-track: oklch(54% 0.068 150);
 		}
 	}
 }

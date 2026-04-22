@@ -9,6 +9,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
 import {
 	writeStoredHomeMode,
 } from "@/lib/app-home-mode";
@@ -36,8 +37,12 @@ export function OfferRequestDetailView() {
 
 	const acceptRequest = useMutation(api.helpRequests.accept);
 	const declineAssigned = useMutation(api.helpRequests.declineAssigned);
+	const volunteerOfferHelp = useMutation(api.helpRequests.volunteerOfferHelp);
+	const markComplete = useMutation(api.helpRequests.markComplete);
 	const [accepting, setAccepting] = useState(false);
 	const [declining, setDeclining] = useState(false);
+	const [offering, setOffering] = useState(false);
+	const [completing, setCompleting] = useState(false);
 
 	function goHomeOffering() {
 		writeStoredHomeMode("offer_help");
@@ -83,6 +88,45 @@ export function OfferRequestDetailView() {
 		}
 	}
 
+	async function handleOfferHelp() {
+		if (!requestId || !doc) {
+			return;
+		}
+		setOffering(true);
+		try {
+			await volunteerOfferHelp({ requestId: requestId as Id<"helpRequests"> });
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not send your offer.",
+			);
+		}
+		finally {
+			setOffering(false);
+		}
+	}
+
+	async function handleMarkComplete() {
+		if (!requestId || !doc) {
+			return;
+		}
+		setCompleting(true);
+		try {
+			await markComplete({ requestId: requestId as Id<"helpRequests"> });
+			goHomeOffering();
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not mark this complete.",
+			);
+		}
+		finally {
+			setCompleting(false);
+		}
+	}
+
 	if (!requestId) {
 		return (
 			<Text size={3} color="gray">
@@ -115,9 +159,10 @@ export function OfferRequestDetailView() {
 
 	const st = doc.status as HelpRequestStatus;
 	const isAwaitingVolunteer = st === "assigned";
+	const isPendingOpen = st === "pending";
 
 	return (
-		<div className="flex w-full max-w-lg flex-col gap-6">
+		<div className="flex w-full max-w-full flex-col gap-6">
 			<Button
 				variant="ghost"
 				color="gray"
@@ -150,6 +195,18 @@ export function OfferRequestDetailView() {
 				</Text>
 			</div>
 
+			{isPendingOpen && (
+				<Button
+					variant="solid"
+					color="sage"
+					className="w-full"
+					isDisabled={offering}
+					onPress={handleOfferHelp}
+				>
+					{offering ? "Sending…" : "I can help"}
+				</Button>
+			)}
+
 			{isAwaitingVolunteer && (
 				<div className="flex w-full gap-3">
 					<Button
@@ -175,15 +232,28 @@ export function OfferRequestDetailView() {
 
 			{st === "awaiting_requester_acceptance" && (
 				<CardNotice>
-					You accepted this request. Waiting for the requester to confirm the
-					match.
+					Waiting for the requester to confirm the match. Address and location
+					stay hidden until then.
 				</CardNotice>
 			)}
 
 			{st === "in_progress" && (
-				<CardNotice>
-					This request is in progress.
-				</CardNotice>
+				<div className="flex flex-col gap-3">
+					<CardNotice>
+						This request is in progress. You can see the full details above,
+						including location.
+					</CardNotice>
+					<RequestMessagesPanel requestId={requestId as Id<"helpRequests">} />
+					<Button
+						variant="outline"
+						color="sage"
+						className="w-full"
+						isDisabled={completing}
+						onPress={handleMarkComplete}
+					>
+						{completing ? "Saving…" : "Mark complete"}
+					</Button>
+				</div>
 			)}
 		</div>
 	);

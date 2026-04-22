@@ -48,7 +48,7 @@ export function RequestStepFooter(props: RequestStepFooterProps) {
 			<Button
 				className="min-w-0 flex-1"
 				variant="solid"
-				color="gray"
+				color="sage"
 				isDisabled={nextDisabled}
 				onPress={onNext}
 			>

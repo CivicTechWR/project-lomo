@@ -17,8 +17,8 @@ export function RequestProgress({ filledCount }: { filledCount: number }) {
 					key={i}
 					className={
 						i < n
-							? "h-2 min-h-2 flex-1 rounded-sm bg-gray-11"
-							: "h-2 min-h-2 flex-1 rounded-sm bg-gray-5"
+							? "h-2 min-h-2 flex-1 rounded-sm bg-sage-9"
+							: "h-2 min-h-2 flex-1 rounded-sm bg-sage-4"
 					}
 				/>
 			))}
