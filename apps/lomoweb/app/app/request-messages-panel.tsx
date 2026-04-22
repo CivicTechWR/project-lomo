@@ -54,11 +54,12 @@ export function RequestMessagesPanel({
 	}
 
 	async function copyRelay() {
-		if (!relay.relayAddress) {
+		const addr = relay?.relayAddress;
+		if (!addr) {
 			return;
 		}
 		try {
-			await navigator.clipboard.writeText(relay.relayAddress);
+			await navigator.clipboard.writeText(addr);
 		}
 		catch {
 			window.alert("Could not copy to clipboard.");
