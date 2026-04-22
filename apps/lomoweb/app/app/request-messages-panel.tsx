@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@repo/convex-backend/convex/_generated/api";
-import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
+import type { Doc, Id } from "@repo/convex-backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Button } from "@repo/ui/button";
 import { Group, Label } from "@repo/ui/field";
@@ -78,7 +78,7 @@ export function RequestMessagesPanel({
 						No messages yet. Say hello below, or use masked email if it’s set up.
 					</Text>
 				) : (
-					messages.map((m) => {
+					messages.map((m: Doc<"requestMessages">) => {
 						const mine = m.authorSubject === me?.subject;
 						const via
 							= m.source === "email"
@@ -111,7 +111,7 @@ export function RequestMessagesPanel({
 				<Group>
 					<TextArea
 						value={draft}
-						onChange={setDraft}
+						onChange={e => setDraft(e.target.value)}
 						rows={3}
 						placeholder="Write a message…"
 						onKeyDown={(e) => {
