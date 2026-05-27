@@ -95,7 +95,8 @@ export default defineSchema(
 			ctaAction: v.optional(v.string()),
 		})
 			.index("by_recipient", ["recipientSubject"])
-			.index("by_recipient_read", ["recipientSubject", "isRead"]),
+			.index("by_recipient_read", ["recipientSubject", "isRead"])
+			.index("by_request", ["requestId"]),
 	},
 	{ schemaValidation: true },
 );

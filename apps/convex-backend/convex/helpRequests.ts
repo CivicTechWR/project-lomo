@@ -2,6 +2,7 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
 import { redactHelpRequestForVolunteer } from "./redactHelpRequest";
 import { requestStatus } from "./schema";
 
@@ -271,6 +272,13 @@ export const accept = mutation({
 			status: "awaiting_requester_acceptance",
 			helperSubject: identity.subject,
 		});
+		await markNotificationsReadForRequest(
+			ctx,
+			requestId,
+			n =>
+				n.type === "volunteer_assigned"
+				&& n.recipientSubject === identity.subject,
+		);
 		await createNotification(ctx, {
 			recipientSubject: doc.ownerSubject,
 			type: "requester_accept_match_prompt",
@@ -357,6 +365,13 @@ export const declineAssigned = mutation({
 			status: "pending",
 			assignedHelperSubject: undefined,
 		});
+		await markNotificationsReadForRequest(
+			ctx,
+			requestId,
+			n =>
+				n.type === "volunteer_assigned"
+				&& n.recipientSubject === identity.subject,
+		);
 		await createNotification(ctx, {
 			recipientSubject: doc.ownerSubject,
 			type: "volunteer_assignment_declined",
@@ -383,6 +398,14 @@ export const requesterAcceptMatch = mutation({
 			status: "in_progress",
 			emailRelayToken: randomRelayToken(),
 		});
+		await markNotificationsReadForRequest(
+			ctx,
+			requestId,
+			n =>
+				(n.type === "requester_accept_match_prompt"
+					|| n.type === "volunteer_offered_help")
+				&& n.recipientSubject === doc.ownerSubject,
+		);
 		await createNotification(ctx, {
 			recipientSubject: doc.helperSubject,
 			type: "volunteer_accepted_match",
@@ -390,7 +413,7 @@ export const requesterAcceptMatch = mutation({
 			body: "You're now in progress on this request.",
 			requestId,
 			ctaLabel: "Open request",
-			ctaAction: "open_offer_request",
+			ctaAction: "open_offer",
 		});
 		const helper = await ctx.db
 			.query("users")
@@ -424,6 +447,14 @@ export const requesterDeclineMatch = mutation({
 			helperSubject: undefined,
 			assignedHelperSubject: undefined,
 		});
+		await markNotificationsReadForRequest(
+			ctx,
+			requestId,
+			n =>
+				(n.type === "requester_accept_match_prompt"
+					|| n.type === "volunteer_offered_help")
+				&& n.recipientSubject === doc.ownerSubject,
+		);
 		if (helper) {
 			await createNotification(ctx, {
 				recipientSubject: helper,
@@ -562,6 +593,14 @@ export const cancel = mutation({
 			|| doc.status === "in_progress"
 		) {
 			await ctx.db.patch(requestId, { status: "cancelled" });
+			await markNotificationsReadForRequest(
+				ctx,
+				requestId,
+				n =>
+					n.type === "volunteer_assigned"
+					|| n.type === "requester_accept_match_prompt"
+					|| n.type === "volunteer_offered_help",
+			);
 			return;
 		}
 		if (

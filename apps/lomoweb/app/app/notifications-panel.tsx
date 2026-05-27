@@ -129,9 +129,13 @@ export function NotificationsDropdown() {
 			await markRead({ notificationId: n._id });
 			return;
 		}
+		if (n.isStale) {
+			await markRead({ notificationId: n._id });
+			return;
+		}
 		setBusyId(n._id);
 		try {
-			if (n.ctaAction === "open_offer_request") {
+			if (n.canVolunteerAcceptAssignment) {
 				if (action === "accept") {
 					await acceptAssigned({ requestId: n.requestId as Id<"helpRequests"> });
 				}
@@ -139,13 +143,17 @@ export function NotificationsDropdown() {
 					await declineAssigned({ requestId: n.requestId as Id<"helpRequests"> });
 				}
 			}
-			if (n.ctaAction === "open_request") {
+			else if (n.canRequesterReviewOffer) {
 				if (action === "accept") {
 					await requesterAcceptMatch({ requestId: n.requestId as Id<"helpRequests"> });
 				}
 				else {
 					await requesterDeclineMatch({ requestId: n.requestId as Id<"helpRequests"> });
 				}
+			}
+			else {
+				await markRead({ notificationId: n._id });
+				return;
 			}
 			await markRead({ notificationId: n._id });
 		}
@@ -208,92 +216,67 @@ export function NotificationsDropdown() {
 												<Text size={3} weight="medium">{n.title}</Text>
 												<Text size={2}>{n.body}</Text>
 											</div>
-											<div className="mt-2 flex flex-wrap gap-2">
-												{n.requestId && n.ctaAction === "open_offer_request" && (
-													<>
-														<Button
-															size={1}
-															variant="solid"
-															color="sage"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "accept")}
-														>
-															Accept
-														</Button>
-														<Button
-															size={1}
-															variant="outline"
-															color="red"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "decline")}
-														>
-															Decline
-														</Button>
+											<div className="mt-2 flex flex-col gap-2">
+												{n.isStale && (
+													<Text size={1} color="gray">
+														This request was updated. Open it for the latest
+														status.
+													</Text>
+												)}
+												<div className="flex flex-wrap gap-2">
+													{n.canVolunteerAcceptAssignment && (
+														<>
+															<Button
+																size={1}
+																variant="solid"
+																color="sage"
+																isDisabled={busyId === n._id}
+																onPress={() => handleAction(n, "accept")}
+															>
+																Accept
+															</Button>
+															<Button
+																size={1}
+																variant="outline"
+																color="red"
+																isDisabled={busyId === n._id}
+																onPress={() => handleAction(n, "decline")}
+															>
+																Decline
+															</Button>
+														</>
+													)}
+													{n.canRequesterReviewOffer && (
+														<>
+															<Button
+																size={1}
+																variant="solid"
+																color="sage"
+																isDisabled={busyId === n._id}
+																onPress={() => handleAction(n, "accept")}
+															>
+																Accept match
+															</Button>
+															<Button
+																size={1}
+																variant="outline"
+																color="red"
+																isDisabled={busyId === n._id}
+																onPress={() => handleAction(n, "decline")}
+															>
+																Decline
+															</Button>
+														</>
+													)}
+													{n.openPath && (
 														<Link
-															href={`/app/offer/${n.requestId}`}
+															href={n.openPath}
 															className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
 															onClick={() => setOpen(false)}
 														>
-															Open
+															{n.ctaLabel ?? "Open"}
 														</Link>
-													</>
-												)}
-												{n.requestId && n.ctaAction === "open_request" && (
-													<>
-														<Button
-															size={1}
-															variant="solid"
-															color="sage"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "accept")}
-														>
-															Accept match
-														</Button>
-														<Button
-															size={1}
-															variant="outline"
-															color="red"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "decline")}
-														>
-															Decline
-														</Button>
-														<Link
-															href={`/app/requests/${n.requestId}`}
-															className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
-															onClick={() => setOpen(false)}
-														>
-															Open
-														</Link>
-													</>
-												)}
-												{n.requestId
-													&& (n.ctaAction === "open_request_thread"
-														|| n.ctaAction === "open_offer_thread") && (
-													<>
-														<Link
-															href={
-																n.ctaAction === "open_request_thread"
-																	? `/app/requests/${n.requestId}`
-																	: `/app/offer/${n.requestId}`
-															}
-															className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
-															onClick={() => setOpen(false)}
-														>
-															{n.ctaLabel ?? "Open conversation"}
-														</Link>
-														<Button
-															size={1}
-															variant="outline"
-															color="gray"
-															isDisabled={busyId === n._id}
-															onPress={() => void markRead({ notificationId: n._id })}
-														>
-															Mark read
-														</Button>
-													</>
-												)}
-												{(!n.requestId || !n.ctaAction) && (
+													)}
 													<Button
 														size={1}
 														variant="outline"
@@ -303,7 +286,7 @@ export function NotificationsDropdown() {
 													>
 														Mark read
 													</Button>
-												)}
+												</div>
 											</div>
 										</div>
 									</li>

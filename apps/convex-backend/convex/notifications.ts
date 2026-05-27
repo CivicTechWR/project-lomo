@@ -1,5 +1,6 @@
 /* eslint-disable node/prefer-global/process */
 import { v } from "convex/values";
+import { enrichNotification } from "./lib/notificationHelpers";
 import { internalAction, mutation, query } from "./_generated/server";
 
 async function postResendEmail(opts: {
@@ -55,7 +56,14 @@ export const listMine = query({
 				.withIndex("by_recipient", q => q.eq("recipientSubject", identity.subject))
 				.collect();
 		rows.sort((a, b) => b._creationTime - a._creationTime);
-		return rows;
+
+		const enriched = await Promise.all(
+			rows.map(async (n) => {
+				const req = n.requestId ? await ctx.db.get(n.requestId) : null;
+				return enrichNotification(n, req, identity.subject);
+			}),
+		);
+		return enriched;
 	},
 });
 
