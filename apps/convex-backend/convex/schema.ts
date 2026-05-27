@@ -116,8 +116,9 @@ export default defineSchema(
 			helpAreaCenterLng: v.optional(v.number()),
 			/** Radius in kilometres (1–30). */
 			helpAreaRadiusKm: v.optional(v.number()),
-		}).index("by_subject", ["subject"]),
-		}).index("by_token_identifier", ["tokenIdentifier"]),
+		})
+			.index("by_subject", ["subject"])
+			.index("by_token_identifier", ["tokenIdentifier"]),
 
 		notifications: defineTable({
 			recipientUserId: v.id("users"),
@@ -132,8 +133,6 @@ export default defineSchema(
 			.index("by_recipient", ["recipientSubject"])
 			.index("by_recipient_read", ["recipientSubject", "isRead"])
 			.index("by_request", ["requestId"]),
-			ctaAction: v.optional(notificationCtaAction),
-		}).index("by_recipient_user_id_and_is_read", ["recipientUserId", "isRead"]),
 	},
 	{ schemaValidation: true },
 );

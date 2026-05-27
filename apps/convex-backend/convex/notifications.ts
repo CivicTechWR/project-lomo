@@ -4,10 +4,10 @@ import { enrichNotification } from "./lib/notificationHelpers";
 import { getResendConfig, postResendEmail } from "./lib/resendEmail";
 
 export const listMine = query({
-	args: {},
-	handler: async (ctx) => {
-		const user = await getCurrentUserRow(ctx);
-		if (!user) {
+	args: { unreadOnly: v.optional(v.boolean()) },
+	handler: async (ctx, { unreadOnly }) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
 			return [];
 		}
 		const rows = unreadOnly
