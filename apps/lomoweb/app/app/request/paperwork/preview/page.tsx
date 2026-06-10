@@ -36,7 +36,6 @@ export default function PaperworkPreviewPage() {
 				title,
 				summary: micrograntRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

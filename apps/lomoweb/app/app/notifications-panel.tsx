@@ -65,7 +65,7 @@ export function NotificationsDropdown() {
 	);
 	const pathname = usePathname();
 
-	const notifications = useQuery(api.notifications.listMine, { unreadOnly: true });
+	const notifications = useQuery(api.notifications.listMine, {});
 	const markRead = useMutation(api.notifications.markRead);
 	const acceptAssigned = useMutation(api.helpRequests.accept);
 	const declineAssigned = useMutation(api.helpRequests.declineAssigned);

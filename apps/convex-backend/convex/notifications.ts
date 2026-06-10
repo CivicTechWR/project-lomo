@@ -1,6 +1,7 @@
 /* eslint-disable node/prefer-global/process */
 import { v } from "convex/values";
 import { internalAction, mutation, query } from "./_generated/server";
+import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
 
 async function postResendEmail(opts: {
 	apiKey: string;
@@ -17,16 +18,16 @@ async function postResendEmail(opts: {
 		subject: opts.subject,
 		text: opts.text,
 	};
-	if (opts.replyTo) {
+	if (opts.replyTo !== undefined && opts.replyTo.length > 0) {
 		body.reply_to = [opts.replyTo];
 	}
-	if (opts.html) {
+	if (opts.html !== undefined && opts.html.length > 0) {
 		body.html = opts.html;
 	}
 	const res = await fetch("https://api.resend.com/emails", {
 		method: "POST",
 		headers: {
-			Authorization: `Bearer ${opts.apiKey}`,
+			"Authorization": `Bearer ${opts.apiKey}`,
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(body),
@@ -38,39 +39,30 @@ async function postResendEmail(opts: {
 }
 
 export const listMine = query({
-	args: { unreadOnly: v.optional(v.boolean()) },
-	handler: async (ctx, { unreadOnly }) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
+	args: {},
+	handler: async (ctx) => {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			return [];
 		}
-		const rows = unreadOnly
-			? await ctx.db
-				.query("notifications")
-				.withIndex("by_recipient_read", q =>
-					q.eq("recipientSubject", identity.subject).eq("isRead", false))
-				.collect()
-			: await ctx.db
-				.query("notifications")
-				.withIndex("by_recipient", q => q.eq("recipientSubject", identity.subject))
-				.collect();
-		rows.sort((a, b) => b._creationTime - a._creationTime);
-		return rows;
+		return ctx.db
+			.query("notifications")
+			.withIndex("by_recipient_user_id_and_is_read", q =>
+				q.eq("recipientUserId", user._id).eq("isRead", false))
+			.order("desc")
+			.take(50);
 	},
 });
 
 export const markRead = mutation({
 	args: { notificationId: v.id("notifications") },
 	handler: async (ctx, { notificationId }) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new Error("Unauthenticated");
-		}
-		const doc = await ctx.db.get(notificationId);
-		if (!doc || doc.recipientSubject !== identity.subject) {
+		const { user } = await getOrCreateCurrentUser(ctx);
+		const doc = await ctx.db.get("notifications", notificationId);
+		if (!doc || doc.recipientUserId !== user._id) {
 			throw new Error("Not found");
 		}
-		await ctx.db.patch(notificationId, { isRead: true });
+		await ctx.db.patch("notifications", notificationId, { isRead: true });
 	},
 });
 
@@ -85,7 +77,12 @@ export const sendEmail = internalAction({
 	handler: async (_ctx, { to, subject, text, replyTo, html }) => {
 		const apiKey = process.env.RESEND_API_KEY;
 		const from = process.env.NOTIFICATIONS_FROM_EMAIL;
-		if (!apiKey || !from) {
+		if (
+			apiKey === undefined
+			|| apiKey.length === 0
+			|| from === undefined
+			|| from.length === 0
+		) {
 			// eslint-disable-next-line no-console
 			console.log("Email skipped: missing RESEND_API_KEY or NOTIFICATIONS_FROM_EMAIL");
 			return;
@@ -113,7 +110,12 @@ export const sendRelayEmail = internalAction({
 	handler: async (_ctx, { to, subject, text, replyTo }) => {
 		const apiKey = process.env.RESEND_API_KEY;
 		const from = process.env.NOTIFICATIONS_FROM_EMAIL;
-		if (!apiKey || !from) {
+		if (
+			apiKey === undefined
+			|| apiKey.length === 0
+			|| from === undefined
+			|| from.length === 0
+		) {
 			// eslint-disable-next-line no-console
 			console.log("Email skipped: missing RESEND_API_KEY or NOTIFICATIONS_FROM_EMAIL");
 			return;

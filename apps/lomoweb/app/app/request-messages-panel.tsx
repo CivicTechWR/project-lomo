@@ -15,7 +15,7 @@ export function RequestMessagesPanel({
 }: {
 	requestId: Id<"helpRequests">;
 }) {
-	const me = useQuery(api.auth.getCurrentUser);
+	const me = useQuery(api.users.getMyProfileRow);
 	const messages = useQuery(api.requestMessages.listForRequest, { requestId });
 	const relay = useQuery(api.requestMessages.getRelayAddressForRequest, {
 		requestId,
@@ -79,7 +79,7 @@ export function RequestMessagesPanel({
 					</Text>
 				) : (
 					messages.map((m: Doc<"requestMessages">) => {
-						const mine = m.authorSubject === me?.subject;
+						const mine = m.authorUserId === me?._id;
 						const via
 							= m.source === "email"
 								? " · via email"

@@ -11,27 +11,27 @@ When the app needs to pass a callback function to the component, use function ha
 import { createFunctionHandle } from "convex/server";
 
 export const startJob = mutation({
-  handler: async (ctx) => {
-    const handle = await createFunctionHandle(internal.myModule.processItem);
-    await ctx.runMutation(components.workpool.enqueue, {
-      callback: handle,
-    });
-  },
+	handler: async (ctx) => {
+		const handle = await createFunctionHandle(internal.myModule.processItem);
+		await ctx.runMutation(components.workpool.enqueue, {
+			callback: handle,
+		});
+	},
 });
 ```
 
 ```ts
+import type { FunctionHandle } from "convex/server";
 // Component side: accept and invoke the handle
 import { v } from "convex/values";
-import type { FunctionHandle } from "convex/server";
 import { mutation } from "./_generated/server.js";
 
 export const enqueue = mutation({
-  args: { callback: v.string() },
-  handler: async (ctx, args) => {
-    const handle = args.callback as FunctionHandle<"mutation">;
-    await ctx.scheduler.runAfter(0, handle, {});
-  },
+	args: { callback: v.string() },
+	handler: async (ctx, args) => {
+		const handle = args.callback as FunctionHandle<"mutation">;
+		await ctx.scheduler.runAfter(0, handle, {});
+	},
 });
 ```
 
@@ -44,16 +44,16 @@ import { v } from "convex/values";
 import schema from "./schema.js";
 
 const notificationDoc = schema.tables.notifications.validator.extend({
-  _id: v.id("notifications"),
-  _creationTime: v.number(),
+	_id: v.id("notifications"),
+	_creationTime: v.number(),
 });
 
 export const getLatest = query({
-  args: {},
-  returns: v.nullable(notificationDoc),
-  handler: async (ctx) => {
-    return await ctx.db.query("notifications").order("desc").first();
-  },
+	args: {},
+	returns: v.nullable(notificationDoc),
+	handler: async (ctx) => {
+		return await ctx.db.query("notifications").order("desc").first();
+	},
 });
 ```
 
@@ -64,28 +64,29 @@ A common pattern for component configuration is a single-document "globals" tabl
 ```ts
 // schema.ts
 export default defineSchema({
-  globals: defineTable({
-    maxRetries: v.number(),
-    webhookUrl: v.optional(v.string()),
-  }),
-  // ... other tables
+	globals: defineTable({
+		maxRetries: v.number(),
+		webhookUrl: v.optional(v.string()),
+	}),
+	// ... other tables
 });
 ```
 
 ```ts
 // lib.ts
 export const configure = mutation({
-  args: { maxRetries: v.number(), webhookUrl: v.optional(v.string()) },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const existing = await ctx.db.query("globals").first();
-    if (existing) {
-      await ctx.db.patch(existing._id, args);
-    } else {
-      await ctx.db.insert("globals", args);
-    }
-    return null;
-  },
+	args: { maxRetries: v.number(), webhookUrl: v.optional(v.string()) },
+	returns: v.null(),
+	handler: async (ctx, args) => {
+		const existing = await ctx.db.query("globals").first();
+		if (existing) {
+			await ctx.db.patch(existing._id, args);
+		}
+		else {
+			await ctx.db.insert("globals", args);
+		}
+		return null;
+	},
 });
 ```
 
@@ -95,23 +96,23 @@ For components with many functions or configuration options, a class-based clien
 
 ```ts
 // src/client/index.ts
-import type { GenericMutationCtx, GenericDataModel } from "convex/server";
+import type { GenericDataModel, GenericMutationCtx } from "convex/server";
 import type { ComponentApi } from "../component/_generated/component.js";
 
 type MutationCtx = Pick<GenericMutationCtx<GenericDataModel>, "runMutation">;
 
 export class Notifications {
-  constructor(
-    private component: ComponentApi,
-    private options?: { defaultChannel?: string },
-  ) {}
+	constructor(
+		private component: ComponentApi,
+		private options?: { defaultChannel?: string },
+	) {}
 
-  async send(ctx: MutationCtx, args: { userId: string; message: string }) {
-    return await ctx.runMutation(this.component.lib.send, {
-      ...args,
-      channel: this.options?.defaultChannel ?? "default",
-    });
-  }
+	async send(ctx: MutationCtx, args: { userId: string; message: string }) {
+		return await ctx.runMutation(this.component.lib.send, {
+			...args,
+			channel: this.options?.defaultChannel ?? "default",
+		});
+	}
 }
 ```
 
@@ -121,14 +122,14 @@ import { Notifications } from "@convex-dev/notifications";
 import { components } from "./_generated/api";
 
 const notifications = new Notifications(components.notifications, {
-  defaultChannel: "alerts",
+	defaultChannel: "alerts",
 });
 
 export const send = mutation({
-  args: { message: v.string() },
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    await notifications.send(ctx, { userId, message: args.message });
-  },
+	args: { message: v.string() },
+	handler: async (ctx, args) => {
+		const userId = await getAuthUserId(ctx);
+		await notifications.send(ctx, { userId, message: args.message });
+	},
 });
 ```

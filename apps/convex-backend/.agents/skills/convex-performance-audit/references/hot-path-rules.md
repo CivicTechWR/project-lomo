@@ -51,37 +51,37 @@ before accepting a scan-plus-filter pattern.
 ```ts
 // Bad: scans then filters in JavaScript
 export const listOpen = query({
-  args: {},
-  handler: async (ctx) => {
-    const tasks = await ctx.db.query("tasks").collect();
-    return tasks.filter((task) => task.status === "open");
-  },
+	args: {},
+	handler: async (ctx) => {
+		const tasks = await ctx.db.query("tasks").collect();
+		return tasks.filter(task => task.status === "open");
+	},
 });
 ```
 
 ```ts
 // Also bad: Convex .filter() does not push to storage either
 export const listOpen = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db
-      .query("tasks")
-      .filter((q) => q.eq(q.field("status"), "open"))
-      .collect();
-  },
+	args: {},
+	handler: async (ctx) => {
+		return await ctx.db
+			.query("tasks")
+			.filter(q => q.eq(q.field("status"), "open"))
+			.collect();
+	},
 });
 ```
 
 ```ts
 // Good: use an index so storage does the filtering
 export const listOpen = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db
-      .query("tasks")
-      .withIndex("by_status", (q) => q.eq("status", "open"))
-      .collect();
-  },
+	args: {},
+	handler: async (ctx) => {
+		return await ctx.db
+			.query("tasks")
+			.withIndex("by_status", q => q.eq("status", "open"))
+			.collect();
+	},
 });
 ```
 
@@ -102,10 +102,10 @@ If correctness depends on handling old and new states during rollout, do not imp
 ```ts
 // Bad: optional booleans can miss older rows where the field is undefined
 const projects = await ctx.db
-  .query("projects")
-  .withIndex("by_archived_and_updated", (q) => q.eq("isArchived", false))
-  .order("desc")
-  .take(20);
+	.query("projects")
+	.withIndex("by_archived_and_updated", q => q.eq("isArchived", false))
+	.order("desc")
+	.take(20);
 ```
 
 ```ts
@@ -120,14 +120,14 @@ Indexes like `by_foo` and `by_foo_and_bar` are usually redundant. You only need 
 ```ts
 // Bad: two indexes where one would do
 defineTable({ team: v.id("teams"), user: v.id("users") })
-  .index("by_team", ["team"])
-  .index("by_team_and_user", ["team", "user"])
+	.index("by_team", ["team"])
+	.index("by_team_and_user", ["team", "user"]);
 ```
 
 ```ts
 // Good: single compound index serves both query patterns
 defineTable({ team: v.id("teams"), user: v.id("users") })
-  .index("by_team_and_user", ["team", "user"])
+	.index("by_team_and_user", ["team", "user"]);
 ```
 
 Exception: `.index("by_foo", ["foo"])` is really an index on `foo` + `_creationTime`, while `.index("by_foo_and_bar", ["foo", "bar"])` is on `foo` + `bar` + `_creationTime`. If you need results sorted by `foo` then `_creationTime`, you need the single-field index because the compound one would sort by `bar` first.
@@ -169,17 +169,17 @@ const ownerName = project.ownerName ?? "Unknown owner";
 
 ```ts
 // Good: denormalized data is an optimization, not the only source of truth
-const ownerName =
-  project.ownerName ??
-  (await ctx.db.get(project.ownerId))?.name ??
-  null;
+const ownerName
+	= project.ownerName
+		?? (await ctx.db.get(project.ownerId))?.name
+		?? null;
 ```
 
 Bad lookup map pattern:
 
 ```ts
 const ownersById = {
-  [project.ownerId]: { ownerName: null },
+	[project.ownerId]: { ownerName: null },
 };
 ```
 
@@ -188,10 +188,10 @@ That blocks fallback because the map says "I have data" when it does not.
 Good lookup map pattern:
 
 ```ts
-const ownersById =
-  project.ownerName !== undefined && project.ownerName !== null
-    ? { [project.ownerId]: { ownerName: project.ownerName } }
-    : {};
+const ownersById
+	= project.ownerName !== undefined && project.ownerName !== null
+		? { [project.ownerId]: { ownerName: project.ownerName } }
+		: {};
 ```
 
 ### No denormalized copy yet
@@ -227,18 +227,18 @@ Digest tables are a tradeoff, not a default:
 ```ts
 // Bad: list page reads source docs, then joins owner data per row
 const projects = await ctx.db
-  .query("projects")
-  .withIndex("by_public", (q) => q.eq("isPublic", true))
-  .collect();
+	.query("projects")
+	.withIndex("by_public", q => q.eq("isPublic", true))
+	.collect();
 ```
 
 ```ts
 // Good: list page reads the smaller digest shape first
 const projects = await ctx.db
-  .query("projectDigests")
-  .withIndex("by_public_and_updated", (q) => q.eq("isPublic", true))
-  .order("desc")
-  .take(20);
+	.query("projectDigests")
+	.withIndex("by_public_and_updated", q => q.eq("isPublic", true))
+	.order("desc")
+	.take(20);
 ```
 
 ## 4. Skip No-Op Writes
@@ -257,18 +257,18 @@ Apply this across sibling writers too. One careful writer does not help much if 
 ```ts
 // Bad: patching unchanged values still triggers invalidation and downstream work
 await ctx.db.patch(settings._id, {
-  theme: args.theme,
-  locale: args.locale,
+	theme: args.theme,
+	locale: args.locale,
 });
 ```
 
 ```ts
 // Good: only write when something actually changed
 if (settings.theme !== args.theme || settings.locale !== args.locale) {
-  await ctx.db.patch(settings._id, {
-    theme: args.theme,
-    locale: args.locale,
-  });
+	await ctx.db.patch(settings._id, {
+		theme: args.theme,
+		locale: args.locale,
+	});
 }
 ```
 

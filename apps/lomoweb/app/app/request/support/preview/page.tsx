@@ -37,7 +37,6 @@ export default function SupportPreviewPage() {
 				title,
 				summary: supportRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

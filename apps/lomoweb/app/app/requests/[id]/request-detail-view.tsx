@@ -226,7 +226,7 @@ export function RequestDetailView() {
 				</Text>
 			</div>
 
-			{st === "in_progress" && doc.helperSubject && (
+			{st === "in_progress" && doc.helperUserId && (
 				<Text size={2} color="gray">
 					A community member is helping with this request.
 				</Text>

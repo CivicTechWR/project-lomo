@@ -39,7 +39,6 @@ export default function ItemsPreviewPage() {
 				title,
 				summary: itemsRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

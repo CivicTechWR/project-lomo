@@ -35,7 +35,6 @@ export default function FoodPreviewPage() {
 				title,
 				summary: foodRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

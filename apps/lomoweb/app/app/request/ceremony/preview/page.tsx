@@ -36,7 +36,6 @@ export default function CeremonyPreviewPage() {
 				title,
 				summary: ceremonyRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

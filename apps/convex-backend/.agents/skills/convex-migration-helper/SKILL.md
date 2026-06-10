@@ -54,33 +54,33 @@ Unless you are certain, prefer deprecating fields over deleting them. Mark the f
 ```typescript
 // Before
 users: defineTable({
-  name: v.string(),
-})
+	name: v.string(),
+});
 
 // After - safe, new field is optional
 users: defineTable({
-  name: v.string(),
-  bio: v.optional(v.string()),
-})
+	name: v.string(),
+	bio: v.optional(v.string()),
+});
 ```
 
 ### Adding New Table
 
 ```typescript
 posts: defineTable({
-  userId: v.id("users"),
-  title: v.string(),
-}).index("by_user", ["userId"])
+	userId: v.id("users"),
+	title: v.string(),
+}).index("by_user", ["userId"]);
 ```
 
 ### Adding Index
 
 ```typescript
 users: defineTable({
-  name: v.string(),
-  email: v.string(),
+	name: v.string(),
+	email: v.string(),
 })
-  .index("by_email", ["email"])
+	.index("by_email", ["email"]);
 ```
 
 ## Breaking Changes: The Deployment Workflow
