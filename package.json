@@ -39,6 +39,7 @@
 		"node": ">=22"
 	},
 	"scripts": {
+		"actions:up": "actions-up",
 		"version": "echo 'Template version:' $npm_package_version",
 		"changelog": "echo 'See CHANGELOG.md for release notes'",
 		"release": "echo 'Use GitHub Releases for official releases'",
@@ -65,6 +66,7 @@
 		"vite": "7.3.1"
 	},
 	"devDependencies": {
+		"actions-up": "1.14.3",
 		"eslint": "catalog:",
 		"turbo": "^2.8.16"
 	}
