@@ -15,7 +15,7 @@
 		"@repo/ui": "workspace:*",
 		"better-auth": "1.5.6",
 		"convex": "1.34.1",
-		"next": "16.2.1",
+		"next": "16.2.6",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"server-only": "0.0.1",
