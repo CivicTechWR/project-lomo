@@ -1,12 +1,13 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import type { HelpRequestStatus } from "@/lib/help-request-status";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
@@ -15,7 +16,7 @@ import {
 } from "@/lib/app-home-mode";
 import {
 	HELP_REQUEST_STATUS_LABEL,
-	type HelpRequestStatus,
+
 	statusBadgeColor,
 } from "@/lib/help-request-status";
 
@@ -186,7 +187,9 @@ export function OfferRequestDetailView() {
 			</div>
 
 			<Text size={2} color="gray">
-				Category: {doc.category}
+				Category:
+				{" "}
+				{doc.category}
 			</Text>
 
 			<div className="rounded-lg border border-gray-6 bg-gray-1 p-4">

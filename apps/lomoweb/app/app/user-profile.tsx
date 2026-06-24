@@ -1,16 +1,16 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Preloaded } from "convex/react";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
-import { useMutation, useQuery } from "convex/react";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
 import { Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
-import { Input, TextField } from "@repo/ui/text-field";
 import { Text } from "@repo/ui/text";
+import { Input, TextField } from "@repo/ui/text-field";
+import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
@@ -109,58 +109,60 @@ export function UserProfile({
 						leave it blank, matched volunteers will email you through a masked
 						address so your real email stays private.
 					</Text>
-					{profileRow === undefined ? (
-						<Text size={2} color="gray">
-							Loading…
-						</Text>
-					) : (
-						<div className="flex flex-col gap-4">
-							<TextField
-								name="firstName"
-								value={firstName}
-								onChange={setFirstName}
-								className="w-full"
-							>
-								<Label>First name (shown to requesters)</Label>
-								<Group>
-									<Input placeholder="e.g. Sam" />
-								</Group>
-							</TextField>
-							<TextField
-								name="pronouns"
-								value={pronouns}
-								onChange={setPronouns}
-								className="w-full"
-							>
-								<Label>Pronouns (optional)</Label>
-								<Group>
-									<Input placeholder="e.g. they/them" />
-								</Group>
-							</TextField>
-							<TextField
-								name="phone"
-								type="tel"
-								autoComplete="tel"
-								value={phone}
-								onChange={setPhone}
-								className="w-full"
-							>
-								<Label>Mobile number (optional)</Label>
-								<Group>
-									<Input placeholder="e.g. +1 519 555 0100" />
-								</Group>
-							</TextField>
-							<Button
-								variant="solid"
-								color="sage"
-								className="w-full"
-								isDisabled={saving}
-								onPress={handleSaveVolunteerFields}
-							>
-								{saving ? "Saving…" : "Save profile"}
-							</Button>
-						</div>
-					)}
+					{profileRow === undefined
+						? (
+								<Text size={2} color="gray">
+									Loading…
+								</Text>
+							)
+						: (
+								<div className="flex flex-col gap-4">
+									<TextField
+										name="firstName"
+										value={firstName}
+										onChange={setFirstName}
+										className="w-full"
+									>
+										<Label>First name (shown to requesters)</Label>
+										<Group>
+											<Input placeholder="e.g. Sam" />
+										</Group>
+									</TextField>
+									<TextField
+										name="pronouns"
+										value={pronouns}
+										onChange={setPronouns}
+										className="w-full"
+									>
+										<Label>Pronouns (optional)</Label>
+										<Group>
+											<Input placeholder="e.g. they/them" />
+										</Group>
+									</TextField>
+									<TextField
+										name="phone"
+										type="tel"
+										autoComplete="tel"
+										value={phone}
+										onChange={setPhone}
+										className="w-full"
+									>
+										<Label>Mobile number (optional)</Label>
+										<Group>
+											<Input placeholder="e.g. +1 519 555 0100" />
+										</Group>
+									</TextField>
+									<Button
+										variant="solid"
+										color="sage"
+										className="w-full"
+										isDisabled={saving}
+										onPress={handleSaveVolunteerFields}
+									>
+										{saving ? "Saving…" : "Save profile"}
+									</Button>
+								</div>
+							)}
 				</div>
 
 				<Button

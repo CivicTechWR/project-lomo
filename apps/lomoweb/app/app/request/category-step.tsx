@@ -2,9 +2,9 @@
 
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
-import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import { useRequestDraft } from "./request-draft-context";
 import { RequestStepFooter } from "./request-step-footer";
 import { SelectionCard } from "./selection-card";

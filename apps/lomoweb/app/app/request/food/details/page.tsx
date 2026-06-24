@@ -1,14 +1,14 @@
 "use client";
 
+import type { GroceryTypeId } from "@/lib/request-flow/types";
 import { Button } from "@repo/ui/button";
 import { Checkbox } from "@repo/ui/checkbox";
 import { Description, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
-import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { Text } from "@repo/ui/text";
-import type { GroceryTypeId } from "@/lib/request-flow/types";
-import { GROCERY_TYPE_OPTIONS } from "@/lib/request-flow/food";
+import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { GROCERY_TYPE_OPTIONS } from "@/lib/request-flow/food";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -52,7 +52,7 @@ export default function FoodDetailsPage() {
 							What types of groceries?
 						</legend>
 						<div className="grid grid-cols-4 gap-2">
-							{GROCERY_TYPE_OPTIONS.map(opt => {
+							{GROCERY_TYPE_OPTIONS.map((opt) => {
 								const selected
 									= !d.groceryNoPreference && d.groceryTypes.includes(opt.id);
 								return (

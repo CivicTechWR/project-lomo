@@ -1,10 +1,10 @@
-export type HelpRequestStatus =
-	| "pending"
-	| "assigned"
-	| "awaiting_requester_acceptance"
-	| "in_progress"
-	| "complete"
-	| "cancelled";
+export type HelpRequestStatus
+	= | "pending"
+		| "assigned"
+		| "awaiting_requester_acceptance"
+		| "in_progress"
+		| "complete"
+		| "cancelled";
 
 export const HELP_REQUEST_STATUS_LABEL: Record<HelpRequestStatus, string> = {
 	pending: "Pending",

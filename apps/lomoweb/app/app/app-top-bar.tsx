@@ -4,8 +4,8 @@ import { Button } from "@repo/ui/button";
 import { LomoLogo } from "@repo/ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { NotificationsDropdown } from "./notifications-panel";
 import { authClient } from "@/lib/auth-client";
+import { NotificationsDropdown } from "./notifications-panel";
 
 export function AppTopBar() {
 	const router = useRouter();

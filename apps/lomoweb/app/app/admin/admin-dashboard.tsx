@@ -1,14 +1,15 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import type { HelpRequestStatus } from "@/lib/help-request-status";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
-import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor, type HelpRequestStatus } from "@/lib/help-request-status";
+import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
@@ -76,7 +77,9 @@ export function AdminDashboard() {
 									<div className="min-w-0 flex-1">
 										<Text size={3} weight="medium">{r.title}</Text>
 										<Text size={2} color="gray" className="mt-1">
-											Owner: {r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
+											Owner:
+											{" "}
+											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
 										</Text>
 									</div>
 									<Badge
@@ -112,7 +115,9 @@ export function AdminDashboard() {
 								</div>
 								{r.assignedHelperUserId && (
 									<Text size={1} color="gray" className="mt-2">
-										Assigned helper: {r.assignedHelper?.name ?? r.assignedHelper?.email ?? "Unknown helper"}
+										Assigned helper:
+										{" "}
+										{r.assignedHelper?.name ?? r.assignedHelper?.email ?? "Unknown helper"}
 									</Text>
 								)}
 							</li>
