@@ -82,6 +82,14 @@ export default defineSchema(
 			image: v.optional(v.string()),
 			isVolunteer: v.optional(v.boolean()),
 			bio: v.optional(v.string()),
+			/** Milliseconds since epoch — set when onboarding wizard is finished. */
+			onboardingCompletedAt: v.optional(v.number()),
+			/** Milliseconds since epoch — safety & boundaries step acknowledged. */
+			safetyAcknowledgedAt: v.optional(v.number()),
+			/** When false, helper is in "Resting" mode (not available to help right now). */
+			canHelpNow: v.optional(v.boolean()),
+			helpPreferences: v.optional(v.array(v.string())),
+			helpLocation: v.optional(v.string()),
 		}).index("by_subject", ["subject"]),
 
 		notifications: defineTable({

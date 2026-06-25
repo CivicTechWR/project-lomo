@@ -14,6 +14,11 @@ import { Text } from "@repo/ui/text";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import {
+	HelperPreferencesFields,
+	helperPreferencesFromProfile,
+} from "./helper-preferences-fields";
+import { SafetyAcknowledgment } from "./onboarding/safety-acknowledgment";
 
 export function UserProfile({
 	preloadedUser,
@@ -24,16 +29,26 @@ export function UserProfile({
 	const user = usePreloadedAuthQuery(preloadedUser);
 	const profileRow = useQuery(api.users.getMyProfileRow, user ? {} : "skip");
 	const updatePublicProfile = useMutation(api.users.updatePublicProfile);
+	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
+	const acknowledgeSafety = useMutation(api.users.acknowledgeSafety);
 	const [firstName, setFirstName] = useState("");
 	const [pronouns, setPronouns] = useState("");
 	const [phone, setPhone] = useState("");
-	const [saving, setSaving] = useState(false);
+	const [preferenceValues, setPreferenceValues] = useState(
+		helperPreferencesFromProfile(undefined),
+	);
+	const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
+	const [savingProfile, setSavingProfile] = useState(false);
+	const [savingPreferences, setSavingPreferences] = useState(false);
+	const [savingSafety, setSavingSafety] = useState(false);
 
 	useEffect(() => {
 		if (profileRow) {
 			setFirstName(profileRow.firstName ?? "");
 			setPronouns(profileRow.pronouns ?? "");
 			setPhone(profileRow.phone ?? "");
+			setPreferenceValues(helperPreferencesFromProfile(profileRow));
+			setSafetyAcknowledged(!!profileRow.safetyAcknowledgedAt);
 		}
 	}, [profileRow]);
 
@@ -47,7 +62,7 @@ export function UserProfile({
 	}
 
 	async function handleSaveVolunteerFields() {
-		setSaving(true);
+		setSavingProfile(true);
 		try {
 			await updatePublicProfile({
 				firstName,
@@ -62,7 +77,46 @@ export function UserProfile({
 			);
 		}
 		finally {
-			setSaving(false);
+			setSavingProfile(false);
+		}
+	}
+
+	async function handleSavePreferences() {
+		setSavingPreferences(true);
+		try {
+			await updateHelperPreferences({
+				canHelpNow: preferenceValues.canHelpNow,
+				helpPreferences: preferenceValues.helpPreferences,
+				helpLocation: preferenceValues.helpLocation.trim() || undefined,
+			});
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your preferences.",
+			);
+		}
+		finally {
+			setSavingPreferences(false);
+		}
+	}
+
+	async function handleSaveSafety() {
+		if (!safetyAcknowledged) {
+			return;
+		}
+		setSavingSafety(true);
+		try {
+			await acknowledgeSafety({});
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your acknowledgment.",
+			);
+		}
+		finally {
+			setSavingSafety(false);
 		}
 	}
 
@@ -154,10 +208,67 @@ export function UserProfile({
 								variant="solid"
 								color="sage"
 								className="w-full"
-								isDisabled={saving}
+								isDisabled={savingProfile}
 								onPress={handleSaveVolunteerFields}
 							>
-								{saving ? "Saving…" : "Save profile"}
+								{savingProfile ? "Saving…" : "Save profile"}
+							</Button>
+						</div>
+					)}
+				</div>
+
+				<div className="border-t border-gray-5 pt-5">
+					<Heading level={3} size={4} className="mb-3">
+						Helper preferences
+					</Heading>
+					{profileRow === undefined ? (
+						<Text size={2} color="gray">Loading…</Text>
+					) : (
+						<div className="flex flex-col gap-4">
+							<HelperPreferencesFields
+								values={preferenceValues}
+								onChange={setPreferenceValues}
+							/>
+							<Button
+								variant="solid"
+								color="sage"
+								className="w-full"
+								isDisabled={savingPreferences}
+								onPress={handleSavePreferences}
+							>
+								{savingPreferences ? "Saving…" : "Save preferences"}
+							</Button>
+						</div>
+					)}
+				</div>
+
+				<div className="border-t border-gray-5 pt-5">
+					<Heading level={3} size={4} className="mb-3">
+						Safety &amp; Boundaries
+					</Heading>
+					{profileRow === undefined ? (
+						<Text size={2} color="gray">Loading…</Text>
+					) : (
+						<div className="flex flex-col gap-4">
+							{profileRow.safetyAcknowledgedAt ? (
+								<Badge variant="soft" size={1} color="sage">
+									Acknowledged
+								</Badge>
+							) : null}
+							<SafetyAcknowledgment
+								acknowledged={safetyAcknowledged}
+								onAcknowledgedChange={setSafetyAcknowledged}
+							/>
+							<Button
+								variant="outline"
+								color="gray"
+								className="w-full"
+								isDisabled={!safetyAcknowledged || savingSafety || !!profileRow.safetyAcknowledgedAt}
+								onPress={handleSaveSafety}
+							>
+								{profileRow.safetyAcknowledgedAt
+									? "Safety notices on file"
+									: savingSafety ? "Saving…" : "Confirm acknowledgment"}
 							</Button>
 						</div>
 					)}

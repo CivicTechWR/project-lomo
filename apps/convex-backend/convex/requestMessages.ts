@@ -3,6 +3,13 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { extractNewReplyText } from "./lib/stripEmailReply";
+import {
+	conversationLink,
+	formatMessageEmailBody,
+	messageEmailReplySubject,
+	messageEmailSubject,
+} from "./lib/messageEmail";
 
 const MAX_BODY_LEN = 8000;
 const MAX_MESSAGES_PER_HOUR = 30;
@@ -154,20 +161,15 @@ export const post = mutation({
 			.unique();
 		const replyTo = relayMailbox(doc.emailRelayToken);
 		if (otherUser?.email && replyTo) {
-			const base = siteBaseUrl();
-			const path
-				= otherSubject === doc.ownerSubject
-					? `/app/requests/${requestId}`
-					: `/app/offer/${requestId}`;
-			const link = base ? `${base}${path}` : path;
+			const link = conversationLink(
+				siteBaseUrl(),
+				requestId,
+				otherSubject === doc.ownerSubject,
+			);
 			await ctx.scheduler.runAfter(0, internal.notifications.sendEmail, {
 				to: otherUser.email,
-				subject: `New LoMo message: ${doc.title}`,
-				text:
-					`You have a new message about "${doc.title}".\n\n`
-					+ `Open the conversation: ${link}\n\n`
-					+ "You can also reply to this email (plain text) to message your match. "
-					+ "Your email address stays private.",
+				subject: messageEmailSubject(doc.title),
+				text: formatMessageEmailBody(trimmed, link),
 				replyTo,
 			});
 		}
@@ -239,7 +241,7 @@ export const ingestInboundEmail = internalMutation({
 			return { ok: false as const, reason: "sender_not_participant" as const };
 		}
 
-		const body = args.bodyText.trim().slice(0, MAX_BODY_LEN);
+		const body = extractNewReplyText(args.bodyText).trim().slice(0, MAX_BODY_LEN);
 		if (body.length === 0) {
 			return { ok: false as const, reason: "empty_body" as const };
 		}
@@ -279,18 +281,15 @@ export const ingestInboundEmail = internalMutation({
 		const replyTo = relayMailbox(req.emailRelayToken);
 
 		if (otherUser?.email && replyTo) {
-			const subjectLine
-				= args.subject.trim().startsWith("Re:")
-					? args.subject.trim()
-					: `Re: ${args.subject.trim() || req.title}`;
+			const link = conversationLink(
+				siteBaseUrl(),
+				req._id,
+				otherSubject === req.ownerSubject,
+			);
 			await ctx.scheduler.runAfter(0, internal.notifications.sendRelayEmail, {
 				to: otherUser.email,
-				subject: `[LoMo] ${subjectLine}`,
-				text:
-					`${body}\n\n`
-					+ "---\n"
-					+ "You’re receiving this through LoMo’s masked relay. "
-					+ "Reply to this email to continue the conversation.",
+				subject: messageEmailReplySubject(req.title),
+				text: formatMessageEmailBody(body, link),
 				replyTo,
 			});
 		}

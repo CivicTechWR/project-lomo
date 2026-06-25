@@ -1,42 +1,8 @@
 /* eslint-disable node/prefer-global/process */
 import { v } from "convex/values";
 import { enrichNotification } from "./lib/notificationHelpers";
+import { getResendConfig, postResendEmail } from "./lib/resendEmail";
 import { internalAction, mutation, query } from "./_generated/server";
-
-async function postResendEmail(opts: {
-	apiKey: string;
-	from: string;
-	to: string;
-	subject: string;
-	text: string;
-	replyTo?: string;
-	html?: string;
-}): Promise<void> {
-	const body: Record<string, unknown> = {
-		from: opts.from,
-		to: [opts.to],
-		subject: opts.subject,
-		text: opts.text,
-	};
-	if (opts.replyTo) {
-		body.reply_to = [opts.replyTo];
-	}
-	if (opts.html) {
-		body.html = opts.html;
-	}
-	const res = await fetch("https://api.resend.com/emails", {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${opts.apiKey}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(body),
-	});
-	if (!res.ok) {
-		const errBody = await res.text();
-		throw new Error(`Resend error (${res.status}): ${errBody}`);
-	}
-}
 
 export const listMine = query({
 	args: { unreadOnly: v.optional(v.boolean()) },
@@ -91,16 +57,15 @@ export const sendEmail = internalAction({
 		html: v.optional(v.string()),
 	},
 	handler: async (_ctx, { to, subject, text, replyTo, html }) => {
-		const apiKey = process.env.RESEND_API_KEY;
-		const from = process.env.NOTIFICATIONS_FROM_EMAIL;
-		if (!apiKey || !from) {
+		const resend = getResendConfig();
+		if (!resend) {
 			// eslint-disable-next-line no-console
 			console.log("Email skipped: missing RESEND_API_KEY or NOTIFICATIONS_FROM_EMAIL");
 			return;
 		}
 		await postResendEmail({
-			apiKey,
-			from,
+			apiKey: resend.apiKey,
+			from: resend.from,
 			to,
 			subject,
 			text,
@@ -119,16 +84,15 @@ export const sendRelayEmail = internalAction({
 		replyTo: v.string(),
 	},
 	handler: async (_ctx, { to, subject, text, replyTo }) => {
-		const apiKey = process.env.RESEND_API_KEY;
-		const from = process.env.NOTIFICATIONS_FROM_EMAIL;
-		if (!apiKey || !from) {
+		const resend = getResendConfig();
+		if (!resend) {
 			// eslint-disable-next-line no-console
 			console.log("Email skipped: missing RESEND_API_KEY or NOTIFICATIONS_FROM_EMAIL");
 			return;
 		}
 		await postResendEmail({
-			apiKey,
-			from,
+			apiKey: resend.apiKey,
+			from: resend.from,
 			to,
 			subject,
 			text,
