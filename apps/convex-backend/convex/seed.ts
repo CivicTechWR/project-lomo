@@ -1,7 +1,7 @@
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { internalMutation } from "./_generated/server";
-import { REQUESTERS, REQUESTS, SEED_PREFIX, VOLUNTEERS } from "./lib/seedData";
+import { NOTIFICATIONS, REQUESTERS, REQUESTS, SEED_PREFIX, VOLUNTEERS } from "./lib/seedData";
 
 /**
  * DEV-ONLY data seeder for the admin dashboard.
@@ -10,10 +10,10 @@ import { REQUESTERS, REQUESTS, SEED_PREFIX, VOLUNTEERS } from "./lib/seedData";
  * from the CLI (`npx convex run seed:run`) or another Convex function, never
  * from the client.
  *
- * Idempotent: clears the seeded rows (users/helpRequests/notifications matched
- * by the `seed:` subject prefix) before reinserting, so you can re-run it
- * freely. It does NOT touch real auth users or requests you create through the
- * app.
+ * Idempotent: clears the seeded rows before reinserting, so you can re-run it
+ * freely. Seeded users are matched by the `seed:` subject prefix; the requests
+ * and notifications they own are cleared by walking back to those user ids. It
+ * does NOT touch real auth users or requests you create through the app.
  *
  * Seed data lives in `convex/lib/seedData.ts`.
  */
@@ -23,20 +23,28 @@ function isSeeded(value: string | undefined): boolean {
 }
 
 async function clearSeeded(ctx: MutationCtx) {
+	// Collect seeded user ids first so we can find the rows that reference them.
+	const seededUserIds = new Set<string>();
 	for (const user of await ctx.db.query("users").collect()) {
 		if (isSeeded(user.subject)) {
-			await ctx.db.delete("users", user._id);
+			seededUserIds.add(user._id);
 		}
 	}
+
+	for (const notification of await ctx.db.query("notifications").collect()) {
+		if (seededUserIds.has(notification.recipientUserId)) {
+			await ctx.db.delete("notifications", notification._id);
+		}
+	}
+
 	for (const request of await ctx.db.query("helpRequests").collect()) {
-		if (isSeeded(request.ownerSubject)) {
+		if (seededUserIds.has(request.ownerUserId)) {
 			await ctx.db.delete("helpRequests", request._id);
 		}
 	}
-	for (const notification of await ctx.db.query("notifications").collect()) {
-		if (isSeeded(notification.recipientSubject)) {
-			await ctx.db.delete("notifications", notification._id);
-		}
+
+	for (const userId of seededUserIds) {
+		await ctx.db.delete("users", userId as Id<"users">);
 	}
 }
 
@@ -45,50 +53,72 @@ export const run = internalMutation({
 	handler: async (ctx) => {
 		await clearSeeded(ctx);
 
+		// Insert users, keyed by handle so requests/notifications can resolve the
+		// generated document ids.
+		const userIdByHandle = new Map<string, Id<"users">>();
 		for (const u of [...VOLUNTEERS, ...REQUESTERS]) {
-			await ctx.db.insert("users", {
-				subject: u.subject,
+			const id = await ctx.db.insert("users", {
+				tokenIdentifier: `${SEED_PREFIX}${u.handle}`,
+				subject: `${SEED_PREFIX}${u.handle}`,
 				name: u.name,
 				firstName: u.firstName,
 				email: u.email,
 				pronouns: u.pronouns,
-				isVolunteer: VOLUNTEERS.some(v => v.subject === u.subject),
+				isVolunteer: VOLUNTEERS.some(v => v.handle === u.handle),
 			});
+			userIdByHandle.set(u.handle, id);
+		}
+
+		function requireUser(handle: string): Id<"users"> {
+			const id = userIdByHandle.get(handle);
+			if (!id) {
+				throw new Error(`Seed data references unknown user handle: ${handle}`);
+			}
+			return id;
 		}
 
 		// Insert requests, keyed by title so notifications can reference them
 		// without relying on array positions.
 		const requestIdByTitle = new Map<string, Id<"helpRequests">>();
 		for (const r of REQUESTS) {
-			const id = await ctx.db.insert("helpRequests", r);
+			const id = await ctx.db.insert("helpRequests", {
+				ownerUserId: requireUser(r.ownerHandle),
+				assignedHelperUserId: r.assignedHelperHandle !== undefined
+					? requireUser(r.assignedHelperHandle)
+					: undefined,
+				helperUserId: r.helperHandle !== undefined
+					? requireUser(r.helperHandle)
+					: undefined,
+				category: r.category,
+				title: r.title,
+				summary: r.summary,
+				details: r.details,
+				status: r.status,
+				emailRelayToken: r.emailRelayToken,
+			});
 			requestIdByTitle.set(r.title, id);
 		}
 
-		// A couple of notifications targeting seeded volunteers, so the
-		// notifications table isn't empty for matched accounts.
-		await ctx.db.insert("notifications", {
-			recipientSubject: `${SEED_PREFIX}vol-amara`,
-			type: "volunteer_assigned",
-			title: "You were matched to a request",
-			body: "Open LoMo to accept or decline this request.",
-			requestId: requestIdByTitle.get("Walk to the clinic"),
-			isRead: false,
-			ctaLabel: "Review assignment",
-			ctaAction: "open_offer_request",
-		});
-		await ctx.db.insert("notifications", {
-			recipientSubject: `${SEED_PREFIX}vol-devin`,
-			type: "requester_accept_match_prompt",
-			title: "Waiting on the requester",
-			body: "The requester is reviewing your offer.",
-			requestId: requestIdByTitle.get("Microgrant application review"),
-			isRead: false,
-		});
+		for (const n of NOTIFICATIONS) {
+			await ctx.db.insert("notifications", {
+				recipientUserId: requireUser(n.recipientHandle),
+				type: n.type,
+				title: n.title,
+				body: n.body,
+				requestId: n.requestTitle !== undefined
+					? requestIdByTitle.get(n.requestTitle)
+					: undefined,
+				isRead: n.isRead,
+				ctaLabel: n.ctaLabel,
+				ctaAction: n.ctaAction,
+			});
+		}
 
 		return {
 			volunteers: VOLUNTEERS.length,
 			requesters: REQUESTERS.length,
 			requests: REQUESTS.length,
+			notifications: NOTIFICATIONS.length,
 		};
 	},
 });
