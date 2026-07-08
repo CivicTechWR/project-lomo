@@ -497,6 +497,45 @@ export const assignVolunteer = mutation({
 	},
 });
 
+export const adminUpdateRequest = mutation({
+	args: {
+		requestId: v.id("helpRequests"),
+		title: v.optional(v.string()),
+		summary: v.optional(v.string()),
+		details: v.optional(v.string()),
+		category: v.optional(requestCategory),
+	},
+	handler: async (ctx, { requestId, title, summary, details, category }) => {
+		const identity = await requireIdentity(ctx);
+		if (!isAdminIdentity(identity)) {
+			throw new Error("Forbidden");
+		}
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc) {
+			throw new Error("Request not found.");
+		}
+		const patch: {
+			title?: string;
+			summary?: string;
+			details?: string;
+			category?: Doc<"helpRequests">["category"];
+		} = {};
+		if (title !== undefined) {
+			patch.title = title;
+		}
+		if (summary !== undefined) {
+			patch.summary = summary;
+		}
+		if (details !== undefined) {
+			patch.details = details;
+		}
+		if (category !== undefined) {
+			patch.category = category;
+		}
+		await ctx.db.patch("helpRequests", requestId, patch);
+	},
+});
+
 export const create = mutation({
 	args: {
 		category: requestCategory,
