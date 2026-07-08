@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as helpRequests from "../helpRequests.js";
 import type * as http from "../http.js";
+import type * as lib_currentUser from "../lib/currentUser.js";
 import type * as lib_siteEnv from "../lib/siteEnv.js";
 import type * as lib_verifyResendWebhook from "../lib/verifyResendWebhook.js";
 import type * as notifications from "../notifications.js";
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   helpRequests: typeof helpRequests;
   http: typeof http;
+  "lib/currentUser": typeof lib_currentUser;
   "lib/siteEnv": typeof lib_siteEnv;
   "lib/verifyResendWebhook": typeof lib_verifyResendWebhook;
   notifications: typeof notifications;
