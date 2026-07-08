@@ -42,15 +42,15 @@ Narrower reads mean fewer false conflicts.
 ```ts
 // Bad: broad scan creates a wide conflict surface
 const allTasks = await ctx.db.query("tasks").collect();
-const mine = allTasks.filter((t) => t.ownerId === userId);
+const mine = allTasks.filter(t => t.ownerId === userId);
 ```
 
 ```ts
 // Good: indexed query touches only relevant documents
 const mine = await ctx.db
-  .query("tasks")
-  .withIndex("by_owner", (q) => q.eq("ownerId", userId))
-  .collect();
+	.query("tasks")
+	.withIndex("by_owner", q => q.eq("ownerId", userId))
+	.collect();
 ```
 
 ### 2. Split hot documents
@@ -85,7 +85,7 @@ await ctx.db.patch(doc._id, { status: args.status });
 ```ts
 // Good: only write when the value actually differs
 if (doc.status !== args.status) {
-  await ctx.db.patch(doc._id, { status: args.status });
+	await ctx.db.patch(doc._id, { status: args.status });
 }
 ```
 
@@ -103,8 +103,8 @@ await ctx.db.insert("analytics", { event: "action", userId, ts: Date.now() });
 // Good: schedule the bookkeeping so the primary transaction is smaller
 await ctx.db.patch(userId, { lastActiveAt: Date.now() });
 await ctx.scheduler.runAfter(0, internal.analytics.recordEvent, {
-  event: "action",
-  userId,
+	event: "action",
+	userId,
 });
 ```
 

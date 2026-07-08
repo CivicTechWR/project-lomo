@@ -1,28 +1,29 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
-import { useQuery } from "convex/react";
+import type { HomeAppMode } from "@/lib/app-home-mode";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
+
 	readStoredHomeMode,
 	writeStoredHomeMode,
-	type HomeAppMode,
 } from "@/lib/app-home-mode";
 import {
 	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
-	type HelpRequestStatus,
-	type HelpRequestStatusFilter,
+
 	statusBadgeColor,
 } from "@/lib/help-request-status";
 
@@ -107,19 +108,21 @@ export function RequestsHome({
 				</button>
 			</div>
 
-			{mode === "request_help" ? (
-				<RequestingHelpPanel
-					router={router}
-					statusFilter={statusFilter}
-					setStatusFilter={setStatusFilter}
-					requests={myRequests}
-				/>
-			) : (
-				<OfferingHelpPanel
-					router={router}
-					openForOthers={openForOthers}
-				/>
-			)}
+			{mode === "request_help"
+				? (
+						<RequestingHelpPanel
+							router={router}
+							statusFilter={statusFilter}
+							setStatusFilter={setStatusFilter}
+							requests={myRequests}
+						/>
+					)
+				: (
+						<OfferingHelpPanel
+							router={router}
+							openForOthers={openForOthers}
+						/>
+					)}
 		</div>
 	);
 }
@@ -164,7 +167,7 @@ function RequestingHelpPanel(props: {
 			</div>
 
 			<div className="flex flex-wrap gap-2">
-				{HELP_REQUEST_FILTER_CHIPS.map(chip => {
+				{HELP_REQUEST_FILTER_CHIPS.map((chip) => {
 					const active = statusFilter === chip.value;
 					return (
 						<Button

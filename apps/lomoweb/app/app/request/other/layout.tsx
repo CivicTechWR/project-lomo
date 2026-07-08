@@ -1,7 +1,8 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 import { useRequestDraft } from "../request-draft-context";
 
 export default function OtherRequestLayout({ children }: { children: ReactNode }) {

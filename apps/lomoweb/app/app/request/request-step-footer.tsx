@@ -2,20 +2,20 @@
 
 import { Button } from "@repo/ui/button";
 
-type RequestStepFooterProps =
+type RequestStepFooterProps
+	= | {
+		onBack: () => void;
+		showNext?: true;
+		onNext: () => void;
+		nextLabel?: string;
+		nextDisabled?: boolean;
+		backLabel?: string;
+	}
 	| {
-			onBack: () => void;
-			showNext?: true;
-			onNext: () => void;
-			nextLabel?: string;
-			nextDisabled?: boolean;
-			backLabel?: string;
-	  }
-	| {
-			onBack: () => void;
-			showNext: false;
-			backLabel?: string;
-	  };
+		onBack: () => void;
+		showNext: false;
+		backLabel?: string;
+	};
 
 export function RequestStepFooter(props: RequestStepFooterProps) {
 	const { onBack, backLabel = "Back" } = props;

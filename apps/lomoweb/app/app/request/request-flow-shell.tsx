@@ -1,9 +1,9 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { LomoLogo } from "@repo/ui/icons";
 import { Text } from "@repo/ui/text";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
 import { RequestProgress } from "./request-progress";
 
 function filledSegmentsForPath(pathname: string): number {

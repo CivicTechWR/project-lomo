@@ -58,28 +58,28 @@ Possible implementations depend on environment:
 - a framework helper like `fetchQuery`
 - a point-in-time client read such as `ConvexHttpClient.query()`
 
-```ts
+```tsx
 // Reactive by default when fresh live data matters
 function TeamPresence() {
-  const presence = useQuery(api.teams.livePresence, { teamId });
-  return <PresenceList users={presence} />;
+	const presence = useQuery(api.teams.livePresence, { teamId });
+	return <PresenceList users={presence} />;
 }
 ```
 
-```ts
+```tsx
 // Point-in-time read when explicit refresh is acceptable
 import { ConvexHttpClient } from "convex/browser";
 
 const client = new ConvexHttpClient(import.meta.env.VITE_CONVEX_URL);
 
 function SnapshotView() {
-  const [items, setItems] = useState<Item[]>([]);
+	const [items, setItems] = useState<Item[]>([]);
 
-  useEffect(() => {
-    client.query(api.items.snapshot).then(setItems);
-  }, []);
+	useEffect(() => {
+		client.query(api.items.snapshot).then(setItems);
+	}, []);
 
-  return <ItemGrid items={items} />;
+	return <ItemGrid items={items} />;
 }
 ```
 
@@ -101,21 +101,21 @@ Keep reactive for:
 
 Instead of N components each fetching their own related data, fetch it in a single query.
 
-```ts
+```tsx
 // Bad: each card fetches its own author
 function ProjectCard({ project }: { project: Project }) {
-  const author = useQuery(api.users.get, { id: project.authorId });
-  return <Card title={project.name} author={author?.name} />;
+	const author = useQuery(api.users.get, { id: project.authorId });
+	return <Card title={project.name} author={author?.name} />;
 }
 ```
 
-```ts
+```tsx
 // Good: parent query returns projects with author names included
 function ProjectList() {
-  const projects = useQuery(api.projects.listWithAuthors);
-  return projects?.map((p) => (
-    <Card key={p._id} title={p.name} author={p.authorName} />
-  ));
+	const projects = useQuery(api.projects.listWithAuthors);
+	return projects?.map(p => (
+		<Card key={p._id} title={p.name} author={p.authorName} />
+	));
 }
 ```
 
@@ -135,8 +135,8 @@ const profile = useQuery(api.users.getProfile, { userId: selectedId! });
 ```ts
 // Good: skip when there is nothing to fetch
 const profile = useQuery(
-  api.users.getProfile,
-  selectedId ? { userId: selectedId } : "skip",
+	api.users.getProfile,
+	selectedId ? { userId: selectedId } : "skip",
 );
 ```
 
@@ -148,22 +148,22 @@ If a document is widely read but has a field that changes often, move that field
 // Bad: lastSeen lives on the user doc, every heartbeat invalidates
 // every query that reads this user
 const users = defineTable({
-  name: v.string(),
-  email: v.string(),
-  lastSeen: v.number(),
+	name: v.string(),
+	email: v.string(),
+	lastSeen: v.number(),
 });
 ```
 
 ```ts
 // Good: lastSeen lives in a separate heartbeat doc
 const users = defineTable({
-  name: v.string(),
-  email: v.string(),
-  heartbeatId: v.id("heartbeats"),
+	name: v.string(),
+	email: v.string(),
+	heartbeatId: v.id("heartbeats"),
 });
 
 const heartbeats = defineTable({
-  lastSeen: v.number(),
+	lastSeen: v.number(),
 });
 ```
 
@@ -186,18 +186,18 @@ Queries that return less data and touch fewer documents invalidate less often.
 ```ts
 // Bad: returns all fields, invalidates on any field change
 export const list = query({
-  handler: async (ctx) => {
-    return await ctx.db.query("projects").collect();
-  },
+	handler: async (ctx) => {
+		return await ctx.db.query("projects").collect();
+	},
 });
 ```
 
 ```ts
 // Good: use a digest table with only the fields the list needs
 export const listDigests = query({
-  handler: async (ctx) => {
-    return await ctx.db.query("projectDigests").collect();
-  },
+	handler: async (ctx) => {
+		return await ctx.db.query("projectDigests").collect();
+	},
 });
 ```
 
@@ -210,17 +210,17 @@ Using `Date.now()` inside a query defeats Convex's query cache. The cache is inv
 ```ts
 // Bad: Date.now() defeats query caching and causes frequent re-evaluation
 const releasedPosts = await ctx.db
-  .query("posts")
-  .withIndex("by_released_at", (q) => q.lte("releasedAt", Date.now()))
-  .take(100);
+	.query("posts")
+	.withIndex("by_released_at", q => q.lte("releasedAt", Date.now()))
+	.take(100);
 ```
 
 ```ts
 // Good: use a boolean field updated by a scheduled function
 const releasedPosts = await ctx.db
-  .query("posts")
-  .withIndex("by_is_released", (q) => q.eq("isReleased", true))
-  .take(100);
+	.query("posts")
+	.withIndex("by_is_released", q => q.eq("isReleased", true))
+	.take(100);
 ```
 
 If the query must compare against a time value, pass it as an explicit argument from the client and round it to a coarse interval (e.g. the most recent minute) so requests within that window share the same cache entry.

@@ -1,11 +1,11 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
@@ -65,7 +65,7 @@ export function NotificationsDropdown() {
 	);
 	const pathname = usePathname();
 
-	const notifications = useQuery(api.notifications.listMine, { unreadOnly: true });
+	const notifications = useQuery(api.notifications.listMine, {});
 	const markRead = useMutation(api.notifications.markRead);
 	const acceptAssigned = useMutation(api.helpRequests.accept);
 	const declineAssigned = useMutation(api.helpRequests.declineAssigned);

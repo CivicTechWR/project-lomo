@@ -1,7 +1,7 @@
 /**
  * Strip address / location lines from stored request `details` for volunteers
  * who are not yet matched in progress. Keeps Convex responses from leaking
- * structured locations via `details` text (payload is cleared separately).
+ * structured locations via `details` text.
  */
 const REJECT_LINE_PREFIXES = [
 	"Address:",
@@ -53,7 +53,6 @@ export function redactHelpRequestForVolunteer<T extends {
 	title: string;
 	summary: string;
 	details: string;
-	payload?: string;
 }>(doc: T): T {
 	const details = redactRequestDetailsText(doc.details);
 	const summary = firstSummaryLine(details, 140);
@@ -63,6 +62,5 @@ export function redactHelpRequestForVolunteer<T extends {
 		title,
 		summary,
 		details,
-		payload: undefined,
 	};
 }

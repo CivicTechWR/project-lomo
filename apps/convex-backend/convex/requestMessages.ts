@@ -1,65 +1,73 @@
 /* eslint-disable node/prefer-global/process */
+import type { Doc, Id } from "./_generated/dataModel";
+import type { QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import type { Doc, Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
 
 const MAX_BODY_LEN = 8000;
 const MAX_MESSAGES_PER_HOUR = 30;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
-
-type Identity = { subject: string; email?: string; name?: string };
+const MAX_MESSAGES_PER_REQUEST = 100;
+const ANGLE_EMAIL_RE = /<([^>]+)>/;
+const TRAILING_SLASH_RE = /\/$/;
 
 function normalizeEmail(raw: string): string {
 	const trimmed = raw.trim().toLowerCase();
-	const angle = trimmed.match(/<([^>]+)>/);
+	const angle = trimmed.match(ANGLE_EMAIL_RE);
 	return (angle?.[1] ?? trimmed).trim().toLowerCase();
 }
 
 function relayMailbox(token: string | undefined): string | null {
 	const domain = process.env.EMAIL_RELAY_DOMAIN?.trim();
-	if (!domain || !token) {
+	if (
+		domain === undefined
+		|| domain.length === 0
+		|| token === undefined
+		|| token.length === 0
+	) {
 		return null;
 	}
 	return `${token}@${domain}`;
 }
 
 function siteBaseUrl(): string {
-	const u = process.env.SITE_URL?.trim().replace(/\/$/, "") ?? "";
-	return u;
+	return process.env.SITE_URL?.trim().replace(TRAILING_SLASH_RE, "") ?? "";
 }
 
 async function assertCanMessage(
-	ctx: { db: any },
+	ctx: Pick<QueryCtx, "db">,
 	requestId: Id<"helpRequests">,
-	subject: string,
+	userId: Id<"users">,
 ): Promise<Doc<"helpRequests">> {
-	const doc = await ctx.db.get(requestId);
+	const doc = await ctx.db.get("helpRequests", requestId);
 	if (!doc || doc.status !== "in_progress") {
 		throw new Error("Messaging is only available for requests in progress.");
 	}
-	if (doc.ownerSubject !== subject && doc.helperSubject !== subject) {
+	if (doc.ownerUserId !== userId && doc.helperUserId !== userId) {
 		throw new Error("Forbidden");
 	}
-	if (!doc.helperSubject) {
+	if (!doc.helperUserId) {
 		throw new Error("No helper on this request.");
 	}
 	return doc;
 }
 
 async function countRecentFromAuthor(
-	ctx: { db: any },
+	ctx: Pick<QueryCtx, "db">,
 	requestId: Id<"helpRequests">,
-	authorSubject: string,
+	authorUserId: Id<"users">,
 ): Promise<number> {
 	const since = Date.now() - RATE_WINDOW_MS;
 	const rows = await ctx.db
 		.query("requestMessages")
-		.withIndex("by_request", (q: any) => q.eq("requestId", requestId))
-		.collect();
+		.withIndex("by_request", q => q.eq("requestId", requestId))
+		.order("desc")
+		.take(MAX_MESSAGES_PER_REQUEST);
 	return rows.filter(
-		(m: Doc<"requestMessages">) =>
-			m.authorSubject === authorSubject
+		m =>
+			m.authorUserId === authorUserId
 			&& m._creationTime >= since
 			&& m.source === "web",
 	).length;
@@ -68,30 +76,30 @@ async function countRecentFromAuthor(
 export const listForRequest = query({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await ctx.auth.getUserIdentity() as Identity | null;
-		if (!identity) {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			return [];
 		}
-		await assertCanMessage(ctx, requestId, identity.subject);
+		await assertCanMessage(ctx, requestId, user._id);
 		const rows = await ctx.db
 			.query("requestMessages")
 			.withIndex("by_request", q => q.eq("requestId", requestId))
-			.collect();
-		rows.sort((a, b) => a._creationTime - b._creationTime);
-		return rows;
+			.order("desc")
+			.take(MAX_MESSAGES_PER_REQUEST);
+		return rows.sort((a, b) => a._creationTime - b._creationTime);
 	},
 });
 
 export const getRelayAddressForRequest = query({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await ctx.auth.getUserIdentity() as Identity | null;
-		if (!identity) {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			return { relayAddress: null as string | null };
 		}
 		let doc: Doc<"helpRequests">;
 		try {
-			doc = await assertCanMessage(ctx, requestId, identity.subject);
+			doc = await assertCanMessage(ctx, requestId, user._id);
 		}
 		catch {
 			return { relayAddress: null as string | null };
@@ -106,10 +114,7 @@ export const post = mutation({
 		body: v.string(),
 	},
 	handler: async (ctx, { requestId, body }) => {
-		const identity = await ctx.auth.getUserIdentity() as Identity | null;
-		if (!identity) {
-			throw new Error("Unauthenticated");
-		}
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const trimmed = body.trim();
 		if (trimmed.length === 0) {
 			throw new Error("Message cannot be empty.");
@@ -117,25 +122,25 @@ export const post = mutation({
 		if (trimmed.length > MAX_BODY_LEN) {
 			throw new Error(`Message is too long (max ${MAX_BODY_LEN} characters).`);
 		}
-		const doc = await assertCanMessage(ctx, requestId, identity.subject);
-		const recent = await countRecentFromAuthor(ctx, requestId, identity.subject);
+		const doc = await assertCanMessage(ctx, requestId, user._id);
+		const recent = await countRecentFromAuthor(ctx, requestId, user._id);
 		if (recent >= MAX_MESSAGES_PER_HOUR) {
 			throw new Error("Too many messages. Try again later.");
 		}
 
 		await ctx.db.insert("requestMessages", {
 			requestId,
-			authorSubject: identity.subject,
+			authorUserId: user._id,
 			body: trimmed,
 			source: "web",
 		});
 
-		const helperSubject = doc.helperSubject!;
-		const otherSubject
-			= doc.ownerSubject === identity.subject ? helperSubject : doc.ownerSubject;
+		const helperUserId = doc.helperUserId!;
+		const otherUserId
+			= doc.ownerUserId === user._id ? helperUserId : doc.ownerUserId;
 
 		await ctx.db.insert("notifications", {
-			recipientSubject: otherSubject,
+			recipientUserId: otherUserId,
 			type: "request_new_message",
 			title: "New message on your LoMo request",
 			body: `Someone messaged you about "${doc.title}".`,
@@ -143,20 +148,21 @@ export const post = mutation({
 			isRead: false,
 			ctaLabel: "Open conversation",
 			ctaAction:
-				otherSubject === doc.ownerSubject
+				otherUserId === doc.ownerUserId
 					? "open_request_thread"
 					: "open_offer_thread",
 		});
 
-		const otherUser = await ctx.db
-			.query("users")
-			.withIndex("by_subject", (q: any) => q.eq("subject", otherSubject))
-			.unique();
+		const otherUser = await ctx.db.get("users", otherUserId);
 		const replyTo = relayMailbox(doc.emailRelayToken);
-		if (otherUser?.email && replyTo) {
+		if (
+			otherUser?.email !== undefined
+			&& otherUser.email.length > 0
+			&& replyTo !== null
+		) {
 			const base = siteBaseUrl();
 			const path
-				= otherSubject === doc.ownerSubject
+				= otherUserId === doc.ownerUserId
 					? `/app/requests/${requestId}`
 					: `/app/offer/${requestId}`;
 			const link = base ? `${base}${path}` : path;
@@ -164,10 +170,10 @@ export const post = mutation({
 				to: otherUser.email,
 				subject: `New LoMo message: ${doc.title}`,
 				text:
-					`You have a new message about "${doc.title}".\n\n`
-					+ `Open the conversation: ${link}\n\n`
-					+ "You can also reply to this email (plain text) to message your match. "
-					+ "Your email address stays private.",
+						`You have a new message about "${doc.title}".\n\n`
+						+ `Open the conversation: ${link}\n\n`
+						+ "You can also reply to this email (plain text) to message your match. "
+						+ "Your email address stays private.",
 				replyTo,
 			});
 		}
@@ -185,7 +191,7 @@ export const ingestInboundEmail = internalMutation({
 	handler: async (ctx, args) => {
 		const existing = await ctx.db
 			.query("processedInboundEmails")
-			.withIndex("by_resend_email_id", (q: any) =>
+			.withIndex("by_resend_email_id", q =>
 				q.eq("resendEmailId", args.resendEmailId))
 			.unique();
 		if (existing) {
@@ -193,7 +199,7 @@ export const ingestInboundEmail = internalMutation({
 		}
 
 		const relayDomain = process.env.EMAIL_RELAY_DOMAIN?.trim().toLowerCase();
-		if (!relayDomain) {
+		if (relayDomain === undefined || relayDomain.length === 0) {
 			return { ok: false as const, reason: "no_relay_domain" as const };
 		}
 
@@ -210,30 +216,32 @@ export const ingestInboundEmail = internalMutation({
 
 		const req = await ctx.db
 			.query("helpRequests")
-			.withIndex("by_email_relay_token", (q: any) => q.eq("emailRelayToken", local))
+			.withIndex("by_email_relay_token", q => q.eq("emailRelayToken", local))
 			.unique();
-		if (!req || req.status !== "in_progress" || !req.helperSubject) {
+		if (!req || req.status !== "in_progress" || !req.helperUserId) {
 			return { ok: false as const, reason: "no_request" as const };
 		}
 
 		const fromEmail = normalizeEmail(args.fromHeader);
-		const ownerUser = await ctx.db
-			.query("users")
-			.withIndex("by_subject", (q: any) => q.eq("subject", req.ownerSubject))
-			.unique();
-		const helperUser = await ctx.db
-			.query("users")
-			.withIndex("by_subject", (q: any) => q.eq("subject", req.helperSubject))
-			.unique();
+		const ownerUser = await ctx.db.get("users", req.ownerUserId);
+		const helperUser = await ctx.db.get("users", req.helperUserId);
 		const ownerEmail = ownerUser?.email?.trim().toLowerCase();
 		const helperEmail = helperUser?.email?.trim().toLowerCase();
 
-		let authorSubject: string | undefined;
-		if (ownerEmail && fromEmail === ownerEmail) {
-			authorSubject = req.ownerSubject;
+		let authorUserId: Id<"users"> | undefined;
+		if (
+			ownerEmail !== undefined
+			&& ownerEmail.length > 0
+			&& fromEmail === ownerEmail
+		) {
+			authorUserId = req.ownerUserId;
 		}
-		else if (helperEmail && fromEmail === helperEmail) {
-			authorSubject = req.helperSubject;
+		else if (
+			helperEmail !== undefined
+			&& helperEmail.length > 0
+			&& fromEmail === helperEmail
+		) {
+			authorUserId = req.helperUserId;
 		}
 		else {
 			return { ok: false as const, reason: "sender_not_participant" as const };
@@ -246,7 +254,7 @@ export const ingestInboundEmail = internalMutation({
 
 		await ctx.db.insert("requestMessages", {
 			requestId: req._id,
-			authorSubject,
+			authorUserId,
 			body,
 			source: "email",
 		});
@@ -255,11 +263,11 @@ export const ingestInboundEmail = internalMutation({
 			resendEmailId: args.resendEmailId,
 		});
 
-		const otherSubject
-			= authorSubject === req.ownerSubject ? req.helperSubject : req.ownerSubject;
+		const otherUserId
+			= authorUserId === req.ownerUserId ? req.helperUserId : req.ownerUserId;
 
 		await ctx.db.insert("notifications", {
-			recipientSubject: otherSubject,
+			recipientUserId: otherUserId,
 			type: "request_new_message",
 			title: "New email on your LoMo request",
 			body: `Someone emailed about "${req.title}".`,
@@ -267,18 +275,19 @@ export const ingestInboundEmail = internalMutation({
 			isRead: false,
 			ctaLabel: "Open conversation",
 			ctaAction:
-				otherSubject === req.ownerSubject
+				otherUserId === req.ownerUserId
 					? "open_request_thread"
 					: "open_offer_thread",
 		});
 
-		const otherUser = await ctx.db
-			.query("users")
-			.withIndex("by_subject", (q: any) => q.eq("subject", otherSubject))
-			.unique();
+		const otherUser = await ctx.db.get("users", otherUserId);
 		const replyTo = relayMailbox(req.emailRelayToken);
 
-		if (otherUser?.email && replyTo) {
+		if (
+			otherUser?.email !== undefined
+			&& otherUser.email.length > 0
+			&& replyTo !== null
+		) {
 			const subjectLine
 				= args.subject.trim().startsWith("Re:")
 					? args.subject.trim()
@@ -287,10 +296,10 @@ export const ingestInboundEmail = internalMutation({
 				to: otherUser.email,
 				subject: `[LoMo] ${subjectLine}`,
 				text:
-					`${body}\n\n`
-					+ "---\n"
-					+ "You’re receiving this through LoMo’s masked relay. "
-					+ "Reply to this email to continue the conversation.",
+						`${body}\n\n`
+						+ "---\n"
+						+ "You are receiving this through LoMo's masked relay. "
+						+ "Reply to this email to continue the conversation.",
 				replyTo,
 			});
 		}

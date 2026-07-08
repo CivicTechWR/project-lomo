@@ -84,28 +84,28 @@ The most common auth task is checking identity in Convex functions.
 ```ts
 // Bad: trusting a client-provided userId
 export const getMyProfile = query({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
-    return await ctx.db.get(args.userId);
-  },
+	args: { userId: v.id("users") },
+	handler: async (ctx, args) => {
+		return await ctx.db.get(args.userId);
+	},
 });
 ```
 
 ```ts
 // Good: verifying identity server-side
 export const getMyProfile = query({
-  args: {},
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
+	args: {},
+	handler: async (ctx) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity)
+			throw new Error("Not authenticated");
 
-    return await ctx.db
-      .query("users")
-      .withIndex("by_tokenIdentifier", (q) =>
-        q.eq("tokenIdentifier", identity.tokenIdentifier)
-      )
-      .unique();
-  },
+		return await ctx.db
+			.query("users")
+			.withIndex("by_tokenIdentifier", q =>
+				q.eq("tokenIdentifier", identity.tokenIdentifier))
+			.unique();
+	},
 });
 ```
 

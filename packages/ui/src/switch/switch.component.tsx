@@ -1,7 +1,7 @@
 "use client";
 
-import type { SwitchProps as AriaSwitchProps } from "react-aria-components";
 import type { ReactNode } from "react";
+import type { SwitchProps as AriaSwitchProps } from "react-aria-components";
 import { Switch as AriaSwitch, composeRenderProps } from "react-aria-components";
 import { cn } from "../utils/cn.ts";
 
@@ -24,11 +24,13 @@ export function Switch({ className, children, ...props }: SwitchProps) {
 					cls,
 				))}
 		>
-			{children != null && children !== false ? (
-				<span className="min-w-0 flex-1 text-[length:var(--text-3)] leading-snug text-gray-12">
-					{children}
-				</span>
-			) : null}
+			{children != null && children !== false
+				? (
+						<span className="min-w-0 flex-1 text-[length:var(--text-3)] leading-snug text-gray-12">
+							{children}
+						</span>
+					)
+				: null}
 			<div
 				aria-hidden
 				className="relative h-7 w-[2.875rem] shrink-0 rounded-[max(var(--radius-2),var(--radius-full))] bg-gray-5 transition-colors group-data-[selected]:bg-gray-9"

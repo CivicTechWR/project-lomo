@@ -1,14 +1,15 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import type { HelpRequestStatus } from "@/lib/help-request-status";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
-import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor, type HelpRequestStatus } from "@/lib/help-request-status";
+import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
@@ -20,7 +21,7 @@ export function AdminDashboard() {
 
 	const volunteerOptions = useMemo(
 		() => (volunteers ?? []).map(v => ({
-			subject: v.subject,
+			userId: v._id,
 			label: `${v.name ?? "Unnamed"}${v.email ? ` (${v.email})` : ""}`,
 		})),
 		[volunteers],
@@ -34,14 +35,17 @@ export function AdminDashboard() {
 	}
 
 	async function handleAssign(requestId: Id<"helpRequests">) {
-		const volunteerSubject = selectedByRequest[requestId];
-		if (!volunteerSubject) {
+		const volunteerUserId = selectedByRequest[requestId];
+		if (!volunteerUserId) {
 			window.alert("Choose a volunteer first.");
 			return;
 		}
 		setAssigningId(requestId);
 		try {
-			await assignVolunteer({ requestId, volunteerSubject });
+			await assignVolunteer({
+				requestId,
+				volunteerUserId: volunteerUserId as Id<"users">,
+			});
 		}
 		catch (e) {
 			console.error(e);
@@ -73,7 +77,9 @@ export function AdminDashboard() {
 									<div className="min-w-0 flex-1">
 										<Text size={3} weight="medium">{r.title}</Text>
 										<Text size={2} color="gray" className="mt-1">
-											Owner: {r.ownerSubject}
+											Owner:
+											{" "}
+											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
 										</Text>
 									</div>
 									<Badge
@@ -93,9 +99,9 @@ export function AdminDashboard() {
 									>
 										<option value="">Select volunteer…</option>
 										{volunteerOptions
-											.filter(v => v.subject !== r.ownerSubject)
+											.filter(v => v.userId !== r.ownerUserId)
 											.map(v => (
-												<option key={v.subject} value={v.subject}>{v.label}</option>
+												<option key={v.userId} value={v.userId}>{v.label}</option>
 											))}
 									</select>
 									<Button
@@ -107,9 +113,11 @@ export function AdminDashboard() {
 										{assigningId === r._id ? "Assigning…" : "Assign volunteer"}
 									</Button>
 								</div>
-								{r.assignedHelperSubject && (
+								{r.assignedHelperUserId && (
 									<Text size={1} color="gray" className="mt-2">
-										Assigned helper: {r.assignedHelperSubject}
+										Assigned helper:
+										{" "}
+										{r.assignedHelper?.name ?? r.assignedHelper?.email ?? "Unknown helper"}
 									</Text>
 								)}
 							</li>
@@ -128,7 +136,7 @@ export function AdminDashboard() {
 							<li key={v._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
 								<Text size={3} weight="medium">{v.name ?? "Unnamed user"}</Text>
 								<Text size={2} color="gray">{v.email ?? "No email on file"}</Text>
-								<Text size={1} color="gray" className="mt-2 break-all">{v.subject}</Text>
+								<Text size={1} color="gray" className="mt-2 break-all">{v.tokenIdentifier}</Text>
 							</li>
 						))}
 					</ul>

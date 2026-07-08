@@ -4,6 +4,7 @@
  */
 
 const SVIX_TOLERANCE_SEC = 300;
+const WHITESPACE_RE = /\s+/;
 
 function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
 	if (a.length !== b.length) {
@@ -11,7 +12,7 @@ function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
 	}
 	let out = 0;
 	for (let i = 0; i < a.length; i++) {
-		out |= a[i]! ^ b[i]!;
+		out |= a[i] ^ b[i];
 	}
 	return out === 0;
 }
@@ -33,7 +34,7 @@ function base64Decode(b64: string): Uint8Array | null {
 function bytesToBase64(u8: Uint8Array): string {
 	let bin = "";
 	for (let i = 0; i < u8.length; i++) {
-		bin += String.fromCharCode(u8[i]!);
+		bin += String.fromCharCode(u8[i]);
 	}
 	return btoa(bin);
 }
@@ -46,7 +47,14 @@ export function parseSvixHeaders(req: Request): {
 	const id = req.headers.get("svix-id");
 	const timestamp = req.headers.get("svix-timestamp");
 	const signature = req.headers.get("svix-signature");
-	if (!id || !timestamp || !signature) {
+	if (
+		id === null
+		|| id.length === 0
+		|| timestamp === null
+		|| timestamp.length === 0
+		|| signature === null
+		|| signature.length === 0
+	) {
 		return null;
 	}
 	return { id, timestamp, signature };
@@ -57,7 +65,11 @@ export async function verifyResendWebhookPayload(
 	headers: { id: string; timestamp: string; signature: string },
 	secret: string | undefined,
 ): Promise<boolean> {
-	if (!secret || !secret.startsWith("whsec_")) {
+	if (
+		secret === undefined
+		|| secret.length === 0
+		|| !secret.startsWith("whsec_")
+	) {
 		return false;
 	}
 	const tsNum = Number(headers.timestamp);
@@ -97,7 +109,7 @@ export async function verifyResendWebhookPayload(
 	);
 	const expectedB64 = bytesToBase64(sig);
 
-	const chunks = headers.signature.trim().split(/\s+/);
+	const chunks = headers.signature.trim().split(WHITESPACE_RE);
 	for (const chunk of chunks) {
 		const comma = chunk.indexOf(",");
 		if (comma === -1) {
@@ -105,11 +117,11 @@ export async function verifyResendWebhookPayload(
 		}
 		const version = chunk.slice(0, comma);
 		const sigB64 = chunk.slice(comma + 1);
-		if (version !== "v1" || !sigB64) {
+		if (version !== "v1" || sigB64.length === 0) {
 			continue;
 		}
 		const decoded = base64Decode(sigB64);
-		if (!decoded) {
+		if (decoded === null) {
 			continue;
 		}
 		if (timingSafeEqual(decoded, sig)) {

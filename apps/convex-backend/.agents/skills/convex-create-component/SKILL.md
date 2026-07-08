@@ -42,12 +42,12 @@ Create reusable Convex components with clear boundaries and a small app-facing A
 
 Ask the user, then pick one path:
 
-| Goal | Shape | Reference |
-|------|-------|-----------|
-| Component for this app only | Local | `references/local-components.md` |
-| Publish or share across apps | Packaged | `references/packaged-components.md` |
-| User explicitly needs local + shared library code | Hybrid | `references/hybrid-components.md` |
-| Not sure | Default to local | `references/local-components.md` |
+| Goal                                              | Shape            | Reference                           |
+| ------------------------------------------------- | ---------------- | ----------------------------------- |
+| Component for this app only                       | Local            | `references/local-components.md`    |
+| Publish or share across apps                      | Packaged         | `references/packaged-components.md` |
+| User explicitly needs local + shared library code | Hybrid           | `references/hybrid-components.md`   |
+| Not sure                                          | Default to local | `references/local-components.md`    |
 
 Read exactly one reference file before proceeding.
 
@@ -77,11 +77,11 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  notifications: defineTable({
-    userId: v.string(),
-    message: v.string(),
-    read: v.boolean(),
-  }).index("by_user", ["userId"]),
+	notifications: defineTable({
+		userId: v.string(),
+		message: v.string(),
+		read: v.boolean(),
+	}).index("by_user", ["userId"]),
 });
 ```
 
@@ -91,35 +91,35 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server.js";
 
 export const send = mutation({
-  args: { userId: v.string(), message: v.string() },
-  returns: v.id("notifications"),
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("notifications", {
-      userId: args.userId,
-      message: args.message,
-      read: false,
-    });
-  },
+	args: { userId: v.string(), message: v.string() },
+	returns: v.id("notifications"),
+	handler: async (ctx, args) => {
+		return await ctx.db.insert("notifications", {
+			userId: args.userId,
+			message: args.message,
+			read: false,
+		});
+	},
 });
 
 export const listUnread = query({
-  args: { userId: v.string() },
-  returns: v.array(
-    v.object({
-      _id: v.id("notifications"),
-      _creationTime: v.number(),
-      userId: v.string(),
-      message: v.string(),
-      read: v.boolean(),
-    })
-  ),
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("notifications")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
-      .filter((q) => q.eq(q.field("read"), false))
-      .collect();
-  },
+	args: { userId: v.string() },
+	returns: v.array(
+		v.object({
+			_id: v.id("notifications"),
+			_creationTime: v.number(),
+			userId: v.string(),
+			message: v.string(),
+			read: v.boolean(),
+		})
+	),
+	handler: async (ctx, args) => {
+		return await ctx.db
+			.query("notifications")
+			.withIndex("by_user", q => q.eq("userId", args.userId))
+			.filter(q => q.eq(q.field("read"), false))
+			.collect();
+	},
 });
 ```
 
@@ -135,37 +135,39 @@ export default app;
 ```
 
 ```ts
+import { getAuthUserId } from "@convex-dev/auth/server";
 // convex/notifications.ts  (app-side wrapper)
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
 import { components } from "./_generated/api";
-import { getAuthUserId } from "@convex-dev/auth/server";
+import { mutation, query } from "./_generated/server";
 
 export const sendNotification = mutation({
-  args: { message: v.string() },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+	args: { message: v.string() },
+	returns: v.null(),
+	handler: async (ctx, args) => {
+		const userId = await getAuthUserId(ctx);
+		if (!userId)
+			throw new Error("Not authenticated");
 
-    await ctx.runMutation(components.notifications.lib.send, {
-      userId,
-      message: args.message,
-    });
-    return null;
-  },
+		await ctx.runMutation(components.notifications.lib.send, {
+			userId,
+			message: args.message,
+		});
+		return null;
+	},
 });
 
 export const myUnread = query({
-  args: {},
-  handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+	args: {},
+	handler: async (ctx) => {
+		const userId = await getAuthUserId(ctx);
+		if (!userId)
+			throw new Error("Not authenticated");
 
-    return await ctx.runQuery(components.notifications.lib.listUnread, {
-      userId,
-    });
-  },
+		return await ctx.runQuery(components.notifications.lib.listUnread, {
+			userId,
+		});
+	},
 });
 ```
 
@@ -196,12 +198,13 @@ const apiKey = process.env.OPENAI_API_KEY;
 ```ts
 // Good: the app resolves auth and env, then passes explicit values
 const userId = await getAuthUserId(ctx);
-if (!userId) throw new Error("Not authenticated");
+if (!userId)
+	throw new Error("Not authenticated");
 
 await ctx.runAction(components.translator.translate, {
-  userId,
-  apiKey: process.env.OPENAI_API_KEY,
-  text: args.text,
+	userId,
+	apiKey: process.env.OPENAI_API_KEY,
+	text: args.text,
 });
 ```
 
@@ -215,18 +218,19 @@ export const send = components.notifications.send;
 ```ts
 // Good: re-export through an app mutation or query
 export const sendNotification = mutation({
-  args: { message: v.string() },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
-    if (!userId) throw new Error("Not authenticated");
+	args: { message: v.string() },
+	returns: v.null(),
+	handler: async (ctx, args) => {
+		const userId = await getAuthUserId(ctx);
+		if (!userId)
+			throw new Error("Not authenticated");
 
-    await ctx.runMutation(components.notifications.lib.send, {
-      userId,
-      message: args.message,
-    });
-    return null;
-  },
+		await ctx.runMutation(components.notifications.lib.send, {
+			userId,
+			message: args.message,
+		});
+		return null;
+	},
 });
 ```
 
@@ -234,12 +238,16 @@ export const sendNotification = mutation({
 
 ```ts
 // Bad: parent app table IDs are not valid component validators
-args: { userId: v.id("users") }
+const args = {
+	userId: v.id("users"),
+};
 ```
 
 ```ts
 // Good: treat parent-owned IDs as strings at the boundary
-args: { userId: v.string() }
+const args = {
+	userId: v.string(),
+};
 ```
 
 ### Advanced Patterns

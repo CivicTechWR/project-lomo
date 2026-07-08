@@ -1,17 +1,17 @@
 "use client";
 
 import { api } from "@repo/convex-backend/convex/_generated/api";
-import { useMutation } from "convex/react";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation } from "convex/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
 	summarizeSupportDraftBody,
 	supportRequestListSummary,
 	supportRequestTitle,
 } from "@/lib/request-flow/summarize-support-draft";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -37,7 +37,6 @@ export default function SupportPreviewPage() {
 				title,
 				summary: supportRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

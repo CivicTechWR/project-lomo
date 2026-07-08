@@ -1,18 +1,18 @@
 "use client";
 
 import { api } from "@repo/convex-backend/convex/_generated/api";
-import { useMutation } from "convex/react";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation } from "convex/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { URGENCY_OPTIONS } from "@/lib/request-flow/food";
 import {
 	itemsRequestListSummary,
 	itemsRequestTitle,
 	summarizeItemsDraftBody,
 } from "@/lib/request-flow/summarize-items-draft";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -39,7 +39,6 @@ export default function ItemsPreviewPage() {
 				title,
 				summary: itemsRequestListSummary(draft),
 				details: body,
-				payload: JSON.stringify({ v: 1, draft }),
 			});
 			resetDraft();
 			router.replace("/app");

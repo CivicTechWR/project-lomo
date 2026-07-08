@@ -1,14 +1,19 @@
 /* eslint-disable node/prefer-global/process */
 import { internal } from "./_generated/api";
-import { parseSvixHeaders, verifyResendWebhookPayload } from "./lib/verifyResendWebhook";
 import { httpAction } from "./_generated/server";
+import { parseSvixHeaders, verifyResendWebhookPayload } from "./lib/verifyResendWebhook";
+
+const SCRIPT_TAG_RE = /<script[\s\S]*?<\/script>/gi;
+const STYLE_TAG_RE = /<style[\s\S]*?<\/style>/gi;
+const HTML_TAG_RE = /<[^>]+>/g;
+const WHITESPACE_RE = /\s+/g;
 
 function stripHtmlToText(html: string): string {
 	return html
-		.replace(/<script[\s\S]*?<\/script>/gi, " ")
-		.replace(/<style[\s\S]*?<\/style>/gi, " ")
-		.replace(/<[^>]+>/g, " ")
-		.replace(/\s+/g, " ")
+		.replace(SCRIPT_TAG_RE, " ")
+		.replace(STYLE_TAG_RE, " ")
+		.replace(HTML_TAG_RE, " ")
+		.replace(WHITESPACE_RE, " ")
 		.trim();
 }
 
@@ -17,21 +22,22 @@ function pickPlainBody(
 	html: string | undefined,
 ): string {
 	const t = text?.trim();
-	if (t && t.length > 0) {
+	if (t !== undefined && t.length > 0) {
 		return t;
 	}
-	if (html?.trim()) {
-		return stripHtmlToText(html);
+	const h = html?.trim();
+	if (h !== undefined && h.length > 0) {
+		return stripHtmlToText(h);
 	}
 	return "";
 }
 
-type ResendWebhookBody = {
+interface ResendWebhookBody {
 	type?: string;
 	data?: {
 		email_id?: string;
 	};
-};
+}
 
 export const resendInboundWebhook = httpAction(async (ctx, req) => {
 	if (req.method !== "POST") {
@@ -58,12 +64,12 @@ export const resendInboundWebhook = httpAction(async (ctx, req) => {
 	}
 
 	const emailId = parsed.data?.email_id;
-	if (!emailId) {
+	if (emailId === undefined || emailId.length === 0) {
 		return new Response(null, { status: 200 });
 	}
 
 	const apiKey = process.env.RESEND_API_KEY;
-	if (!apiKey) {
+	if (apiKey === undefined || apiKey.length === 0) {
 		return new Response("Missing RESEND_API_KEY", { status: 500 });
 	}
 
