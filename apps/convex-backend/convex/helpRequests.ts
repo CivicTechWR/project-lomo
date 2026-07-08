@@ -60,6 +60,40 @@ async function createNotification(ctx: MutationCtx, args: {
 	});
 }
 
+/**
+ * Hard-delete a request and everything that references it. Isolated behind
+ * this helper so the delete strategy can change without touching callers.
+ *
+ * To switch to a soft delete later: add `deletedAt: v.optional(v.number())`
+ * to helpRequests in schema.ts, filter `deletedAt` rows out of the user/
+ * volunteer queries (listMine, listPendingFromOthers, getAsHelper,
+ * listAllForAdmin, getOfferHelperPreview), add a restore mutation, and change
+ * this helper to patch `deletedAt` instead of deleting. adminDeleteRequest's
+ * public signature stays the same across that change.
+ */
+async function purgeRequest(ctx: MutationCtx, requestId: Id<"helpRequests">) {
+	// Messages are indexed by request, so this is a targeted delete.
+	const messages = await ctx.db
+		.query("requestMessages")
+		.withIndex("by_request", q => q.eq("requestId", requestId))
+		.collect();
+	for (const message of messages) {
+		await ctx.db.delete("requestMessages", message._id);
+	}
+
+	// notifications has no requestId index, so we scan and filter. Cost is
+	// O(total notifications); acceptable at current scale. If notification
+	// volume grows, add a by_request_id index and query it instead.
+	const notifications = await ctx.db.query("notifications").collect();
+	for (const notification of notifications) {
+		if (notification.requestId === requestId) {
+			await ctx.db.delete("notifications", notification._id);
+		}
+	}
+
+	await ctx.db.delete("helpRequests", requestId);
+}
+
 function volunteerLabelForNotification(helper: {
 	firstName?: string;
 	name?: string;
@@ -533,6 +567,25 @@ export const adminUpdateRequest = mutation({
 			patch.category = category;
 		}
 		await ctx.db.patch("helpRequests", requestId, patch);
+	},
+});
+
+export const adminDeleteRequest = mutation({
+	args: { requestId: v.id("helpRequests") },
+	// Hard delete chosen for the initial version: the row and its dependents
+	// (messages, notifications) are removed via purgeRequest. This can be
+	// swapped for a soft delete later without changing this signature — see
+	// the note on purgeRequest.
+	handler: async (ctx, { requestId }) => {
+		const identity = await requireIdentity(ctx);
+		if (!isAdminIdentity(identity)) {
+			throw new Error("Forbidden");
+		}
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc) {
+			throw new Error("Request not found.");
+		}
+		await purgeRequest(ctx, requestId);
 	},
 });
 
