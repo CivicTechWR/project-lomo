@@ -10,6 +10,7 @@ import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
+import { AdminRequestDetail } from "./admin-request-detail";
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
@@ -18,6 +19,14 @@ export function AdminDashboard() {
 	const assignVolunteer = useMutation(api.helpRequests.assignVolunteer);
 	const [assigningId, setAssigningId] = useState<string | null>(null);
 	const [selectedByRequest, setSelectedByRequest] = useState<Record<string, string>>({});
+	const [detailId, setDetailId] = useState<Id<"helpRequests"> | null>(null);
+
+	// Derive the open request from the live query so it stays reactive and
+	// falls back to null once the row leaves the list (e.g. after delete).
+	const detailRequest = useMemo(
+		() => requests?.find(r => r._id === detailId) ?? null,
+		[requests, detailId],
+	);
 
 	const volunteerOptions = useMemo(
 		() => (volunteers ?? []).map(v => ({
@@ -58,6 +67,7 @@ export function AdminDashboard() {
 
 	return (
 		<div className="flex flex-col gap-8">
+			<AdminRequestDetail request={detailRequest} onClose={() => setDetailId(null)} />
 			<div>
 				<Heading level={1} size={8}>Admin dashboard</Heading>
 				<Text size={2} color="gray" className="mt-1">
@@ -82,13 +92,23 @@ export function AdminDashboard() {
 											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
 										</Text>
 									</div>
-									<Badge
-										variant="soft"
-										size={1}
-										color={statusBadgeColor(r.status as HelpRequestStatus)}
-									>
-										{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
-									</Badge>
+									<div className="flex items-center gap-2">
+										<Badge
+											variant="soft"
+											size={1}
+											color={statusBadgeColor(r.status as HelpRequestStatus)}
+										>
+											{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
+										</Badge>
+										<Button
+											variant="soft"
+											color="gray"
+											size={1}
+											onPress={() => setDetailId(r._id)}
+										>
+											View / edit
+										</Button>
+									</div>
 								</div>
 								<div className="mt-3 flex flex-wrap gap-2">
 									<select
