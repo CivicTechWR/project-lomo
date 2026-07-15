@@ -87,7 +87,9 @@ export function UserProfile({
 			await updateHelperPreferences({
 				canHelpNow: preferenceValues.canHelpNow,
 				helpPreferences: preferenceValues.helpPreferences,
-				helpLocation: preferenceValues.helpLocation.trim() || undefined,
+				helpAreaCenterLat: preferenceValues.helpAreaCenterLat,
+				helpAreaCenterLng: preferenceValues.helpAreaCenterLng,
+				helpAreaRadiusKm: preferenceValues.helpAreaRadiusKm,
 			});
 		}
 		catch (e) {
@@ -127,32 +129,12 @@ export function UserProfile({
 					<Heading level={2} size={6}>
 						Your profile
 					</Heading>
-					<Button
-						variant="soft"
-						color="gray"
-						size={1}
-						onPress={handleSignOut}
-					>
-						Sign out
-					</Button>
 				</div>
 
 				<div className="flex flex-col gap-3">
-					<DetailRow label="Name" value={user.name ?? "—"} />
-					<DetailRow label="Email" value={user.email ?? "—"} />
-					<div className="flex items-center justify-between">
-						<Text size={2} color="gray">
-							Email verified
-						</Text>
-						<Badge
-							variant="soft"
-							size={1}
-							color={user.emailVerified ? "sage" : "amber"}
-						>
-							{user.emailVerified ? "Verified" : "Not verified"}
-						</Badge>
-					</div>
-					{user.issuer && <DetailRow label="Issuer" value={user.issuer} />}
+				<Text size={2} color="gray">
+					{user.email}
+					</Text>
 				</div>
 
 				<div className="border-t border-gray-5 pt-5">

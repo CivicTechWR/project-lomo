@@ -31,7 +31,7 @@ export function Switch({ className, children, ...props }: SwitchProps) {
 			) : null}
 			<div
 				aria-hidden
-				className="relative h-7 w-[2.875rem] shrink-0 rounded-[max(var(--radius-2),var(--radius-full))] bg-gray-5 transition-colors group-data-[selected]:bg-gray-9"
+				className="relative h-7 w-[2.875rem] shrink-0 rounded-[max(var(--radius-2),var(--radius-full))] bg-gray-5 transition-colors group-data-[selected]:bg-sage-9"
 			>
 				<div
 					className="absolute top-[3px] left-[3px] size-[22px] rounded-[max(var(--radius-1),var(--radius-full))] bg-gray-1 shadow transition-transform duration-200 group-data-[selected]:translate-x-[1.25rem]"

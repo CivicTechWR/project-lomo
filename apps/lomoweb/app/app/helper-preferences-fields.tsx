@@ -1,16 +1,33 @@
 "use client";
 
 import { Checkbox, CheckboxGroup } from "@repo/ui/checkbox";
-import { Group, Label } from "@repo/ui/field";
 import { Switch } from "@repo/ui/switch";
 import { Text } from "@repo/ui/text";
-import { Input, TextField } from "@repo/ui/text-field";
+import dynamic from "next/dynamic";
+import {
+	DEFAULT_HELP_AREA_CENTER,
+	DEFAULT_HELP_AREA_RADIUS_KM,
+	HELP_AREA_RADIUS_MAX_KM,
+	HELP_AREA_RADIUS_MIN_KM,
+} from "@/lib/help-area";
 import { HELPER_PREFERENCE_GROUPS } from "@/lib/helper-preferences";
+
+const HelpAreaMap = dynamic(
+	() => import("./help-area-map").then(m => m.HelpAreaMap),
+	{
+		ssr: false,
+		loading: () => (
+			<div className="h-64 w-full animate-pulse rounded-[max(var(--radius-3),12px)] border border-gray-6 bg-gray-3" />
+		),
+	},
+);
 
 export type HelperPreferencesFormValues = {
 	canHelpNow: boolean;
 	helpPreferences: string[];
-	helpLocation: string;
+	helpAreaCenterLat: number;
+	helpAreaCenterLng: number;
+	helpAreaRadiusKm: number;
 };
 
 type HelperPreferencesFieldsProps = {
@@ -22,16 +39,11 @@ export function HelperPreferencesFields({ values, onChange }: HelperPreferencesF
 	return (
 		<div className="flex flex-col gap-8">
 			<div className="flex flex-col gap-2">
-				<p className="text-[length:var(--text-2)] font-medium text-gray-12">
-					Capacity &amp; Pace
-					{" "}
-					<span className="font-normal text-gray-11">(Optional)</span>
-				</p>
 				<Switch
 					isSelected={values.canHelpNow}
 					onChange={canHelpNow => onChange({ ...values, canHelpNow })}
 				>
-					I can help right now
+					I can offer help
 				</Switch>
 			</div>
 
@@ -66,16 +78,64 @@ export function HelperPreferencesFields({ values, onChange }: HelperPreferencesF
 				))}
 			</div>
 
-			<TextField
-				name="helpLocation"
-				value={values.helpLocation}
-				onChange={helpLocation => onChange({ ...values, helpLocation })}
-			>
-				<Label>Location you can help with (optional)</Label>
-				<Group>
-					<Input placeholder="City / Neighborhood" />
-				</Group>
-			</TextField>
+			<div className="flex flex-col gap-3">
+				<div className="flex flex-col gap-1">
+					<Text size={2} weight="medium">
+						Area you can help with
+					</Text>
+					<Text size={2} color="gray">
+						Drag the map to set the centre. You&apos;ll only see open requests
+						within this radius when offering help.
+					</Text>
+				</div>
+
+				<HelpAreaMap
+					centerLat={values.helpAreaCenterLat}
+					centerLng={values.helpAreaCenterLng}
+					radiusKm={values.helpAreaRadiusKm}
+					onCenterChange={(helpAreaCenterLat, helpAreaCenterLng) =>
+						onChange({ ...values, helpAreaCenterLat, helpAreaCenterLng })}
+				/>
+
+				<div className="flex flex-col gap-2">
+					<div className="flex items-center justify-between gap-3">
+						<Text size={2} color="gray">
+							Radius
+						</Text>
+						<Text size={2} weight="medium">
+							{values.helpAreaRadiusKm}
+							{" "}
+							km
+						</Text>
+					</div>
+					<input
+						type="range"
+						min={HELP_AREA_RADIUS_MIN_KM}
+						max={HELP_AREA_RADIUS_MAX_KM}
+						step={1}
+						value={values.helpAreaRadiusKm}
+						onChange={event =>
+							onChange({
+								...values,
+								helpAreaRadiusKm: Number(event.target.value),
+							})}
+						className="h-2 w-full cursor-pointer appearance-none rounded-full bg-gray-4 accent-sage-9"
+						aria-label="Help area radius in kilometres"
+					/>
+					<div className="flex justify-between">
+						<Text size={1} color="gray">
+							{HELP_AREA_RADIUS_MIN_KM}
+							{" "}
+							km
+						</Text>
+						<Text size={1} color="gray">
+							{HELP_AREA_RADIUS_MAX_KM}
+							{" "}
+							km
+						</Text>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -83,11 +143,15 @@ export function HelperPreferencesFields({ values, onChange }: HelperPreferencesF
 export function helperPreferencesFromProfile(row: {
 	canHelpNow?: boolean;
 	helpPreferences?: string[];
-	helpLocation?: string;
+	helpAreaCenterLat?: number;
+	helpAreaCenterLng?: number;
+	helpAreaRadiusKm?: number;
 } | null | undefined): HelperPreferencesFormValues {
 	return {
 		canHelpNow: row?.canHelpNow ?? false,
 		helpPreferences: row?.helpPreferences ?? [],
-		helpLocation: row?.helpLocation ?? "",
+		helpAreaCenterLat: row?.helpAreaCenterLat ?? DEFAULT_HELP_AREA_CENTER.lat,
+		helpAreaCenterLng: row?.helpAreaCenterLng ?? DEFAULT_HELP_AREA_CENTER.lng,
+		helpAreaRadiusKm: row?.helpAreaRadiusKm ?? DEFAULT_HELP_AREA_RADIUS_KM,
 	};
 }

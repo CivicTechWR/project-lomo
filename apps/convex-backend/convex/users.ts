@@ -94,24 +94,42 @@ export const updateHelperPreferences = mutation({
 	args: {
 		canHelpNow: v.optional(v.boolean()),
 		helpPreferences: v.optional(v.array(v.string())),
-		helpLocation: v.optional(v.string()),
+		helpAreaCenterLat: v.optional(v.number()),
+		helpAreaCenterLng: v.optional(v.number()),
+		helpAreaRadiusKm: v.optional(v.number()),
 	},
-	handler: async (ctx, { canHelpNow, helpPreferences, helpLocation }) => {
+	handler: async (ctx, args) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
 		const row = await getUserRow(ctx, identity.subject);
 		if (!row) {
 			throw new Error("User row missing");
 		}
-		const patch: Record<string, boolean | string | string[] | undefined> = {};
-		if (canHelpNow !== undefined) {
-			patch.canHelpNow = canHelpNow;
+		const patch: Record<string, boolean | number | string[] | undefined> = {};
+		if (args.canHelpNow !== undefined) {
+			patch.canHelpNow = args.canHelpNow;
 		}
-		if (helpPreferences !== undefined) {
-			patch.helpPreferences = normalizeHelpPreferences(helpPreferences);
+		if (args.helpPreferences !== undefined) {
+			patch.helpPreferences = normalizeHelpPreferences(args.helpPreferences);
 		}
-		if (helpLocation !== undefined) {
-			patch.helpLocation = helpLocation.trim() || undefined;
+		if (args.helpAreaCenterLat !== undefined) {
+			if (args.helpAreaCenterLat < -90 || args.helpAreaCenterLat > 90) {
+				throw new Error("Invalid latitude");
+			}
+			patch.helpAreaCenterLat = args.helpAreaCenterLat;
+		}
+		if (args.helpAreaCenterLng !== undefined) {
+			if (args.helpAreaCenterLng < -180 || args.helpAreaCenterLng > 180) {
+				throw new Error("Invalid longitude");
+			}
+			patch.helpAreaCenterLng = args.helpAreaCenterLng;
+		}
+		if (args.helpAreaRadiusKm !== undefined) {
+			const radiusKm = Math.round(args.helpAreaRadiusKm);
+			if (radiusKm < 1 || radiusKm > 30) {
+				throw new Error("Radius must be between 1 and 30 km");
+			}
+			patch.helpAreaRadiusKm = radiusKm;
 		}
 		await ctx.db.patch(row._id, patch);
 	},

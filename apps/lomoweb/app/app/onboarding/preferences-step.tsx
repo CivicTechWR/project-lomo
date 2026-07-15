@@ -32,7 +32,9 @@ export function PreferencesStep() {
 			await updateHelperPreferences({
 				canHelpNow: values.canHelpNow,
 				helpPreferences: values.helpPreferences,
-				helpLocation: values.helpLocation.trim() || undefined,
+				helpAreaCenterLat: values.helpAreaCenterLat,
+				helpAreaCenterLng: values.helpAreaCenterLng,
+				helpAreaRadiusKm: values.helpAreaRadiusKm,
 			});
 			await completeOnboarding({});
 			router.push("/app");

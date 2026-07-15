@@ -1,5 +1,6 @@
 "use client";
 
+import type { FunctionReturnType } from "convex/server";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
@@ -8,16 +9,22 @@ import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
+import { Checkbox, CheckboxGroup } from "@repo/ui/checkbox";
 import { Heading } from "@repo/ui/heading";
+import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-	readStoredHomeMode,
-	writeStoredHomeMode,
-	type HomeAppMode,
-} from "@/lib/app-home-mode";
+	EMPTY_OPEN_REQUEST_FILTERS,
+	filterOpenRequests,
+	hasActiveOpenRequestFilters,
+	type OpenRequestFilters,
+} from "@/lib/open-request-filters";
+import { useHomeMode } from "@/lib/home-mode-context";
+import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
+import type { RequestCategoryId } from "@/lib/request-flow/types";
 import {
 	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
@@ -26,6 +33,50 @@ import {
 	statusBadgeColor,
 } from "@/lib/help-request-status";
 
+type OpenRequestListItem = FunctionReturnType<
+	typeof api.helpRequests.listPendingFromOthers
+>[number];
+
+function FilterIcon({ className }: { className?: string }) {
+	return (
+		<svg
+			className={className}
+			width={14}
+			height={14}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden
+		>
+			<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+		</svg>
+	);
+}
+
+function ExclamationIcon({ className }: { className?: string }) {
+	return (
+		<svg
+			className={className}
+			width={14}
+			height={14}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden
+		>
+			<circle cx="12" cy="12" r="10" />
+			<line x1="12" y1="8" x2="12" y2="12" />
+			<line x1="12" y1="16" x2="12.01" y2="16" />
+		</svg>
+	);
+}
+
 export function RequestsHome({
 	preloadedUser,
 }: {
@@ -33,19 +84,8 @@ export function RequestsHome({
 }) {
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
-	const [mode, setMode] = useState<HomeAppMode>("request_help");
+	const { mode } = useHomeMode();
 	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
-
-	useEffect(() => {
-		const stored = readStoredHomeMode();
-		if (stored) {
-			setMode(stored);
-		}
-	}, []);
-
-	useEffect(() => {
-		writeStoredHomeMode(mode);
-	}, [mode]);
 
 	const listArgs
 		= statusFilter === null ? {} : { statusFilter };
@@ -115,10 +155,7 @@ export function RequestsHome({
 					requests={myRequests}
 				/>
 			) : (
-				<OfferingHelpPanel
-					router={router}
-					openForOthers={openForOthers}
-				/>
+				<OfferingHelpPanel openForOthers={openForOthers} />
 			)}
 		</div>
 	);
@@ -151,14 +188,6 @@ function RequestingHelpPanel(props: {
 						onPress={() => router.push("/app/request?fresh=1")}
 					>
 						New request
-					</Button>
-					<Button
-						variant="ghost"
-						color="gray"
-						size={2}
-						onPress={() => router.push("/app/profile")}
-					>
-						Profile
 					</Button>
 				</div>
 			</div>
@@ -255,10 +284,19 @@ function RequestingHelpPanel(props: {
 }
 
 function OfferingHelpPanel(props: {
-	router: ReturnType<typeof useRouter>;
-	openForOthers: Doc<"helpRequests">[] | undefined;
+	openForOthers: OpenRequestListItem[] | undefined;
 }) {
-	const { router, openForOthers } = props;
+	const { openForOthers } = props;
+	const [filters, setFilters] = useState<OpenRequestFilters>(EMPTY_OPEN_REQUEST_FILTERS);
+	const [categoriesOpen, setCategoriesOpen] = useState(false);
+
+	const filteredRequests = openForOthers === undefined
+		? undefined
+		: filterOpenRequests(openForOthers, filters);
+	const filtersActive = hasActiveOpenRequestFilters(filters);
+	const selectedCategoryCount = filters.categories.length;
+	const categoriesButtonActive = selectedCategoryCount > 0;
+	const openRequestCategories = REQUEST_CATEGORIES.filter(category => category.implemented);
 
 	return (
 		<>
@@ -272,16 +310,77 @@ function OfferingHelpPanel(props: {
 						to read more — if it feels like a fit, you can offer to help.
 					</Text>
 				</div>
+			</div>
+
+			<div className="flex flex-wrap items-center gap-2">
 				<Button
-					variant="ghost"
-					color="gray"
-					size={2}
-					className="self-start"
-					onPress={() => router.push("/app/profile")}
+					size={1}
+					variant="soft"
+					color={categoriesButtonActive ? "sage" : "gray"}
+					border="small"
+					borderColor={categoriesButtonActive ? "sage" : "gray"}
+					className="gap-1.5 rounded-full"
+					onPress={() => setCategoriesOpen(true)}
 				>
-					Profile
+					<FilterIcon />
+					Categories ({selectedCategoryCount})
+				</Button>
+				<Button
+					size={1}
+					variant="soft"
+					color={filters.urgentOnly ? "red" : "gray"}
+					border="small"
+					borderColor={filters.urgentOnly ? "red" : "gray"}
+					className="gap-1.5 rounded-full"
+					onPress={() =>
+						setFilters(current => ({
+							...current,
+							urgentOnly: !current.urgentOnly,
+						}))}
+				>
+					<ExclamationIcon />
+					Urgent
 				</Button>
 			</div>
+
+			<ModalOverlay
+				isOpen={categoriesOpen}
+				onOpenChange={setCategoriesOpen}
+				isDismissable
+			>
+				<Modal size={2} aria-labelledby="open-request-category-filter-title">
+					<div className="flex flex-col gap-4">
+						<Heading id="open-request-category-filter-title" level={2} size={4}>
+							Categories
+						</Heading>
+						<CheckboxGroup
+							value={filters.categories}
+							onChange={(value) => {
+								setFilters(current => ({
+									...current,
+									categories: value as RequestCategoryId[],
+								}));
+							}}
+							className="flex flex-col gap-2"
+						>
+							{openRequestCategories.map(category => (
+								<Checkbox key={category.id} value={category.id}>
+									{category.title}
+								</Checkbox>
+							))}
+						</CheckboxGroup>
+						<Button
+							variant="soft"
+							color="gray"
+							size={2}
+							className="self-end"
+							onPress={() => setCategoriesOpen(false)}
+						>
+							Done
+						</Button>
+					</div>
+				</Modal>
+			</ModalOverlay>
 
 			{openForOthers === undefined && (
 				<Text size={2} color="gray">
@@ -289,18 +388,19 @@ function OfferingHelpPanel(props: {
 				</Text>
 			)}
 
-			{openForOthers !== undefined && openForOthers.length === 0 && (
+			{filteredRequests !== undefined && filteredRequests.length === 0 && (
 				<Card size={2} variant="surface" className="p-6">
 					<Text size={3} color="gray" className="text-center">
-						There are no open requests from others right now. Check back
-						again soon.
+						{filtersActive
+							? "No open requests match these filters. Try adjusting them or check back again soon."
+							: "No open requests match your help area right now. You can widen your radius in Profile, or check back again soon."}
 					</Text>
 				</Card>
 			)}
 
-			{openForOthers !== undefined && openForOthers.length > 0 && (
+			{filteredRequests !== undefined && filteredRequests.length > 0 && (
 				<ul className="flex flex-col gap-3">
-					{openForOthers.map(r => (
+					{filteredRequests.map(r => (
 						<li key={r._id}>
 							<Link
 								href={`/app/offer/${r._id}`}
@@ -328,9 +428,13 @@ function OfferingHelpPanel(props: {
 												{r.summary}
 											</Text>
 										</div>
-										<Badge variant="soft" size={1} color="amber">
-											{HELP_REQUEST_STATUS_LABEL.pending}
-										</Badge>
+										{r.isUrgent
+											? (
+													<Badge variant="soft" size={1} color="red">
+														Urgent
+													</Badge>
+												)
+											: null}
 									</div>
 								</Card>
 							</Link>

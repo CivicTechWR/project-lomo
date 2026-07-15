@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { AppTopBar } from "./app-top-bar";
+import { HomeModeProvider } from "@/lib/home-mode-context";
 
 export function AppChrome({ children }: { children: ReactNode }) {
 	const pathname = usePathname() ?? "";
@@ -31,11 +32,11 @@ export function AppChrome({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<>
+		<HomeModeProvider>
 			<AppTopBar />
 			<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto">
 				{children}
 			</div>
-		</>
+		</HomeModeProvider>
 	);
 }

@@ -2,7 +2,10 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { haversineDistanceKm } from "./lib/geo";
 import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
+import { extractGeocodableAddress } from "./lib/requestLocation";
+import { extractIsUrgent, extractNeedsDelivery } from "./lib/requestMetadata";
 import { redactHelpRequestForVolunteer } from "./redactHelpRequest";
 import { requestStatus } from "./schema";
 
@@ -156,11 +159,47 @@ export const listPendingFromOthers = query({
 			.withIndex("by_status", q => q.eq("status", "pending"))
 			.collect();
 
-		const mine = rows.filter(
+		const userRow = await ctx.db
+			.query("users")
+			.withIndex("by_subject", q => q.eq("subject", identity.subject))
+			.unique();
+
+		const hasHelpArea
+			= userRow?.helpAreaCenterLat != null
+				&& userRow?.helpAreaCenterLng != null
+				&& userRow?.helpAreaRadiusKm != null;
+
+		let mine = rows.filter(
 			r => r.ownerSubject !== identity.subject,
 		);
+
+		if (hasHelpArea) {
+			const centerLat = userRow!.helpAreaCenterLat!;
+			const centerLng = userRow!.helpAreaCenterLng!;
+			const radiusKm = userRow!.helpAreaRadiusKm!;
+			mine = mine.filter((r) => {
+				if (r.locationLat == null || r.locationLng == null) {
+					return false;
+				}
+				return haversineDistanceKm(
+					centerLat,
+					centerLng,
+					r.locationLat,
+					r.locationLng,
+				) <= radiusKm;
+			});
+		}
+
 		mine.sort((a, b) => b._creationTime - a._creationTime);
-		return mine.map(r => redactHelpRequestForVolunteer(r));
+		return mine.map((r) => {
+			const needsDelivery = r.needsDelivery ?? extractNeedsDelivery(r.category, r.payload);
+			const isUrgent = r.isUrgent ?? extractIsUrgent(r.payload);
+			return {
+				...redactHelpRequestForVolunteer(r),
+				needsDelivery,
+				isUrgent,
+			};
+		});
 	},
 });
 
@@ -565,7 +604,7 @@ export const create = mutation({
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
 
-		return await ctx.db.insert("helpRequests", {
+		const requestId = await ctx.db.insert("helpRequests", {
 			ownerSubject: identity.subject,
 			category: args.category,
 			title: args.title,
@@ -573,7 +612,19 @@ export const create = mutation({
 			details: args.details,
 			status: "pending",
 			payload: args.payload,
+			needsDelivery: extractNeedsDelivery(args.category, args.payload),
+			isUrgent: extractIsUrgent(args.payload),
 		});
+
+		const address = extractGeocodableAddress(args.category, args.payload);
+		if (address) {
+			await ctx.scheduler.runAfter(0, internal.requestGeocode.geocodeRequest, {
+				requestId,
+				address,
+			});
+		}
+
+		return requestId;
 	},
 });
 

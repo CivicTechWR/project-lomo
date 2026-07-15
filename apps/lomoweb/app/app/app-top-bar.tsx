@@ -3,17 +3,31 @@
 import { Button } from "@repo/ui/button";
 import { LomoLogo } from "@repo/ui/icons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NotificationsDropdown } from "./notifications-panel";
 import { authClient } from "@/lib/auth-client";
+import { useHomeMode } from "@/lib/home-mode-context";
 
 export function AppTopBar() {
 	const router = useRouter();
+	const pathname = usePathname() ?? "";
+	const { mode, setMode } = useHomeMode();
 
 	async function handleSignOut() {
 		await authClient.signOut();
 		router.push("/signin");
 	}
+
+	function handleRequestsViewSwitch() {
+		const nextMode = mode === "request_help" ? "offer_help" : "request_help";
+		setMode(nextMode);
+		if (pathname !== "/app") {
+			router.push("/app");
+		}
+	}
+
+	const requestsViewSwitchLabel
+		= mode === "request_help" ? "Open requests" : "My requests";
 
 	return (
 		<header
@@ -34,6 +48,15 @@ export function AppTopBar() {
 			</Link>
 
 			<div className="flex shrink-0 items-center gap-2">
+				<Button
+					variant="soft"
+					color="sage"
+					size={1}
+					className="min-h-9"
+					onPress={handleRequestsViewSwitch}
+				>
+					{requestsViewSwitchLabel}
+				</Button>
 				<NotificationsDropdown />
 				<Button
 					variant="ghost"

@@ -46,6 +46,12 @@ export default defineSchema(
 			status: requestStatus,
 			/** Optional JSON payload for structured client data (e.g. food draft). */
 			payload: v.optional(v.string()),
+			/** Geocoded from address/location in payload when available. */
+			locationLat: v.optional(v.number()),
+			locationLng: v.optional(v.number()),
+			/** Denormalized from payload for volunteer list filters. */
+			needsDelivery: v.optional(v.boolean()),
+			isUrgent: v.optional(v.boolean()),
 			/**
 			 * Opaque token for masked email relay (local-part only; domain from EMAIL_RELAY_DOMAIN).
 			 * Set when the requester accepts the match (in_progress).
@@ -89,7 +95,13 @@ export default defineSchema(
 			/** When false, helper is in "Resting" mode (not available to help right now). */
 			canHelpNow: v.optional(v.boolean()),
 			helpPreferences: v.optional(v.array(v.string())),
+			/** @deprecated Free-text location — use help area coordinates instead. */
 			helpLocation: v.optional(v.string()),
+			/** Centre of the area where this helper is willing to help. */
+			helpAreaCenterLat: v.optional(v.number()),
+			helpAreaCenterLng: v.optional(v.number()),
+			/** Radius in kilometres (1–30). */
+			helpAreaRadiusKm: v.optional(v.number()),
 		}).index("by_subject", ["subject"]),
 
 		notifications: defineTable({
