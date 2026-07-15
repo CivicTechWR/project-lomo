@@ -10,13 +10,22 @@ import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
+import { SegmentedTabs } from "../segmented-tabs";
 import { AdminRequestDetail } from "./admin-request-detail";
+
+type AdminTab = "requests" | "users";
+
+const TABS = [
+	{ key: "requests", label: "Requests" },
+	{ key: "users", label: "Users" },
+];
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
 	const requests = useQuery(api.helpRequests.listAllForAdmin, isAdmin ? {} : "skip");
 	const volunteers = useQuery(api.helpRequests.listVolunteersForAdmin, isAdmin ? {} : "skip");
 	const assignVolunteer = useMutation(api.helpRequests.assignVolunteer);
+	const [tab, setTab] = useState<AdminTab>("requests");
 	const [assigningId, setAssigningId] = useState<string | null>(null);
 	const [selectedByRequest, setSelectedByRequest] = useState<Record<string, string>>({});
 	const [detailId, setDetailId] = useState<Id<"helpRequests"> | null>(null);
@@ -66,7 +75,7 @@ export function AdminDashboard() {
 	}
 
 	return (
-		<div className="flex flex-col gap-8">
+		<div className="flex flex-col gap-6">
 			<AdminRequestDetail request={detailRequest} onClose={() => setDetailId(null)} />
 			<div>
 				<Heading level={1} size={8}>Admin dashboard</Heading>
@@ -75,93 +84,102 @@ export function AdminDashboard() {
 				</Text>
 			</div>
 
-			<section className="flex flex-col gap-4">
-				<Heading level={2} size={6}>All requests</Heading>
-				{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
-				{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
-				{requests && requests.length > 0 && (
-					<ul className="flex flex-col gap-3">
-						{requests.map(r => (
-							<li key={r._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
-								<div className="flex flex-wrap items-start justify-between gap-3">
-									<div className="min-w-0 flex-1">
-										<Text size={3} weight="medium">{r.title}</Text>
-										<Text size={2} color="gray" className="mt-1">
-											Owner:
-											{" "}
-											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
-										</Text>
+			<SegmentedTabs
+				label="Admin sections"
+				tabs={TABS}
+				activeKey={tab}
+				onSelect={key => setTab(key as AdminTab)}
+			/>
+
+			{tab === "requests" && (
+				<section className="flex flex-col gap-4">
+					{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
+					{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
+					{requests && requests.length > 0 && (
+						<ul className="flex flex-col gap-3">
+							{requests.map(r => (
+								<li key={r._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+									<div className="flex flex-wrap items-start justify-between gap-3">
+										<div className="min-w-0 flex-1">
+											<Text size={3} weight="medium">{r.title}</Text>
+											<Text size={2} color="gray" className="mt-1">
+												Owner:
+												{" "}
+												{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
+											</Text>
+										</div>
+										<div className="flex items-center gap-2">
+											<Badge
+												variant="soft"
+												size={1}
+												color={statusBadgeColor(r.status as HelpRequestStatus)}
+											>
+												{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
+											</Badge>
+											<Button
+												variant="soft"
+												color="gray"
+												size={1}
+												onPress={() => setDetailId(r._id)}
+											>
+												View / edit
+											</Button>
+										</div>
 									</div>
-									<div className="flex items-center gap-2">
-										<Badge
-											variant="soft"
-											size={1}
-											color={statusBadgeColor(r.status as HelpRequestStatus)}
+									<div className="mt-3 flex flex-wrap gap-2">
+										<select
+											className="min-h-10 min-w-[260px] rounded-md border border-gray-6 bg-gray-1 px-3"
+											value={selectedByRequest[r._id] ?? ""}
+											onChange={e =>
+												setSelectedByRequest(prev => ({ ...prev, [r._id]: e.target.value }))}
 										>
-											{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
-										</Badge>
+											<option value="">Select volunteer…</option>
+											{volunteerOptions
+												.filter(v => v.userId !== r.ownerUserId)
+												.map(v => (
+													<option key={v.userId} value={v.userId}>{v.label}</option>
+												))}
+										</select>
 										<Button
-											variant="soft"
-											color="gray"
-											size={1}
-											onPress={() => setDetailId(r._id)}
+											variant="solid"
+											color="sage"
+											isDisabled={assigningId === r._id || r.status !== "pending"}
+											onPress={() => handleAssign(r._id)}
 										>
-											View / edit
+											{assigningId === r._id ? "Assigning…" : "Assign volunteer"}
 										</Button>
 									</div>
-								</div>
-								<div className="mt-3 flex flex-wrap gap-2">
-									<select
-										className="min-h-10 min-w-[260px] rounded-md border border-gray-6 bg-gray-1 px-3"
-										value={selectedByRequest[r._id] ?? ""}
-										onChange={e =>
-											setSelectedByRequest(prev => ({ ...prev, [r._id]: e.target.value }))}
-									>
-										<option value="">Select volunteer…</option>
-										{volunteerOptions
-											.filter(v => v.userId !== r.ownerUserId)
-											.map(v => (
-												<option key={v.userId} value={v.userId}>{v.label}</option>
-											))}
-									</select>
-									<Button
-										variant="solid"
-										color="sage"
-										isDisabled={assigningId === r._id || r.status !== "pending"}
-										onPress={() => handleAssign(r._id)}
-									>
-										{assigningId === r._id ? "Assigning…" : "Assign volunteer"}
-									</Button>
-								</div>
-								{r.assignedHelperUserId && (
-									<Text size={1} color="gray" className="mt-2">
-										Assigned helper:
-										{" "}
-										{r.assignedHelper?.name ?? r.assignedHelper?.email ?? "Unknown helper"}
-									</Text>
-								)}
-							</li>
-						))}
-					</ul>
-				)}
-			</section>
+									{r.assignedHelperUserId && (
+										<Text size={1} color="gray" className="mt-2">
+											Assigned helper:
+											{" "}
+											{r.assignedHelper?.name ?? r.assignedHelper?.email ?? "Unknown helper"}
+										</Text>
+									)}
+								</li>
+							))}
+						</ul>
+					)}
+				</section>
+			)}
 
-			<section className="flex flex-col gap-4">
-				<Heading level={2} size={6}>Volunteer helpers</Heading>
-				{volunteers === undefined && <Text size={2} color="gray">Loading volunteers…</Text>}
-				{volunteers && volunteers.length === 0 && <Text size={2} color="gray">No volunteer profiles yet.</Text>}
-				{volunteers && volunteers.length > 0 && (
-					<ul className="grid gap-3 sm:grid-cols-2">
-						{volunteers.map(v => (
-							<li key={v._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
-								<Text size={3} weight="medium">{v.name ?? "Unnamed user"}</Text>
-								<Text size={2} color="gray">{v.email ?? "No email on file"}</Text>
-								<Text size={1} color="gray" className="mt-2 break-all">{v.tokenIdentifier}</Text>
-							</li>
-						))}
-					</ul>
-				)}
-			</section>
+			{tab === "users" && (
+				<section className="flex flex-col gap-4">
+					{volunteers === undefined && <Text size={2} color="gray">Loading volunteers…</Text>}
+					{volunteers && volunteers.length === 0 && <Text size={2} color="gray">No volunteer profiles yet.</Text>}
+					{volunteers && volunteers.length > 0 && (
+						<ul className="grid gap-3 sm:grid-cols-2">
+							{volunteers.map(v => (
+								<li key={v._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+									<Text size={3} weight="medium">{v.name ?? "Unnamed user"}</Text>
+									<Text size={2} color="gray">{v.email ?? "No email on file"}</Text>
+									<Text size={1} color="gray" className="mt-2 break-all">{v.tokenIdentifier}</Text>
+								</li>
+							))}
+						</ul>
+					)}
+				</section>
+			)}
 		</div>
 	);
 }
