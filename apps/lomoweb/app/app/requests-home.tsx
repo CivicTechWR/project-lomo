@@ -21,11 +21,10 @@ import {
 	writeStoredHomeMode,
 } from "@/lib/app-home-mode";
 import {
-	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
-
 	statusBadgeColor,
 } from "@/lib/help-request-status";
+import { StatusFilterChips } from "./status-filter-chips";
 
 export function RequestsHome({
 	preloadedUser,
@@ -166,23 +165,7 @@ function RequestingHelpPanel(props: {
 				</div>
 			</div>
 
-			<div className="flex flex-wrap gap-2">
-				{HELP_REQUEST_FILTER_CHIPS.map((chip) => {
-					const active = statusFilter === chip.value;
-					return (
-						<Button
-							key={chip.label}
-							size={1}
-							variant={active ? "soft" : "outline"}
-							color={active ? "gray" : "gray"}
-							className="rounded-full"
-							onPress={() => setStatusFilter(chip.value)}
-						>
-							{chip.label}
-						</Button>
-					);
-				})}
-			</div>
+			<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
 
 			{requests === undefined && (
 				<Text size={2} color="gray">

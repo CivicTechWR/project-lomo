@@ -1,7 +1,7 @@
 "use client";
 
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import type { HelpRequestStatus } from "@/lib/help-request-status";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
@@ -10,11 +10,16 @@ import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
+import { StatusFilterChips } from "../status-filter-chips";
 import { AdminRequestDetail } from "./admin-request-detail";
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
-	const requests = useQuery(api.helpRequests.listAllForAdmin, isAdmin ? {} : "skip");
+	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
+	const requests = useQuery(
+		api.helpRequests.listAllForAdmin,
+		isAdmin ? (statusFilter === null ? {} : { statusFilter }) : "skip",
+	);
 	const volunteers = useQuery(api.helpRequests.listVolunteersForAdmin, isAdmin ? {} : "skip");
 	const assignVolunteer = useMutation(api.helpRequests.assignVolunteer);
 	const [assigningId, setAssigningId] = useState<string | null>(null);
@@ -77,6 +82,7 @@ export function AdminDashboard() {
 
 			<section className="flex flex-col gap-4">
 				<Heading level={2} size={6}>All requests</Heading>
+				<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
 				{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
 				{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
 				{requests && requests.length > 0 && (
