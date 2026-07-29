@@ -24,7 +24,7 @@ vi.mock("@repo/ui/text", () => ({
 	),
 }));
 
-describe("HowItWorksSection - Property 2: How It Works steps render in the correct order", () => {
+describe("howItWorksSection - Property 2: How It Works steps render in the correct order", () => {
 	it(
 		"**Validates: Requirements 12.3, 12.4** — should render exactly 4 steps in correct order across varied contexts",
 		() => {
@@ -45,9 +45,8 @@ describe("HowItWorksSection - Property 2: How It Works steps render in the corre
 						const { container } = render(<HowItWorksSection />);
 
 						// Extract all h4 headings (step labels) in DOM order
-						const stepLabels = Array.from(container.querySelectorAll("h4")).map(el =>
-							el.textContent?.trim() || "",
-						);
+						const stepLabels = Array.from(container.querySelectorAll("h4"), el =>
+							el.textContent?.trim() || "");
 
 						// Assert exactly 4 steps are present
 						expect(stepLabels).toHaveLength(4);
@@ -79,21 +78,20 @@ describe("HowItWorksSection - Property 2: How It Works steps render in the corre
 	it("should render all step numbers correctly", () => {
 		const { container } = render(<HowItWorksSection />);
 		// Extract all h3 headings (step numbers)
-		const stepNumbers = Array.from(container.querySelectorAll("h3")).map(el =>
-			el.textContent?.trim() || "",
-		);
+		const stepNumbers = Array.from(container.querySelectorAll("h3"), el =>
+			el.textContent?.trim() || "");
 		expect(stepNumbers).toEqual(["1", "2", "3", "4"]);
 	});
 
 	it("should render section with correct aria-label", () => {
 		const { container } = render(<HowItWorksSection />);
-		const section = container.querySelector('section[aria-label="How it works"]');
+		const section = container.querySelector("section[aria-label=\"How it works\"]");
 		expect(section).toBeInTheDocument();
 	});
 
 	it("should render main heading 'A simple, safe process'", () => {
 		const { container } = render(<HowItWorksSection />);
-		const headings = Array.from(container.querySelectorAll("h2")).map(el => el.textContent?.trim() || "");
+		const headings = Array.from(container.querySelectorAll("h2"), el => el.textContent?.trim() || "");
 		expect(headings).toContain("A simple, safe process");
 	});
 });

@@ -10,15 +10,17 @@ vi.mock("next/image", () => ({
 
 vi.mock("@repo/ui/button", () => ({
 	Button: ({ href, children, className }: { href?: string; children: React.ReactNode; className?: string }) =>
-		href ? (
-			<a href={href} className={className}>
-				{children}
-			</a>
-		) : (
-			<button type="button" className={className}>
-				{children}
-			</button>
-		),
+		href
+			? (
+					<a href={href} className={className}>
+						{children}
+					</a>
+				)
+			: (
+					<button type="button" className={className}>
+						{children}
+					</button>
+				),
 }));
 
 vi.mock("@repo/ui/heading", () => ({
@@ -46,7 +48,11 @@ vi.mock("@repo/ui/text", () => ({
 	),
 }));
 
-describe("HeroSection", () => {
+const GET_STARTED_REGEX = /get started/i;
+const SIGN_IN_REGEX = /sign in/i;
+const COMMUNITY_MEMBERS_REGEX = /community members sharing resources/i;
+
+describe("heroSection", () => {
 	it("displays h1 heading that contains 'Waterloo'", () => {
 		render(<HeroSection />);
 		const heading = screen.getByRole("heading", { level: 1 });
@@ -56,20 +62,20 @@ describe("HeroSection", () => {
 
 	it("primary CTA has href='/signup' with accessible name", () => {
 		render(<HeroSection />);
-		const primaryCTA = screen.getByRole("link", { name: /get started/i });
+		const primaryCTA = screen.getByRole("link", { name: GET_STARTED_REGEX });
 		expect(primaryCTA).toHaveAttribute("href", "/signup");
 		expect(primaryCTA).toHaveAccessibleName();
 	});
 
 	it("secondary CTA has href='/signin'", () => {
 		render(<HeroSection />);
-		const secondaryCTA = screen.getByRole("link", { name: /sign in/i });
+		const secondaryCTA = screen.getByRole("link", { name: SIGN_IN_REGEX });
 		expect(secondaryCTA).toHaveAttribute("href", "/signin");
 	});
 
 	it("image has non-empty alt attribute", () => {
 		render(<HeroSection />);
-		const image = screen.getByAltText(/community members sharing resources/i);
+		const image = screen.getByAltText(COMMUNITY_MEMBERS_REGEX);
 		expect(image).toBeVisible();
 		expect(image).toHaveAttribute("alt");
 		const altText = image.getAttribute("alt");

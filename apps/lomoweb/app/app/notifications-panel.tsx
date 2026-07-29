@@ -78,25 +78,24 @@ export function NotificationsDropdown() {
 		setOpen(false);
 	}, [pathname]);
 
-	function syncPanelPosition() {
-		const el = buttonWrapRef.current;
-		if (!el || !open) {
-			return;
-		}
-		setPanelBox(computePanelBox(el));
-	}
-
 	useLayoutEffect(() => {
 		if (!open) {
 			setPanelBox(null);
 			return;
 		}
-		syncPanelPosition();
-		window.addEventListener("resize", syncPanelPosition);
-		window.addEventListener("scroll", syncPanelPosition, true);
+		const handleSync = () => {
+			const el = buttonWrapRef.current;
+			if (!el || !open) {
+				return;
+			}
+			setPanelBox(computePanelBox(el));
+		};
+		handleSync();
+		window.addEventListener("resize", handleSync);
+		window.addEventListener("scroll", handleSync, true);
 		return () => {
-			window.removeEventListener("resize", syncPanelPosition);
-			window.removeEventListener("scroll", syncPanelPosition, true);
+			window.removeEventListener("resize", handleSync);
+			window.removeEventListener("scroll", handleSync, true);
 		};
 	}, [open]);
 

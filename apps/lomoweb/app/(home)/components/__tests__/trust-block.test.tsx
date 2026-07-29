@@ -16,31 +16,45 @@ vi.mock("@repo/ui", () => ({
 	),
 }));
 
-describe("TrustBlock", () => {
+const FREE_AND_NOT_FOR_PROFIT_REGEX = /Free & not-for-profit/i;
+const NO_ALGORITHMS_NO_ADS_REGEX = /No algorithms, no ads/i;
+const YOU_OWN_YOUR_DATA_REGEX = /You own your data/i;
+const COMMUNITY_FIRST_ALWAYS_REGEX = /Community-first, always/i;
+const OUR_VALUES_REGEX = /Our values/i;
+const FREE_REGEX = /Free/;
+const NO_ALGORITHMS_REGEX = /No algorithms/;
+const YOU_OWN_REGEX = /You own/;
+const COMMUNITY_FIRST_REGEX = /Community-first/;
+const FREE_AND_NOT_FOR_PROFIT_MATCH_REGEX = /Free & not-for-profit/;
+const NO_ALGORITHMS_NO_ADS_MATCH_REGEX = /No algorithms, no ads/;
+const YOU_OWN_YOUR_DATA_MATCH_REGEX = /You own your data/;
+const COMMUNITY_FIRST_ALWAYS_MATCH_REGEX = /Community-first, always/;
+
+describe("trustBlock", () => {
 	it("renders four Card elements", () => {
 		render(<TrustBlock />);
 		const cards = screen.getAllByTestId("card");
 		expect(cards).toHaveLength(4);
 	});
 
-	it('renders "Free & not-for-profit" text', () => {
+	it("renders \"Free & not-for-profit\" text", () => {
 		render(<TrustBlock />);
-		expect(screen.getByText(/Free & not-for-profit/i)).toBeInTheDocument();
+		expect(screen.getByText(FREE_AND_NOT_FOR_PROFIT_REGEX)).toBeInTheDocument();
 	});
 
-	it('renders "No algorithms, no ads" text', () => {
+	it("renders \"No algorithms, no ads\" text", () => {
 		render(<TrustBlock />);
-		expect(screen.getByText(/No algorithms, no ads/i)).toBeInTheDocument();
+		expect(screen.getByText(NO_ALGORITHMS_NO_ADS_REGEX)).toBeInTheDocument();
 	});
 
-	it('renders "You own your data" text', () => {
+	it("renders \"You own your data\" text", () => {
 		render(<TrustBlock />);
-		expect(screen.getByText(/You own your data/i)).toBeInTheDocument();
+		expect(screen.getByText(YOU_OWN_YOUR_DATA_REGEX)).toBeInTheDocument();
 	});
 
-	it('renders "Community-first, always" text', () => {
+	it("renders \"Community-first, always\" text", () => {
 		render(<TrustBlock />);
-		expect(screen.getByText(/Community-first, always/i)).toBeInTheDocument();
+		expect(screen.getByText(COMMUNITY_FIRST_ALWAYS_REGEX)).toBeInTheDocument();
 	});
 
 	it("renders all four value statements in the correct order", () => {
@@ -55,7 +69,7 @@ describe("TrustBlock", () => {
 
 	it("renders as a section with aria-label", () => {
 		render(<TrustBlock />);
-		const section = screen.getByRole("region", { name: /Our values/i });
+		const section = screen.getByRole("region", { name: OUR_VALUES_REGEX });
 		expect(section).toBeInTheDocument();
 	});
 
@@ -68,7 +82,7 @@ describe("TrustBlock", () => {
 
 	it("renders with full width background", () => {
 		render(<TrustBlock />);
-		const section = screen.getByRole("region", { name: /Our values/i });
+		const section = screen.getByRole("region", { name: OUR_VALUES_REGEX });
 		expect(section).toHaveClass("w-full", "bg-gray-1");
 	});
 
@@ -76,10 +90,10 @@ describe("TrustBlock", () => {
 		render(<TrustBlock />);
 
 		// Check for required keywords as per requirements 11.2, 11.4
-		expect(screen.getByText(/Free/)).toBeInTheDocument();
-		expect(screen.getByText(/No algorithms/)).toBeInTheDocument();
-		expect(screen.getByText(/You own/)).toBeInTheDocument();
-		expect(screen.getByText(/Community-first/)).toBeInTheDocument();
+		expect(screen.getByText(FREE_REGEX)).toBeInTheDocument();
+		expect(screen.getByText(NO_ALGORITHMS_REGEX)).toBeInTheDocument();
+		expect(screen.getByText(YOU_OWN_REGEX)).toBeInTheDocument();
+		expect(screen.getByText(COMMUNITY_FIRST_REGEX)).toBeInTheDocument();
 	});
 
 	it("renders exactly one Card element per value statement", () => {
@@ -87,9 +101,14 @@ describe("TrustBlock", () => {
 		const cards = screen.getAllByTestId("card");
 		const textElements = cards.map(card => card.textContent);
 
-		expect(textElements).toContain(expect.stringMatching(/Free & not-for-profit/));
-		expect(textElements).toContain(expect.stringMatching(/No algorithms, no ads/));
-		expect(textElements).toContain(expect.stringMatching(/You own your data/));
-		expect(textElements).toContain(expect.stringMatching(/Community-first, always/));
+		// toContain does not support asymmetric matchers on arrays — use arrayContaining
+		expect(textElements).toEqual(
+			expect.arrayContaining([
+				expect.stringMatching(FREE_AND_NOT_FOR_PROFIT_MATCH_REGEX),
+				expect.stringMatching(NO_ALGORITHMS_NO_ADS_MATCH_REGEX),
+				expect.stringMatching(YOU_OWN_YOUR_DATA_MATCH_REGEX),
+				expect.stringMatching(COMMUNITY_FIRST_ALWAYS_MATCH_REGEX),
+			]),
+		);
 	});
 });

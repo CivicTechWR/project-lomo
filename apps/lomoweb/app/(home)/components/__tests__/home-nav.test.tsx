@@ -12,15 +12,17 @@ vi.mock("@repo/ui/link", () => ({
 
 vi.mock("@repo/ui/button", () => ({
 	Button: ({ href, children, className }: { href?: string; children: React.ReactNode; className?: string }) =>
-		href ? (
-			<a href={href} className={className}>
-				{children}
-			</a>
-		) : (
-			<button type="button" className={className}>
-				{children}
-			</button>
-		),
+		href
+			? (
+					<a href={href} className={className}>
+						{children}
+					</a>
+				)
+			: (
+					<button type="button" className={className}>
+						{children}
+					</button>
+				),
 }));
 
 vi.mock("@repo/ui/icons", () => ({
@@ -29,21 +31,24 @@ vi.mock("@repo/ui/icons", () => ({
 	),
 }));
 
-describe("HomeNav", () => {
+const LOGIN_REGEX = /login/i;
+const SIGN_UP_REGEX = /sign up/i;
+
+describe("homeNav", () => {
 	it("displays the LoMo brand name", () => {
 		render(<HomeNav />);
 		expect(screen.getByText("LoMo")).toBeVisible();
 	});
 
-	it("Login link navigates to /signin", () => {
+	it("login link navigates to /signin", () => {
 		render(<HomeNav />);
-		const loginLink = screen.getByRole("link", { name: /login/i });
+		const loginLink = screen.getByRole("link", { name: LOGIN_REGEX });
 		expect(loginLink).toHaveAttribute("href", "/signin");
 	});
 
-	it("Sign Up link navigates to /signup", () => {
+	it("sign Up link navigates to /signup", () => {
 		render(<HomeNav />);
-		const signUpLink = screen.getByRole("link", { name: /sign up/i });
+		const signUpLink = screen.getByRole("link", { name: SIGN_UP_REGEX });
 		expect(signUpLink).toHaveAttribute("href", "/signup");
 	});
 });
