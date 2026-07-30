@@ -29,11 +29,11 @@ export function CategoryPicker({
 
 	const badgePositionClass
 		= badgePosition === "left"
-			? "sm:left-0 sm:-translate-x-1/4 md:-translate-x-1/2 sm:items-end"
-			: "sm:right-0 sm:translate-x-1/4 md:translate-x-1/2 sm:items-start";
+			? "lg:left-0 lg:-translate-x-1/4 xl:-translate-x-1/2 lg:items-end"
+			: "lg:right-0 lg:translate-x-1/4 xl:translate-x-1/2 lg:items-start";
 
 	return (
-		<div className="flex flex-col sm:relative sm:w-full sm:aspect-4/3">
+		<div className="flex flex-col lg:relative lg:w-full lg:aspect-4/3">
 			<div className="relative w-full aspect-4/3">
 				<CategoryImageCard
 					src={activeImage.src}
@@ -42,7 +42,7 @@ export function CategoryPicker({
 				/>
 			</div>
 			<div
-				className={`flex flex-wrap gap-2 mt-3 justify-center z-10 sm:absolute sm:top-1/2 sm:-translate-y-1/2 sm:flex-col sm:gap-2.5 sm:mt-0 ${badgePositionClass}`}
+				className={`flex flex-wrap gap-2 mt-3 justify-center z-10 lg:absolute lg:top-1/2 lg:-translate-y-1/2 lg:flex-col lg:gap-2.5 lg:mt-0 ${badgePositionClass}`}
 			>
 				<CategoryBadgeSelector
 					categories={categories}
