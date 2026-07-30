@@ -57,9 +57,13 @@
 	animation-delay: 0.45s;
 }
 
-/* Display font utility */
+/* Display font utilities */
 .font-display {
 	font-family: var(--font-display), Georgia, serif;
+}
+
+.font-logo {
+	font-family: var(--font-logo), cursive, sans-serif;
 }
 
 /* Desktop app chrome: fixed width, height grows with content (see app/app/layout.tsx). */

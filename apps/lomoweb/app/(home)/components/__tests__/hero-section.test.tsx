@@ -2,12 +2,6 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { HeroSection } from "../hero-section.tsx";
 
-vi.mock("next/image", () => ({
-	default: ({ alt, src, className }: { alt: string; src: string; className?: string }) => (
-		<img alt={alt} src={src} className={className} />
-	),
-}));
-
 vi.mock("@repo/ui/button", () => ({
 	Button: ({ href, children, className }: { href?: string; children: React.ReactNode; className?: string }) =>
 		href
@@ -50,7 +44,6 @@ vi.mock("@repo/ui/text", () => ({
 
 const GET_STARTED_REGEX = /get started/i;
 const SIGN_IN_REGEX = /sign in/i;
-const COMMUNITY_MEMBERS_REGEX = /community members sharing resources/i;
 
 describe("heroSection", () => {
 	it("displays h1 heading that contains 'Waterloo'", () => {
@@ -71,15 +64,5 @@ describe("heroSection", () => {
 		render(<HeroSection />);
 		const secondaryCTA = screen.getByRole("link", { name: SIGN_IN_REGEX });
 		expect(secondaryCTA).toHaveAttribute("href", "/signin");
-	});
-
-	it("image has non-empty alt attribute", () => {
-		render(<HeroSection />);
-		const image = screen.getByAltText(COMMUNITY_MEMBERS_REGEX);
-		expect(image).toBeVisible();
-		expect(image).toHaveAttribute("alt");
-		const altText = image.getAttribute("alt");
-		expect(altText).toBeTruthy();
-		expect(altText).not.toBe("");
 	});
 });

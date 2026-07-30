@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import {
+	Andada_Pro,
 	Geist,
 	Geist_Mono,
-	Noto_Sans_Display,
+	MuseoModerno,
 } from "next/font/google";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import "./globals.css";
@@ -17,11 +18,17 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
-const notoSansDisplay = Noto_Sans_Display({
+const andadaPro = Andada_Pro({
 	variable: "--font-display",
 	subsets: ["latin"],
-	weight: "400",
-	style: ["normal"],
+	weight: ["400", "500", "600", "700", "800"],
+	style: ["normal", "italic"],
+});
+
+const museoModerno = MuseoModerno({
+	variable: "--font-logo",
+	subsets: ["latin"],
+	weight: ["400", "500", "700", "900"],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +44,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
-			className={`${geistSans.variable} ${geistMono.variable} ${notoSansDisplay.variable} h-full antialiased`}
+			className={`${geistSans.variable} ${geistMono.variable} ${andadaPro.variable} ${museoModerno.variable} h-full antialiased`}
 		>
 			<body className="min-h-full flex flex-col">
 				<ConvexClientProvider>{children}</ConvexClientProvider>
