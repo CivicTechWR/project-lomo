@@ -20,16 +20,16 @@ export function HeroSection() {
 							<br />
 							& Resources In
 							<br />
-							<span className="text-yellow-9 relative inline-block">
+							<span className="text-yellow-10 relative inline-block isolate">
 								Waterloo
-								<span className="absolute left-0 bottom-1 w-full h-2 bg-black/10 rounded-full -z-10" />
+								<span className="absolute left-0 -bottom-1 w-full h-3 bg-accent-underline rounded-full -z-10 -rotate-1" />
 							</span>
 							{" "}
 							Region
 						</Heading>
 
 						<Text size={4} className="text-black/80 font-display italic font-bold">
-							Sharing Care and Resources in Waterloo Region
+							A calm, consent-based mutual aid platform
 						</Text>
 
 						<Text size={3} className="text-black/70 font-medium leading-relaxed max-w-xl">

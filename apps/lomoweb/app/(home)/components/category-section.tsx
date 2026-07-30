@@ -10,7 +10,7 @@ import { sectionLabel, sectionPadding } from "./styles";
 export interface CategorySectionProps {
 	/** Accessible label for the section landmark */
 	ariaLabel: string;
-	/** Column layout: "image-first" puts the picker on the left, "text-first" on the left */
+	/** Column layout: "image-first" puts the picker on the left, "text-first" on the right */
 	layout: "image-first" | "text-first";
 	/** Eyebrow label above the heading */
 	label: string;

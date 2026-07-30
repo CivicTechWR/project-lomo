@@ -20,7 +20,7 @@ export function CategoryBadgeSelector({
 	onChange,
 }: CategoryBadgeSelectorProps) {
 	return (
-		<>
+		<div role="group" aria-label="Category selection" className="contents">
 			{categories.map(cat => (
 				<button
 					key={cat.key}
@@ -41,6 +41,6 @@ export function CategoryBadgeSelector({
 					</Badge>
 				</button>
 			))}
-		</>
+		</div>
 	);
 }

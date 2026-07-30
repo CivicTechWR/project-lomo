@@ -26,7 +26,7 @@ export function TrustBlock() {
 								<Text
 									weight="bold"
 									size={3}
-									className="text-black tracking-wide font-display font-extrabold flex items-center gap-2"
+									className="text-black tracking-wide font-display font-extrabold flex items-center gap-2 whitespace-nowrap"
 								>
 									{value}
 								</Text>

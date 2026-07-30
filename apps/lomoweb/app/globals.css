@@ -1,6 +1,12 @@
 @import "@repo/ui/theme.css";
 @source "../src";
 
+/* ── Brand surface tokens (homepage warm background & accents) ── */
+@theme {
+	--color-surface-warm: #F5EFE8;
+	--color-accent-underline: #28729D;
+}
+
 /* ── Auth page animations ── */
 
 @keyframes auth-fade-up {

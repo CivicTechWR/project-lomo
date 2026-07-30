@@ -25,7 +25,7 @@ export function CategoryPicker({
 	sizes,
 }: CategoryPickerProps) {
 	const [activeKey, setActiveKey] = useState(defaultKey);
-	const activeImage = images[activeKey];
+	const activeImage = images[activeKey] ?? images[defaultKey];
 
 	const badgePositionClass
 		= badgePosition === "left"

@@ -27,7 +27,7 @@ export function HomeFooter() {
 				</div>
 
 				{/* Bottom section: Metadata & Rights */}
-				<div className="w-full pt-8 border-t border-[#f5efe4]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+				<div className="w-full pt-8 border-t border-surface-warm/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
 					<Text size={1} className="text-gray-1/40 font-medium">
 						&copy;
 						{" "}
