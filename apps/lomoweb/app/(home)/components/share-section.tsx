@@ -1,29 +1,30 @@
-"use client";
-
 import { Badge } from "@repo/ui/badge";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
-import Image from "next/image";
-import { useState } from "react";
 
-type CategoryKey = "supplies" | "microgrant" | "produce";
+import { CategoryPicker } from "./category-picker";
+import { sectionLabel } from "./styles";
 
-const categoryImages: Record<CategoryKey, string> = {
-	supplies: "/lomo-bg.jpg",
-	microgrant: "/lomo-bg.jpg",
-	produce: "/lomo-bg.jpg",
+const categories = [
+	{ key: "supplies", label: "Dropping Off Supplies", color: "sage" as const },
+	{ key: "microgrant", label: "Funding A Microgrant", color: "yellow" as const },
+	{ key: "produce", label: "Sharing Extra Garden Produce", color: "terracotta" as const },
+];
+
+const images: Record<string, { src: string; alt: string }> = {
+	supplies: { src: "/lomo-bg.jpg", alt: "Community member dropping off supplies" },
+	microgrant: { src: "/lomo-bg.jpg", alt: "Funding a microgrant for a neighbour" },
+	produce: { src: "/lomo-bg.jpg", alt: "Sharing garden produce with the community" },
 };
 
 export function ShareSection() {
-	const [activeCategory, setActiveCategory] = useState<CategoryKey>("supplies");
-
 	return (
-		<section aria-label="Share what you can" className="w-full bg-[#f5efe4]">
-			<div className="max-w-[1200px] mx-auto px-4 md:px-8 py-16 md:py-24">
+		<section aria-label="Share what you can" className="w-full">
+			<div className="max-w-300 mx-auto px-4 md:px-8 py-16 md:py-24">
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 					{/* Left column: text + content */}
 					<div className="flex flex-col gap-6 lg:col-span-7">
-						<span className="text-[#7a343b] font-display font-black text-sm tracking-widest uppercase select-none">
+						<span className={sectionLabel}>
 							🌱 Solidarity, Not Charity
 						</span>
 
@@ -31,7 +32,7 @@ export function ShareSection() {
 							Share What You Can
 						</Heading>
 
-						<Heading level={3} size={5} weight="bold" className="text-[#7a343b] font-display italic leading-relaxed">
+						<Heading level={3} size={5} weight="bold" className="text-terracotta-11 font-display italic leading-relaxed">
 							Stronger together, on our own terms
 						</Heading>
 
@@ -51,62 +52,13 @@ export function ShareSection() {
 
 					{/* Right column: Image card with badge overlap */}
 					<div className="lg:col-span-5 flex flex-col gap-6">
-						{/* Image card wrapper — relative + overflow-visible for badge overlap */}
-						<div className="relative w-full aspect-[4/3] mb-8">
-							{/* Image container with border, radius, overflow-hidden */}
-							<div className="relative w-full h-full rounded-[24px] border-2 border-black overflow-hidden shadow-[0px_2px_8px_rgba(0,0,0,0.10)] bg-white">
-								<Image
-									key={activeCategory}
-									src={categoryImages[activeCategory]}
-									alt="Category image"
-									fill
-									sizes="(max-width: 768px) 100vw, 450px"
-									className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
-								/>
-								{/* Subtle warm overlay */}
-								<div className="absolute inset-0 bg-terracotta-9/5 mix-blend-multiply pointer-events-none" />
-							</div>
-
-							{/* Badge container — absolute, overlapping bottom edge */}
-							<div className="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 z-10 flex flex-wrap justify-center gap-2.5">
-								<Badge
-									as="button"
-									onClick={() => setActiveCategory("supplies")}
-									variant="soft"
-									color="sage"
-									size={1}
-									className={`border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
-										activeCategory === "supplies" ? "ring-2 ring-offset-2 ring-black" : ""
-									}`}
-								>
-									Dropping Off Supplies
-								</Badge>
-								<Badge
-									as="button"
-									onClick={() => setActiveCategory("microgrant")}
-									variant="soft"
-									color="yellow"
-									size={1}
-									className={`border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
-										activeCategory === "microgrant" ? "ring-2 ring-offset-2 ring-black" : ""
-									}`}
-								>
-									Funding A Microgrant
-								</Badge>
-								<Badge
-									as="button"
-									onClick={() => setActiveCategory("produce")}
-									variant="soft"
-									color="terracotta"
-									size={1}
-									className={`border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
-										activeCategory === "produce" ? "ring-2 ring-offset-2 ring-black" : ""
-									}`}
-								>
-									Sharing Extra Garden Produce
-								</Badge>
-							</div>
-						</div>
+						<CategoryPicker
+							categories={categories}
+							images={images}
+							defaultKey="supplies"
+							badgePosition="left"
+							sizes="(max-width: 768px) 100vw, 450px"
+						/>
 					</div>
 				</div>
 			</div>

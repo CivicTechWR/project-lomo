@@ -83,7 +83,7 @@ describe("trustBlock", () => {
 	it("renders with full width background", () => {
 		render(<TrustBlock />);
 		const section = screen.getByRole("region", { name: OUR_VALUES_REGEX });
-		expect(section).toHaveClass("w-full", "bg-gray-1");
+		expect(section).toHaveClass("w-full");
 	});
 
 	it("renders all four value statements are present (requires Free, No algorithms, You own, Community-first keywords)", () => {

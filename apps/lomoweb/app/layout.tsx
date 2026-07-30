@@ -46,7 +46,7 @@ export default function RootLayout({
 			lang="en"
 			className={`${geistSans.variable} ${geistMono.variable} ${andadaPro.variable} ${museoModerno.variable} h-full antialiased`}
 		>
-			<body className="min-h-full flex flex-col bg-[#f5efe4]">
+			<body className="min-h-full flex flex-col bg-[#F5EFE8]">
 				<ConvexClientProvider>{children}</ConvexClientProvider>
 			</body>
 		</html>

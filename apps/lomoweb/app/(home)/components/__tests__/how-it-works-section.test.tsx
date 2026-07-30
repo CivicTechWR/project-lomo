@@ -44,8 +44,8 @@ describe("howItWorksSection - Property 2: How It Works steps render in the corre
 						// Render the component
 						const { container } = render(<HowItWorksSection />);
 
-						// Extract all h4 headings (step labels) in DOM order
-						const stepLabels = Array.from(container.querySelectorAll("h4"), el =>
+						// Extract all h3 headings (step labels) in DOM order
+						const stepLabels = Array.from(container.querySelectorAll("h3"), el =>
 							el.textContent?.trim() || "");
 
 						// Assert exactly 4 steps are present
@@ -77,8 +77,8 @@ describe("howItWorksSection - Property 2: How It Works steps render in the corre
 
 	it("should render all step numbers correctly", () => {
 		const { container } = render(<HowItWorksSection />);
-		// Extract all h3 headings (step numbers)
-		const stepNumbers = Array.from(container.querySelectorAll("h3"), el =>
+		// Extract all aria-hidden spans (step numbers)
+		const stepNumbers = Array.from(container.querySelectorAll("span[aria-hidden='true']"), el =>
 			el.textContent?.trim() || "");
 		expect(stepNumbers).toEqual(["1", "2", "3", "4"]);
 	});
