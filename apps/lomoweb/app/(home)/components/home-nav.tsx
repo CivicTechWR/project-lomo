@@ -14,7 +14,7 @@ export function HomeNav() {
 							href="/"
 							className="flex items-center gap-1 py-0.5 text-black hover:opacity-90 transition-opacity"
 						>
-							<span className="font-logo font-extrabold text-2xl tracking-tight text-black select-none">LoMo</span>
+							<span className="font-logo font-extrabold text-4xl tracking-tight text-black select-none">LoMo</span>
 						</Link>
 
 						{/* Navigation Capsule */}
