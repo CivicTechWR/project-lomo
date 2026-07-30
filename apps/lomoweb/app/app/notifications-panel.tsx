@@ -8,7 +8,7 @@ import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const PANEL_MAX_WIDTH_PX = 22 * 16;
@@ -74,23 +74,34 @@ export function NotificationsDropdown() {
 	const [busyId, setBusyId] = useState<string | null>(null);
 	type NotificationDoc = NonNullable<typeof notifications>[number];
 
-	useEffect(() => {
-		setOpen(false);
-	}, [pathname]);
+	// Close the panel whenever the route changes.
+	const prevPathnameRef = useRef(pathname);
+	if (pathname !== prevPathnameRef.current) {
+		prevPathnameRef.current = pathname;
+		if (open) {
+			setOpen(false);
+		}
+	}
+
+	// Compute initial panel position synchronously when opening to avoid flicker.
+	// Subsequent updates (resize/scroll) are handled by event listeners in the effect below.
+	const prevOpenRef = useRef(open);
+	if (open && !prevOpenRef.current && buttonWrapRef.current) {
+		setPanelBox(computePanelBox(buttonWrapRef.current));
+	}
+	prevOpenRef.current = open;
 
 	useLayoutEffect(() => {
 		if (!open) {
-			setPanelBox(null);
 			return;
 		}
 		const handleSync = () => {
-			const el = buttonWrapRef.current;
-			if (!el || !open) {
+			const btn = buttonWrapRef.current;
+			if (!btn) {
 				return;
 			}
-			setPanelBox(computePanelBox(el));
+			setPanelBox(computePanelBox(btn));
 		};
-		handleSync();
 		window.addEventListener("resize", handleSync);
 		window.addEventListener("scroll", handleSync, true);
 		return () => {
@@ -99,7 +110,7 @@ export function NotificationsDropdown() {
 		};
 	}, [open]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (!open) {
 			return;
 		}

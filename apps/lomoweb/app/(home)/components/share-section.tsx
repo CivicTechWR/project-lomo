@@ -1,9 +1,22 @@
+"use client";
+
 import { Badge } from "@repo/ui/badge";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import Image from "next/image";
+import { useState } from "react";
+
+type CategoryKey = "supplies" | "microgrant" | "produce";
+
+const categoryImages: Record<CategoryKey, string> = {
+	supplies: "/lomo-bg.jpg",
+	microgrant: "/lomo-bg.jpg",
+	produce: "/lomo-bg.jpg",
+};
 
 export function ShareSection() {
+	const [activeCategory, setActiveCategory] = useState<CategoryKey>("supplies");
+
 	return (
 		<section aria-label="Share what you can" className="w-full bg-[#f5efe4]">
 			<div className="max-w-[1200px] mx-auto px-4 md:px-8 py-16 md:py-24">
@@ -41,8 +54,9 @@ export function ShareSection() {
 						{/* Premium Single Image Card with Bold Border and Offset Shadow */}
 						<div className="relative w-full aspect-[4/3] rounded-[32px] border-2 border-black overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white">
 							<Image
-								src="/lomo-bg.jpg"
-								alt="Hands carrying boxes of supplies to share"
+								key={activeCategory}
+								src={categoryImages[activeCategory]}
+								alt="Category image"
 								fill
 								sizes="(max-width: 768px) 100vw, 450px"
 								className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
@@ -54,26 +68,38 @@ export function ShareSection() {
 						{/* Clean, premium row of categories as Badges */}
 						<div className="flex flex-wrap gap-2.5 pt-2">
 							<Badge
+								as="button"
+								onClick={() => setActiveCategory("supplies")}
 								variant="soft"
 								color="sage"
 								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
+								className={`border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
+									activeCategory === "supplies" ? "ring-2 ring-offset-2 ring-black" : ""
+								}`}
 							>
 								Dropping Off Supplies
 							</Badge>
 							<Badge
+								as="button"
+								onClick={() => setActiveCategory("microgrant")}
 								variant="soft"
 								color="yellow"
 								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
+								className={`border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
+									activeCategory === "microgrant" ? "ring-2 ring-offset-2 ring-black" : ""
+								}`}
 							>
 								Funding A Microgrant
 							</Badge>
 							<Badge
+								as="button"
+								onClick={() => setActiveCategory("produce")}
 								variant="soft"
 								color="terracotta"
 								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
+								className={`border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
+									activeCategory === "produce" ? "ring-2 ring-offset-2 ring-black" : ""
+								}`}
 							>
 								Sharing Extra Garden Produce
 							</Badge>

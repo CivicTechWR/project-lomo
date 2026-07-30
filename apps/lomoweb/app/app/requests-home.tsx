@@ -14,7 +14,7 @@ import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 
 	readStoredHomeMode,
@@ -34,18 +34,17 @@ export function RequestsHome({
 }) {
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
-	const [mode, setMode] = useState<HomeAppMode>("request_help");
+	const [mode, setMode] = useState<HomeAppMode>(
+		() => readStoredHomeMode() ?? "request_help",
+	);
 	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
 
+	const prevModeRef = useRef(mode);
 	useEffect(() => {
-		const stored = readStoredHomeMode();
-		if (stored) {
-			setMode(stored);
+		if (prevModeRef.current !== mode) {
+			prevModeRef.current = mode;
+			writeStoredHomeMode(mode);
 		}
-	}, []);
-
-	useEffect(() => {
-		writeStoredHomeMode(mode);
 	}, [mode]);
 
 	const listArgs
