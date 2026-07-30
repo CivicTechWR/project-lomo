@@ -29,8 +29,8 @@ export function CategoryPicker({
 
 	const badgePositionClass
 		= badgePosition === "left"
-			? "lg:left-0 lg:-translate-x-1/4 xl:-translate-x-1/2 lg:items-end"
-			: "lg:right-0 lg:translate-x-1/4 xl:translate-x-1/2 lg:items-start";
+			? "lg:left-0 lg:-translate-x-1/2 xl:-translate-x-3/4 lg:items-end"
+			: "lg:right-0 lg:translate-x-1/2 xl:translate-x-3/4 lg:items-start";
 
 	return (
 		<div className="flex flex-col lg:relative lg:w-full lg:aspect-4/3">

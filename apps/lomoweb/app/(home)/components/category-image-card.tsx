@@ -1,6 +1,5 @@
-import Image from "next/image";
-
-import { cardSurface, grayscaleImage, warmOverlay } from "./styles";
+import { ProximityImage } from "./proximity-image";
+import { cardSurface, warmOverlay } from "./styles";
 
 export interface CategoryImageCardProps {
 	src: string;
@@ -13,12 +12,11 @@ export function CategoryImageCard({ src, alt, sizes }: CategoryImageCardProps) {
 		<div
 			className={`relative w-full h-full ${cardSurface} overflow-hidden bg-white`}
 		>
-			<Image
+			<ProximityImage
 				src={src}
 				alt={alt}
 				fill
 				sizes={sizes}
-				className={grayscaleImage}
 			/>
 			{/* Warm overlay */}
 			<div className={warmOverlay} />
