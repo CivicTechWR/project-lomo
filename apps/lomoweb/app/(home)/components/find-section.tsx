@@ -24,10 +24,10 @@ export function FindSection() {
 		<CategorySection
 			ariaLabel="Find what you need"
 			layout="image-first"
-			label="🤝 Mutual Aid In Action"
+			label="Mutual Aid In Action"
 			heading="Find What You Need"
-			subtitle="You deserve to have your needs met"
-			body="Getting support is a normal, healthy part of being in community. Whether you are looking for fresh food, emergency funds, or companion supports, the circle is here to respect your privacy and choices. You are completely in control of what you request and how much you choose to share."
+			subtitle="Support is here when you need it"
+			body="Ask for fresh food, emergency funds, or companion supports. You control what you request and how much you share."
 			badges={(
 				<div className="flex flex-wrap gap-2 pt-2">
 					<Badge variant="soft" color="sage" size={2} className={infoBadge}>

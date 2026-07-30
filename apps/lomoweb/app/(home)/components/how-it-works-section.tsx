@@ -5,10 +5,10 @@ import { Text } from "@repo/ui/text";
 import { cardSurface, sectionLabel, sectionPadding } from "./styles";
 
 const STEPS = [
-	{ number: 1, label: "Post a need", description: "Describe what you need and when. Your request is shared only with matched helpers." },
-	{ number: 2, label: "A helper is chosen", description: "Someone in your community volunteers, or an admin assigns a trusted helper." },
-	{ number: 3, label: "You accept the help", description: "You stay in control — confirm the helper before anything is shared." },
-	{ number: 4, label: "Connect safely", description: "LoMo connects you and your helper directly, with consent at every step." },
+	{ number: 1, label: "Ask for what you need", description: "Describe what you need and when. Only matched helpers see your request." },
+	{ number: 2, label: "Someone steps forward", description: "A neighbour volunteers, or a coordinator suggests someone trusted." },
+	{ number: 3, label: "You choose your helper", description: "You confirm before anything is shared. Nothing happens without your say." },
+	{ number: 4, label: "Connect when you're ready", description: "You and your helper connect directly, with consent at every step." },
 ] as const;
 
 export function HowItWorksSection() {
@@ -17,13 +17,13 @@ export function HowItWorksSection() {
 			<div className={`max-w-300 mx-auto ${sectionPadding}`}>
 				<div className="flex flex-col gap-3 max-w-3xl mb-12">
 					<span className={sectionLabel}>
-						Simple 4-Step Circle
+						How It Works
 					</span>
 					<Heading level={2} size={8} className="font-display font-black leading-tight text-black">
 						A simple, safe process
 					</Heading>
 					<Text size={3} className="text-black/70 font-medium leading-relaxed">
-						We design for human relationships, not algorithmic transactions. Here is how mutual aid works in our trusted circle.
+						Here is how mutual aid works, step by step.
 					</Text>
 				</div>
 

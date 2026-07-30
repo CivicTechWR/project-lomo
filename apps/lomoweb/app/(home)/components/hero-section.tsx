@@ -38,7 +38,7 @@ export function HeroSection() {
 						</Text>
 
 						<Text size={3} className="text-black/70 font-medium leading-relaxed max-w-xl">
-							LoMo is a community-led space where neighbours connect to share food, microgrants, and everyday supports. We believe that everyone has something to offer, and everyone has times when they need backup. By keeping our platform direct, secure, and free from commercial tracking, we ensure you can give and receive support safely, on your own terms, and with dignity.
+							LoMo connects neighbours in Waterloo Region to share food, microgrants, and everyday supports. Direct, secure, and free — on your terms.
 						</Text>
 
 						<div className="flex flex-wrap gap-4 mt-2">

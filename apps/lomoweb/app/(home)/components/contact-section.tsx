@@ -14,7 +14,7 @@ export function ContactSection() {
 					</Heading>
 
 					<Text size={3} className="text-black/70 font-medium leading-relaxed">
-						Have questions, ideas, or want to start a circle in your area? We would love to connect.
+						Questions, ideas, or want to start a circle in your area? Reach out any time.
 					</Text>
 
 					<div className="inline-flex items-center gap-2 mt-2">
