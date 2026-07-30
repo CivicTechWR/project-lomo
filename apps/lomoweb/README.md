@@ -19,17 +19,17 @@ app/(home)/
 
 The page renders sections in this order:
 
-| # | Component | Purpose |
-|---|-----------|---------|
-| 1 | `ScrollAwareNav` + `HomeNav` | Sticky navigation bar (logo, login, signup) |
-| 2 | `HeroSection` | Headline, tagline, description, CTA buttons, editorial illustration |
-| 3 | `TrustBlock` | Four value cards (free, no ads, data ownership, community-first) |
-| 4 | `HowItWorksSection` | 4-step process cards explaining the mutual aid flow |
-| 5 | `FindSection` | "Find what you need" — category picker with image cards (grocery, check-ins, crisis, meals) |
-| 6 | `ShareSection` | "Share what you can" — category picker (supplies, microgrants, produce) |
-| 7 | `JoinSection` | CTA section with community image and signup button |
-| 8 | `ContactSection` | Email link for community inquiries |
-| 9 | `HomeFooter` | Brand, safety notice, copyright |
+| #   | Component                    | Purpose                                                                                     |
+| --- | ---------------------------- | ------------------------------------------------------------------------------------------- |
+| 1   | `ScrollAwareNav` + `HomeNav` | Sticky navigation bar (logo, login, signup)                                                 |
+| 2   | `HeroSection`                | Headline, tagline, description, CTA buttons, editorial illustration                         |
+| 3   | `TrustBlock`                 | Four value cards (free, no ads, data ownership, community-first)                            |
+| 4   | `HowItWorksSection`          | 4-step process cards explaining the mutual aid flow                                         |
+| 5   | `FindSection`                | "Find what you need" — category picker with image cards (grocery, check-ins, crisis, meals) |
+| 6   | `ShareSection`               | "Share what you can" — category picker (supplies, microgrants, produce)                     |
+| 7   | `JoinSection`                | CTA section with community image and signup button                                          |
+| 8   | `ContactSection`             | Email link for community inquiries                                                          |
+| 9   | `HomeFooter`                 | Brand, safety notice, copyright                                                             |
 
 ### Key patterns
 

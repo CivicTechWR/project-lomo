@@ -3,8 +3,8 @@
 
 /* ── Brand surface tokens (homepage warm background & accents) ── */
 @theme inline {
-	--color-surface-warm: #F5EFE8;
-	--color-accent-underline: #28729D;
+	--color-surface-warm: #f5efe8;
+	--color-accent-underline: #28729d;
 }
 
 /* ── Auth page animations ── */
