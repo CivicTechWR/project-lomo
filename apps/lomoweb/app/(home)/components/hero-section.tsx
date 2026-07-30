@@ -40,7 +40,7 @@ export function HeroSection() {
 								variant="solid"
 								color="terracotta"
 								size={3}
-								className="bg-[#7a343b] hover:bg-[#632a30] text-white border-2 border-black rounded-full px-8 py-3.5 font-display font-black text-base shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-all duration-100"
+								className="bg-[#7a343b] hover:bg-[#632a30] text-white border-2 border-black rounded-full px-8 py-3.5 font-display font-black text-base shadow-[0px_2px_8px_rgba(0,0,0,0.10)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.15)] active:shadow-[0px_1px_4px_rgba(0,0,0,0.10)] transition-shadow duration-150"
 							>
 								Get Started
 							</Button>
@@ -49,7 +49,7 @@ export function HeroSection() {
 								variant="outline"
 								color="gray"
 								size={3}
-								className="bg-white hover:bg-[#fcfaf7] text-black border-2 border-black rounded-full px-8 py-3.5 font-display font-black text-base shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-all duration-100"
+								className="bg-white hover:bg-[#fcfaf7] text-black border-2 border-black rounded-full px-8 py-3.5 font-display font-black text-base shadow-[0px_2px_8px_rgba(0,0,0,0.10)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.15)] active:shadow-[0px_1px_4px_rgba(0,0,0,0.10)] transition-shadow duration-150"
 							>
 								Sign In
 							</Button>

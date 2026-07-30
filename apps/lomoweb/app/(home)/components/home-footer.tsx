@@ -16,7 +16,7 @@ export function HomeFooter() {
 				</div>
 
 				{/* Middle section: Ethical Safety Alert Card */}
-				<div className="w-full max-w-3xl bg-[#7a343b]/20 rounded-[var(--radius-3)] border-2 border-black p-5 md:p-6 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+				<div className="w-full max-w-3xl bg-[#7a343b]/20 rounded-[24px] border-2 border-black p-5 md:p-6 text-center shadow-[0px_2px_8px_rgba(0,0,0,0.10)]">
 					<div className="flex flex-col items-center gap-2">
 						<span className="text-xl">⚠️ Safety First</span>
 						<Text size={2} className="text-[#f5efe4]/90 leading-relaxed max-w-2xl font-medium">

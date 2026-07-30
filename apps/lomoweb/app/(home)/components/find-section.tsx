@@ -8,55 +8,58 @@ export function FindSection() {
 		<section aria-label="Find what you need" className="w-full bg-[#f5efe4]">
 			<div className="max-w-[1200px] mx-auto px-4 md:px-8 py-16 md:py-24">
 				<div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-					{/* Left column: Highly refined single premium image card & categories below it */}
+					{/* Left column: Image card with badge overlap */}
 					<div className="lg:col-span-5 flex flex-col gap-6 order-last lg:order-first">
-						{/* Premium Single Image Card with Bold Border and Offset Shadow */}
-						<div className="relative w-full aspect-[4/3] rounded-[32px] border-2 border-black overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white">
-							<Image
-								src="/lomo-bg.jpg"
-								alt="Fresh local vegetables for community grocery sharing"
-								fill
-								sizes="(max-width: 768px) 100vw, 450px"
-								className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
-							/>
-							{/* Subtle warm overlay */}
-							<div className="absolute inset-0 bg-yellow-9/5 mix-blend-multiply pointer-events-none" />
-						</div>
+						{/* Image card wrapper — relative + overflow-visible for badge overlap */}
+						<div className="relative w-full aspect-[4/3] mb-8">
+							{/* Image container with border, radius, overflow-hidden */}
+							<div className="relative w-full h-full rounded-[24px] border-2 border-black overflow-hidden shadow-[0px_2px_8px_rgba(0,0,0,0.10)] bg-white">
+								<Image
+									src="/lomo-bg.jpg"
+									alt="Fresh local vegetables for community grocery sharing"
+									fill
+									sizes="(max-width: 768px) 100vw, 450px"
+									className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
+								/>
+								{/* Subtle warm overlay */}
+								<div className="absolute inset-0 bg-yellow-9/5 mix-blend-multiply pointer-events-none" />
+							</div>
 
-						{/* Clean, premium row of categories as Badges */}
-						<div className="flex flex-wrap gap-2.5 pt-2">
-							<Badge
-								variant="soft"
-								color="yellow"
-								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
-							>
-								Grocery Sharing
-							</Badge>
-							<Badge
-								variant="soft"
-								color="terracotta"
-								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
-							>
-								Peer Check-Ins
-							</Badge>
-							<Badge
-								variant="soft"
-								color="red"
-								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
-							>
-								Crisis Funds
-							</Badge>
-							<Badge
-								variant="soft"
-								color="sage"
-								size={1}
-								className="border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none"
-							>
-								Warm Meals
-							</Badge>
+							{/* Badge container — absolute, overlapping bottom edge */}
+							<div className="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 z-10 flex flex-wrap justify-center gap-2.5">
+								<Badge
+									variant="soft"
+									color="yellow"
+									size={1}
+									className="border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none"
+								>
+									Grocery Sharing
+								</Badge>
+								<Badge
+									variant="soft"
+									color="terracotta"
+									size={1}
+									className="border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none"
+								>
+									Peer Check-Ins
+								</Badge>
+								<Badge
+									variant="soft"
+									color="red"
+									size={1}
+									className="border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none"
+								>
+									Crisis Funds
+								</Badge>
+								<Badge
+									variant="soft"
+									color="sage"
+									size={1}
+									className="border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none"
+								>
+									Warm Meals
+								</Badge>
+							</div>
 						</div>
 					</div>
 

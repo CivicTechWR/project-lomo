@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@repo/ui/badge";
-import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import Image from "next/image";
@@ -30,74 +29,65 @@ export function JoinSection() {
 						Join The Circle
 					</Heading>
 
-					<div className="my-2">
-						<Button
-							href="/signup"
-							variant="solid"
-							color="yellow"
-							size={3}
-							className="bg-[#f2c010] hover:bg-[#d9ab0d] text-black border-2 border-black rounded-full px-10 py-4 font-display font-black text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
-						>
-							Launch LoMo
-						</Button>
-					</div>
-
 					<Text size={2} className="text-black/60 font-display font-bold italic tracking-wide">
 						Free to use. No social media login required. Your data belongs to you.
 					</Text>
 
-					{/* Beautiful large horizontal oval image showing community support hands */}
-					<div className="relative w-full max-w-[650px] aspect-[2.2/1] mt-8 rounded-[100px] border-2 border-black overflow-hidden shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] transform hover:scale-[1.01] transition-transform duration-300">
-						<Image
-							key={activeCategory}
-							src={categoryImages[activeCategory]}
-							alt="Category image"
-							fill
-							sizes="(max-width: 768px) 100vw, 650px"
-							className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
-						/>
-						{/* Subtle warm overlay */}
-						<div className="absolute inset-0 bg-terracotta-9/5 mix-blend-multiply pointer-events-none" />
-					</div>
+					{/* Image card wrapper — relative + overflow-visible for badge overlap */}
+					<div className="relative w-full max-w-[650px] aspect-[2.2/1] mt-8 mb-8">
+						{/* Image container — uses rounded-full for oval/pill shape */}
+						<div className="relative w-full h-full rounded-full border-2 border-black overflow-hidden shadow-[0px_2px_8px_rgba(0,0,0,0.10)] bg-white">
+							<Image
+								key={activeCategory}
+								src={categoryImages[activeCategory]}
+								alt="Category image"
+								fill
+								sizes="(max-width: 768px) 100vw, 650px"
+								className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
+							/>
+							{/* Subtle warm overlay */}
+							<div className="absolute inset-0 bg-terracotta-9/5 mix-blend-multiply pointer-events-none" />
+						</div>
 
-					{/* Clickable category badges */}
-					<div className="flex flex-wrap justify-center gap-2.5 pt-2">
-						<Badge
-							as="button"
-							onClick={() => setActiveCategory("community")}
-							variant="soft"
-							color="sage"
-							size={1}
-							className={`border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
-								activeCategory === "community" ? "ring-2 ring-offset-2 ring-black" : ""
-							}`}
-						>
-							Community Gatherings
-						</Badge>
-						<Badge
-							as="button"
-							onClick={() => setActiveCategory("food")}
-							variant="soft"
-							color="yellow"
-							size={1}
-							className={`border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
-								activeCategory === "food" ? "ring-2 ring-offset-2 ring-black" : ""
-							}`}
-						>
-							Food Sharing
-						</Badge>
-						<Badge
-							as="button"
-							onClick={() => setActiveCategory("support")}
-							variant="soft"
-							color="terracotta"
-							size={1}
-							className={`border-2 border-black font-display font-black text-xs text-black shadow-[2px_2px_0px_rgba(0,0,0,1)] rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
-								activeCategory === "support" ? "ring-2 ring-offset-2 ring-black" : ""
-							}`}
-						>
-							Neighbour Support
-						</Badge>
+						{/* Badge container — absolute, overlapping bottom edge */}
+						<div className="absolute bottom-0 translate-y-1/2 left-1/2 -translate-x-1/2 z-10 flex flex-wrap justify-center gap-2.5">
+							<Badge
+								as="button"
+								onClick={() => setActiveCategory("community")}
+								variant="soft"
+								color="sage"
+								size={1}
+								className={`border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
+									activeCategory === "community" ? "ring-2 ring-offset-2 ring-black" : ""
+								}`}
+							>
+								Community Gatherings
+							</Badge>
+							<Badge
+								as="button"
+								onClick={() => setActiveCategory("food")}
+								variant="soft"
+								color="yellow"
+								size={1}
+								className={`border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
+									activeCategory === "food" ? "ring-2 ring-offset-2 ring-black" : ""
+								}`}
+							>
+								Food Sharing
+							</Badge>
+							<Badge
+								as="button"
+								onClick={() => setActiveCategory("support")}
+								variant="soft"
+								color="terracotta"
+								size={1}
+								className={`border-2 border-black font-display font-black text-xs text-black rounded-full py-1.5 px-3 select-none cursor-pointer transition-all ${
+									activeCategory === "support" ? "ring-2 ring-offset-2 ring-black" : ""
+								}`}
+							>
+								Neighbour Support
+							</Badge>
+						</div>
 					</div>
 				</div>
 			</div>

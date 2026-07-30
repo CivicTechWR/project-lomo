@@ -19,7 +19,7 @@ export function TrustBlock() {
 							variant="surface"
 							color="gray"
 							size={2}
-							className="relative flex items-center justify-center text-center p-6 bg-white border-2 border-black rounded-[24px] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] cursor-default"
+							className="relative flex items-center justify-center text-center p-6 bg-white border-2 border-black rounded-[24px] shadow-[0px_2px_8px_rgba(0,0,0,0.10)] cursor-default"
 						>
 							<Text
 								weight="bold"
