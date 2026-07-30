@@ -1,5 +1,7 @@
 import { Card, Text } from "@repo/ui";
 
+import { sectionPadding } from "./styles";
+
 const VALUES = [
 	"Free & not-for-profit 🤝",
 	"No algorithms, no ads 🚫",
@@ -11,8 +13,8 @@ export function TrustBlock() {
 	return (
 		<section aria-label="Our values" className="w-full">
 			<h2 className="sr-only">Our values</h2>
-			<div className="max-w-300 mx-auto px-4 md:px-8 py-10 md:py-12">
-				<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 list-none p-0 m-0">
+			<div className={`max-w-300 mx-auto ${sectionPadding}`}>
+				<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 list-none p-0 m-0">
 					{VALUES.map(value => (
 						<li key={value}>
 							<Card

@@ -27,7 +27,7 @@ export function CategoryBadgeSelector({
 					type="button"
 					aria-pressed={activeKey === cat.key}
 					onClick={() => onChange(cat.key)}
-					className="appearance-none bg-transparent border-none p-0 cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black rounded-full"
+					className="appearance-none bg-transparent border-none p-2.5 sm:p-0 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-black rounded-full"
 				>
 					<Badge
 						variant="solid"

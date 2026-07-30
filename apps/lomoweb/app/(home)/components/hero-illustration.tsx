@@ -4,7 +4,7 @@ export function HeroIllustration() {
 			viewBox="0 0 420 520"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
-			className="w-full max-w-100 select-none pointer-events-none"
+			className="w-full max-w-100 max-h-[50vh] min-h-60 sm:max-h-none sm:min-h-100 select-none pointer-events-none"
 			aria-hidden="true"
 		>
 			{/* Top Hand (Terracotta, reaching down from top-right) */}

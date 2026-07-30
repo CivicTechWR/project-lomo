@@ -2,20 +2,20 @@ import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { HeroIllustration } from "./hero-illustration";
-import { ctaButton, secondaryButton, sectionLabel } from "./styles";
+import { ctaButton, headingH1, secondaryButton, sectionLabel } from "./styles";
 
 export function HeroSection() {
 	return (
 		<section aria-label="Hero" className="w-full relative overflow-hidden pb-12">
 			<div className="max-w-300 mx-auto px-4 md:px-8 py-12 md:py-16">
-				<div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-12 items-center">
 					{/* Left column: text + CTAs (takes up 7 columns on desktop) */}
 					<div className="flex flex-col gap-6 lg:col-span-7">
 						<span className={sectionLabel}>
 							Mutual Aid Waterloo Region
 						</span>
 
-						<Heading level={1} size={9} className="font-display font-black leading-tight tracking-tight text-black">
+						<Heading level={1} size={9} className={`font-display font-black leading-tight tracking-tight text-black ${headingH1}`}>
 							Sharing Care
 							<br />
 							& Resources In
@@ -51,7 +51,7 @@ export function HeroSection() {
 								variant="outline"
 								color="gray"
 								size={3}
-								className={secondaryButton}
+								className={`${secondaryButton} min-h-11`}
 							>
 								Sign In
 							</Button>

@@ -5,7 +5,6 @@ import type { CategoryItem } from "./category-badge-selector";
 import { useState } from "react";
 import {
 	CategoryBadgeSelector,
-
 } from "./category-badge-selector";
 import { CategoryImageCard } from "./category-image-card";
 
@@ -30,18 +29,20 @@ export function CategoryPicker({
 
 	const badgePositionClass
 		= badgePosition === "left"
-			? "left-0 -translate-x-1/4 sm:-translate-x-1/2 items-end"
-			: "right-0 translate-x-1/4 sm:translate-x-1/2 items-start";
+			? "sm:left-0 sm:-translate-x-1/4 md:-translate-x-1/2 sm:items-end"
+			: "sm:right-0 sm:translate-x-1/4 md:translate-x-1/2 sm:items-start";
 
 	return (
-		<div className="relative w-full aspect-4/3">
-			<CategoryImageCard
-				src={activeImage.src}
-				alt={activeImage.alt}
-				sizes={sizes}
-			/>
+		<div className="flex flex-col sm:relative sm:w-full sm:aspect-4/3">
+			<div className="relative w-full aspect-4/3">
+				<CategoryImageCard
+					src={activeImage.src}
+					alt={activeImage.alt}
+					sizes={sizes}
+				/>
+			</div>
 			<div
-				className={`absolute top-1/2 -translate-y-1/2 ${badgePositionClass} flex flex-col gap-2.5 z-10`}
+				className={`flex flex-wrap gap-2 mt-3 justify-center z-10 sm:absolute sm:top-1/2 sm:-translate-y-1/2 sm:flex-col sm:gap-2.5 sm:mt-0 ${badgePositionClass}`}
 			>
 				<CategoryBadgeSelector
 					categories={categories}

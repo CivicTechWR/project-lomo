@@ -8,7 +8,7 @@ export function HomeNav() {
 				{/* Two pill-shaped containers: outer black, inner yellow */}
 				<div className="w-full bg-black rounded-full py-px px-2 sm:px-3 flex items-center justify-center shadow-lg">
 					{/* Inner Yellow Pill Container */}
-					<div className="w-full bg-yellow-9 rounded-full px-6 py-1.5 flex items-center justify-between">
+					<div className="w-full bg-yellow-9 rounded-full px-3 sm:px-6 py-1.5 flex items-center justify-between">
 						{/* Logo / Brand Name */}
 						<Link
 							href="/"
@@ -19,10 +19,10 @@ export function HomeNav() {
 
 						{/* Navigation Capsule */}
 						<nav aria-label="Main navigation">
-							<div className="bg-gray-1/90 backdrop-blur-sm border-2 border-black/10 rounded-full p-0.5 pl-3 flex items-center gap-1.5 shadow-inner">
+							<div className="bg-gray-1/90 backdrop-blur-sm border-2 border-black/10 rounded-full p-0.5 pl-3 flex items-center gap-2 shadow-inner">
 								<Link
 									href="/signin"
-									className="font-display font-black text-sm text-black hover:opacity-75 transition-opacity px-2 py-0.5 min-h-8 flex items-center justify-center"
+									className="font-display font-black text-sm text-black hover:opacity-75 transition-opacity px-2 py-0.5 min-h-11 flex items-center justify-center"
 								>
 									Login
 								</Link>
@@ -31,7 +31,7 @@ export function HomeNav() {
 									variant="solid"
 									color="terracotta"
 									size={2}
-									className="min-h-8 flex items-center justify-center bg-[#7a343b] hover:bg-[#632a30] text-white border-2 border-black rounded-full px-4 py-0.5 font-display font-black text-sm shadow-[0px_2px_8px_rgba(0,0,0,0.10)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.15)] transition-shadow duration-150"
+									className="min-h-11 flex items-center justify-center bg-[#7a343b] hover:bg-[#632a30] text-white border-2 border-black rounded-full px-4 py-0.5 font-display font-black text-sm shadow-[0px_2px_8px_rgba(0,0,0,0.10)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.15)] transition-shadow duration-150"
 								>
 									Sign Up
 								</Button>

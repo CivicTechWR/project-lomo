@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { cardSurface } from "./styles";
+import { cardSurface, grayscaleImage, warmOverlay } from "./styles";
 
 export interface CategoryImageCardProps {
 	src: string;
@@ -18,10 +18,10 @@ export function CategoryImageCard({ src, alt, sizes }: CategoryImageCardProps) {
 				alt={alt}
 				fill
 				sizes={sizes}
-				className="object-cover object-center grayscale hover:grayscale-0 transition-all duration-500"
+				className={grayscaleImage}
 			/>
 			{/* Warm overlay */}
-			<div className="absolute inset-0 bg-terracotta-9/5 mix-blend-multiply pointer-events-none" />
+			<div className={warmOverlay} />
 		</div>
 	);
 }

@@ -2,7 +2,7 @@ import { Card } from "@repo/ui/card";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 
-import { cardSurface, sectionLabel } from "./styles";
+import { cardSurface, sectionLabel, sectionPadding } from "./styles";
 
 const STEPS = [
 	{ number: 1, label: "Post a need", description: "Describe what you need and when. Your request is shared only with matched helpers." },
@@ -14,7 +14,7 @@ const STEPS = [
 export function HowItWorksSection() {
 	return (
 		<section aria-label="How it works" className="w-full">
-			<div className="max-w-300 mx-auto px-4 md:px-8 py-16 md:py-20">
+			<div className={`max-w-300 mx-auto ${sectionPadding}`}>
 				<div className="flex flex-col gap-3 max-w-3xl mb-12">
 					<span className={sectionLabel}>
 						Simple 4-Step Circle
@@ -27,7 +27,7 @@ export function HowItWorksSection() {
 					</Text>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
 					{STEPS.map(step => (
 						<Card
 							key={step.number}
