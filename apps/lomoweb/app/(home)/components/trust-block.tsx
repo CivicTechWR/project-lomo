@@ -1,6 +1,4 @@
-import { Card, Text } from "@repo/ui";
-
-import { sectionPadding } from "./styles";
+import { Text } from "@repo/ui";
 
 const VALUES = [
 	"Free & not-for-profit 🤝",
@@ -13,24 +11,20 @@ export function TrustBlock() {
 	return (
 		<section aria-label="Our values" className="w-full">
 			<h2 className="sr-only">Our values</h2>
-			<div className={`max-w-300 mx-auto ${sectionPadding}`}>
-				<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 list-none p-0 m-0">
-					{VALUES.map(value => (
-						<li key={value}>
-							<Card
-								variant="surface"
-								color="gray"
-								size={2}
-								className="relative flex items-center justify-center text-center p-6 bg-white border-2 border-black rounded-5 shadow-[0px_2px_8px_rgba(0,0,0,0.10)] cursor-default"
+			<div className="max-w-300 mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10 lg:py-12">
+				<ul className="flex flex-wrap items-center justify-center gap-x-2 gap-y-3 list-none p-0 m-0">
+					{VALUES.map((value, i) => (
+						<li key={value} className="flex items-center gap-2">
+							<Text
+								weight="bold"
+								size={3}
+								className="text-black font-display font-extrabold whitespace-nowrap"
 							>
-								<Text
-									weight="bold"
-									size={3}
-									className="text-black tracking-wide font-display font-extrabold flex items-center gap-2 whitespace-nowrap"
-								>
-									{value}
-								</Text>
-							</Card>
+								{value}
+							</Text>
+							{i < VALUES.length - 1 && (
+								<span aria-hidden="true" className="text-black/30 select-none">·</span>
+							)}
 						</li>
 					))}
 				</ul>
