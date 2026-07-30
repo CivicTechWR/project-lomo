@@ -4,15 +4,15 @@ This guide walks you through setting up the LoMo project for local development.
 
 ## Prerequisites
 
-- **[Bun](https://bun.sh) 1.0+** — used as the package manager and runtime
-- **[Docker](https://www.docker.com)** — used to run PostgreSQL and the Django backend locally
-- **Git 2.30+**
+- **[Bun](https://bun.sh) 1.3.8+** — package manager and runtime
+- **[Node.js](https://nodejs.org) >=22** — required runtime
+- **[Git](https://git-scm.com) 2.30+**
 
 To verify:
 
 ```bash
 bun --version
-docker --version
+node --version
 git --version
 ```
 
@@ -31,55 +31,54 @@ cd project-lomo
 bun install
 ```
 
-This installs dependencies for all workspaces (`apps/webapp`, `packages/eslint-config`).
-
 ### 3. Start everything
 
 ```bash
 bun run dev
 ```
 
-This starts:
+## What `bun run dev` starts
 
-- **PostgreSQL 17** on port `5432` (User: `postgres`, Password: `postgres`, Database: `lomo`)
-- **Django backend** on port `8000`
-- **Vite dev server** (webapp) on port `5173`
-
-Turbo opens a terminal UI so each dev process has its own log view instead of one shared stream.
-
-> **Note:** The first run will be slower because Docker needs to build the backend image. Subsequent runs will be fast.
+Turborepo starts all apps in the monorepo and opens a terminal UI for managing log views. Each process gets its own log panel instead of a single interleaved stream, making it easy to monitor individual apps.
 
 ## Project Structure
 
 ```
 project-lomo/
 ├── apps/
-│   ├── webapp/               # React 19 + TypeScript + Vite frontend
-│   └── backend/              # Django 5 + DRF backend (Docker)
+│   ├── lomoweb/              # Next.js 16 + Convex + Better Auth
+│   ├── convex-backend/       # Convex backend-as-a-service
+│   └── documentation/        # Design system showcase (Vite 7 + TanStack Router)
 ├── packages/
+│   ├── ui/                   # Component library (Tailwind v4 + react-aria-components)
 │   └── eslint-config/        # Shared ESLint configuration
-└── package.json              # Root workspace config (Bun)
+└── package.json              # Root workspace config (Bun + Turborepo)
 ```
 
 ## Common Commands
 
-| Command              | Description                                |
-| -------------------- | ------------------------------------------ |
-| `bun run dev`        | Start all apps in Turbo's terminal UI      |
-| `bun run dev:web`    | Start only the webapp                      |
-| `bun run dev:stop`   | Stop Docker services (postgres + backend)  |
-| `bun run dev:logs`   | Tail Docker service logs                   |
-| `bun run dev:reset`  | Stop Docker services and wipe DB volumes   |
-| `bun run build`      | Build all packages                         |
-| `bun run lint`       | Lint all packages                          |
-| `bun run lint:fix`   | Auto-fix lint issues                       |
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start all apps in Turbo's terminal UI |
+| `bun run build` | Build all packages |
+| `bun run lint` | Lint all packages |
+| `bun run lint:fix` | Auto-fix lint issues |
+
+## Convex Backend
+
+The backend uses [Convex](https://docs.convex.dev), a backend-as-a-service platform. After initial setup, you need to configure environment variables from the `apps/convex-backend` directory:
+
+```bash
+cd apps/convex-backend
+bunx convex env set SITE_URL http://localhost:3000
+bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32)
+```
+
+See the [Convex documentation](https://docs.convex.dev) for additional details on deployment and configuration.
 
 ## Contributing
 
-1. Create a branch: `git checkout -b feat/your-feature`
-2. Make your changes
-3. Run `bun run lint` to check for issues
-4. Open a pull request against `main`
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branch naming conventions, commit message format, and the pull request workflow.
 
 ## Getting Help
 

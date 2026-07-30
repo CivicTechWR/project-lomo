@@ -39,10 +39,14 @@ A platform for people to post asks and offers, matched with others in their comm
 
 **Technology Stack:**
 
-- Frontend: React 19 + TypeScript + Vite + TanStack Router (`apps/webapp`)
-- Backend: Django 5 + Django REST Framework (`apps/backend`)
-- Database: PostgreSQL 17 (Docker)
-- Package Manager: Bun (monorepo workspaces)
+- Main app: Next.js 16 + Convex + Better Auth (`apps/lomoweb`)
+- Backend: Convex backend-as-a-service (`apps/convex-backend`)
+- Design system showcase: Vite 7 + TanStack Router + React 19 (`apps/documentation`)
+- Component library: Tailwind v4 + react-aria-components (`packages/ui`)
+- Shared lint config: ESLint with antfu preset (`packages/eslint-config`)
+- Package manager: Bun 1.3.8+ (monorepo workspaces)
+- Orchestration: Turborepo
+- Runtime: Node >=22
 
 ## Project Timeline
 
@@ -56,8 +60,8 @@ A platform for people to post asks and offers, matched with others in their comm
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.0+
-- [Docker](https://www.docker.com) (for the database and backend)
+- [Bun](https://bun.sh) 1.3.8+
+- [Node.js](https://nodejs.org) >=22
 
 ### Getting started
 
@@ -66,19 +70,16 @@ bun install
 bun run dev
 ```
 
-This starts the database, backend, and webapp all at once. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
-Turbo's TUI keeps each long-running process in its own log view.
+This starts all apps via Turborepo. Turbo's TUI keeps each process in its own log view. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-### Other commands
+### Available commands
 
-```bash
-bun run dev:web    # Start only the webapp
-bun run dev:stop   # Stop Docker services
-bun run dev:reset  # Stop Docker services and wipe DB
-bun run build      # Build all packages
-bun run lint       # Lint all packages
-bun run lint:fix   # Auto-fix lint issues
-```
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start all apps in Turbo's terminal UI |
+| `bun run build` | Build all packages |
+| `bun run lint` | Lint all packages |
+| `bun run lint:fix` | Auto-fix lint issues |
 
 ## Community Impact
 
