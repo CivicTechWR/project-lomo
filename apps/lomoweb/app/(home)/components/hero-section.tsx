@@ -7,10 +7,15 @@ import { ctaButton, headingH1, secondaryButton, sectionLabel } from "./styles";
 export function HeroSection() {
 	return (
 		<section aria-label="Hero" className="w-full relative overflow-hidden pb-12">
-			<div className="max-w-300 mx-auto px-4 md:px-8 py-12 md:py-16">
+			{/* Mobile: image behind text (absolute-positioned) */}
+			<div className="absolute inset-0 sm:hidden">
+				<HeroIllustration />
+			</div>
+
+			<div className="max-w-300 mx-auto px-4 md:px-8 py-12 md:py-16 relative">
 				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-12 items-center">
 					{/* Left column: text + CTAs (takes up 7 columns on desktop) */}
-					<div className="flex flex-col gap-6 lg:col-span-7">
+					<div className="flex flex-col gap-6 lg:col-span-7 bg-surface-warm/85 backdrop-blur-sm rounded-4 p-5 sm:bg-transparent sm:backdrop-blur-none sm:rounded-none sm:p-0">
 						<span className={sectionLabel}>
 							Mutual Aid Waterloo Region
 						</span>
@@ -58,8 +63,8 @@ export function HeroSection() {
 						</div>
 					</div>
 
-					{/* Right column: Hand and feather editorial illustration */}
-					<div className="relative w-full lg:col-span-5 flex flex-col items-center justify-center min-h-100">
+					{/* Right column: visible only on sm+ (side-by-side layout) */}
+					<div className="relative w-full lg:col-span-5 hidden sm:flex flex-col items-center justify-center min-h-100">
 						<HeroIllustration />
 					</div>
 				</div>

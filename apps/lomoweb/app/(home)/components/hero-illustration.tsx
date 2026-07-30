@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function HeroIllustration() {
 	return (
-		<div className="relative w-full h-60 sm:h-80 md:h-100 lg:h-[520px]">
+		<div className="relative w-full h-full min-h-60 sm:h-80 md:h-100 lg:h-130">
 			<Image
 				src="/hero.png"
 				alt=""
