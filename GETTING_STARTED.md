@@ -31,7 +31,26 @@ cd project-lomo
 bun install
 ```
 
-### 3. Start everything
+### 3. Create the frontend environment file
+
+```bash
+cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
+```
+
+The defaults work for local development — no edits needed.
+
+### 4. Set Convex environment variables
+
+From the repo root:
+
+```bash
+bunx convex env set SITE_URL http://localhost:3000 --project-dir apps/convex-backend
+bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32) --project-dir apps/convex-backend
+```
+
+These are stored in Convex's cloud config, not in a local file, so you only need to run this once per deployment.
+
+### 5. Start everything
 
 ```bash
 bun run dev
@@ -66,15 +85,7 @@ project-lomo/
 
 ## Convex Backend
 
-The backend uses [Convex](https://docs.convex.dev), a backend-as-a-service platform. After initial setup, you need to configure environment variables from the `apps/convex-backend` directory:
-
-```bash
-cd apps/convex-backend
-bunx convex env set SITE_URL http://localhost:3000
-bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32)
-```
-
-See the [Convex documentation](https://docs.convex.dev) for additional details on deployment and configuration.
+The backend uses [Convex](https://docs.convex.dev), a backend-as-a-service platform. See the [Convex documentation](https://docs.convex.dev) for details on deployment and configuration beyond local dev.
 
 ## Contributing
 

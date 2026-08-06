@@ -62,6 +62,25 @@ bun --filter=@repo/ui run lint:fix
 
 **Do NOT run `bun install` directly.** Ask the user to review dependency changes and run it themselves.
 
+## Local Dev Setup
+
+When a user asks you to set up their local environment, run these steps in order:
+
+**Step 1 — Copy the frontend env file** (skip if `apps/lomoweb/.env.local` already exists):
+```bash
+cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
+```
+
+**Step 2 — Set Convex environment variables** (run from repo root):
+```bash
+bunx convex env set SITE_URL http://localhost:3000 --project-dir apps/convex-backend
+bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32) --project-dir apps/convex-backend
+```
+
+These are stored in Convex's cloud config. They only need to be set once per deployment — running them again on an existing setup is safe (it just overwrites with a new secret).
+
+After both steps complete, the user can run `bun run dev` to start everything.
+
 ## Do NOT
 
 - Do NOT commit `.env` files
