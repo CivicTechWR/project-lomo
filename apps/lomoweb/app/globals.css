@@ -63,7 +63,13 @@
 	animation-delay: 0.45s;
 }
 
-/* Display font utilities */
+/* Display font utilities
+   Andada Pro is loaded via <link> in layout.tsx (not next/font) because
+   next/font currently resolves broken gstatic URLs for this family. */
+:root {
+	--font-display: "Andada Pro";
+}
+
 .font-display {
 	font-family: var(--font-display), Georgia, serif;
 }
