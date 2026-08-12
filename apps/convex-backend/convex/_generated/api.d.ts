@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as helpRequests from "../helpRequests.js";
 import type * as http from "../http.js";
+import type * as lib_currentUser from "../lib/currentUser.js";
 import type * as lib_geo from "../lib/geo.js";
 import type * as lib_helperPreferences from "../lib/helperPreferences.js";
 import type * as lib_messageEmail from "../lib/messageEmail.js";
@@ -18,7 +19,6 @@ import type * as lib_notificationHelpers from "../lib/notificationHelpers.js";
 import type * as lib_requestLocation from "../lib/requestLocation.js";
 import type * as lib_requestMetadata from "../lib/requestMetadata.js";
 import type * as lib_resendEmail from "../lib/resendEmail.js";
-import type * as lib_currentUser from "../lib/currentUser.js";
 import type * as lib_seedData from "../lib/seedData.js";
 import type * as lib_siteEnv from "../lib/siteEnv.js";
 import type * as lib_stripEmailReply from "../lib/stripEmailReply.js";
@@ -41,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   helpRequests: typeof helpRequests;
   http: typeof http;
+  "lib/currentUser": typeof lib_currentUser;
   "lib/geo": typeof lib_geo;
   "lib/helperPreferences": typeof lib_helperPreferences;
   "lib/messageEmail": typeof lib_messageEmail;
@@ -48,7 +49,6 @@ declare const fullApi: ApiFromModules<{
   "lib/requestLocation": typeof lib_requestLocation;
   "lib/requestMetadata": typeof lib_requestMetadata;
   "lib/resendEmail": typeof lib_resendEmail;
-  "lib/currentUser": typeof lib_currentUser;
   "lib/seedData": typeof lib_seedData;
   "lib/siteEnv": typeof lib_siteEnv;
   "lib/stripEmailReply": typeof lib_stripEmailReply;

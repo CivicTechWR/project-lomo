@@ -98,6 +98,7 @@ export function AdminDashboard() {
 
 			{tab === "requests" && (
 				<section className="flex flex-col gap-4">
+					<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
 					{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
 					{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
 					{requests && requests.length > 0 && (
@@ -130,23 +131,6 @@ export function AdminDashboard() {
 												View / edit
 											</Button>
 										</div>
-			<section className="flex flex-col gap-4">
-				<Heading level={2} size={6}>All requests</Heading>
-				<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
-				{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
-				{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
-				{requests && requests.length > 0 && (
-					<ul className="flex flex-col gap-3">
-						{requests.map(r => (
-							<li key={r._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
-								<div className="flex flex-wrap items-start justify-between gap-3">
-									<div className="min-w-0 flex-1">
-										<Text size={3} weight="medium">{r.title}</Text>
-										<Text size={2} color="gray" className="mt-1">
-											Owner:
-											{" "}
-											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
-										</Text>
 									</div>
 									<div className="mt-3 flex flex-wrap gap-2">
 										<select

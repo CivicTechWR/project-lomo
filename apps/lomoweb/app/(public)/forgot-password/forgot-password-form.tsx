@@ -45,7 +45,7 @@ export function ForgotPasswordForm() {
 
 		const redirectTo = `${window.location.origin}/reset-password`;
 
-		let error: { code?: string; message?: string } | undefined;
+		let error: { code?: string; message?: string } | null | undefined;
 		try {
 			({ error } = await authClient.requestPasswordReset({
 				email: result.data.email,

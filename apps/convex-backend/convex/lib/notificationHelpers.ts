@@ -1,5 +1,7 @@
 import type { Doc, Id } from "../_generated/dataModel";
 
+type UserId = Id<"users">;
+
 type NotificationRow = Doc<"notifications">;
 type HelpRequestRow = Doc<"helpRequests">;
 
@@ -13,19 +15,19 @@ export type EnrichedNotification = NotificationRow & {
 export function enrichNotification(
 	n: NotificationRow,
 	req: HelpRequestRow | null,
-	viewerSubject: string,
+	viewerUserId: UserId,
 ): EnrichedNotification {
 	const canVolunteerAcceptAssignment
 		= n.type === "volunteer_assigned"
 			&& req !== null
 			&& req.status === "assigned"
-			&& req.assignedHelperSubject === viewerSubject;
+			&& req.assignedHelperUserId === viewerUserId;
 
 	const canRequesterReviewOffer
 		= (n.type === "requester_accept_match_prompt" || n.type === "volunteer_offered_help")
 			&& req !== null
 			&& req.status === "awaiting_requester_acceptance"
-			&& req.ownerSubject === viewerSubject;
+			&& req.ownerUserId === viewerUserId;
 
 	let openPath: string | null = null;
 	if (n.requestId) {
@@ -41,7 +43,7 @@ export function enrichNotification(
 		}
 		else if (req) {
 			openPath
-				= req.ownerSubject === viewerSubject
+				= req.ownerUserId === viewerUserId
 					? `/app/requests/${n.requestId}`
 					: `/app/offer/${n.requestId}`;
 		}

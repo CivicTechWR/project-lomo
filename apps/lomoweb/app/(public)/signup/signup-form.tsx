@@ -103,7 +103,7 @@ export function SignUpForm() {
 
 		setIsSubmitting(true);
 
-		let error: { code?: string; message?: string } | undefined;
+		let error: { code?: string; message?: string } | null | undefined;
 		try {
 			({ error } = await authClient.signUp.email({
 				name: result.data.name,

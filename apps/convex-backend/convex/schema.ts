@@ -72,8 +72,8 @@ export default defineSchema(
 			.index("by_owner_user_id", ["ownerUserId"])
 			.index("by_owner_user_id_and_status", ["ownerUserId", "status"])
 			.index("by_status", ["status"])
-			.index("by_helper", ["helperSubject"])
-			.index("by_assigned_helper", ["assignedHelperSubject"])
+			.index("by_helper", ["helperUserId"])
+			.index("by_assigned_helper", ["assignedHelperUserId"])
 			.index("by_email_relay_token", ["emailRelayToken"]),
 
 		requestMessages: defineTable({
@@ -130,8 +130,8 @@ export default defineSchema(
 			ctaLabel: v.optional(v.string()),
 			ctaAction: v.optional(v.string()),
 		})
-			.index("by_recipient", ["recipientSubject"])
-			.index("by_recipient_read", ["recipientSubject", "isRead"])
+			.index("by_recipient", ["recipientUserId"])
+			.index("by_recipient_read", ["recipientUserId", "isRead"])
 			.index("by_request", ["requestId"]),
 	},
 	{ schemaValidation: true },

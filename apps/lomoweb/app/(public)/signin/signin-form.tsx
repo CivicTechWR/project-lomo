@@ -79,7 +79,7 @@ export function SignInForm() {
 
 		setIsSubmitting(true);
 
-		let error: { code?: string; message?: string } | undefined;
+		let error: { code?: string; message?: string } | null | undefined;
 		try {
 			({ error } = await authClient.signIn.email({
 				email: result.data.email,

@@ -78,7 +78,7 @@ export function ResetPasswordForm() {
 
 		setIsSubmitting(true);
 
-		let error: { code?: string; message?: string } | undefined;
+		let error: { code?: string; message?: string } | null | undefined;
 		try {
 			({ error } = await authClient.resetPassword({
 				newPassword: result.data.password,

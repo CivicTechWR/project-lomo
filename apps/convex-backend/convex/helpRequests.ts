@@ -191,9 +191,8 @@ export const get = query({
 		if (!user) {
 			return null;
 		}
-		await upsertCurrentUser(ctx, identity);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject !== identity.subject) {
+		if (!doc || doc.ownerUserId !== user._id) {
 			return null;
 		}
 		return doc;
@@ -238,7 +237,7 @@ function enrichOpenRequestForHelper(
 		locationLng?: number;
 		needsDelivery?: boolean;
 		isUrgent?: boolean;
-		ownerSubject: string;
+		ownerUserId: Id<"users">;
 		status: string;
 	},
 	/** Profile help area — drives the "In your area" badge. */
@@ -370,7 +369,7 @@ export const listPendingFromOthers = query({
 		}
 
 		const open = rows
-			.filter(r => r.ownerSubject !== identity.subject)
+			.filter(r => user == null || r.ownerUserId !== user._id)
 			.filter(r => filterArea == null || matchesLocationFilter(r, filterArea))
 			.map(r => enrichOpenRequestForHelper(
 				r,
@@ -392,8 +391,8 @@ const ACTIVE_HOME_STATUSES = new Set([
 export const homeDashboard = query({
 	args: {},
 	handler: async (ctx) => {
-		const identity = await ctx.auth.getUserIdentity() as Identity | null;
-		if (!identity) {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			return {
 				active: [],
 				pendingMine: [],
@@ -403,17 +402,15 @@ export const homeDashboard = query({
 				canHelpNow: false,
 			};
 		}
-		await upsertCurrentUser(ctx, identity);
-		const subject = identity.subject;
 
 		const owned = await ctx.db
 			.query("helpRequests")
-			.withIndex("by_owner", q => q.eq("ownerSubject", subject))
+			.withIndex("by_owner_user_id", q => q.eq("ownerUserId", user._id))
 			.collect();
 
 		const asHelper = await ctx.db
 			.query("helpRequests")
-			.withIndex("by_helper", q => q.eq("helperSubject", subject))
+			.withIndex("by_helper", q => q.eq("helperUserId", user._id))
 			.collect();
 
 		const activeOwned = owned
@@ -461,11 +458,8 @@ export const homeDashboard = query({
 
 		const pendingMineTotal = owned.filter(r => r.status === "pending").length;
 
-		const userRow = await ctx.db
-			.query("users")
-			.withIndex("by_subject", q => q.eq("subject", subject))
-			.unique();
-		const canHelpNow = userRow?.canHelpNow === true;
+		const userRow = user;
+		const canHelpNow = userRow.canHelpNow === true;
 		const helpArea = helpAreaFromUser(userRow);
 
 		if (!canHelpNow) {
@@ -485,7 +479,7 @@ export const homeDashboard = query({
 			.collect();
 
 		const openEnriched = openRows
-			.filter(r => r.ownerSubject !== subject)
+			.filter(r => r.ownerUserId !== user._id)
 			.map(r => enrichOpenRequestForHelper(r, helpArea))
 			.sort(compareOpenRequestsForHelper);
 
@@ -511,11 +505,10 @@ export const homeDashboard = query({
 export const getAsHelper = query({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await getIdentity(ctx);
-		if (!identity) {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			return null;
 		}
-		await upsertCurrentUser(ctx, identity);
 		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc) {
 			return null;
@@ -525,9 +518,6 @@ export const getAsHelper = query({
 		}
 		if (doc.status === "pending") {
 			return redactHelpRequestForVolunteer(doc);
-		}
-		if (!user) {
-			return null;
 		}
 
 		const isAssignedVolunteer
@@ -556,9 +546,8 @@ export const getOfferHelperPreview = query({
 		if (!user) {
 			return null;
 		}
-		await upsertCurrentUser(ctx, identity);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject !== identity.subject) {
+		if (!doc || doc.ownerUserId !== user._id) {
 			return null;
 		}
 		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperUserId) {
@@ -574,10 +563,9 @@ export const getOfferHelperPreview = query({
 export const accept = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject === identity.subject) {
+		if (!doc || doc.ownerUserId === user._id) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "assigned" || doc.assignedHelperUserId !== user._id) {
@@ -592,7 +580,7 @@ export const accept = mutation({
 			requestId,
 			n =>
 				n.type === "volunteer_assigned"
-				&& n.recipientSubject === identity.subject,
+				&& n.recipientUserId === user._id,
 		);
 		await createNotification(ctx, {
 			recipientUserId: doc.ownerUserId,
@@ -617,10 +605,9 @@ export const accept = mutation({
 export const volunteerOfferHelp = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject === identity.subject) {
+		if (!doc || doc.ownerUserId === user._id) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "pending") {
@@ -657,10 +644,9 @@ export const volunteerOfferHelp = mutation({
 export const declineAssigned = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.assignedHelperSubject !== identity.subject) {
+		if (!doc || doc.assignedHelperUserId !== user._id) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "assigned") {
@@ -675,7 +661,7 @@ export const declineAssigned = mutation({
 			requestId,
 			n =>
 				n.type === "volunteer_assigned"
-				&& n.recipientSubject === identity.subject,
+				&& n.recipientUserId === user._id,
 		);
 		await createNotification(ctx, {
 			recipientUserId: doc.ownerUserId,
@@ -690,10 +676,9 @@ export const declineAssigned = mutation({
 export const requesterAcceptMatch = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject !== identity.subject) {
+		if (!doc || doc.ownerUserId !== user._id) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperUserId) {
@@ -709,7 +694,7 @@ export const requesterAcceptMatch = mutation({
 			n =>
 				(n.type === "requester_accept_match_prompt"
 					|| n.type === "volunteer_offered_help")
-				&& n.recipientSubject === doc.ownerSubject,
+				&& n.recipientUserId === doc.ownerUserId,
 		);
 		await createNotification(ctx, {
 			recipientUserId: doc.helperUserId,
@@ -718,7 +703,7 @@ export const requesterAcceptMatch = mutation({
 			body: "You're now in progress on this request.",
 			requestId,
 			ctaLabel: "Open request",
-			ctaAction: "open_offer",
+			ctaAction: "open_offer_request",
 		});
 		const helper = await ctx.db.get("users", doc.helperUserId);
 		if (helper?.email !== undefined && helper.email.length > 0) {
@@ -734,16 +719,15 @@ export const requesterAcceptMatch = mutation({
 export const requesterDeclineMatch = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject !== identity.subject) {
+		if (!doc || doc.ownerUserId !== user._id) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "awaiting_requester_acceptance") {
 			throw new Error("No match to decline.");
 		}
-		const helper = doc.helperSubject;
+		const helperUserId = doc.helperUserId;
 		await ctx.db.patch("helpRequests", requestId, {
 			status: "pending",
 			helperUserId: undefined,
@@ -755,9 +739,9 @@ export const requesterDeclineMatch = mutation({
 			n =>
 				(n.type === "requester_accept_match_prompt"
 					|| n.type === "volunteer_offered_help")
-				&& n.recipientSubject === doc.ownerSubject,
+				&& n.recipientUserId === doc.ownerUserId,
 		);
-		if (helper) {
+		if (helperUserId) {
 			await createNotification(ctx, {
 				recipientUserId: helperUserId,
 				type: "requester_declined_match",
@@ -934,13 +918,14 @@ export const create = mutation({
 		title: v.string(),
 		summary: v.string(),
 		details: v.string(),
+		payload: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
 		const { user } = await getOrCreateCurrentUser(ctx);
 
 		const coords = extractPayloadCoordinates(args.category, args.payload);
 		const requestId = await ctx.db.insert("helpRequests", {
-			ownerSubject: identity.subject,
+			ownerUserId: user._id,
 			category: args.category,
 			title: args.title,
 			summary: args.summary,
@@ -971,10 +956,9 @@ export const create = mutation({
 export const cancel = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
-		if (!doc || doc.ownerSubject !== identity.subject) {
+		if (!doc || doc.ownerUserId !== user._id) {
 			throw new Error("Not found");
 		}
 		if (
@@ -1003,8 +987,7 @@ export const cancel = mutation({
 export const markComplete = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
-		const identity = await requireIdentity(ctx);
-		await upsertCurrentUser(ctx, identity);
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc) {
 			throw new Error("Not found");

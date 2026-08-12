@@ -1,31 +1,32 @@
 import { v } from "convex/values";
 import { internalAction, mutation, query } from "./_generated/server";
+import { getCurrentUserRow } from "./lib/currentUser";
 import { enrichNotification } from "./lib/notificationHelpers";
 import { getResendConfig, postResendEmail } from "./lib/resendEmail";
 
 export const listMine = query({
 	args: { unreadOnly: v.optional(v.boolean()) },
 	handler: async (ctx, { unreadOnly }) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			return [];
 		}
 		const rows = unreadOnly
 			? await ctx.db
 					.query("notifications")
 					.withIndex("by_recipient_read", q =>
-						q.eq("recipientSubject", identity.subject).eq("isRead", false))
+						q.eq("recipientUserId", user._id).eq("isRead", false))
 					.collect()
 			: await ctx.db
 					.query("notifications")
-					.withIndex("by_recipient", q => q.eq("recipientSubject", identity.subject))
+					.withIndex("by_recipient", q => q.eq("recipientUserId", user._id))
 					.collect();
 		rows.sort((a, b) => b._creationTime - a._creationTime);
 
 		const enriched = await Promise.all(
 			rows.map(async (n) => {
 				const req = n.requestId ? await ctx.db.get("helpRequests", n.requestId) : null;
-				return enrichNotification(n, req, identity.subject);
+				return enrichNotification(n, req, user._id);
 			}),
 		);
 		return enriched;
@@ -35,12 +36,12 @@ export const listMine = query({
 export const markRead = mutation({
 	args: { notificationId: v.id("notifications") },
 	handler: async (ctx, { notificationId }) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
+		const user = await getCurrentUserRow(ctx);
+		if (!user) {
 			throw new Error("Unauthenticated");
 		}
 		const doc = await ctx.db.get("notifications", notificationId);
-		if (!doc || doc.recipientSubject !== identity.subject) {
+		if (!doc || doc.recipientUserId !== user._id) {
 			throw new Error("Not found");
 		}
 		await ctx.db.patch("notifications", notificationId, { isRead: true });

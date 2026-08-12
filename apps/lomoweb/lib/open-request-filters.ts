@@ -36,7 +36,7 @@ export function filterOpenRequests(
 	requests: OpenRequestListItem[],
 	filters: OpenRequestFilters,
 ): OpenRequestListItem[] {
-	const selectedCategories = new Set(filters.categories);
+	const selectedCategories = new Set<string>(filters.categories);
 	const filterByCategory = selectedCategories.size > 0;
 
 	return requests.filter((item) => {

@@ -2,6 +2,7 @@
 import type { Doc, Id } from "./_generated/dataModel";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import type { QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
 import {
 	conversationLink,
@@ -167,7 +168,7 @@ export const post = mutation({
 			const link = conversationLink(
 				siteBaseUrl(),
 				requestId,
-				otherSubject === doc.ownerSubject,
+				otherUserId === doc.ownerUserId,
 			);
 			await ctx.scheduler.runAfter(0, internal.notifications.sendEmail, {
 				to: otherUser.email,
@@ -286,7 +287,7 @@ export const ingestInboundEmail = internalMutation({
 			const link = conversationLink(
 				siteBaseUrl(),
 				req._id,
-				otherSubject === req.ownerSubject,
+				otherUserId === req.ownerUserId,
 			);
 			await ctx.scheduler.runAfter(0, internal.notifications.sendRelayEmail, {
 				to: otherUser.email,
