@@ -35,6 +35,11 @@ export const linkUnderlineColors: ColorMap = {
 		"data-hovered:decoration-amber-a7-muted",
 		"data-pressed:decoration-amber-a8-muted",
 	),
+	darkred: tw(
+		"decoration-darkred-a5-muted",
+		"data-hovered:decoration-darkred-a7-muted",
+		"data-pressed:decoration-darkred-a8-muted",
+	),
 };
 
 // ── Link underline colors: high contrast ──
@@ -69,6 +74,11 @@ export const linkUnderlineColorsHighContrast: ColorMap = {
 		"data-hovered:decoration-amber-a7-muted",
 		"data-pressed:decoration-amber-a8-muted",
 	),
+	darkred: tw(
+		"decoration-darkred-a6-muted",
+		"data-hovered:decoration-darkred-a7-muted",
+		"data-pressed:decoration-darkred-a8-muted",
+	),
 };
 
 // ── Link text colors: standard contrast (step 11 default, 12 hover, 11 press) ──
@@ -79,6 +89,7 @@ export const linkTextColors: ColorMap = {
 	gray: tw("text-gray-11 data-hovered:text-gray-12 data-pressed:text-gray-11"),
 	red: tw("text-red-11 data-hovered:text-red-12 data-pressed:text-red-11"),
 	amber: tw("text-amber-11 data-hovered:text-amber-12 data-pressed:text-amber-11"),
+	darkred: tw("text-darkred-11 data-hovered:text-darkred-12 data-pressed:text-darkred-11"),
 };
 
 // ── Link text colors: high contrast (step 12 throughout) ──
@@ -89,4 +100,5 @@ export const linkTextColorsHighContrast: ColorMap = {
 	gray: tw("text-gray-12"),
 	red: tw("text-red-12"),
 	amber: tw("text-amber-12"),
+	darkred: tw("text-darkred-12"),
 };

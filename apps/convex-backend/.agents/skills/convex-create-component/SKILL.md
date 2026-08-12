@@ -238,12 +238,16 @@ export const sendNotification = mutation({
 
 ```ts
 // Bad: parent app table IDs are not valid component validators
-args: { userId: v.id("users"); }
+const args = {
+	userId: v.id("users"),
+};
 ```
 
 ```ts
 // Good: treat parent-owned IDs as strings at the boundary
-args: { userId: v.string(); }
+const args = {
+	userId: v.string(),
+};
 ```
 
 ### Advanced Patterns

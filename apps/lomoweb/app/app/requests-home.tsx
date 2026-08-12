@@ -4,8 +4,10 @@ import type { FunctionReturnType } from "convex/server";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
-import { useQuery } from "convex/react";
+import type { HomeAppMode } from "@/lib/app-home-mode";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
@@ -13,9 +15,14 @@ import { Checkbox, CheckboxGroup } from "@repo/ui/checkbox";
 import { Heading } from "@repo/ui/heading";
 import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
+import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import {
+	readStoredHomeMode,
+	writeStoredHomeMode,
+} from "@/lib/app-home-mode";
 import {
 	EMPTY_OPEN_REQUEST_FILTERS,
 	filterOpenRequests,
@@ -32,13 +39,11 @@ import { useHomeMode } from "@/lib/home-mode-context";
 import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import type { RequestCategoryId } from "@/lib/request-flow/types";
 import {
-	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
-	type HelpRequestStatus,
-	type HelpRequestStatusFilter,
 	statusBadgeColor,
 } from "@/lib/help-request-status";
 import dynamic from "next/dynamic";
+import { StatusFilterChips } from "./status-filter-chips";
 
 const HelpAreaMap = dynamic(
 	() => import("./help-area-map").then(m => m.HelpAreaMap),
@@ -213,8 +218,18 @@ export function RequestsHome({
 }) {
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
-	const { mode, setMode } = useHomeMode();
+	const [mode, setMode] = useState<HomeAppMode>(
+		() => readStoredHomeMode() ?? "request_help",
+	);
 	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
+
+	const prevModeRef = useRef(mode);
+	useEffect(() => {
+		if (prevModeRef.current !== mode) {
+			prevModeRef.current = mode;
+			writeStoredHomeMode(mode);
+		}
+	}, [mode]);
 
 	const listArgs
 		= statusFilter === null ? {} : { statusFilter };
@@ -596,6 +611,7 @@ function RequestingHelpPanel(props: {
 					</div>
 				</Modal>
 			</ModalOverlay>
+			<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
 
 			{requests === undefined && (
 				<Text size={2} color="gray">

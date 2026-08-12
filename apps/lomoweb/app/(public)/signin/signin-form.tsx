@@ -18,8 +18,14 @@ const signinSchema = z.object({
 
 type FieldErrors = Partial<Record<"email" | "password", string>>;
 
-const SERVER_ERROR_MAP: Record<string, { field?: keyof FieldErrors; message: string }> = {
-	INVALID_EMAIL: { field: "email", message: "Please enter a valid email address" },
+const SERVER_ERROR_MAP: Record<
+	string,
+	{ field?: keyof FieldErrors; message: string }
+> = {
+	INVALID_EMAIL: {
+		field: "email",
+		message: "Please enter a valid email address",
+	},
 	INVALID_EMAIL_OR_PASSWORD: { message: "Invalid email or password" },
 	EMAIL_NOT_VERIFIED: { message: "Please verify your email before signing in" },
 	INVALID_ORIGIN: {
@@ -95,7 +101,9 @@ export function SignInForm() {
 				setFormError(mapped.message);
 			}
 			else {
-				setFormError(error.message ?? "Something went wrong. Please try again.");
+				setFormError(
+					error.message ?? "Something went wrong. Please try again.",
+				);
 			}
 			setIsSubmitting(false);
 			return;
@@ -167,7 +175,9 @@ export function SignInForm() {
 			{/* Form-level error */}
 			{formError && (
 				<div className="rounded-[var(--radius-2)] border border-red-6 bg-red-2 px-4 py-3">
-					<Text size={2} color="red">{formError}</Text>
+					<Text size={2} color="red">
+						{formError}
+					</Text>
 				</div>
 			)}
 
@@ -178,6 +188,9 @@ export function SignInForm() {
 				color="yellow"
 				isDisabled={isSubmitting}
 				className="mt-2"
+				size={3}
+				border="large"
+				borderColor="terracotta"
 			>
 				{isSubmitting ? "Signing in..." : "Login"}
 			</Button>

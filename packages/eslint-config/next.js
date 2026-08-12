@@ -22,6 +22,8 @@ export function GetConfig(options) {
 		react: {
 			overrides: {
 				"react/prefer-shorthand-fragment": "off",
+				"no-alert": "off",
+				"react-refresh/only-export-components": "off",
 			},
 		},
 		rules: {

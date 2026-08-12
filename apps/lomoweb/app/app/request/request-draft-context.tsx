@@ -22,7 +22,7 @@ import {
 } from "react";
 import { emptyDraft } from "@/lib/request-flow/types";
 
-type RequestDraftContextValue = {
+interface RequestDraftContextValue {
 	draft: RequestDraft;
 	setCategory: (id: RequestCategoryId | null) => void;
 	setFoodKind: (kind: FoodKindId | null) => void;
@@ -40,7 +40,7 @@ type RequestDraftContextValue = {
 	setCeremonyDetailsAll: (details: CeremonyRequestDetails) => void;
 	setUrgency: (urgency: RequestUrgencyId | null) => void;
 	resetDraft: () => void;
-};
+}
 
 const RequestDraftContext = createContext<RequestDraftContextValue | null>(
 	null,
@@ -174,9 +174,9 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 	);
 
 	return (
-		<RequestDraftContext.Provider value={value}>
+		<RequestDraftContext value={value}>
 			{children}
-		</RequestDraftContext.Provider>
+		</RequestDraftContext>
 	);
 }
 

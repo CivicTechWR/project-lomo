@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { normalizeHelpPreferences } from "./lib/helperPreferences";
+import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
 
 interface Identity {
 	subject: string;
@@ -59,7 +60,7 @@ export const getMyProfileRow = query({
 			return null;
 		}
 		await upsertCurrentUser(ctx, identity);
-		return getUserRow(ctx, identity.subject);
+		return getCurrentUserRow(ctx);
 	},
 });
 
@@ -76,6 +77,7 @@ export const updatePublicProfile = mutation({
 		if (!row) {
 			throw new Error("User row missing");
 		}
+		const { user } = await getOrCreateCurrentUser(ctx);
 		const patch: Record<string, string | undefined> = {};
 		if (firstName !== undefined) {
 			patch.firstName = firstName.trim() || undefined;
@@ -86,7 +88,7 @@ export const updatePublicProfile = mutation({
 		if (phone !== undefined) {
 			patch.phone = phone.trim() || undefined;
 		}
-		await ctx.db.patch(row._id, patch);
+		await ctx.db.patch("users", user._id, patch);
 	},
 });
 

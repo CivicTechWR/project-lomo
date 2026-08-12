@@ -58,28 +58,28 @@ Possible implementations depend on environment:
 - a framework helper like `fetchQuery`
 - a point-in-time client read such as `ConvexHttpClient.query()`
 
-```ts
+```tsx
 // Reactive by default when fresh live data matters
 function TeamPresence() {
-  const presence = useQuery(api.teams.livePresence, { teamId });
-  return <PresenceList users={presence} />;
+	const presence = useQuery(api.teams.livePresence, { teamId });
+	return <PresenceList users={presence} />;
 }
 ```
 
-```ts
+```tsx
 // Point-in-time read when explicit refresh is acceptable
 import { ConvexHttpClient } from "convex/browser";
 
 const client = new ConvexHttpClient(import.meta.env.VITE_CONVEX_URL);
 
 function SnapshotView() {
-  const [items, setItems] = useState<Item[]>([]);
+	const [items, setItems] = useState<Item[]>([]);
 
-  useEffect(() => {
-    client.query(api.items.snapshot).then(setItems);
-  }, []);
+	useEffect(() => {
+		client.query(api.items.snapshot).then(setItems);
+	}, []);
 
-  return <ItemGrid items={items} />;
+	return <ItemGrid items={items} />;
 }
 ```
 
@@ -101,21 +101,21 @@ Keep reactive for:
 
 Instead of N components each fetching their own related data, fetch it in a single query.
 
-```ts
+```tsx
 // Bad: each card fetches its own author
 function ProjectCard({ project }: { project: Project }) {
-  const author = useQuery(api.users.get, { id: project.authorId });
-  return <Card title={project.name} author={author?.name} />;
+	const author = useQuery(api.users.get, { id: project.authorId });
+	return <Card title={project.name} author={author?.name} />;
 }
 ```
 
-```ts
+```tsx
 // Good: parent query returns projects with author names included
 function ProjectList() {
-  const projects = useQuery(api.projects.listWithAuthors);
-  return projects?.map((p) => (
-    <Card key={p._id} title={p.name} author={p.authorName} />
-  ));
+	const projects = useQuery(api.projects.listWithAuthors);
+	return projects?.map(p => (
+		<Card key={p._id} title={p.name} author={p.authorName} />
+	));
 }
 ```
 

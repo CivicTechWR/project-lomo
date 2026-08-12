@@ -1,12 +1,15 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { Text } from "@repo/ui/text";
+import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useId, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 export function MailIcon({ className }: { className?: string }) {
 	return (
@@ -67,6 +70,66 @@ export function NotificationsList({ unreadOnly = false }: { unreadOnly?: boolean
 	const requesterDeclineMatch = useMutation(api.helpRequests.requesterDeclineMatch);
 	const [busyId, setBusyId] = useState<string | null>(null);
 	type NotificationDoc = NonNullable<typeof notifications>[number];
+
+	// Close the panel whenever the route changes.
+	const prevPathnameRef = useRef(pathname);
+	if (pathname !== prevPathnameRef.current) {
+		prevPathnameRef.current = pathname;
+		if (open) {
+			setOpen(false);
+		}
+	}
+
+	// Compute initial panel position synchronously when opening to avoid flicker.
+	// Subsequent updates (resize/scroll) are handled by event listeners in the effect below.
+	const prevOpenRef = useRef(open);
+	if (open && !prevOpenRef.current && buttonWrapRef.current) {
+		setPanelBox(computePanelBox(buttonWrapRef.current));
+	}
+	prevOpenRef.current = open;
+
+	useLayoutEffect(() => {
+		if (!open) {
+			return;
+		}
+		const handleSync = () => {
+			const btn = buttonWrapRef.current;
+			if (!btn) {
+				return;
+			}
+			setPanelBox(computePanelBox(btn));
+		};
+		window.addEventListener("resize", handleSync);
+		window.addEventListener("scroll", handleSync, true);
+		return () => {
+			window.removeEventListener("resize", handleSync);
+			window.removeEventListener("scroll", handleSync, true);
+		};
+	}, [open]);
+
+	useLayoutEffect(() => {
+		if (!open) {
+			return;
+		}
+		function onPointerDown(e: PointerEvent) {
+			const t = e.target as Node;
+			if (buttonWrapRef.current?.contains(t) || panelRef.current?.contains(t)) {
+				return;
+			}
+			setOpen(false);
+		}
+		function onKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				setOpen(false);
+			}
+		}
+		document.addEventListener("pointerdown", onPointerDown, true);
+		document.addEventListener("keydown", onKeyDown, true);
+		return () => {
+			document.removeEventListener("pointerdown", onPointerDown, true);
+			document.removeEventListener("keydown", onKeyDown, true);
+		};
+	}, [open]);
 
 	async function handleAction(n: NotificationDoc, action: "accept" | "decline") {
 		if (!n.requestId) {

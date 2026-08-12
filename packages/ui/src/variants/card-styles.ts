@@ -28,6 +28,7 @@ export const cardGhostColors: ColorMap = {
 	gray: tw("bg-gray-3 data-hovered:bg-gray-3 data-pressed:bg-gray-4"),
 	red: tw("bg-red-3 data-hovered:bg-red-3 data-pressed:bg-red-4"),
 	amber: tw("bg-amber-3 data-hovered:bg-amber-3 data-pressed:bg-amber-4"),
+	darkred: tw("bg-darkred-3 data-hovered:bg-darkred-3 data-pressed:bg-darkred-4"),
 };
 
 /* ── Surface colors — tinted background + color-matched inset ring ── */
@@ -63,6 +64,11 @@ export const cardSurfaceColors: ColorMap = {
 		"data-hovered:shadow-[inset_0_0_0_1px_var(--color-amber-7)]",
 		"data-pressed:shadow-[inset_0_0_0_1px_var(--color-amber-8)]",
 	),
+	darkred: tw(
+		"bg-darkred-3 shadow-[inset_0_0_0_1px_var(--color-darkred-6)]",
+		"data-hovered:shadow-[inset_0_0_0_1px_var(--color-darkred-7)]",
+		"data-pressed:shadow-[inset_0_0_0_1px_var(--color-darkred-8)]",
+	),
 };
 
 /* ── Classic colors — tinted background + layered elevation shadow ── */
@@ -95,6 +101,11 @@ export const cardClassicColors: ColorMap = {
 	),
 	amber: tw(
 		"bg-amber-3 shadow-[var(--shadow-card-classic)]",
+		"data-hovered:shadow-[var(--shadow-card-classic-hover)]",
+		"data-pressed:shadow-[var(--shadow-card-classic-active)]",
+	),
+	darkred: tw(
+		"bg-darkred-3 shadow-[var(--shadow-card-classic)]",
 		"data-hovered:shadow-[var(--shadow-card-classic-hover)]",
 		"data-pressed:shadow-[var(--shadow-card-classic-active)]",
 	),

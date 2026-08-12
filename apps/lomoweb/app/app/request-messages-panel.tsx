@@ -1,13 +1,13 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Doc, Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { TextArea, TextField } from "@repo/ui/text-field";
+import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 
 export function RequestMessagesPanel({
@@ -15,7 +15,7 @@ export function RequestMessagesPanel({
 }: {
 	requestId: Id<"helpRequests">;
 }) {
-	const me = useQuery(api.auth.getCurrentUser);
+	const me = useQuery(api.users.getMyProfileRow);
 	const messages = useQuery(api.requestMessages.listForRequest, { requestId });
 	const relay = useQuery(api.requestMessages.getRelayAddressForRequest, {
 		requestId,
@@ -73,37 +73,39 @@ export function RequestMessagesPanel({
 			</Heading>
 
 			<div className="flex max-h-72 flex-col gap-2 overflow-y-auto">
-				{messages.length === 0 ? (
-					<Text size={2} color="gray">
-						No messages yet. Say hello below, or use masked email if it’s set up.
-					</Text>
-				) : (
-					messages.map((m: Doc<"requestMessages">) => {
-						const mine = m.authorSubject === me?.subject;
-						const via
-							= m.source === "email"
-								? " · via email"
-								: "";
-						return (
-							<div
-								key={m._id}
-								className={`flex min-w-0 flex-col gap-1 rounded-md border px-3 py-2 ${
-									mine
-										? "border-sage-7 bg-sage-3 ml-4"
-										: "border-gray-6 bg-gray-2 mr-4"
-								}`}
-							>
-								<Text size={1} color="gray">
-									{mine ? "You" : "Your match"}
-									{via}
-								</Text>
-								<Text size={2} className="whitespace-pre-wrap">
-									{m.body}
-								</Text>
-							</div>
-						);
-					})
-				)}
+				{messages.length === 0
+					? (
+							<Text size={2} color="gray">
+								No messages yet. Say hello below, or use masked email if it’s set up.
+							</Text>
+						)
+					: (
+							messages.map((m: Doc<"requestMessages">) => {
+								const mine = m.authorUserId === me?._id;
+								const via
+									= m.source === "email"
+										? " · via email"
+										: "";
+								return (
+									<div
+										key={m._id}
+										className={`flex min-w-0 flex-col gap-1 rounded-md border px-3 py-2 ${
+											mine
+												? "border-sage-7 bg-sage-3 ml-4"
+												: "border-gray-6 bg-gray-2 mr-4"
+										}`}
+									>
+										<Text size={1} color="gray">
+											{mine ? "You" : "Your match"}
+											{via}
+										</Text>
+										<Text size={2} className="whitespace-pre-wrap">
+											{m.body}
+										</Text>
+									</div>
+								);
+							})
+						)}
 			</div>
 
 			<TextField className="w-full">
@@ -140,31 +142,33 @@ export function RequestMessagesPanel({
 				<Text size={2} weight="medium" className="mb-1">
 					Masked email
 				</Text>
-				{relay.relayAddress ? (
-					<div className="flex flex-col gap-2">
-						<Text size={2} color="gray">
-							Email this address to reach your match without sharing your real
-							address. Plain text only; keep it about this request.
-						</Text>
-						<code className="break-all rounded border border-gray-6 bg-gray-2 px-2 py-1 text-sm">
-							{relay.relayAddress}
-						</code>
-						<Button
-							size={1}
-							variant="outline"
-							color="gray"
-							className="self-start"
-							onPress={() => void copyRelay()}
-						>
-							Copy address
-						</Button>
-					</div>
-				) : (
-					<Text size={2} color="gray">
-						Relay email isn’t configured yet (server needs EMAIL_RELAY_DOMAIN and
-						inbound DNS).
-					</Text>
-				)}
+				{relay.relayAddress
+					? (
+							<div className="flex flex-col gap-2">
+								<Text size={2} color="gray">
+									Email this address to reach your match without sharing your real
+									address. Plain text only; keep it about this request.
+								</Text>
+								<code className="break-all rounded border border-gray-6 bg-gray-2 px-2 py-1 text-sm">
+									{relay.relayAddress}
+								</code>
+								<Button
+									size={1}
+									variant="outline"
+									color="gray"
+									className="self-start"
+									onPress={() => void copyRelay()}
+								>
+									Copy address
+								</Button>
+							</div>
+						)
+					: (
+							<Text size={2} color="gray">
+								Relay email isn’t configured yet (server needs EMAIL_RELAY_DOMAIN and
+								inbound DNS).
+							</Text>
+						)}
 			</div>
 		</div>
 	);

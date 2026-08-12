@@ -3,13 +3,13 @@
  * Category-specific steps live under `app/app/request/[category]/`.
  */
 
-export type RequestCategoryId =
-	| "food"
-	| "items"
-	| "other"
-	| "support"
-	| "paperwork"
-	| "ceremony";
+export type RequestCategoryId
+	= | "food"
+		| "items"
+		| "other"
+		| "support"
+		| "paperwork"
+		| "ceremony";
 
 export type FoodKindId = "meal" | "groceries";
 
@@ -34,19 +34,21 @@ export interface FoodRequestDetails {
 	deliveryInstructions: string;
 }
 
-export const emptyFoodDetails = (): FoodRequestDetails => ({
-	groceryNoPreference: false,
-	groceryTypes: [],
-	helpfulNote: "",
-	allergies: "",
-	dietary: "",
-	peopleCount: "",
-	needsDelivery: false,
-	address: "",
-	addressLat: undefined,
-	addressLng: undefined,
-	deliveryInstructions: "",
-});
+export function emptyFoodDetails(): FoodRequestDetails {
+	return {
+		groceryNoPreference: false,
+		groceryTypes: [],
+		helpfulNote: "",
+		allergies: "",
+		dietary: "",
+		peopleCount: "",
+		needsDelivery: false,
+		address: "",
+    addressLat: undefined,
+	  addressLng: undefined,
+		deliveryInstructions: "",
+	};
+}
 
 export interface ItemsRequestDetails {
 	itemDescription: string;
@@ -76,19 +78,21 @@ export interface OtherRequestDetails {
 	location: string;
 }
 
-export const emptyOtherDetails = (): OtherRequestDetails => ({
-	whatNeed: "",
-	whenText: "",
-	location: "",
-});
+export function emptyOtherDetails(): OtherRequestDetails {
+	return {
+		whatNeed: "",
+		whenText: "",
+		location: "",
+	};
+}
 
 export type PublicWalkLengthId = "10_15" | "20_30" | "45_60";
-export type PublicWalkTypeId =
-	| "slow_scenic"
-	| "conversational"
-	| "quiet_presence"
-	| "grounding"
-	| "not_sure_yet";
+export type PublicWalkTypeId
+	= | "slow_scenic"
+		| "conversational"
+		| "quiet_presence"
+		| "grounding"
+		| "not_sure_yet";
 
 export interface PublicWalkRequestDetails {
 	preferredTime: string;
@@ -97,22 +101,24 @@ export interface PublicWalkRequestDetails {
 	walkTypes: PublicWalkTypeId[];
 }
 
-export const emptyPublicWalkDetails = (): PublicWalkRequestDetails => ({
-	preferredTime: "",
-	walkLength: null,
-	location: "",
-	walkTypes: [],
-});
+export function emptyPublicWalkDetails(): PublicWalkRequestDetails {
+	return {
+		preferredTime: "",
+		walkLength: null,
+		location: "",
+		walkTypes: [],
+	};
+}
 
-export type MicrograntNeedId =
-	| "education_career"
-	| "food_groceries"
-	| "transportation"
-	| "medication_health"
-	| "phone_internet"
-	| "utilities_bills"
-	| "clothing_essentials"
-	| "something_else";
+export type MicrograntNeedId
+	= | "education_career"
+		| "food_groceries"
+		| "transportation"
+		| "medication_health"
+		| "phone_internet"
+		| "utilities_bills"
+		| "clothing_essentials"
+		| "something_else";
 export type MicrograntAmountId = "under_25" | "25_50" | "50_100" | "100_plus";
 
 export interface MicrograntRequestDetails {
@@ -131,21 +137,23 @@ export interface MicrograntRequestDetails {
 	otherTransferDetails: string;
 }
 
-export const emptyMicrograntDetails = (): MicrograntRequestDetails => ({
-	needType: null,
-	needOtherText: "",
-	amountRange: null,
-	amountOver100Text: "",
-	needByText: "",
-	optionalDetails: "",
-	methods: [],
-	otherMethodText: "",
-	etransferContact: "",
-	etransferPassword: "",
-	giftCardEmail: "",
-	giftCardType: "",
-	otherTransferDetails: "",
-});
+export function emptyMicrograntDetails(): MicrograntRequestDetails {
+	return {
+		needType: null,
+		needOtherText: "",
+		amountRange: null,
+		amountOver100Text: "",
+		needByText: "",
+		optionalDetails: "",
+		methods: [],
+		otherMethodText: "",
+		etransferContact: "",
+		etransferPassword: "",
+		giftCardEmail: "",
+		giftCardType: "",
+		otherTransferDetails: "",
+	};
+}
 
 export type CeremonyRoleId = "firekeeping" | "ceremony_support";
 
@@ -160,16 +168,18 @@ export interface CeremonyRequestDetails {
 	locationDirections: string;
 }
 
-export const emptyCeremonyDetails = (): CeremonyRequestDetails => ({
-	role: null,
-	whatNeed: "",
-	ceremonyType: "",
-	durationApprox: "",
-	helperNotes: "",
-	whenText: "",
-	locationAddress: "",
-	locationDirections: "",
-});
+export function emptyCeremonyDetails(): CeremonyRequestDetails {
+	return {
+		role: null,
+		whatNeed: "",
+		ceremonyType: "",
+		durationApprox: "",
+		helperNotes: "",
+		whenText: "",
+		locationAddress: "",
+		locationDirections: "",
+	};
+}
 
 export interface RequestDraft {
 	category: RequestCategoryId | null;
@@ -183,14 +193,16 @@ export interface RequestDraft {
 	urgency: RequestUrgencyId | null;
 }
 
-export const emptyDraft = (): RequestDraft => ({
-	category: null,
-	foodKind: null,
-	foodDetails: emptyFoodDetails(),
-	itemsDetails: emptyItemsDetails(),
-	otherDetails: emptyOtherDetails(),
-	publicWalkDetails: emptyPublicWalkDetails(),
-	micrograntDetails: emptyMicrograntDetails(),
-	ceremonyDetails: emptyCeremonyDetails(),
-	urgency: null,
-});
+export function emptyDraft(): RequestDraft {
+	return {
+		category: null,
+		foodKind: null,
+		foodDetails: emptyFoodDetails(),
+		itemsDetails: emptyItemsDetails(),
+		otherDetails: emptyOtherDetails(),
+		publicWalkDetails: emptyPublicWalkDetails(),
+		micrograntDetails: emptyMicrograntDetails(),
+		ceremonyDetails: emptyCeremonyDetails(),
+		urgency: null,
+	};
+}

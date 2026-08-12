@@ -269,3 +269,5 @@ dmypy.json
 
 .turbo/
 .tanstack/
+
+.kiro/

@@ -22,7 +22,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 feat: add user profile page
 fix: resolve OAuth redirect loop
-chore: update Django to 5.1
+chore: update dependencies
 docs: add API endpoint documentation
 ```
 
@@ -35,8 +35,7 @@ docs: add API endpoint documentation
 
 ## Important Notes
 
-- **Backend runs in Docker.** Do not install Python or Django on your host machine. See [GETTING_STARTED.md](GETTING_STARTED.md) for how `bun run dev` starts everything.
-- **Frontend code style is enforced by ESLint.** Tabs, double quotes, semicolons. Run `bun run lint:fix` to auto-format. See `apps/webapp/AGENTS.md` for full details.
+- Code style is enforced by ESLint — tabs, double quotes, semicolons. See [AGENTS.md](AGENTS.md) for full details.
 
 ## Code of Conduct
 

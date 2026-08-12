@@ -1,26 +1,50 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
-import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor, type HelpRequestStatus } from "@/lib/help-request-status";
+import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
+import { SegmentedTabs } from "../segmented-tabs";
+import { StatusFilterChips } from "../status-filter-chips";
+import { AdminRequestDetail } from "./admin-request-detail";
+
+type AdminTab = "requests" | "users";
+
+const TABS = [
+	{ key: "requests", label: "Requests" },
+	{ key: "users", label: "Users" },
+];
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
-	const requests = useQuery(api.helpRequests.listAllForAdmin, isAdmin ? {} : "skip");
+	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
+	const requests = useQuery(
+		api.helpRequests.listAllForAdmin,
+		isAdmin ? (statusFilter === null ? {} : { statusFilter }) : "skip",
+	);
 	const volunteers = useQuery(api.helpRequests.listVolunteersForAdmin, isAdmin ? {} : "skip");
 	const assignVolunteer = useMutation(api.helpRequests.assignVolunteer);
+	const [tab, setTab] = useState<AdminTab>("requests");
 	const [assigningId, setAssigningId] = useState<string | null>(null);
 	const [selectedByRequest, setSelectedByRequest] = useState<Record<string, string>>({});
+	const [detailId, setDetailId] = useState<Id<"helpRequests"> | null>(null);
+
+	// Derive the open request from the live query so it stays reactive and
+	// falls back to null once the row leaves the list (e.g. after delete).
+	const detailRequest = useMemo(
+		() => requests?.find(r => r._id === detailId) ?? null,
+		[requests, detailId],
+	);
 
 	const volunteerOptions = useMemo(
 		() => (volunteers ?? []).map(v => ({
-			subject: v.subject,
+			userId: v._id,
 			label: `${v.name ?? "Unnamed"}${v.email ? ` (${v.email})` : ""}`,
 		})),
 		[volunteers],
@@ -34,14 +58,17 @@ export function AdminDashboard() {
 	}
 
 	async function handleAssign(requestId: Id<"helpRequests">) {
-		const volunteerSubject = selectedByRequest[requestId];
-		if (!volunteerSubject) {
+		const volunteerUserId = selectedByRequest[requestId];
+		if (!volunteerUserId) {
 			window.alert("Choose a volunteer first.");
 			return;
 		}
 		setAssigningId(requestId);
 		try {
-			await assignVolunteer({ requestId, volunteerSubject });
+			await assignVolunteer({
+				requestId,
+				volunteerUserId: volunteerUserId as Id<"users">,
+			});
 		}
 		catch (e) {
 			console.error(e);
@@ -53,7 +80,8 @@ export function AdminDashboard() {
 	}
 
 	return (
-		<div className="flex flex-col gap-8">
+		<div className="flex flex-col gap-6">
+			<AdminRequestDetail request={detailRequest} onClose={() => setDetailId(null)} />
 			<div>
 				<Heading level={1} size={8}>Admin dashboard</Heading>
 				<Text size={2} color="gray" className="mt-1">
@@ -61,8 +89,50 @@ export function AdminDashboard() {
 				</Text>
 			</div>
 
+			<SegmentedTabs
+				label="Admin sections"
+				tabs={TABS}
+				activeKey={tab}
+				onSelect={key => setTab(key as AdminTab)}
+			/>
+
+			{tab === "requests" && (
+				<section className="flex flex-col gap-4">
+					{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
+					{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
+					{requests && requests.length > 0 && (
+						<ul className="flex flex-col gap-3">
+							{requests.map(r => (
+								<li key={r._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+									<div className="flex flex-wrap items-start justify-between gap-3">
+										<div className="min-w-0 flex-1">
+											<Text size={3} weight="medium">{r.title}</Text>
+											<Text size={2} color="gray" className="mt-1">
+												Owner:
+												{" "}
+												{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
+											</Text>
+										</div>
+										<div className="flex items-center gap-2">
+											<Badge
+												variant="soft"
+												size={1}
+												color={statusBadgeColor(r.status as HelpRequestStatus)}
+											>
+												{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
+											</Badge>
+											<Button
+												variant="soft"
+												color="gray"
+												size={1}
+												onPress={() => setDetailId(r._id)}
+											>
+												View / edit
+											</Button>
+										</div>
 			<section className="flex flex-col gap-4">
 				<Heading level={2} size={6}>All requests</Heading>
+				<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
 				{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
 				{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
 				{requests && requests.length > 0 && (
@@ -73,67 +143,65 @@ export function AdminDashboard() {
 									<div className="min-w-0 flex-1">
 										<Text size={3} weight="medium">{r.title}</Text>
 										<Text size={2} color="gray" className="mt-1">
-											Owner: {r.ownerSubject}
+											Owner:
+											{" "}
+											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
 										</Text>
 									</div>
-									<Badge
-										variant="soft"
-										size={1}
-										color={statusBadgeColor(r.status as HelpRequestStatus)}
-									>
-										{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
-									</Badge>
-								</div>
-								<div className="mt-3 flex flex-wrap gap-2">
-									<select
-										className="min-h-10 min-w-[260px] rounded-md border border-gray-6 bg-gray-1 px-3"
-										value={selectedByRequest[r._id] ?? ""}
-										onChange={e =>
-											setSelectedByRequest(prev => ({ ...prev, [r._id]: e.target.value }))}
-									>
-										<option value="">Select volunteer…</option>
-										{volunteerOptions
-											.filter(v => v.subject !== r.ownerSubject)
-											.map(v => (
-												<option key={v.subject} value={v.subject}>{v.label}</option>
-											))}
-									</select>
-									<Button
-										variant="solid"
-										color="sage"
-										isDisabled={assigningId === r._id || r.status !== "pending"}
-										onPress={() => handleAssign(r._id)}
-									>
-										{assigningId === r._id ? "Assigning…" : "Assign volunteer"}
-									</Button>
-								</div>
-								{r.assignedHelperSubject && (
-									<Text size={1} color="gray" className="mt-2">
-										Assigned helper: {r.assignedHelperSubject}
-									</Text>
-								)}
-							</li>
-						))}
-					</ul>
-				)}
-			</section>
+									<div className="mt-3 flex flex-wrap gap-2">
+										<select
+											className="min-h-10 min-w-[260px] rounded-md border border-gray-6 bg-gray-1 px-3"
+											value={selectedByRequest[r._id] ?? ""}
+											onChange={e =>
+												setSelectedByRequest(prev => ({ ...prev, [r._id]: e.target.value }))}
+										>
+											<option value="">Select volunteer…</option>
+											{volunteerOptions
+												.filter(v => v.userId !== r.ownerUserId)
+												.map(v => (
+													<option key={v.userId} value={v.userId}>{v.label}</option>
+												))}
+										</select>
+										<Button
+											variant="solid"
+											color="sage"
+											isDisabled={assigningId === r._id || r.status !== "pending"}
+											onPress={() => handleAssign(r._id)}
+										>
+											{assigningId === r._id ? "Assigning…" : "Assign volunteer"}
+										</Button>
+									</div>
+									{r.assignedHelperUserId && (
+										<Text size={1} color="gray" className="mt-2">
+											Assigned helper:
+											{" "}
+											{r.assignedHelper?.name ?? r.assignedHelper?.email ?? "Unknown helper"}
+										</Text>
+									)}
+								</li>
+							))}
+						</ul>
+					)}
+				</section>
+			)}
 
-			<section className="flex flex-col gap-4">
-				<Heading level={2} size={6}>Volunteer helpers</Heading>
-				{volunteers === undefined && <Text size={2} color="gray">Loading volunteers…</Text>}
-				{volunteers && volunteers.length === 0 && <Text size={2} color="gray">No volunteer profiles yet.</Text>}
-				{volunteers && volunteers.length > 0 && (
-					<ul className="grid gap-3 sm:grid-cols-2">
-						{volunteers.map(v => (
-							<li key={v._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
-								<Text size={3} weight="medium">{v.name ?? "Unnamed user"}</Text>
-								<Text size={2} color="gray">{v.email ?? "No email on file"}</Text>
-								<Text size={1} color="gray" className="mt-2 break-all">{v.subject}</Text>
-							</li>
-						))}
-					</ul>
-				)}
-			</section>
+			{tab === "users" && (
+				<section className="flex flex-col gap-4">
+					{volunteers === undefined && <Text size={2} color="gray">Loading volunteers…</Text>}
+					{volunteers && volunteers.length === 0 && <Text size={2} color="gray">No volunteer profiles yet.</Text>}
+					{volunteers && volunteers.length > 0 && (
+						<ul className="grid gap-3 sm:grid-cols-2">
+							{volunteers.map(v => (
+								<li key={v._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+									<Text size={3} weight="medium">{v.name ?? "Unnamed user"}</Text>
+									<Text size={2} color="gray">{v.email ?? "No email on file"}</Text>
+									<Text size={1} color="gray" className="mt-2 break-all">{v.tokenIdentifier}</Text>
+								</li>
+							))}
+						</ul>
+					)}
+				</section>
+			)}
 		</div>
 	);
 }

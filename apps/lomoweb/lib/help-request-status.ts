@@ -1,17 +1,15 @@
-export type HelpRequestStatus =
-	| "pending"
-	| "assigned"
-	| "awaiting_requester_acceptance"
-	| "rejected"
-	| "in_progress"
-	| "complete"
-	| "cancelled";
+export type HelpRequestStatus
+	= | "pending"
+		| "assigned"
+		| "awaiting_requester_acceptance"
+		| "in_progress"
+		| "complete"
+		| "cancelled";
 
 export const HELP_REQUEST_STATUS_LABEL: Record<HelpRequestStatus, string> = {
 	pending: "Pending",
 	assigned: "Assigned",
 	awaiting_requester_acceptance: "Awaiting your confirmation",
-	rejected: "Rejected",
 	in_progress: "In progress",
 	complete: "Complete",
 	cancelled: "Cancelled",
@@ -30,7 +28,6 @@ export const HELP_REQUEST_FILTER_CHIPS: {
 	{ value: "awaiting_requester_acceptance", label: "Awaiting acceptance" },
 	{ value: "in_progress", label: "In progress" },
 	{ value: "complete", label: "Complete" },
-	{ value: "rejected", label: "Rejected" },
 	{ value: "cancelled", label: "Cancelled" },
 ];
 
@@ -43,8 +40,6 @@ export function statusBadgeColor(
 		case "assigned":
 		case "awaiting_requester_acceptance":
 			return "terracotta";
-		case "rejected":
-			return "red";
 		case "in_progress":
 			return "terracotta";
 		case "complete":

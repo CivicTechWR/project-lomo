@@ -1,18 +1,18 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Preloaded } from "convex/react";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
-import { useMutation, useQuery } from "convex/react";
+import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
 import { Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
-import { Input, TextField } from "@repo/ui/text-field";
 import { Text } from "@repo/ui/text";
+import { Input, TextField } from "@repo/ui/text-field";
+import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import {
 	HelperPreferencesFields,
@@ -51,6 +51,14 @@ export function UserProfile({
 			setSafetyAcknowledged(!!profileRow.safetyAcknowledgedAt);
 		}
 	}, [profileRow]);
+
+	const syncedProfileRef = useRef(profileRow);
+	if (profileRow && profileRow !== syncedProfileRef.current) {
+		syncedProfileRef.current = profileRow;
+		setFirstName(profileRow.firstName ?? "");
+		setPronouns(profileRow.pronouns ?? "");
+		setPhone(profileRow.phone ?? "");
+	}
 
 	if (!user) {
 		return null;
@@ -145,115 +153,60 @@ export function UserProfile({
 						leave it blank, matched volunteers will email you through a masked
 						address so your real email stays private.
 					</Text>
-					{profileRow === undefined ? (
-						<Text size={2} color="gray">
-							Loading…
-						</Text>
-					) : (
-						<div className="flex flex-col gap-4">
-							<TextField
-								name="firstName"
-								value={firstName}
-								onChange={setFirstName}
-								className="w-full"
-							>
-								<Label>First name (shown to requesters)</Label>
-								<Group>
-									<Input placeholder="e.g. Sam" />
-								</Group>
-							</TextField>
-							<TextField
-								name="pronouns"
-								value={pronouns}
-								onChange={setPronouns}
-								className="w-full"
-							>
-								<Label>Pronouns (optional)</Label>
-								<Group>
-									<Input placeholder="e.g. they/them" />
-								</Group>
-							</TextField>
-							<TextField
-								name="phone"
-								type="tel"
-								autoComplete="tel"
-								value={phone}
-								onChange={setPhone}
-								className="w-full"
-							>
-								<Label>Mobile number (optional)</Label>
-								<Group>
-									<Input placeholder="e.g. +1 519 555 0100" />
-								</Group>
-							</TextField>
-							<Button
-								variant="solid"
-								color="sage"
-								className="w-full"
-								isDisabled={savingProfile}
-								onPress={handleSaveVolunteerFields}
-							>
-								{savingProfile ? "Saving…" : "Save profile"}
-							</Button>
-						</div>
-					)}
-				</div>
-
-				<div className="border-t border-gray-5 pt-5">
-					<Heading level={3} size={4} className="mb-3">
-						Helper preferences
-					</Heading>
-					{profileRow === undefined ? (
-						<Text size={2} color="gray">Loading…</Text>
-					) : (
-						<div className="flex flex-col gap-4">
-							<HelperPreferencesFields
-								values={preferenceValues}
-								onChange={setPreferenceValues}
-							/>
-							<Button
-								variant="solid"
-								color="sage"
-								className="w-full"
-								isDisabled={savingPreferences}
-								onPress={handleSavePreferences}
-							>
-								{savingPreferences ? "Saving…" : "Save preferences"}
-							</Button>
-						</div>
-					)}
-				</div>
-
-				<div className="border-t border-gray-5 pt-5">
-					<Heading level={3} size={4} className="mb-3">
-						Safety &amp; Boundaries
-					</Heading>
-					{profileRow === undefined ? (
-						<Text size={2} color="gray">Loading…</Text>
-					) : (
-						<div className="flex flex-col gap-4">
-							{profileRow.safetyAcknowledgedAt ? (
-								<Badge variant="soft" size={1} color="sage">
-									Acknowledged
-								</Badge>
-							) : null}
-							<SafetyAcknowledgment
-								acknowledged={safetyAcknowledged}
-								onAcknowledgedChange={setSafetyAcknowledged}
-							/>
-							<Button
-								variant="outline"
-								color="gray"
-								className="w-full"
-								isDisabled={!safetyAcknowledged || savingSafety || !!profileRow.safetyAcknowledgedAt}
-								onPress={handleSaveSafety}
-							>
-								{profileRow.safetyAcknowledgedAt
-									? "Safety notices on file"
-									: savingSafety ? "Saving…" : "Confirm acknowledgment"}
-							</Button>
-						</div>
-					)}
+					{profileRow === undefined
+						? (
+								<Text size={2} color="gray">
+									Loading…
+								</Text>
+							)
+						: (
+								<div className="flex flex-col gap-4">
+									<TextField
+										name="firstName"
+										value={firstName}
+										onChange={setFirstName}
+										className="w-full"
+									>
+										<Label>First name (shown to requesters)</Label>
+										<Group>
+											<Input placeholder="e.g. Sam" />
+										</Group>
+									</TextField>
+									<TextField
+										name="pronouns"
+										value={pronouns}
+										onChange={setPronouns}
+										className="w-full"
+									>
+										<Label>Pronouns (optional)</Label>
+										<Group>
+											<Input placeholder="e.g. they/them" />
+										</Group>
+									</TextField>
+									<TextField
+										name="phone"
+										type="tel"
+										autoComplete="tel"
+										value={phone}
+										onChange={setPhone}
+										className="w-full"
+									>
+										<Label>Mobile number (optional)</Label>
+										<Group>
+											<Input placeholder="e.g. +1 519 555 0100" />
+										</Group>
+									</TextField>
+									<Button
+										variant="solid"
+										color="sage"
+										className="w-full"
+										isDisabled={saving}
+										onPress={handleSaveVolunteerFields}
+									>
+										{saving ? "Saving…" : "Save profile"}
+									</Button>
+								</div>
+							)}
 				</div>
 
 				<Button

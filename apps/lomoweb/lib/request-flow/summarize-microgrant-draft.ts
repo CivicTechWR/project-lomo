@@ -22,7 +22,7 @@ const NEED_LABEL: Record<
 };
 
 const AMOUNT_LABEL: Record<"under_25" | "25_50" | "50_100" | "100_plus", string> = {
-	under_25: "Under $25",
+	"under_25": "Under $25",
 	"25_50": "$25-$50",
 	"50_100": "$50-$100",
 	"100_plus": "$100+",

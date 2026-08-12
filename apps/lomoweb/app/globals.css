@@ -1,6 +1,12 @@
 @import "@repo/ui/theme.css";
 @source "../src";
 
+/* ── Brand surface tokens (homepage warm background & accents) ── */
+@theme inline {
+	--color-surface-warm: #f5efe8;
+	--color-accent-underline: #28729d;
+}
+
 /* ── Auth page animations ── */
 
 @keyframes auth-fade-up {
@@ -57,17 +63,20 @@
 	animation-delay: 0.45s;
 }
 
-/* Display font utility */
+/* Display font utilities */
 .font-display {
 	font-family: var(--font-display), Georgia, serif;
+}
+
+.font-logo {
+	font-family: var(--font-logo), cursive, sans-serif;
 }
 
 /* Desktop app chrome: fixed width, height grows with content (see app/app/layout.tsx). */
 @media (min-width: 1024px) {
 	.lomo-desktop-app-frame {
-		--lomo-app-width: min(32rem, calc(100vw - 2rem));
+		--lomo-app-width: min(100rem, calc(100vw - 2rem));
 		width: var(--lomo-app-width);
 		max-width: var(--lomo-app-width);
 	}
 }
-
