@@ -30,7 +30,10 @@ const SERVER_ERROR_MAP: Record<
 	EMAIL_NOT_VERIFIED: { message: "Please verify your email before signing in" },
 	INVALID_ORIGIN: {
 		message:
-			"Sign-in was blocked because this page origin is not allowed. Use http://localhost:3000 (not 127.0.0.1 or another port), or ask your team to set Convex SITE_URL for local dev.",
+			"Sign-in was blocked because this page’s origin is not allowed. "
+			+ "On production, set Convex SITE_URL (and the host’s NEXT_PUBLIC_SITE_URL) "
+			+ "to your live app URL (e.g. https://your-app.example). "
+			+ "For local dev, open http://localhost:3000 and keep SITE_URL matching that origin.",
 	},
 };
 

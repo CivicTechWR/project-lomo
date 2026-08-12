@@ -38,10 +38,12 @@ export function OfferRequestDetailView() {
 	const acceptRequest = useMutation(api.helpRequests.accept);
 	const declineAssigned = useMutation(api.helpRequests.declineAssigned);
 	const volunteerOfferHelp = useMutation(api.helpRequests.volunteerOfferHelp);
+	const withdrawOffer = useMutation(api.helpRequests.withdrawOffer);
 	const markComplete = useMutation(api.helpRequests.markComplete);
 	const [accepting, setAccepting] = useState(false);
 	const [declining, setDeclining] = useState(false);
 	const [offering, setOffering] = useState(false);
+	const [withdrawing, setWithdrawing] = useState(false);
 	const [completing, setCompleting] = useState(false);
 
 	function goHomeOffering() {
@@ -104,6 +106,29 @@ export function OfferRequestDetailView() {
 		}
 		finally {
 			setOffering(false);
+		}
+	}
+
+	async function handleWithdrawOffer() {
+		if (!requestId || !doc) {
+			return;
+		}
+		if (!window.confirm("Withdraw your offer? The request will reopen for others.")) {
+			return;
+		}
+		setWithdrawing(true);
+		try {
+			await withdrawOffer({ requestId: requestId as Id<"helpRequests"> });
+			goHomeOffering();
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not withdraw your offer.",
+			);
+		}
+		finally {
+			setWithdrawing(false);
 		}
 	}
 
@@ -181,7 +206,9 @@ export function OfferRequestDetailView() {
 					size={2}
 					color={statusBadgeColor(st)}
 				>
-					{HELP_REQUEST_STATUS_LABEL[st]}
+					{st === "awaiting_requester_acceptance"
+						? "Awaiting confirmation"
+						: HELP_REQUEST_STATUS_LABEL[st]}
 				</Badge>
 			</div>
 
@@ -233,10 +260,21 @@ export function OfferRequestDetailView() {
 			)}
 
 			{st === "awaiting_requester_acceptance" && (
-				<CardNotice>
-					Waiting for the requester to confirm the match. Address and location
-					stay hidden until then.
-				</CardNotice>
+				<div className="flex flex-col gap-3">
+					<CardNotice>
+						Waiting for the requester to confirm the match. Address and location
+						stay hidden until then.
+					</CardNotice>
+					<Button
+						variant="outline"
+						color="red"
+						className="w-full"
+						isDisabled={withdrawing}
+						onPress={handleWithdrawOffer}
+					>
+						{withdrawing ? "Withdrawing…" : "Withdraw offer"}
+					</Button>
+				</div>
 			)}
 
 			{st === "in_progress" && (

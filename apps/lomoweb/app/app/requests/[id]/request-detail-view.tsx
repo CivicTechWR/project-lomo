@@ -213,7 +213,9 @@ export function RequestDetailView() {
 					size={2}
 					color={statusBadgeColor(st)}
 				>
-					{HELP_REQUEST_STATUS_LABEL[st]}
+					{st === "awaiting_requester_acceptance"
+						? "Awaiting confirmation"
+						: HELP_REQUEST_STATUS_LABEL[st]}
 				</Badge>
 			</div>
 

@@ -31,6 +31,7 @@ export function UserProfile({
 	const updatePublicProfile = useMutation(api.users.updatePublicProfile);
 	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
 	const acknowledgeSafety = useMutation(api.users.acknowledgeSafety);
+	const deleteMyAccount = useMutation(api.users.deleteMyAccount);
 	const [firstName, setFirstName] = useState("");
 	const [pronouns, setPronouns] = useState("");
 	const [phone, setPhone] = useState("");
@@ -41,6 +42,10 @@ export function UserProfile({
 	const [savingProfile, setSavingProfile] = useState(false);
 	const [savingPreferences, setSavingPreferences] = useState(false);
 	const [savingSafety, setSavingSafety] = useState(false);
+	const [confirmingDelete, setConfirmingDelete] = useState(false);
+	const [deletePassword, setDeletePassword] = useState("");
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+	const [deletingAccount, setDeletingAccount] = useState(false);
 
 	const syncedProfileRef = useRef(profileRow);
 	if (profileRow && profileRow !== syncedProfileRef.current) {
@@ -56,9 +61,30 @@ export function UserProfile({
 		return null;
 	}
 
-	async function handleSignOut() {
-		await authClient.signOut();
-		router.push("/signin");
+	async function handleDeleteAccount() {
+		if (deletePassword.trim().length === 0) {
+			setDeleteError("Enter your password to confirm.");
+			return;
+		}
+		setDeletingAccount(true);
+		setDeleteError(null);
+		try {
+			await deleteMyAccount({ password: deletePassword });
+			try {
+				await authClient.signOut();
+			}
+			catch {
+				// Session may already be cleared by account deletion.
+			}
+			router.push("/");
+		}
+		catch (e) {
+			console.error(e);
+			setDeleteError(
+				e instanceof Error ? e.message : "Could not delete your account.",
+			);
+			setDeletingAccount(false);
+		}
 	}
 
 	async function handleSaveVolunteerFields() {
@@ -132,8 +158,8 @@ export function UserProfile({
 				</div>
 
 				<div className="flex flex-col gap-3">
-				<Text size={2} color="gray">
-					{user.email}
+					<Text size={2} color="gray">
+						{user.email}
 					</Text>
 				</div>
 
@@ -201,6 +227,149 @@ export function UserProfile({
 							)}
 				</div>
 
+				<div className="border-t border-gray-5 pt-5">
+					<Heading level={3} size={4} className="mb-3">
+						Helper preferences
+					</Heading>
+					{profileRow == null
+						? (
+								<Text size={2} color="gray">
+									Loading…
+								</Text>
+							)
+						: (
+								<div className="flex flex-col gap-4">
+									<HelperPreferencesFields
+										values={preferenceValues}
+										onChange={setPreferenceValues}
+									/>
+									<Button
+										variant="solid"
+										color="sage"
+										className="w-full"
+										isDisabled={savingPreferences}
+										onPress={handleSavePreferences}
+									>
+										{savingPreferences ? "Saving…" : "Save preferences"}
+									</Button>
+								</div>
+							)}
+				</div>
+
+				<div className="border-t border-gray-5 pt-5">
+					<Heading level={3} size={4} className="mb-3">
+						Safety &amp; Boundaries
+					</Heading>
+					{profileRow == null
+						? (
+								<Text size={2} color="gray">
+									Loading…
+								</Text>
+							)
+						: (
+								<div className="flex flex-col gap-4">
+									{profileRow.safetyAcknowledgedAt
+										? (
+												<Badge variant="soft" size={1} color="sage">
+													Acknowledged
+												</Badge>
+											)
+										: null}
+									<SafetyAcknowledgment
+										acknowledged={safetyAcknowledged}
+										onAcknowledgedChange={setSafetyAcknowledged}
+									/>
+									<Button
+										variant="outline"
+										color="gray"
+										className="w-full"
+										isDisabled={
+											!safetyAcknowledged
+											|| savingSafety
+											|| !!profileRow.safetyAcknowledgedAt
+										}
+										onPress={handleSaveSafety}
+									>
+										{profileRow.safetyAcknowledgedAt
+											? "Safety notices on file"
+											: savingSafety
+												? "Saving…"
+												: "Confirm acknowledgment"}
+									</Button>
+								</div>
+							)}
+				</div>
+
+				<div className="border-t border-gray-5 pt-5">
+					<Heading level={3} size={4} className="mb-2">
+						Delete account
+					</Heading>
+					<Text size={2} color="gray" className="mb-4">
+						Permanently delete your account, profile, requests you created,
+						messages, and notifications. This cannot be undone.
+					</Text>
+					{confirmingDelete
+						? (
+								<div className="flex flex-col gap-3">
+									<TextField
+										name="deletePassword"
+										type="password"
+										autoComplete="current-password"
+										value={deletePassword}
+										onChange={setDeletePassword}
+										isInvalid={!!deleteError}
+										className="w-full"
+									>
+										<Label>Confirm with your password</Label>
+										<Group>
+											<Input placeholder="Your password" />
+										</Group>
+									</TextField>
+									{deleteError
+										? (
+												<div className="rounded-[var(--radius-2)] border border-red-6 bg-red-2 px-4 py-3">
+													<Text size={2} color="red">
+														{deleteError}
+													</Text>
+												</div>
+											)
+										: null}
+									<div className="flex flex-wrap gap-2">
+										<Button
+											variant="solid"
+											color="red"
+											isDisabled={deletingAccount}
+											onPress={handleDeleteAccount}
+										>
+											{deletingAccount ? "Deleting…" : "Delete permanently"}
+										</Button>
+										<Button
+											variant="soft"
+											color="gray"
+											isDisabled={deletingAccount}
+											onPress={() => {
+												setConfirmingDelete(false);
+												setDeletePassword("");
+												setDeleteError(null);
+											}}
+										>
+											Cancel
+										</Button>
+									</div>
+								</div>
+							)
+						: (
+								<Button
+									variant="soft"
+									color="red"
+									className="w-full"
+									onPress={() => setConfirmingDelete(true)}
+								>
+									Delete account
+								</Button>
+							)}
+				</div>
+
 				<Button
 					variant="outline"
 					color="gray"
@@ -211,16 +380,5 @@ export function UserProfile({
 				</Button>
 			</div>
 		</Card>
-	);
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-	return (
-		<div className="flex items-center justify-between">
-			<Text size={2} color="gray">
-				{label}
-			</Text>
-			<Text size={2}>{value}</Text>
-		</div>
 	);
 }

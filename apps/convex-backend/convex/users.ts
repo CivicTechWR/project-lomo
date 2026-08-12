@@ -1,7 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { normalizeHelpPreferences } from "./lib/helperPreferences";
+import { authComponent, createAuth } from "./auth";
 import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
+import { normalizeHelpPreferences } from "./lib/helperPreferences";
+import { purgeUserAppData } from "./lib/purgeUserAppData";
+
+const INVALID_PASSWORD_RE = /invalid.?password/i;
+const SESSION_EXPIRED_RE = /session.?expired|SESSION_EXPIRED/i;
 
 interface Identity {
 	subject: string;
@@ -167,5 +172,45 @@ export const completeOnboarding = mutation({
 		await ctx.db.patch(row._id, {
 			onboardingCompletedAt: Date.now(),
 		});
+	},
+});
+
+/**
+ * Permanently delete the signed-in account: verifies password, removes the
+ * Better Auth user, then purges app data (profile, owned requests, messages,
+ * notifications, helper links).
+ */
+export const deleteMyAccount = mutation({
+	args: {
+		password: v.string(),
+	},
+	handler: async (ctx, { password }) => {
+		if (password.trim().length === 0) {
+			throw new Error("Password is required");
+		}
+		const identity = await requireIdentity(ctx);
+		const subject = identity.subject;
+		const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+		try {
+			await auth.api.deleteUser({
+				body: { password },
+				headers,
+			});
+		}
+		catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+			if (INVALID_PASSWORD_RE.test(message)) {
+				throw new Error("Incorrect password.");
+			}
+			if (SESSION_EXPIRED_RE.test(message)) {
+				throw new Error(
+					"Your session is too old to delete your account. Sign out, sign back in, and try again.",
+				);
+			}
+			throw new Error(
+				message.length > 0 ? message : "Could not delete your account.",
+			);
+		}
+		await purgeUserAppData(ctx, subject);
 	},
 });

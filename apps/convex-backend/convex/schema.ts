@@ -26,7 +26,9 @@ export const notificationType = v.union(
 	v.literal("requester_accept_match_prompt"),
 	v.literal("requester_declined_match"),
 	v.literal("volunteer_offered_help"),
+	v.literal("volunteer_withdrew_offer"),
 	v.literal("help_request_completed"),
+	v.literal("request_cancelled"),
 	v.literal("request_new_message"),
 );
 

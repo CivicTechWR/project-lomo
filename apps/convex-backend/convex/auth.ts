@@ -20,16 +20,27 @@ const LOCAL_DEV_ORIGINS = [
 
 export function createAuth(ctx: GenericCtx<DataModel>) {
 	const { SITE_URL } = getSiteEnv();
+	const siteOrigin = SITE_URL.replace(/\/$/, "");
 	const extraOrigins
 		= process.env.TRUSTED_ORIGINS?.split(",")
-			.map(origin => origin.trim())
+			.map(origin => origin.trim().replace(/\/$/, ""))
 			.filter(Boolean) ?? [];
 
 	return betterAuth({
-		baseURL: SITE_URL,
-		// Dashboard SITE_URL may point at preview/prod while you develop on localhost.
-		trustedOrigins: [...LOCAL_DEV_ORIGINS, ...extraOrigins],
+		baseURL: siteOrigin,
+		// Include SITE_URL so production/preview origins work when set as SITE_URL.
+		// LOCAL_DEV_ORIGINS keep localhost usable even when SITE_URL points at a deployed app.
+		trustedOrigins: [
+			siteOrigin,
+			...LOCAL_DEV_ORIGINS,
+			...extraOrigins,
+		],
 		database: authComponent.adapter(ctx),
+		user: {
+			deleteUser: {
+				enabled: true,
+			},
+		},
 		emailAndPassword: {
 			enabled: true,
 			requireEmailVerification: false,

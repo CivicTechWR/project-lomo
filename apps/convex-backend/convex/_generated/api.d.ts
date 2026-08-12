@@ -16,6 +16,8 @@ import type * as lib_geo from "../lib/geo.js";
 import type * as lib_helperPreferences from "../lib/helperPreferences.js";
 import type * as lib_messageEmail from "../lib/messageEmail.js";
 import type * as lib_notificationHelpers from "../lib/notificationHelpers.js";
+import type * as lib_purgeRequest from "../lib/purgeRequest.js";
+import type * as lib_purgeUserAppData from "../lib/purgeUserAppData.js";
 import type * as lib_requestLocation from "../lib/requestLocation.js";
 import type * as lib_requestMetadata from "../lib/requestMetadata.js";
 import type * as lib_resendEmail from "../lib/resendEmail.js";
@@ -46,6 +48,8 @@ declare const fullApi: ApiFromModules<{
   "lib/helperPreferences": typeof lib_helperPreferences;
   "lib/messageEmail": typeof lib_messageEmail;
   "lib/notificationHelpers": typeof lib_notificationHelpers;
+  "lib/purgeRequest": typeof lib_purgeRequest;
+  "lib/purgeUserAppData": typeof lib_purgeUserAppData;
   "lib/requestLocation": typeof lib_requestLocation;
   "lib/requestMetadata": typeof lib_requestMetadata;
   "lib/resendEmail": typeof lib_resendEmail;

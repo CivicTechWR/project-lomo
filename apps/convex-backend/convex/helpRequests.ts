@@ -5,6 +5,7 @@ import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import { haversineDistanceKm } from "./lib/geo";
 import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
+import { purgeRequest } from "./lib/purgeRequest";
 import { extractGeocodableAddress, extractPayloadCoordinates } from "./lib/requestLocation";
 import { extractIsUrgent, extractNeedsDelivery } from "./lib/requestMetadata";
 import {
@@ -43,7 +44,9 @@ type NotificationType
 		| "requester_accept_match_prompt"
 		| "requester_declined_match"
 		| "volunteer_offered_help"
+		| "volunteer_withdrew_offer"
 		| "help_request_completed"
+		| "request_cancelled"
 		| "request_new_message";
 
 type NotificationCtaAction
@@ -77,40 +80,6 @@ async function createNotification(ctx: MutationCtx, args: {
 		ctaLabel: args.ctaLabel,
 		ctaAction: args.ctaAction,
 	});
-}
-
-/**
- * Hard-delete a request and everything that references it. Isolated behind
- * this helper so the delete strategy can change without touching callers.
- *
- * To switch to a soft delete later: add `deletedAt: v.optional(v.number())`
- * to helpRequests in schema.ts, filter `deletedAt` rows out of the user/
- * volunteer queries (listMine, listPendingFromOthers, getAsHelper,
- * listAllForAdmin, getOfferHelperPreview), add a restore mutation, and change
- * this helper to patch `deletedAt` instead of deleting. adminDeleteRequest's
- * public signature stays the same across that change.
- */
-async function purgeRequest(ctx: MutationCtx, requestId: Id<"helpRequests">) {
-	// Messages are indexed by request, so this is a targeted delete.
-	const messages = await ctx.db
-		.query("requestMessages")
-		.withIndex("by_request", q => q.eq("requestId", requestId))
-		.collect();
-	for (const message of messages) {
-		await ctx.db.delete("requestMessages", message._id);
-	}
-
-	// notifications has no requestId index, so we scan and filter. Cost is
-	// O(total notifications); acceptable at current scale. If notification
-	// volume grows, add a by_request_id index and query it instead.
-	const notifications = await ctx.db.query("notifications").collect();
-	for (const notification of notifications) {
-		if (notification.requestId === requestId) {
-			await ctx.db.delete("notifications", notification._id);
-		}
-	}
-
-	await ctx.db.delete("helpRequests", requestId);
 }
 
 function volunteerLabelForNotification(helper: {
@@ -753,6 +722,43 @@ export const requesterDeclineMatch = mutation({
 	},
 });
 
+/** Helper withdraws their offer while waiting for requester confirmation. */
+export const withdrawOffer = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		const { user } = await getOrCreateCurrentUser(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc || doc.helperUserId !== user._id) {
+			throw new Error("Not found");
+		}
+		if (doc.status !== "awaiting_requester_acceptance") {
+			throw new Error("There is no pending offer to withdraw.");
+		}
+		await ctx.db.patch("helpRequests", requestId, {
+			status: "pending",
+			helperUserId: undefined,
+			assignedHelperUserId: undefined,
+		});
+		await markNotificationsReadForRequest(
+			ctx,
+			requestId,
+			n =>
+				(n.type === "requester_accept_match_prompt"
+					|| n.type === "volunteer_offered_help")
+				&& n.recipientUserId === doc.ownerUserId,
+		);
+		await createNotification(ctx, {
+			recipientUserId: doc.ownerUserId,
+			type: "volunteer_withdrew_offer",
+			title: "A volunteer withdrew their offer",
+			body: `"${doc.title}" is open for help again.`,
+			requestId,
+			ctaLabel: "Open request",
+			ctaAction: "open_request",
+		});
+	},
+});
+
 export const isAdmin = query({
 	args: {},
 	handler: async (ctx) => {
@@ -967,6 +973,9 @@ export const cancel = mutation({
 			|| doc.status === "pending"
 			|| doc.status === "in_progress"
 		) {
+			const previousStatus = doc.status;
+			const helperUserId = doc.helperUserId;
+			const assignedHelperUserId = doc.assignedHelperUserId;
 			await ctx.db.patch("helpRequests", requestId, { status: "cancelled" });
 			await markNotificationsReadForRequest(
 				ctx,
@@ -976,6 +985,27 @@ export const cancel = mutation({
 					|| n.type === "requester_accept_match_prompt"
 					|| n.type === "volunteer_offered_help",
 			);
+			const notifyHelperIds = new Set<Id<"users">>();
+			if (
+				previousStatus === "awaiting_requester_acceptance"
+				|| previousStatus === "in_progress"
+			) {
+				if (helperUserId) {
+					notifyHelperIds.add(helperUserId);
+				}
+			}
+			if (previousStatus === "assigned" && assignedHelperUserId) {
+				notifyHelperIds.add(assignedHelperUserId);
+			}
+			for (const recipientUserId of notifyHelperIds) {
+				await createNotification(ctx, {
+					recipientUserId,
+					type: "request_cancelled",
+					title: "Request cancelled",
+					body: `The requester cancelled "${doc.title}".`,
+					requestId,
+				});
+			}
 			return;
 		}
 		if (doc.status === "complete" || doc.status === "cancelled") {
