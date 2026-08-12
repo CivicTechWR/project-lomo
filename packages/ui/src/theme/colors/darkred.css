@@ -1,0 +1,73 @@
+:root,
+.light,
+.light-theme {
+	--darkred-1: #fefcfc;
+	--darkred-2: #fdf8f8;
+	--darkred-3: #faeceb;
+	--darkred-4: #fbe0de;
+	--darkred-5: #f6d3d1;
+	--darkred-6: #eec5c2;
+	--darkred-7: #e3b3af;
+	--darkred-8: #d79c97;
+	--darkred-9: #9f3a3a;
+	--darkred-10: #8e2a2c;
+	--darkred-11: #b34d4b;
+	--darkred-12: #592625;
+
+	--darkred-a1: #aa000003;
+	--darkred-a2: #b7000007;
+	--darkred-a3: #c00d0014;
+	--darkred-a4: #e1100021;
+	--darkred-a5: #ce0c002e;
+	--darkred-a6: #b80d003d;
+	--darkred-a7: #a60d0050;
+	--darkred-a8: #9d0d0068;
+	--darkred-a9: #830000c5;
+	--darkred-a10: #780002d5;
+	--darkred-a11: #940300b4;
+	--darkred-a12: #3d0100da;
+
+	--darkred-contrast: #fff;
+	--darkred-surface: #fdf6f6cc;
+	--darkred-indicator: #9f3a3a;
+	--darkred-track: #9f3a3a;
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+	@media (color-gamut: p3) {
+		:root,
+		.light,
+		.light-theme {
+			--darkred-1: oklch(99.4% 0.0021 23.47);
+			--darkred-2: oklch(98.3% 0.0057 23.47);
+			--darkred-3: oklch(95.5% 0.0148 23.47);
+			--darkred-4: oklch(92.8% 0.03 23.47);
+			--darkred-5: oklch(89.6% 0.0391 23.47);
+			--darkred-6: oklch(85.8% 0.0471 23.47);
+			--darkred-7: oklch(80.9% 0.0567 23.47);
+			--darkred-8: oklch(74.7% 0.0719 23.47);
+			--darkred-9: oklch(49.1% 0.1348 23.47);
+			--darkred-10: oklch(44% 0.1348 23.47);
+			--darkred-11: oklch(55.2% 0.1348 23.47);
+			--darkred-12: oklch(34% 0.0746 23.47);
+
+			--darkred-a1: color(display-p3 0.6745 0.0235 0.0235 / 0.012);
+			--darkred-a2: color(display-p3 0.5804 0.0235 0.0235 / 0.028);
+			--darkred-a3: color(display-p3 0.6549 0.0588 0.0078 / 0.079);
+			--darkred-a4: color(display-p3 0.7216 0.0667 0.0078 / 0.126);
+			--darkred-a5: color(display-p3 0.6706 0.051 0.0039 / 0.177);
+			--darkred-a6: color(display-p3 0.6039 0.0706 0.0039 / 0.236);
+			--darkred-a7: color(display-p3 0.5451 0.0667 0.0039 / 0.31);
+			--darkred-a8: color(display-p3 0.5216 0.051 0 / 0.4);
+			--darkred-a9: color(display-p3 0.4392 0.0157 0 / 0.757);
+			--darkred-a10: color(display-p3 0.4 0.0118 0 / 0.812);
+			--darkred-a11: color(display-p3 0.502 0.0275 0 / 0.695);
+			--darkred-a12: color(display-p3 0.2039 0.0078 0 / 0.848);
+
+			--darkred-contrast: #fff;
+			--darkred-surface: color(display-p3 0.9843 0.9647 0.9647 / 0.8);
+			--darkred-indicator: oklch(49.1% 0.1348 23.47);
+			--darkred-track: oklch(49.1% 0.1348 23.47);
+		}
+	}
+}

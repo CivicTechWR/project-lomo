@@ -1,1 +1,8 @@
-export type Colors = "terracotta" | "sage" | "yellow" | "red" | "amber" | "gray";
+export type Colors
+	= | "terracotta"
+		| "sage"
+		| "yellow"
+		| "red"
+		| "amber"
+		| "gray"
+		| "darkred";

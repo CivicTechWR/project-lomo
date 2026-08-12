@@ -112,6 +112,10 @@ export const fieldFocusRings: ColorMap = {
 		"data-focus-within:ring-2",
 		"data-focus-within:ring-amber-8",
 	),
+	darkred: tw(
+		"data-focus-within:ring-2",
+		"data-focus-within:ring-darkred-8",
+	),
 };
 
 /* ── Field soft colors ──────────────────────────────────────────────────
@@ -144,5 +148,9 @@ export const fieldSoftColors: ColorMap = {
 	amber: tw(
 		"bg-amber-3 text-gray-12",
 		"data-hovered:bg-amber-4",
+	),
+	darkred: tw(
+		"bg-darkred-3 text-gray-12",
+		"data-hovered:bg-darkred-4",
 	),
 };

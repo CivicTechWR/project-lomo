@@ -11,7 +11,7 @@ import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useMutation } from "convex/react";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import {
 	HELP_REQUEST_CATEGORY_IDS,
 	helpRequestCategoryLabel,
@@ -39,13 +39,15 @@ export function AdminRequestDetail({
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
 
 	// Reset the form whenever a different request is opened.
-	useEffect(() => {
+	const syncedRequestRef = useRef(request);
+	if (request !== syncedRequestRef.current) {
+		syncedRequestRef.current = request;
 		setTitle(request?.title ?? "");
 		setSummary(request?.summary ?? "");
 		setDetails(request?.details ?? "");
 		setCategory(request?.category ?? "");
 		setConfirmingDelete(false);
-	}, [request]);
+	}
 
 	if (!request) {
 		return null;
