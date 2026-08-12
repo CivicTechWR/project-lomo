@@ -17,14 +17,14 @@ export const groupVariants = tv({
 	variants: {
 		variant: {
 			surface: tw(
-				"bg-gray-2 text-gray-12",
+				"bg-gray-1 text-gray-12",
 				"shadow-[inset_0_0_0_1px_var(--color-gray-6)]",
 				"data-hovered:shadow-[inset_0_0_0_1px_var(--color-gray-7)]",
 				"data-invalid:shadow-[inset_0_0_0_1px_var(--color-red-7)]",
 				"data-invalid:data-hovered:shadow-[inset_0_0_0_1px_var(--color-red-8)]",
 			),
 			classic: tw(
-				"bg-gray-2 text-gray-12",
+				"bg-gray-1 text-gray-12",
 				"shadow-sm",
 				"data-invalid:shadow-[inset_0_0_0_1px_var(--color-red-7)]",
 				"data-invalid:data-hovered:shadow-[inset_0_0_0_1px_var(--color-red-8)]",
@@ -39,6 +39,7 @@ export const groupVariants = tv({
 			gray: fieldFocusRings.gray,
 			red: fieldFocusRings.red,
 			amber: fieldFocusRings.amber,
+			darkred: fieldFocusRings.darkred,
 		},
 	},
 	compoundVariants: [
@@ -48,10 +49,11 @@ export const groupVariants = tv({
 		{ variant: "soft", color: "gray", class: fieldSoftColors.gray },
 		{ variant: "soft", color: "red", class: fieldSoftColors.red },
 		{ variant: "soft", color: "amber", class: fieldSoftColors.amber },
-		{ variant: "soft", class: tw(
-			"data-invalid:bg-red-3",
-			"data-invalid:data-hovered:bg-red-4",
-		) },
+		{ variant: "soft", color: "darkred", class: fieldSoftColors.darkred },
+		{
+			variant: "soft",
+			class: tw("data-invalid:bg-red-3", "data-invalid:data-hovered:bg-red-4"),
+		},
 	],
 	defaultVariants: {
 		variant: "surface",

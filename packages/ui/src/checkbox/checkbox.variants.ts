@@ -37,6 +37,7 @@ export const checkboxVariants = tv({
 			gray: "",
 			red: "",
 			amber: "",
+			darkred: "",
 		},
 	},
 	defaultVariants: {

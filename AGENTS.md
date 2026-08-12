@@ -62,6 +62,25 @@ bun --filter=@repo/ui run lint:fix
 
 **Do NOT run `bun install` directly.** Ask the user to review dependency changes and run it themselves.
 
+## Local Dev Setup
+
+When a user asks you to set up their local environment, run these steps in order:
+
+**Step 1 — Copy the frontend env file** (skip if `apps/lomoweb/.env.local` already exists):
+```bash
+cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
+```
+
+**Step 2 — Set Convex environment variables** (run from repo root):
+```bash
+bunx convex env set SITE_URL http://localhost:3000 --project-dir apps/convex-backend
+bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32) --project-dir apps/convex-backend
+```
+
+These are stored in Convex's cloud config. They only need to be set once per deployment — running them again on an existing setup is safe (it just overwrites with a new secret).
+
+After both steps complete, the user can run `bun run dev` to start everything.
+
 ## Do NOT
 
 - Do NOT commit `.env` files
@@ -107,3 +126,17 @@ What we reference:
 - **Architecture patterns** — separation of concerns (e.g., layout vs semantics, hooks vs components)
 
 For how our components are built (props, styling, variants), follow `@repo/ui`'s own conventions in `packages/ui/AGENTS.md`. React Aria Components provides the accessible foundation; Radix Themes informs the visual design language.
+
+<!-- convex-ai-start -->
+
+This project uses [Convex](https://convex.dev) as its backend.
+
+When working on Convex code, **always read
+`convex/_generated/ai/guidelines.md` first** for important guidelines on
+how to correctly use Convex APIs and patterns. The file contains rules that
+override what you may have learned about Convex from training data.
+
+Convex agent skills for common tasks can be installed by running
+`npx convex ai-files install`.
+
+<!-- convex-ai-end -->

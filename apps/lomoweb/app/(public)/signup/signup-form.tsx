@@ -41,14 +41,25 @@ const signupSchema = z
 		}
 	});
 
-type FieldErrors = Partial<Record<"name" | "email" | "password" | "phone", string>>;
+type FieldErrors = Partial<
+	Record<"name" | "email" | "password" | "phone", string>
+>;
 
-const SERVER_ERROR_MAP: Record<string, { field?: keyof FieldErrors; message: string }> = {
-	INVALID_EMAIL: { field: "email", message: "Please enter a valid email address" },
+const SERVER_ERROR_MAP: Record<
+	string,
+	{ field?: keyof FieldErrors; message: string }
+> = {
+	INVALID_EMAIL: {
+		field: "email",
+		message: "Please enter a valid email address",
+	},
 	INVALID_PASSWORD: { field: "password", message: "Invalid password" },
 	PASSWORD_TOO_SHORT: { field: "password", message: "Password is too short" },
 	PASSWORD_TOO_LONG: { field: "password", message: "Password is too long" },
-	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: { field: "email", message: "An account with this email already exists" },
+	USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL: {
+		field: "email",
+		message: "An account with this email already exists",
+	},
 };
 
 function getRedirectPath(searchParams: URLSearchParams): string {
@@ -107,7 +118,9 @@ export function SignUpForm() {
 				setFormError(mapped.message);
 			}
 			else {
-				setFormError(error.message ?? "Something went wrong. Please try again.");
+				setFormError(
+					error.message ?? "Something went wrong. Please try again.",
+				);
 			}
 			setIsSubmitting(false);
 			return;
@@ -148,6 +161,7 @@ export function SignUpForm() {
 
 			{/* Fields */}
 			<TextField
+				color="sage"
 				name="name"
 				isRequired
 				isInvalid={!!fieldErrors.name}
@@ -209,18 +223,20 @@ export function SignUpForm() {
 					{fieldErrors.phone && <FieldError>{fieldErrors.phone}</FieldError>}
 				</TextField>
 				<Text size={1} color="gray" className="leading-relaxed">
-					If you add a number, we only share it with someone after you are matched
-					on a request, so you can coordinate by text outside LoMo. LoMo does not
-					send texts or host chat in the app. If you skip this, a matched
-					volunteer will reach you by email using a masked address so your real
-					email stays private.
+					If you add a number, we only share it with someone after you are
+					matched on a request, so you can coordinate by text outside LoMo. LoMo
+					does not send texts or host chat in the app. If you skip this, a
+					matched volunteer will reach you by email using a masked address so
+					your real email stays private.
 				</Text>
 			</div>
 
 			{/* Form-level error */}
 			{formError && (
 				<div className="rounded-[var(--radius-2)] border border-red-6 bg-red-2 px-4 py-3">
-					<Text size={2} color="red">{formError}</Text>
+					<Text size={2} color="red">
+						{formError}
+					</Text>
 				</div>
 			)}
 
@@ -231,6 +247,9 @@ export function SignUpForm() {
 				color="yellow"
 				isDisabled={isSubmitting}
 				className="mt-2"
+				size={3}
+				border="large"
+				borderColor="terracotta"
 			>
 				{isSubmitting ? "Creating account..." : "Sign up"}
 			</Button>

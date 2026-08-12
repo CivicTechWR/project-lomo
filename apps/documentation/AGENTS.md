@@ -1,6 +1,6 @@
-# Webapp — AI Agent Instructions
+# Documentation App — AI Agent Instructions
 
-React 19 frontend for LoMo. See the root [AGENTS.md](../../AGENTS.md) for repo-wide info.
+Design system showcase for LoMo's `@repo/ui` component library. See the root [AGENTS.md](../../AGENTS.md) for repo-wide info.
 
 ## Code Style
 
@@ -17,9 +17,8 @@ React 19 frontend for LoMo. See the root [AGENTS.md](../../AGENTS.md) for repo-w
 - React 19 with React Compiler (`babel-plugin-react-compiler`)
 - TypeScript strict mode: `noUnusedLocals`, `noUnusedParameters`, `verbatimModuleSyntax`
 - Vite 7 (build tool)
-- Styling: Tailwind CSS (coming soon — not yet installed)
-- Component library: TBD (shadcn/ui or custom React Aria components)
-- State management: TanStack Query planned, not yet installed
+- Styling: Tailwind CSS v4 via `@tailwindcss/vite`
+- Component library: `@repo/ui` (react-aria-components + tailwind-variants)
 
 ## Routing
 

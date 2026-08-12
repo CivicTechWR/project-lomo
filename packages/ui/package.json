@@ -17,6 +17,7 @@
 		"./field": "./src/field/index.ts",
 		"./text-field": "./src/text-field/index.ts",
 		"./icons": "./src/icons/index.ts",
+		"./utils": "./src/utils/index.ts",
 		"./theme.css": "./src/theme/theme.css"
 	},
 	"scripts": {

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import type { HelpRequestStatus } from "@/lib/help-request-status";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
@@ -11,6 +11,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useMemo, useState } from "react";
 import { HELP_REQUEST_STATUS_LABEL, statusBadgeColor } from "@/lib/help-request-status";
 import { SegmentedTabs } from "../segmented-tabs";
+import { StatusFilterChips } from "../status-filter-chips";
 import { AdminRequestDetail } from "./admin-request-detail";
 
 type AdminTab = "requests" | "users";
@@ -22,7 +23,11 @@ const TABS = [
 
 export function AdminDashboard() {
 	const isAdmin = useQuery(api.helpRequests.isAdmin, {});
-	const requests = useQuery(api.helpRequests.listAllForAdmin, isAdmin ? {} : "skip");
+	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
+	const requests = useQuery(
+		api.helpRequests.listAllForAdmin,
+		isAdmin ? (statusFilter === null ? {} : { statusFilter }) : "skip",
+	);
 	const volunteers = useQuery(api.helpRequests.listVolunteersForAdmin, isAdmin ? {} : "skip");
 	const assignVolunteer = useMutation(api.helpRequests.assignVolunteer);
 	const [tab, setTab] = useState<AdminTab>("requests");
@@ -125,6 +130,23 @@ export function AdminDashboard() {
 												View / edit
 											</Button>
 										</div>
+			<section className="flex flex-col gap-4">
+				<Heading level={2} size={6}>All requests</Heading>
+				<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
+				{requests === undefined && <Text size={2} color="gray">Loading requests…</Text>}
+				{requests && requests.length === 0 && <Text size={2} color="gray">No requests yet.</Text>}
+				{requests && requests.length > 0 && (
+					<ul className="flex flex-col gap-3">
+						{requests.map(r => (
+							<li key={r._id} className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+								<div className="flex flex-wrap items-start justify-between gap-3">
+									<div className="min-w-0 flex-1">
+										<Text size={3} weight="medium">{r.title}</Text>
+										<Text size={2} color="gray" className="mt-1">
+											Owner:
+											{" "}
+											{r.owner?.name ?? r.owner?.email ?? "Unknown requester"}
+										</Text>
 									</div>
 									<div className="mt-3 flex flex-wrap gap-2">
 										<select
