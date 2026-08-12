@@ -14,18 +14,17 @@ import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 
 	readStoredHomeMode,
 	writeStoredHomeMode,
 } from "@/lib/app-home-mode";
 import {
-	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
-
 	statusBadgeColor,
 } from "@/lib/help-request-status";
+import { StatusFilterChips } from "./status-filter-chips";
 
 export function RequestsHome({
 	preloadedUser,
@@ -34,18 +33,17 @@ export function RequestsHome({
 }) {
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
-	const [mode, setMode] = useState<HomeAppMode>("request_help");
+	const [mode, setMode] = useState<HomeAppMode>(
+		() => readStoredHomeMode() ?? "request_help",
+	);
 	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
 
+	const prevModeRef = useRef(mode);
 	useEffect(() => {
-		const stored = readStoredHomeMode();
-		if (stored) {
-			setMode(stored);
+		if (prevModeRef.current !== mode) {
+			prevModeRef.current = mode;
+			writeStoredHomeMode(mode);
 		}
-	}, []);
-
-	useEffect(() => {
-		writeStoredHomeMode(mode);
 	}, [mode]);
 
 	const listArgs
@@ -166,23 +164,7 @@ function RequestingHelpPanel(props: {
 				</div>
 			</div>
 
-			<div className="flex flex-wrap gap-2">
-				{HELP_REQUEST_FILTER_CHIPS.map((chip) => {
-					const active = statusFilter === chip.value;
-					return (
-						<Button
-							key={chip.label}
-							size={1}
-							variant={active ? "soft" : "outline"}
-							color={active ? "gray" : "gray"}
-							className="rounded-full"
-							onPress={() => setStatusFilter(chip.value)}
-						>
-							{chip.label}
-						</Button>
-					);
-				})}
-			</div>
+			<StatusFilterChips value={statusFilter} onChange={setStatusFilter} />
 
 			{requests === undefined && (
 				<Text size={2} color="gray">

@@ -1,11 +1,6 @@
 import { tv } from "tailwind-variants";
 import { tw } from "../utils/tw.ts";
-import {
-	fontWeights,
-	textColors,
-	textColorsHighContrast,
-	typographySizes,
-} from "../variants/index.ts";
+import { fontWeights, typographySizes } from "../variants/index.ts";
 
 export const headingVariants = tv({
 	variants: {
@@ -15,15 +10,18 @@ export const headingVariants = tv({
 			normal: "",
 			start: tw("mt-[calc(var(--leading-trim-start)*-1)]"),
 			end: tw("mb-[calc(var(--leading-trim-end)*-1)]"),
-			both: tw("mt-[calc(var(--leading-trim-start)*-1)] mb-[calc(var(--leading-trim-end)*-1)]"),
+			both: tw(
+				"mt-[calc(var(--leading-trim-start)*-1)] mb-[calc(var(--leading-trim-end)*-1)]",
+			),
 		},
 		color: {
-			terracotta: "",
-			sage: "",
-			yellow: "",
-			gray: "",
-			red: "",
-			amber: "",
+			terracotta: "text-terracotta-11",
+			sage: "text-sage-11",
+			yellow: "text-yellow-11",
+			gray: "text-gray-11",
+			red: "text-red-11",
+			amber: "text-amber-11",
+			darkred: "text-darkred-11",
 		},
 		highContrast: {
 			true: "",
@@ -31,20 +29,14 @@ export const headingVariants = tv({
 		},
 	},
 	compoundVariants: [
-		// Standard contrast (step 11)
-		{ highContrast: false, color: "terracotta", class: textColors.terracotta },
-		{ highContrast: false, color: "sage", class: textColors.sage },
-		{ highContrast: false, color: "yellow", class: textColors.yellow },
-		{ highContrast: false, color: "gray", class: textColors.gray },
-		{ highContrast: false, color: "red", class: textColors.red },
-		{ highContrast: false, color: "amber", class: textColors.amber },
 		// High contrast (step 12)
-		{ highContrast: true, color: "terracotta", class: textColorsHighContrast.terracotta },
-		{ highContrast: true, color: "sage", class: textColorsHighContrast.sage },
-		{ highContrast: true, color: "yellow", class: textColorsHighContrast.yellow },
-		{ highContrast: true, color: "gray", class: textColorsHighContrast.gray },
-		{ highContrast: true, color: "red", class: textColorsHighContrast.red },
-		{ highContrast: true, color: "amber", class: textColorsHighContrast.amber },
+		{ highContrast: true, color: "terracotta", class: "text-terracotta-12" },
+		{ highContrast: true, color: "sage", class: "text-sage-12" },
+		{ highContrast: true, color: "yellow", class: "text-yellow-12" },
+		{ highContrast: true, color: "gray", class: "text-gray-12" },
+		{ highContrast: true, color: "red", class: "text-red-12" },
+		{ highContrast: true, color: "amber", class: "text-amber-12" },
+		{ highContrast: true, color: "darkred", class: "text-darkred-12" },
 	],
 	defaultVariants: {
 		// size intentionally omitted — derived from level in component

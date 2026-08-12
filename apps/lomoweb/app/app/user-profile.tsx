@@ -12,7 +12,7 @@ import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
 export function UserProfile({
@@ -29,13 +29,13 @@ export function UserProfile({
 	const [phone, setPhone] = useState("");
 	const [saving, setSaving] = useState(false);
 
-	useEffect(() => {
-		if (profileRow) {
-			setFirstName(profileRow.firstName ?? "");
-			setPronouns(profileRow.pronouns ?? "");
-			setPhone(profileRow.phone ?? "");
-		}
-	}, [profileRow]);
+	const syncedProfileRef = useRef(profileRow);
+	if (profileRow && profileRow !== syncedProfileRef.current) {
+		syncedProfileRef.current = profileRow;
+		setFirstName(profileRow.firstName ?? "");
+		setPronouns(profileRow.pronouns ?? "");
+		setPhone(profileRow.phone ?? "");
+	}
 
 	if (!user) {
 		return null;

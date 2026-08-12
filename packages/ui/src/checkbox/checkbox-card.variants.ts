@@ -51,6 +51,10 @@ export const checkboxCardVariants = tv({
 				focusRings.amber,
 				"data-selected:shadow-[inset_0_0_0_2px_var(--color-amber-9)]",
 			),
+			darkred: tw(
+				focusRings.darkred,
+				"data-selected:shadow-[inset_0_0_0_2px_var(--color-darkred-9)]",
+			),
 		},
 	},
 	compoundVariants: [
@@ -61,6 +65,7 @@ export const checkboxCardVariants = tv({
 		{ variant: "surface", color: "gray", class: cardSurfaceColors.gray },
 		{ variant: "surface", color: "red", class: cardSurfaceColors.red },
 		{ variant: "surface", color: "amber", class: cardSurfaceColors.amber },
+		{ variant: "surface", color: "darkred", class: cardSurfaceColors.darkred },
 
 		/* ── Classic variant ── */
 		{ variant: "classic", color: "terracotta", class: cardClassicColors.terracotta },
@@ -69,6 +74,7 @@ export const checkboxCardVariants = tv({
 		{ variant: "classic", color: "gray", class: cardClassicColors.gray },
 		{ variant: "classic", color: "red", class: cardClassicColors.red },
 		{ variant: "classic", color: "amber", class: cardClassicColors.amber },
+		{ variant: "classic", color: "darkred", class: cardClassicColors.darkred },
 	],
 	defaultVariants: {
 		variant: CHECKBOX_DEFAULTS.variant,

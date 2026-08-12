@@ -1,9 +1,7 @@
 import type { Colors } from "../theme/types.ts";
 import { tw } from "../utils/tw.ts";
 
-type ColorMap = Record<Colors, string>;
-
-export const solidColors: ColorMap = {
+export const solidColors: Record<Colors, string> = {
 	terracotta: tw(
 		"bg-terracotta-9 text-white",
 		"data-hovered:bg-terracotta-10 data-pressed:brightness-125",
@@ -28,9 +26,13 @@ export const solidColors: ColorMap = {
 		"bg-amber-9 text-[var(--amber-contrast)]",
 		"data-hovered:bg-amber-10 data-pressed:brightness-105",
 	),
+	darkred: tw(
+		"bg-darkred-9 text-white",
+		"data-hovered:bg-darkred-10 data-pressed:brightness-105",
+	),
 };
 
-export const softColors: ColorMap = {
+export const softColors: Record<Colors, string> = {
 	terracotta: tw(
 		"bg-terracotta-3 text-terracotta-11",
 		"data-hovered:bg-terracotta-4 data-pressed:bg-terracotta-5",
@@ -55,9 +57,13 @@ export const softColors: ColorMap = {
 		"bg-amber-3 text-amber-11",
 		"data-hovered:bg-amber-4 data-pressed:bg-amber-5",
 	),
+	darkred: tw(
+		"bg-darkred-3 text-darkred-11",
+		"data-hovered:bg-darkred-4 data-pressed:bg-darkred-5",
+	),
 };
 
-export const outlineColors: ColorMap = {
+export const outlineColors: Record<Colors, string> = {
 	terracotta: tw(
 		"border border-terracotta-7 text-terracotta-11",
 		"data-hovered:bg-terracotta-2 data-pressed:bg-terracotta-3",
@@ -82,36 +88,32 @@ export const outlineColors: ColorMap = {
 		"border border-amber-7 text-amber-11",
 		"data-hovered:bg-amber-2 data-pressed:bg-amber-3",
 	),
+	darkred: tw(
+		"border border-darkred-7 text-darkred-11",
+		"data-hovered:bg-darkred-2 data-pressed:bg-darkred-3",
+	),
 };
 
-export const ghostColors: ColorMap = {
+export const ghostColors: Record<Colors, string> = {
 	terracotta: tw(
 		"text-terracotta-11",
 		"data-hovered:bg-terracotta-3 data-pressed:bg-terracotta-4",
 	),
-	sage: tw(
-		"text-sage-11",
-		"data-hovered:bg-sage-3 data-pressed:bg-sage-4",
-	),
+	sage: tw("text-sage-11", "data-hovered:bg-sage-3 data-pressed:bg-sage-4"),
 	yellow: tw(
 		"text-yellow-11",
 		"data-hovered:bg-yellow-3 data-pressed:bg-yellow-4",
 	),
-	gray: tw(
-		"text-gray-11",
-		"data-hovered:bg-gray-3 data-pressed:bg-gray-4",
-	),
-	red: tw(
-		"text-red-11",
-		"data-hovered:bg-red-3 data-pressed:bg-red-4",
-	),
-	amber: tw(
-		"text-amber-11",
-		"data-hovered:bg-amber-3 data-pressed:bg-amber-4",
+	gray: tw("text-gray-11", "data-hovered:bg-gray-3 data-pressed:bg-gray-4"),
+	red: tw("text-red-11", "data-hovered:bg-red-3 data-pressed:bg-red-4"),
+	amber: tw("text-amber-11", "data-hovered:bg-amber-3 data-pressed:bg-amber-4"),
+	darkred: tw(
+		"text-darkred-11",
+		"data-hovered:bg-darkred-3 data-pressed:bg-darkred-4",
 	),
 };
 
-export const surfaceColors: ColorMap = {
+export const surfaceColors: Record<Colors, string> = {
 	terracotta: tw(
 		"bg-terracotta-2 text-terracotta-11",
 		"shadow-[inset_0_0_0_1px_var(--color-terracotta-6)]",
@@ -136,27 +138,33 @@ export const surfaceColors: ColorMap = {
 		"bg-amber-2 text-amber-11",
 		"shadow-[inset_0_0_0_1px_var(--color-amber-6)]",
 	),
+	darkred: tw(
+		"bg-darkred-2 text-darkred-11",
+		"shadow-[inset_0_0_0_1px_var(--color-darkred-6)]",
+	),
 };
 
-export const solidColorsHighContrast: ColorMap = {
+export const solidColorsHighContrast: Record<Colors, string> = {
 	terracotta: tw("bg-terracotta-12 text-terracotta-1"),
 	sage: tw("bg-sage-12 text-sage-1"),
 	yellow: tw("bg-yellow-12 text-yellow-1"),
 	gray: tw("bg-gray-12 text-gray-1"),
 	red: tw("bg-red-12 text-red-1"),
 	amber: tw("bg-amber-12 text-amber-1"),
+	darkred: tw("bg-darkred-12 text-darkred-1"),
 };
 
-export const softColorsHighContrast: ColorMap = {
+export const softColorsHighContrast: Record<Colors, string> = {
 	terracotta: tw("bg-terracotta-3 text-terracotta-12"),
 	sage: tw("bg-sage-3 text-sage-12"),
 	yellow: tw("bg-yellow-3 text-yellow-12"),
 	gray: tw("bg-gray-3 text-gray-12"),
 	red: tw("bg-red-3 text-red-12"),
 	amber: tw("bg-amber-3 text-amber-12"),
+	darkred: tw("bg-darkred-3 text-darkred-12"),
 };
 
-export const surfaceColorsHighContrast: ColorMap = {
+export const surfaceColorsHighContrast: Record<Colors, string> = {
 	terracotta: tw(
 		"bg-terracotta-2 text-terracotta-12",
 		"shadow-[inset_0_0_0_1px_var(--color-terracotta-6)]",
@@ -181,18 +189,23 @@ export const surfaceColorsHighContrast: ColorMap = {
 		"bg-amber-2 text-amber-12",
 		"shadow-[inset_0_0_0_1px_var(--color-amber-6)]",
 	),
+	darkred: tw(
+		"bg-darkred-2 text-darkred-12",
+		"shadow-[inset_0_0_0_1px_var(--color-darkred-6)]",
+	),
 };
 
-export const outlineColorsHighContrast: ColorMap = {
+export const outlineColorsHighContrast: Record<Colors, string> = {
 	terracotta: tw("border border-terracotta-11 text-terracotta-12"),
 	sage: tw("border border-sage-11 text-sage-12"),
 	yellow: tw("border border-yellow-11 text-yellow-12"),
 	gray: tw("border border-gray-11 text-gray-12"),
 	red: tw("border border-red-11 text-red-12"),
 	amber: tw("border border-amber-11 text-amber-12"),
+	darkred: tw("border border-darkred-11 text-darkred-12"),
 };
 
-export const focusRings: ColorMap = {
+export const focusRings: Record<Colors, string> = {
 	terracotta: tw(
 		"data-focus-visible:ring-2 data-focus-visible:ring-offset-2",
 		"data-focus-visible:ring-terracotta-8",
@@ -216,5 +229,9 @@ export const focusRings: ColorMap = {
 	amber: tw(
 		"data-focus-visible:ring-2 data-focus-visible:ring-offset-2",
 		"data-focus-visible:ring-amber-8",
+	),
+	darkred: tw(
+		"data-focus-visible:ring-2 data-focus-visible:ring-offset-2",
+		"data-focus-visible:ring-darkred-8",
 	),
 };

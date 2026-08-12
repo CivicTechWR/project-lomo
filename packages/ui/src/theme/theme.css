@@ -5,6 +5,7 @@
 @import "./colors/terracotta.css";
 @import "./colors/sage.css";
 @import "./colors/yellow.css";
+@import "./colors/darkred.css";
 
 /* Radix semantic colors */
 @import "@radix-ui/colors/red.css";
@@ -142,19 +143,39 @@
 	--color-sage-a11: var(--sage-a11);
 	--color-sage-a12: var(--sage-a12);
 
-	/* ── Yellow Alpha a1-a12 ── */
-	--color-yellow-a1: var(--yellow-a1);
-	--color-yellow-a2: var(--yellow-a2);
-	--color-yellow-a3: var(--yellow-a3);
-	--color-yellow-a4: var(--yellow-a4);
-	--color-yellow-a5: var(--yellow-a5);
-	--color-yellow-a6: var(--yellow-a6);
-	--color-yellow-a7: var(--yellow-a7);
-	--color-yellow-a8: var(--yellow-a8);
-	--color-yellow-a9: var(--yellow-a9);
-	--color-yellow-a10: var(--yellow-a10);
-	--color-yellow-a11: var(--yellow-a11);
-	--color-yellow-a12: var(--yellow-a12);
+	/* ── Darkred 1-12 ── */
+	--color-darkred-1: var(--darkred-1);
+	--color-darkred-2: var(--darkred-2);
+	--color-darkred-3: var(--darkred-3);
+	--color-darkred-4: var(--darkred-4);
+	--color-darkred-5: var(--darkred-5);
+	--color-darkred-6: var(--darkred-6);
+	--color-darkred-7: var(--darkred-7);
+	--color-darkred-8: var(--darkred-8);
+	--color-darkred-9: var(--darkred-9);
+	--color-darkred-10: var(--darkred-10);
+	--color-darkred-11: var(--darkred-11);
+	--color-darkred-12: var(--darkred-12);
+
+	/* ── Darkred Alpha a1-a12 ── */
+	--color-darkred-a1: var(--darkred-a1);
+	--color-darkred-a2: var(--darkred-a2);
+	--color-darkred-a3: var(--darkred-a3);
+	--color-darkred-a4: var(--darkred-a4);
+	--color-darkred-a5: var(--darkred-a5);
+	--color-darkred-a6: var(--darkred-a6);
+	--color-darkred-a7: var(--darkred-a7);
+	--color-darkred-a8: var(--darkred-a8);
+	--color-darkred-a9: var(--darkred-a9);
+	--color-darkred-a10: var(--darkred-a10);
+	--color-darkred-a11: var(--darkred-a11);
+	--color-darkred-a12: var(--darkred-a12);
+
+	/* ── Darkred alpha muted tokens ── */
+	--color-darkred-a5-muted: color-mix(in oklab, var(--darkred-a5), var(--gray-a6));
+	--color-darkred-a6-muted: color-mix(in oklab, var(--darkred-a6), var(--gray-a6));
+	--color-darkred-a7-muted: color-mix(in oklab, var(--darkred-a7), var(--gray-a6));
+	--color-darkred-a8-muted: color-mix(in oklab, var(--darkred-a8), var(--gray-a6));
 
 	/* ── Red Alpha a1-a12 (Radix semantic) ── */
 	--color-red-a1: var(--red-a1);
