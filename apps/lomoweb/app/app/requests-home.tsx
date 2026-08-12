@@ -1,11 +1,10 @@
 "use client";
 
 import type { FunctionReturnType } from "convex/server";
-import { api } from "@repo/convex-backend/convex/_generated/api";
-import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
 import type { HomeAppMode } from "@/lib/app-home-mode";
 import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
+import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
@@ -18,7 +17,7 @@ import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
 	readStoredHomeMode,
 	writeStoredHomeMode,
@@ -35,10 +34,10 @@ import {
 	HELP_AREA_RADIUS_MAX_KM,
 	HELP_AREA_RADIUS_MIN_KM,
 } from "@/lib/help-area";
-import { useHomeMode } from "@/lib/home-mode-context";
 import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import type { RequestCategoryId } from "@/lib/request-flow/types";
 import {
+	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
 	statusBadgeColor,
 } from "@/lib/help-request-status";

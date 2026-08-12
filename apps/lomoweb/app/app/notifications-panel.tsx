@@ -6,7 +6,6 @@ import { Button } from "@repo/ui/button";
 import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
