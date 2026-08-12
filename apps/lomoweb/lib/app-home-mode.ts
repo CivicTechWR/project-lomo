@@ -1,6 +1,6 @@
 export const HOME_APP_MODE_STORAGE_KEY = "lomo-home-mode";
 
-export type HomeAppMode = "request_help" | "offer_help";
+export type HomeAppMode = "home" | "request_help" | "offer_help";
 
 export function readStoredHomeMode(): HomeAppMode | null {
 	if (typeof window === "undefined") {
@@ -8,7 +8,7 @@ export function readStoredHomeMode(): HomeAppMode | null {
 	}
 	try {
 		const v = sessionStorage.getItem(HOME_APP_MODE_STORAGE_KEY);
-		if (v === "request_help" || v === "offer_help") {
+		if (v === "home" || v === "request_help" || v === "offer_help") {
 			return v;
 		}
 	}

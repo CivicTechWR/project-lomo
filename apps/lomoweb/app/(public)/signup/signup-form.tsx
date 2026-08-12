@@ -11,7 +11,7 @@ import { useMutation } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
+import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
 
 const signupSchema = z
 	.object({
@@ -103,11 +103,19 @@ export function SignUpForm() {
 
 		setIsSubmitting(true);
 
-		const { error } = await authClient.signUp.email({
-			name: result.data.name,
-			email: result.data.email,
-			password: result.data.password,
-		});
+		let error: { code?: string; message?: string } | undefined;
+		try {
+			({ error } = await authClient.signUp.email({
+				name: result.data.name,
+				email: result.data.email,
+				password: result.data.password,
+			}));
+		}
+		catch {
+			setFormError(AUTH_CONNECTION_ERROR_MESSAGE);
+			setIsSubmitting(false);
+			return;
+		}
 
 		if (error) {
 			const mapped = SERVER_ERROR_MAP[error.code ?? ""];
@@ -139,7 +147,7 @@ export function SignUpForm() {
 			}
 		}
 
-		router.push(getRedirectPath(searchParams));
+		router.push("/app/onboarding/basics");
 	}
 
 	const signinHref = searchParams.get("redirect")

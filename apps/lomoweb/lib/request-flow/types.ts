@@ -28,6 +28,9 @@ export interface FoodRequestDetails {
 	peopleCount: string;
 	needsDelivery: boolean;
 	address: string;
+	/** Set when the requester picks an address from autocomplete. */
+	addressLat?: number;
+	addressLng?: number;
 	deliveryInstructions: string;
 }
 
@@ -41,6 +44,8 @@ export function emptyFoodDetails(): FoodRequestDetails {
 		peopleCount: "",
 		needsDelivery: false,
 		address: "",
+    addressLat: undefined,
+	  addressLng: undefined,
 		deliveryInstructions: "",
 	};
 }
@@ -50,18 +55,21 @@ export interface ItemsRequestDetails {
 	sizeOrStyle: string;
 	needsDelivery: boolean;
 	address: string;
+	/** Set when the requester picks an address from autocomplete. */
+	addressLat?: number;
+	addressLng?: number;
 	deliveryInstructions: string;
 }
 
-export function emptyItemsDetails(): ItemsRequestDetails {
-	return {
-		itemDescription: "",
-		sizeOrStyle: "",
-		needsDelivery: false,
-		address: "",
-		deliveryInstructions: "",
-	};
-}
+export const emptyItemsDetails = (): ItemsRequestDetails => ({
+	itemDescription: "",
+	sizeOrStyle: "",
+	needsDelivery: false,
+	address: "",
+	addressLat: undefined,
+	addressLng: undefined,
+	deliveryInstructions: "",
+});
 
 /** Custom / miscellaneous help (replaces deprecated ride flow in the UI). */
 export interface OtherRequestDetails {

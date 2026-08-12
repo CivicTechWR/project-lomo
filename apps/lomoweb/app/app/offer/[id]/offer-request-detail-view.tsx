@@ -11,9 +11,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
-import {
-	writeStoredHomeMode,
-} from "@/lib/app-home-mode";
+import { useHomeMode } from "@/lib/home-mode-context";
 import {
 	HELP_REQUEST_STATUS_LABEL,
 
@@ -22,6 +20,7 @@ import {
 
 export function OfferRequestDetailView() {
 	const router = useRouter();
+	const { setMode } = useHomeMode();
 	const params = useParams();
 	const rawId = params.id;
 	const requestId
@@ -46,7 +45,7 @@ export function OfferRequestDetailView() {
 	const [completing, setCompleting] = useState(false);
 
 	function goHomeOffering() {
-		writeStoredHomeMode("offer_help");
+		setMode("home");
 		router.push("/app");
 	}
 
