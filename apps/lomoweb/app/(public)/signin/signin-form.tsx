@@ -7,9 +7,9 @@ import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
+import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
 
 const signinSchema = z.object({
 	email: z.string().email("Please enter a valid email address"),
@@ -28,6 +28,10 @@ const SERVER_ERROR_MAP: Record<
 	},
 	INVALID_EMAIL_OR_PASSWORD: { message: "Invalid email or password" },
 	EMAIL_NOT_VERIFIED: { message: "Please verify your email before signing in" },
+	INVALID_ORIGIN: {
+		message:
+			"Sign-in was blocked because this page origin is not allowed. Use http://localhost:3000 (not 127.0.0.1 or another port), or ask your team to set Convex SITE_URL for local dev.",
+	},
 };
 
 function getRedirectPath(searchParams: URLSearchParams): string {
@@ -46,7 +50,14 @@ export function SignInForm() {
 	const [password, setPassword] = useState("");
 	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 	const [formError, setFormError] = useState<string | null>(null);
+	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	useEffect(() => {
+		if (searchParams.get("reset") === "success") {
+			setSuccessMessage("Your password was updated. Sign in with your new password.");
+		}
+	}, [searchParams]);
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
@@ -68,10 +79,18 @@ export function SignInForm() {
 
 		setIsSubmitting(true);
 
-		const { error } = await authClient.signIn.email({
-			email: result.data.email,
-			password: result.data.password,
-		});
+		let error: { code?: string; message?: string } | undefined;
+		try {
+			({ error } = await authClient.signIn.email({
+				email: result.data.email,
+				password: result.data.password,
+			}));
+		}
+		catch {
+			setFormError(AUTH_CONNECTION_ERROR_MESSAGE);
+			setIsSubmitting(false);
+			return;
+		}
 
 		if (error) {
 			const mapped = SERVER_ERROR_MAP[error.code ?? ""];
@@ -133,7 +152,12 @@ export function SignInForm() {
 				value={password}
 				onChange={setPassword}
 			>
-				<Label>Password</Label>
+				<div className="flex items-center justify-between gap-2">
+					<Label>Password</Label>
+					<Link href="/forgot-password" color="terracotta" className="text-[length:var(--font-size-1)]">
+						Forgot password?
+					</Link>
+				</div>
 				<Group>
 					<Input placeholder="Enter your password" />
 				</Group>
@@ -141,6 +165,12 @@ export function SignInForm() {
 					<FieldError>{fieldErrors.password}</FieldError>
 				)}
 			</TextField>
+
+			{successMessage && (
+				<div className="rounded-[var(--radius-2)] border border-sage-6 bg-sage-2 px-4 py-3">
+					<Text size={2} color="sage">{successMessage}</Text>
+				</div>
+			)}
 
 			{/* Form-level error */}
 			{formError && (

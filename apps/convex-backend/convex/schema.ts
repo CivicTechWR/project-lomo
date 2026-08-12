@@ -55,6 +55,14 @@ export default defineSchema(
 			summary: v.string(),
 			details: v.string(),
 			status: requestStatus,
+			/** Optional JSON payload for structured client data (e.g. food draft). */
+			payload: v.optional(v.string()),
+			/** Geocoded from address/location in payload when available. */
+			locationLat: v.optional(v.number()),
+			locationLng: v.optional(v.number()),
+			/** Denormalized from payload for volunteer list filters. */
+			needsDelivery: v.optional(v.boolean()),
+			isUrgent: v.optional(v.boolean()),
 			/**
 			 * Opaque token for masked email relay (local-part only; domain from EMAIL_RELAY_DOMAIN).
 			 * Set when the requester accepts the match (in_progress).
@@ -64,6 +72,8 @@ export default defineSchema(
 			.index("by_owner_user_id", ["ownerUserId"])
 			.index("by_owner_user_id_and_status", ["ownerUserId", "status"])
 			.index("by_status", ["status"])
+			.index("by_helper", ["helperSubject"])
+			.index("by_assigned_helper", ["assignedHelperSubject"])
 			.index("by_email_relay_token", ["emailRelayToken"]),
 
 		requestMessages: defineTable({
@@ -91,6 +101,22 @@ export default defineSchema(
 			phone: v.optional(v.string()),
 			image: v.optional(v.string()),
 			isVolunteer: v.optional(v.boolean()),
+			bio: v.optional(v.string()),
+			/** Milliseconds since epoch — set when onboarding wizard is finished. */
+			onboardingCompletedAt: v.optional(v.number()),
+			/** Milliseconds since epoch — safety & boundaries step acknowledged. */
+			safetyAcknowledgedAt: v.optional(v.number()),
+			/** When false, helper is in "Resting" mode (not available to help right now). */
+			canHelpNow: v.optional(v.boolean()),
+			helpPreferences: v.optional(v.array(v.string())),
+			/** @deprecated Free-text location — use help area coordinates instead. */
+			helpLocation: v.optional(v.string()),
+			/** Centre of the area where this helper is willing to help. */
+			helpAreaCenterLat: v.optional(v.number()),
+			helpAreaCenterLng: v.optional(v.number()),
+			/** Radius in kilometres (1–30). */
+			helpAreaRadiusKm: v.optional(v.number()),
+		}).index("by_subject", ["subject"]),
 		}).index("by_token_identifier", ["tokenIdentifier"]),
 
 		notifications: defineTable({
@@ -101,6 +127,11 @@ export default defineSchema(
 			requestId: v.optional(v.id("helpRequests")),
 			isRead: v.boolean(),
 			ctaLabel: v.optional(v.string()),
+			ctaAction: v.optional(v.string()),
+		})
+			.index("by_recipient", ["recipientSubject"])
+			.index("by_recipient_read", ["recipientSubject", "isRead"])
+			.index("by_request", ["requestId"]),
 			ctaAction: v.optional(notificationCtaAction),
 		}).index("by_recipient_user_id_and_is_read", ["recipientUserId", "isRead"]),
 	},

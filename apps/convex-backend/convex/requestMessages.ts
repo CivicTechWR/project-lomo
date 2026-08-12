@@ -1,10 +1,16 @@
 /* eslint-disable node/prefer-global/process */
 import type { Doc, Id } from "./_generated/dataModel";
-import type { QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./_generated/server";
+import {
+	conversationLink,
+	formatMessageEmailBody,
+	messageEmailReplySubject,
+	messageEmailSubject,
+} from "./lib/messageEmail";
 import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
+import { extractNewReplyText } from "./lib/stripEmailReply";
 
 const MAX_BODY_LEN = 8000;
 const MAX_MESSAGES_PER_HOUR = 30;
@@ -12,6 +18,8 @@ const RATE_WINDOW_MS = 60 * 60 * 1000;
 const MAX_MESSAGES_PER_REQUEST = 100;
 const ANGLE_EMAIL_RE = /<([^>]+)>/;
 const TRAILING_SLASH_RE = /\/$/;
+
+interface Identity { subject: string; email?: string; name?: string }
 
 function normalizeEmail(raw: string): string {
 	const trimmed = raw.trim().toLowerCase();
@@ -155,25 +163,16 @@ export const post = mutation({
 
 		const otherUser = await ctx.db.get("users", otherUserId);
 		const replyTo = relayMailbox(doc.emailRelayToken);
-		if (
-			otherUser?.email !== undefined
-			&& otherUser.email.length > 0
-			&& replyTo !== null
-		) {
-			const base = siteBaseUrl();
-			const path
-				= otherUserId === doc.ownerUserId
-					? `/app/requests/${requestId}`
-					: `/app/offer/${requestId}`;
-			const link = base ? `${base}${path}` : path;
+		if (otherUser?.email && replyTo) {
+			const link = conversationLink(
+				siteBaseUrl(),
+				requestId,
+				otherSubject === doc.ownerSubject,
+			);
 			await ctx.scheduler.runAfter(0, internal.notifications.sendEmail, {
 				to: otherUser.email,
-				subject: `New LoMo message: ${doc.title}`,
-				text:
-						`You have a new message about "${doc.title}".\n\n`
-						+ `Open the conversation: ${link}\n\n`
-						+ "You can also reply to this email (plain text) to message your match. "
-						+ "Your email address stays private.",
+				subject: messageEmailSubject(doc.title),
+				text: formatMessageEmailBody(trimmed, link),
 				replyTo,
 			});
 		}
@@ -247,7 +246,7 @@ export const ingestInboundEmail = internalMutation({
 			return { ok: false as const, reason: "sender_not_participant" as const };
 		}
 
-		const body = args.bodyText.trim().slice(0, MAX_BODY_LEN);
+		const body = extractNewReplyText(args.bodyText).trim().slice(0, MAX_BODY_LEN);
 		if (body.length === 0) {
 			return { ok: false as const, reason: "empty_body" as const };
 		}
@@ -283,23 +282,16 @@ export const ingestInboundEmail = internalMutation({
 		const otherUser = await ctx.db.get("users", otherUserId);
 		const replyTo = relayMailbox(req.emailRelayToken);
 
-		if (
-			otherUser?.email !== undefined
-			&& otherUser.email.length > 0
-			&& replyTo !== null
-		) {
-			const subjectLine
-				= args.subject.trim().startsWith("Re:")
-					? args.subject.trim()
-					: `Re: ${args.subject.trim() || req.title}`;
+		if (otherUser?.email && replyTo) {
+			const link = conversationLink(
+				siteBaseUrl(),
+				req._id,
+				otherSubject === req.ownerSubject,
+			);
 			await ctx.scheduler.runAfter(0, internal.notifications.sendRelayEmail, {
 				to: otherUser.email,
-				subject: `[LoMo] ${subjectLine}`,
-				text:
-						`${body}\n\n`
-						+ "---\n"
-						+ "You are receiving this through LoMo's masked relay. "
-						+ "Reply to this email to continue the conversation.",
+				subject: messageEmailReplySubject(req.title),
+				text: formatMessageEmailBody(body, link),
 				replyTo,
 			});
 		}

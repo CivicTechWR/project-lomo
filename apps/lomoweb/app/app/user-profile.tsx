@@ -14,6 +14,11 @@ import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import {
+	HelperPreferencesFields,
+	helperPreferencesFromProfile,
+} from "./helper-preferences-fields";
+import { SafetyAcknowledgment } from "./onboarding/safety-acknowledgment";
 
 export function UserProfile({
 	preloadedUser,
@@ -24,10 +29,28 @@ export function UserProfile({
 	const user = usePreloadedAuthQuery(preloadedUser);
 	const profileRow = useQuery(api.users.getMyProfileRow, user ? {} : "skip");
 	const updatePublicProfile = useMutation(api.users.updatePublicProfile);
+	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
+	const acknowledgeSafety = useMutation(api.users.acknowledgeSafety);
 	const [firstName, setFirstName] = useState("");
 	const [pronouns, setPronouns] = useState("");
 	const [phone, setPhone] = useState("");
-	const [saving, setSaving] = useState(false);
+	const [preferenceValues, setPreferenceValues] = useState(
+		helperPreferencesFromProfile(undefined),
+	);
+	const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
+	const [savingProfile, setSavingProfile] = useState(false);
+	const [savingPreferences, setSavingPreferences] = useState(false);
+	const [savingSafety, setSavingSafety] = useState(false);
+
+	useEffect(() => {
+		if (profileRow) {
+			setFirstName(profileRow.firstName ?? "");
+			setPronouns(profileRow.pronouns ?? "");
+			setPhone(profileRow.phone ?? "");
+			setPreferenceValues(helperPreferencesFromProfile(profileRow));
+			setSafetyAcknowledged(!!profileRow.safetyAcknowledgedAt);
+		}
+	}, [profileRow]);
 
 	const syncedProfileRef = useRef(profileRow);
 	if (profileRow && profileRow !== syncedProfileRef.current) {
@@ -47,7 +70,7 @@ export function UserProfile({
 	}
 
 	async function handleSaveVolunteerFields() {
-		setSaving(true);
+		setSavingProfile(true);
 		try {
 			await updatePublicProfile({
 				firstName,
@@ -62,43 +85,64 @@ export function UserProfile({
 			);
 		}
 		finally {
-			setSaving(false);
+			setSavingProfile(false);
+		}
+	}
+
+	async function handleSavePreferences() {
+		setSavingPreferences(true);
+		try {
+			await updateHelperPreferences({
+				canHelpNow: preferenceValues.canHelpNow,
+				helpPreferences: preferenceValues.helpPreferences,
+				helpAreaCenterLat: preferenceValues.helpAreaCenterLat,
+				helpAreaCenterLng: preferenceValues.helpAreaCenterLng,
+				helpAreaRadiusKm: preferenceValues.helpAreaRadiusKm,
+			});
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your preferences.",
+			);
+		}
+		finally {
+			setSavingPreferences(false);
+		}
+	}
+
+	async function handleSaveSafety() {
+		if (!safetyAcknowledged) {
+			return;
+		}
+		setSavingSafety(true);
+		try {
+			await acknowledgeSafety({});
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your acknowledgment.",
+			);
+		}
+		finally {
+			setSavingSafety(false);
 		}
 	}
 
 	return (
-		<Card size={3} variant="surface" className="w-full max-w-md">
-			<div className="flex flex-col gap-5 p-6">
+		<Card size={3} variant="surface" className="w-full max-w-lg">
+			<div className="flex flex-col gap-4 p-4 sm:p-5">
 				<div className="flex items-center justify-between gap-3">
 					<Heading level={2} size={6}>
 						Your profile
 					</Heading>
-					<Button
-						variant="soft"
-						color="gray"
-						size={1}
-						onPress={handleSignOut}
-					>
-						Sign out
-					</Button>
 				</div>
 
 				<div className="flex flex-col gap-3">
-					<DetailRow label="Name" value={user.name ?? "—"} />
-					<DetailRow label="Email" value={user.email ?? "—"} />
-					<div className="flex items-center justify-between">
-						<Text size={2} color="gray">
-							Email verified
-						</Text>
-						<Badge
-							variant="soft"
-							size={1}
-							color={user.emailVerified ? "sage" : "amber"}
-						>
-							{user.emailVerified ? "Verified" : "Not verified"}
-						</Badge>
-					</div>
-					{user.issuer && <DetailRow label="Issuer" value={user.issuer} />}
+				<Text size={2} color="gray">
+					{user.email}
+					</Text>
 				</div>
 
 				<div className="border-t border-gray-5 pt-5">

@@ -3,19 +3,15 @@
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
-import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-const PANEL_MAX_WIDTH_PX = 22 * 16;
-const VIEW_MARGIN_PX = 10;
-const PANEL_GAP_PX = 6;
-
-function BellIcon({ className }: { className?: string }) {
+export function MailIcon({ className }: { className?: string }) {
 	return (
 		<svg
 			className={className}
@@ -29,43 +25,44 @@ function BellIcon({ className }: { className?: string }) {
 			strokeLinejoin="round"
 			aria-hidden
 		>
-			<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-			<path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+			<rect x="2" y="4" width="20" height="16" rx="2" />
+			<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
 		</svg>
 	);
 }
 
-function computePanelBox(trigger: HTMLElement): { top: number; left: number; width: number } {
-	const rect = trigger.getBoundingClientRect();
-	const width = Math.min(
-		PANEL_MAX_WIDTH_PX,
-		window.innerWidth - 2 * VIEW_MARGIN_PX,
+/** Icon button linking to the notifications page, with unread badge. */
+export function NotificationsNavButton() {
+	const unread = useQuery(api.notifications.listMine, { unreadOnly: true });
+	const count = unread?.length ?? 0;
+	const loading = unread === undefined;
+
+	return (
+		<Link
+			href="/app/notifications"
+			className={
+				"relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-[max(var(--radius-2),var(--radius-full))] "
+				+ "text-gray-11 outline-none transition-colors hover:bg-gray-3 focus-visible:ring-2 "
+				+ "focus-visible:ring-gray-8 focus-visible:ring-offset-2"
+			}
+			aria-label={
+				!loading && count > 0
+					? `Notifications, ${count} unread`
+					: "Notifications"
+			}
+		>
+			<MailIcon />
+			{!loading && count > 0 && (
+				<span className="absolute -right-0.5 -top-0.5 flex min-w-[1.125rem] items-center justify-center rounded-full bg-red-9 px-1 text-[10px] font-semibold leading-none text-white">
+					{count > 9 ? "9+" : count}
+				</span>
+			)}
+		</Link>
 	);
-	let left = rect.right - width;
-	if (left < VIEW_MARGIN_PX) {
-		left = VIEW_MARGIN_PX;
-	}
-	if (left + width > window.innerWidth - VIEW_MARGIN_PX) {
-		left = Math.max(VIEW_MARGIN_PX, window.innerWidth - VIEW_MARGIN_PX - width);
-	}
-	return {
-		top: rect.bottom + PANEL_GAP_PX,
-		left,
-		width,
-	};
 }
 
-export function NotificationsDropdown() {
-	const menuId = useId();
-	const buttonWrapRef = useRef<HTMLDivElement>(null);
-	const panelRef = useRef<HTMLDivElement>(null);
-	const [open, setOpen] = useState(false);
-	const [panelBox, setPanelBox] = useState<{ top: number; left: number; width: number } | null>(
-		null,
-	);
-	const pathname = usePathname();
-
-	const notifications = useQuery(api.notifications.listMine, {});
+export function NotificationsList({ unreadOnly = false }: { unreadOnly?: boolean }) {
+	const notifications = useQuery(api.notifications.listMine, { unreadOnly });
 	const markRead = useMutation(api.notifications.markRead);
 	const acceptAssigned = useMutation(api.helpRequests.accept);
 	const declineAssigned = useMutation(api.helpRequests.declineAssigned);
@@ -139,9 +136,13 @@ export function NotificationsDropdown() {
 			await markRead({ notificationId: n._id });
 			return;
 		}
+		if (n.isStale) {
+			await markRead({ notificationId: n._id });
+			return;
+		}
 		setBusyId(n._id);
 		try {
-			if (n.ctaAction === "open_offer_request") {
+			if (n.canVolunteerAcceptAssignment) {
 				if (action === "accept") {
 					await acceptAssigned({ requestId: n.requestId as Id<"helpRequests"> });
 				}
@@ -149,13 +150,17 @@ export function NotificationsDropdown() {
 					await declineAssigned({ requestId: n.requestId as Id<"helpRequests"> });
 				}
 			}
-			if (n.ctaAction === "open_request") {
+			else if (n.canRequesterReviewOffer) {
 				if (action === "accept") {
 					await requesterAcceptMatch({ requestId: n.requestId as Id<"helpRequests"> });
 				}
 				else {
 					await requesterDeclineMatch({ requestId: n.requestId as Id<"helpRequests"> });
 				}
+			}
+			else {
+				await markRead({ notificationId: n._id });
+				return;
 			}
 			await markRead({ notificationId: n._id });
 		}
@@ -168,184 +173,117 @@ export function NotificationsDropdown() {
 		}
 	}
 
-	const count = notifications?.length ?? 0;
 	const loading = notifications === undefined;
+	const count = notifications?.length ?? 0;
 
-	const panel
-		= open
-			&& panelBox
-			&& typeof document !== "undefined"
-			&& createPortal(
-				<div
-					ref={panelRef}
-					id={menuId}
-					role="region"
-					aria-label="Notifications"
-					className={
-						"flex max-h-[min(70vh,28rem)] flex-col overflow-hidden rounded-lg "
-						+ "border border-gray-6 bg-gray-1 shadow-lg"
-					}
-					style={{
-						position: "fixed",
-						top: panelBox.top,
-						left: panelBox.left,
-						width: panelBox.width,
-						zIndex: 80,
-					}}
-				>
-					<div className="border-b border-gray-6 px-3 py-2">
-						<Heading level={2} size={4}>
-							Notifications
-						</Heading>
-					</div>
-					<div className="min-h-0 flex-1 overflow-y-auto p-2">
-						{loading && (
-							<Text size={2} color="gray" className="px-2 py-3">
-								Loading…
-							</Text>
-						)}
-						{!loading && count === 0 && (
-							<Text size={2} color="gray" className="px-2 py-3">
-								No unread notifications. You&apos;re all caught up.
-							</Text>
-						)}
-						{!loading && count > 0 && (
-							<ul className="flex flex-col gap-2">
-								{notifications!.map(n => (
-									<li key={n._id}>
-										<div className="rounded-lg border border-amber-6 bg-amber-2 p-3">
-											<div className="flex min-w-0 flex-col gap-1">
-												<Text size={3} weight="medium">{n.title}</Text>
-												<Text size={2}>{n.body}</Text>
-											</div>
-											<div className="mt-2 flex flex-wrap gap-2">
-												{n.requestId && n.ctaAction === "open_offer_request" && (
-													<>
-														<Button
-															size={1}
-															variant="solid"
-															color="sage"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "accept")}
-														>
-															Accept
-														</Button>
-														<Button
-															size={1}
-															variant="outline"
-															color="red"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "decline")}
-														>
-															Decline
-														</Button>
-														<Link
-															href={`/app/offer/${n.requestId}`}
-															className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
-															onClick={() => setOpen(false)}
-														>
-															Open
-														</Link>
-													</>
-												)}
-												{n.requestId && n.ctaAction === "open_request" && (
-													<>
-														<Button
-															size={1}
-															variant="solid"
-															color="sage"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "accept")}
-														>
-															Accept match
-														</Button>
-														<Button
-															size={1}
-															variant="outline"
-															color="red"
-															isDisabled={busyId === n._id}
-															onPress={() => handleAction(n, "decline")}
-														>
-															Decline
-														</Button>
-														<Link
-															href={`/app/requests/${n.requestId}`}
-															className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
-															onClick={() => setOpen(false)}
-														>
-															Open
-														</Link>
-													</>
-												)}
-												{n.requestId
-													&& (n.ctaAction === "open_request_thread"
-														|| n.ctaAction === "open_offer_thread") && (
-													<>
-														<Link
-															href={
-																n.ctaAction === "open_request_thread"
-																	? `/app/requests/${n.requestId}`
-																	: `/app/offer/${n.requestId}`
-															}
-															className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
-															onClick={() => setOpen(false)}
-														>
-															{n.ctaLabel ?? "Open conversation"}
-														</Link>
-														<Button
-															size={1}
-															variant="outline"
-															color="gray"
-															isDisabled={busyId === n._id}
-															onPress={() => void markRead({ notificationId: n._id })}
-														>
-															Mark read
-														</Button>
-													</>
-												)}
-												{(!n.requestId || !n.ctaAction) && (
-													<Button
-														size={1}
-														variant="outline"
-														color="gray"
-														isDisabled={busyId === n._id}
-														onPress={() => void markRead({ notificationId: n._id })}
-													>
-														Mark read
-													</Button>
-												)}
-											</div>
-										</div>
-									</li>
-								))}
-							</ul>
-						)}
-					</div>
-				</div>,
-				document.body,
-			);
+	if (loading) {
+		return (
+			<Text size={2} color="gray">
+				Loading…
+			</Text>
+		);
+	}
+
+	if (count === 0) {
+		return (
+			<Text size={2} color="gray">
+				{unreadOnly
+					? "No unread notifications. You're all caught up."
+					: "No notifications yet."}
+			</Text>
+		);
+	}
 
 	return (
-		<div ref={buttonWrapRef} className="inline-flex">
-			<Button
-				variant="ghost"
-				color="gray"
-				size={1}
-				className="relative min-h-9 min-w-9 px-2"
-				aria-expanded={open}
-				aria-haspopup="true"
-				aria-controls={open ? menuId : undefined}
-				onPress={() => setOpen(o => !o)}
-			>
-				<span className="sr-only">Notifications</span>
-				<BellIcon className="text-gray-11" />
-				{!loading && count > 0 && (
-					<span className="absolute -right-0.5 -top-0.5 flex min-w-[1.125rem] items-center justify-center rounded-full bg-amber-9 px-1 text-[10px] font-semibold leading-none text-gray-1">
-						{count > 9 ? "9+" : count}
-					</span>
-				)}
-			</Button>
-			{panel}
-		</div>
+		<ul className="flex flex-col gap-3">
+			{notifications.map(n => (
+				<li key={n._id}>
+					<div
+						className={
+							n.isRead
+								? "rounded-[max(var(--radius-3),12px)] border border-gray-6 bg-gray-2 p-4"
+								: "rounded-[max(var(--radius-3),12px)] border border-amber-6 bg-amber-2 p-4"
+						}
+					>
+						<div className="flex min-w-0 flex-col gap-1">
+							<Text size={3} weight="medium">{n.title}</Text>
+							<Text size={2}>{n.body}</Text>
+						</div>
+						<div className="mt-3 flex flex-col gap-2">
+							{n.isStale && (
+								<Text size={1} color="gray">
+									This request was updated. Open it for the latest status.
+								</Text>
+							)}
+							<div className="flex flex-wrap gap-2">
+								{n.canVolunteerAcceptAssignment && (
+									<>
+										<Button
+											size={1}
+											variant="solid"
+											color="sage"
+											isDisabled={busyId === n._id}
+											onPress={() => handleAction(n, "accept")}
+										>
+											Accept
+										</Button>
+										<Button
+											size={1}
+											variant="outline"
+											color="red"
+											isDisabled={busyId === n._id}
+											onPress={() => handleAction(n, "decline")}
+										>
+											Decline
+										</Button>
+									</>
+								)}
+								{n.canRequesterReviewOffer && (
+									<>
+										<Button
+											size={1}
+											variant="solid"
+											color="sage"
+											isDisabled={busyId === n._id}
+											onPress={() => handleAction(n, "accept")}
+										>
+											Accept match
+										</Button>
+										<Button
+											size={1}
+											variant="outline"
+											color="red"
+											isDisabled={busyId === n._id}
+											onPress={() => handleAction(n, "decline")}
+										>
+											Decline
+										</Button>
+									</>
+								)}
+								{n.openPath && (
+									<Link
+										href={n.openPath}
+										className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
+									>
+										{n.ctaLabel ?? "Open"}
+									</Link>
+								)}
+								{!n.isRead && (
+									<Button
+										size={1}
+										variant="outline"
+										color="gray"
+										isDisabled={busyId === n._id}
+										onPress={() => void markRead({ notificationId: n._id })}
+									>
+										Mark read
+									</Button>
+								)}
+							</div>
+						</div>
+					</div>
+				</li>
+			))}
+		</ul>
 	);
 }

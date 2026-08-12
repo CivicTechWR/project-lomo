@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth-server";
-import { AppTopBar } from "./app-top-bar";
+import { AppChrome } from "./app-chrome";
 
 export default async function ProtectedLayout({
 	children,
@@ -25,10 +25,7 @@ export default async function ProtectedLayout({
 						+ "lg:overflow-x-hidden lg:rounded-[max(var(--radius-4),16px)] lg:border-2 lg:border-gray-9 lg:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]"
 					}
 				>
-					<AppTopBar />
-					<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto">
-						{children}
-					</div>
+					<AppChrome>{children}</AppChrome>
 				</div>
 			</div>
 		</>
