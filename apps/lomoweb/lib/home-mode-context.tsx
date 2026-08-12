@@ -1,9 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import {
-	readStoredHomeMode,
 	writeStoredHomeMode,
 	type HomeAppMode,
 } from "@/lib/app-home-mode";
@@ -17,14 +16,7 @@ type HomeModeContextValue = {
 const HomeModeContext = createContext<HomeModeContextValue | null>(null);
 
 export function HomeModeProvider({ children }: { children: ReactNode }) {
-	const [mode, setModeState] = useState<HomeAppMode>("request_help");
-
-	useEffect(() => {
-		const stored = readStoredHomeMode();
-		if (stored) {
-			setModeState(stored);
-		}
-	}, []);
+	const [mode, setModeState] = useState<HomeAppMode>("home");
 
 	function setMode(next: HomeAppMode) {
 		setModeState(next);
@@ -32,7 +24,11 @@ export function HomeModeProvider({ children }: { children: ReactNode }) {
 	}
 
 	function toggleMode() {
-		setMode(mode === "request_help" ? "offer_help" : "request_help");
+		if (mode === "home" || mode === "offer_help") {
+			setMode("request_help");
+			return;
+		}
+		setMode("offer_help");
 	}
 
 	return (

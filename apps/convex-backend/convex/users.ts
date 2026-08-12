@@ -1,13 +1,13 @@
 import { v } from "convex/values";
-import { normalizeHelpPreferences } from "./lib/helperPreferences";
 import { mutation, query } from "./_generated/server";
+import { normalizeHelpPreferences } from "./lib/helperPreferences";
 
-type Identity = {
+interface Identity {
 	subject: string;
 	email?: string;
 	name?: string;
 	pictureUrl?: string;
-};
+}
 
 async function requireIdentity(ctx: any) {
 	const identity = await ctx.auth.getUserIdentity();
@@ -59,7 +59,7 @@ export const getMyProfileRow = query({
 			return null;
 		}
 		await upsertCurrentUser(ctx, identity);
-		return await getUserRow(ctx, identity.subject);
+		return getUserRow(ctx, identity.subject);
 	},
 });
 

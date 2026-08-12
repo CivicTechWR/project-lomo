@@ -123,8 +123,8 @@ export function UserProfile({
 	}
 
 	return (
-		<Card size={3} variant="surface" className="w-full max-w-md">
-			<div className="flex flex-col gap-5 p-6">
+		<Card size={3} variant="surface" className="w-full max-w-lg">
+			<div className="flex flex-col gap-4 p-4 sm:p-5">
 				<div className="flex items-center justify-between gap-3">
 					<Heading level={2} size={6}>
 						Your profile

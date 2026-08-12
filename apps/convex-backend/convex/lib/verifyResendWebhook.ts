@@ -11,7 +11,7 @@ function timingSafeEqual(a: Uint8Array, b: Uint8Array): boolean {
 	}
 	let out = 0;
 	for (let i = 0; i < a.length; i++) {
-		out |= a[i]! ^ b[i]!;
+		out |= a[i] ^ b[i];
 	}
 	return out === 0;
 }
@@ -33,7 +33,7 @@ function base64Decode(b64: string): Uint8Array | null {
 function bytesToBase64(u8: Uint8Array): string {
 	let bin = "";
 	for (let i = 0; i < u8.length; i++) {
-		bin += String.fromCharCode(u8[i]!);
+		bin += String.fromCharCode(u8[i]);
 	}
 	return btoa(bin);
 }

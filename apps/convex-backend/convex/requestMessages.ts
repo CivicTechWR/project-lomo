@@ -1,21 +1,21 @@
 /* eslint-disable node/prefer-global/process */
+import type { Doc, Id } from "./_generated/dataModel";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import type { Doc, Id } from "./_generated/dataModel";
 import { internalMutation, mutation, query } from "./_generated/server";
-import { extractNewReplyText } from "./lib/stripEmailReply";
 import {
 	conversationLink,
 	formatMessageEmailBody,
 	messageEmailReplySubject,
 	messageEmailSubject,
 } from "./lib/messageEmail";
+import { extractNewReplyText } from "./lib/stripEmailReply";
 
 const MAX_BODY_LEN = 8000;
 const MAX_MESSAGES_PER_HOUR = 30;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
 
-type Identity = { subject: string; email?: string; name?: string };
+interface Identity { subject: string; email?: string; name?: string }
 
 function normalizeEmail(raw: string): string {
 	const trimmed = raw.trim().toLowerCase();
@@ -41,7 +41,7 @@ async function assertCanMessage(
 	requestId: Id<"helpRequests">,
 	subject: string,
 ): Promise<Doc<"helpRequests">> {
-	const doc = await ctx.db.get(requestId);
+	const doc = await ctx.db.get("helpRequests", requestId);
 	if (!doc || doc.status !== "in_progress") {
 		throw new Error("Messaging is only available for requests in progress.");
 	}

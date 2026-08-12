@@ -20,8 +20,8 @@ const LOCAL_DEV_ORIGINS = [
 
 export function createAuth(ctx: GenericCtx<DataModel>) {
 	const { SITE_URL } = getSiteEnv();
-	const extraOrigins =
-		process.env.TRUSTED_ORIGINS?.split(",")
+	const extraOrigins
+		= process.env.TRUSTED_ORIGINS?.split(",")
 			.map(origin => origin.trim())
 			.filter(Boolean) ?? [];
 

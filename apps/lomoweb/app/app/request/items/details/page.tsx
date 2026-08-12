@@ -6,6 +6,7 @@ import { Heading } from "@repo/ui/heading";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { Text } from "@repo/ui/text";
 import { useRouter } from "next/navigation";
+import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -15,6 +16,14 @@ export default function ItemsDetailsPage() {
 	const d = draft.itemsDetails;
 
 	function handleNext() {
+		if (d.needsDelivery) {
+			if (!d.address.trim() || d.addressLat == null || d.addressLng == null) {
+				window.alert(
+					"Please choose a delivery address from the suggestions so we can match helpers nearby.",
+				);
+				return;
+			}
+		}
 		router.push("/app/request/items/urgency");
 	}
 
@@ -54,7 +63,19 @@ export default function ItemsDetailsPage() {
 					<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
 						<Checkbox
 							isSelected={d.needsDelivery}
-							onChange={v => setItemsDetails({ needsDelivery: v })}
+							onChange={(v) => {
+								if (v) {
+									setItemsDetails({ needsDelivery: true });
+								}
+								else {
+									setItemsDetails({
+										needsDelivery: false,
+										address: "",
+										addressLat: undefined,
+										addressLng: undefined,
+									});
+								}
+							}}
 						>
 							<Label>
 								I need delivery (Picking up isn&apos;t an option)
@@ -63,16 +84,24 @@ export default function ItemsDetailsPage() {
 
 						{d.needsDelivery && (
 							<div className="mt-4 flex flex-col gap-4 border-t border-gray-5 pt-4">
-								<TextField
+								<AddressAutocompleteField
 									name="address"
 									value={d.address}
+									selectedLat={d.addressLat}
+									selectedLng={d.addressLng}
 									onChange={v => setItemsDetails({ address: v })}
-								>
-									<Label>Address</Label>
-									<Group>
-										<Input placeholder="Street, city" />
-									</Group>
-								</TextField>
+									onSelect={({ label, lat, lng }) =>
+										setItemsDetails({
+											address: label,
+											addressLat: lat,
+											addressLng: lng,
+										})}
+									onClearSelection={() =>
+										setItemsDetails({
+											addressLat: undefined,
+											addressLng: undefined,
+										})}
+								/>
 								<TextField
 									name="deliveryInstructions"
 									value={d.deliveryInstructions}

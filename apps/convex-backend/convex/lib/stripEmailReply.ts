@@ -12,11 +12,11 @@ export function extractNewReplyText(raw: string): string {
 		/\nFrom:\s.+\n(?:Sent|Date):\s/i,
 		/\n_{10,}\s*\n/,
 		// Current LoMo message email footer
-		/\n----\s*\n/i,
+		/\n----\s*\n/,
 		/\nReply to this email \(plain text\) to continue the conversation\./i,
 		/\nOpen the conversation: /i,
 		// Legacy LoMo relay footers
-		/\n---\s*\nYou(?:'|')re receiving this through LoMo/i,
+		/\n---\s*\nYou're receiving this through LoMo/i,
 		/\n---\s*\nYou can also reply to this email/i,
 		/\nYou can also reply to this email \(plain text\) to message your match\./i,
 	];
@@ -38,13 +38,13 @@ export function extractNewReplyText(raw: string): string {
 	text = text.slice(0, cutAt).trim();
 
 	// Trailing LoMo boilerplate if it wasn't preceded by a quote marker
-	text = text.replace(/\n----\s*\n[\s\S]*$/i, "").trim();
+	text = text.replace(/\n----[\t\v\f\r \xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]*\n[\s\S]*$/, "").trim();
 	text = text.replace(
 		/\nReply to this email \(plain text\) to continue the conversation\.[\s\S]*$/i,
 		"",
 	).trim();
 	text = text.replace(
-		/\n---\s*\nYou(?:'|')re receiving this through LoMo[\s\S]*$/i,
+		/\n---\s*\nYou're receiving this through LoMo[\s\S]*$/i,
 		"",
 	).trim();
 	text = text.replace(

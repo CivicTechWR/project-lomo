@@ -28,6 +28,9 @@ export interface FoodRequestDetails {
 	peopleCount: string;
 	needsDelivery: boolean;
 	address: string;
+	/** Set when the requester picks an address from autocomplete. */
+	addressLat?: number;
+	addressLng?: number;
 	deliveryInstructions: string;
 }
 
@@ -40,6 +43,8 @@ export const emptyFoodDetails = (): FoodRequestDetails => ({
 	peopleCount: "",
 	needsDelivery: false,
 	address: "",
+	addressLat: undefined,
+	addressLng: undefined,
 	deliveryInstructions: "",
 });
 
@@ -48,6 +53,9 @@ export interface ItemsRequestDetails {
 	sizeOrStyle: string;
 	needsDelivery: boolean;
 	address: string;
+	/** Set when the requester picks an address from autocomplete. */
+	addressLat?: number;
+	addressLng?: number;
 	deliveryInstructions: string;
 }
 
@@ -56,6 +64,8 @@ export const emptyItemsDetails = (): ItemsRequestDetails => ({
 	sizeOrStyle: "",
 	needsDelivery: false,
 	address: "",
+	addressLat: undefined,
+	addressLng: undefined,
 	deliveryInstructions: "",
 });
 

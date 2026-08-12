@@ -9,6 +9,7 @@ import { Text } from "@repo/ui/text";
 import type { GroceryTypeId } from "@/lib/request-flow/types";
 import { GROCERY_TYPE_OPTIONS } from "@/lib/request-flow/food";
 import { useRouter } from "next/navigation";
+import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -36,6 +37,14 @@ export default function FoodDetailsPage() {
 	}
 
 	function handleNext() {
+		if (d.needsDelivery) {
+			if (!d.address.trim() || d.addressLat == null || d.addressLng == null) {
+				window.alert(
+					"Please choose a delivery address from the suggestions so we can match helpers nearby.",
+				);
+				return;
+			}
+		}
 		router.push("/app/request/food/urgency");
 	}
 
@@ -137,7 +146,19 @@ export default function FoodDetailsPage() {
 					<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
 						<Checkbox
 							isSelected={d.needsDelivery}
-							onChange={v => setFoodDetails({ needsDelivery: v })}
+							onChange={(v) => {
+								if (v) {
+									setFoodDetails({ needsDelivery: true });
+								}
+								else {
+									setFoodDetails({
+										needsDelivery: false,
+										address: "",
+										addressLat: undefined,
+										addressLng: undefined,
+									});
+								}
+							}}
 						>
 							<Label>
 								I need delivery (Picking up isn&apos;t an option)
@@ -146,16 +167,24 @@ export default function FoodDetailsPage() {
 
 						{d.needsDelivery && (
 							<div className="mt-4 flex flex-col gap-4 border-t border-gray-5 pt-4">
-								<TextField
+								<AddressAutocompleteField
 									name="address"
 									value={d.address}
+									selectedLat={d.addressLat}
+									selectedLng={d.addressLng}
 									onChange={v => setFoodDetails({ address: v })}
-								>
-									<Label>Address</Label>
-									<Group>
-										<Input placeholder="Street, city" />
-									</Group>
-								</TextField>
+									onSelect={({ label, lat, lng }) =>
+										setFoodDetails({
+											address: label,
+											addressLat: lat,
+											addressLng: lng,
+										})}
+									onClearSelection={() =>
+										setFoodDetails({
+											addressLat: undefined,
+											addressLng: undefined,
+										})}
+								/>
 								<TextField
 									name="deliveryInstructions"
 									value={d.deliveryInstructions}

@@ -43,7 +43,7 @@ export function HelperPreferencesFields({ values, onChange }: HelperPreferencesF
 					isSelected={values.canHelpNow}
 					onChange={canHelpNow => onChange({ ...values, canHelpNow })}
 				>
-					I can offer help
+					I can offer support
 				</Switch>
 			</div>
 
@@ -84,8 +84,9 @@ export function HelperPreferencesFields({ values, onChange }: HelperPreferencesF
 						Area you can help with
 					</Text>
 					<Text size={2} color="gray">
-						Drag the map to set the centre. You&apos;ll only see open requests
-						within this radius when offering help.
+						Drag the map to set the centre and adjust the radius based on how far
+						you are able to travel. This becomes the default area filter when you
+						browse open requests.
 					</Text>
 				</div>
 

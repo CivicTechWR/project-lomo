@@ -1,8 +1,7 @@
-/* eslint-disable node/prefer-global/process */
 import { v } from "convex/values";
+import { internalAction, mutation, query } from "./_generated/server";
 import { enrichNotification } from "./lib/notificationHelpers";
 import { getResendConfig, postResendEmail } from "./lib/resendEmail";
-import { internalAction, mutation, query } from "./_generated/server";
 
 export const listMine = query({
 	args: { unreadOnly: v.optional(v.boolean()) },
@@ -13,19 +12,19 @@ export const listMine = query({
 		}
 		const rows = unreadOnly
 			? await ctx.db
-				.query("notifications")
-				.withIndex("by_recipient_read", q =>
-					q.eq("recipientSubject", identity.subject).eq("isRead", false))
-				.collect()
+					.query("notifications")
+					.withIndex("by_recipient_read", q =>
+						q.eq("recipientSubject", identity.subject).eq("isRead", false))
+					.collect()
 			: await ctx.db
-				.query("notifications")
-				.withIndex("by_recipient", q => q.eq("recipientSubject", identity.subject))
-				.collect();
+					.query("notifications")
+					.withIndex("by_recipient", q => q.eq("recipientSubject", identity.subject))
+					.collect();
 		rows.sort((a, b) => b._creationTime - a._creationTime);
 
 		const enriched = await Promise.all(
 			rows.map(async (n) => {
-				const req = n.requestId ? await ctx.db.get(n.requestId) : null;
+				const req = n.requestId ? await ctx.db.get("helpRequests", n.requestId) : null;
 				return enrichNotification(n, req, identity.subject);
 			}),
 		);
@@ -40,11 +39,11 @@ export const markRead = mutation({
 		if (!identity) {
 			throw new Error("Unauthenticated");
 		}
-		const doc = await ctx.db.get(notificationId);
+		const doc = await ctx.db.get("notifications", notificationId);
 		if (!doc || doc.recipientSubject !== identity.subject) {
 			throw new Error("Not found");
 		}
-		await ctx.db.patch(notificationId, { isRead: true });
+		await ctx.db.patch("notifications", notificationId, { isRead: true });
 	},
 });
 

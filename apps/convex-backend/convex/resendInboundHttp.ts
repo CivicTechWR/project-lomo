@@ -1,7 +1,7 @@
 /* eslint-disable node/prefer-global/process */
 import { internal } from "./_generated/api";
-import { parseSvixHeaders, verifyResendWebhookPayload } from "./lib/verifyResendWebhook";
 import { httpAction } from "./_generated/server";
+import { parseSvixHeaders, verifyResendWebhookPayload } from "./lib/verifyResendWebhook";
 
 function stripHtmlToText(html: string): string {
 	return html
@@ -26,12 +26,12 @@ function pickPlainBody(
 	return "";
 }
 
-type ResendWebhookBody = {
+interface ResendWebhookBody {
 	type?: string;
 	data?: {
 		email_id?: string;
 	};
-};
+}
 
 export const resendInboundWebhook = httpAction(async (ctx, req) => {
 	if (req.method !== "POST") {

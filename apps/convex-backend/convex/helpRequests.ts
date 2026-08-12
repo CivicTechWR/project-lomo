@@ -4,17 +4,17 @@ import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import { haversineDistanceKm } from "./lib/geo";
 import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
-import { extractGeocodableAddress } from "./lib/requestLocation";
+import { extractGeocodableAddress, extractPayloadCoordinates } from "./lib/requestLocation";
 import { extractIsUrgent, extractNeedsDelivery } from "./lib/requestMetadata";
 import { redactHelpRequestForVolunteer } from "./redactHelpRequest";
 import { requestStatus } from "./schema";
 
-type Identity = {
+interface Identity {
 	subject: string;
 	email?: string;
 	name?: string;
 	pictureUrl?: string;
-};
+}
 
 function csvSet(raw: string | undefined): Set<string> {
 	return new Set(
@@ -136,7 +136,7 @@ export const get = query({
 			return null;
 		}
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject !== identity.subject) {
 			return null;
 		}
@@ -144,10 +144,135 @@ export const get = query({
 	},
 });
 
+type HelpArea = {
+	centerLat: number;
+	centerLng: number;
+	radiusKm: number;
+};
+
+function helpAreaFromUser(userRow: {
+	helpAreaCenterLat?: number;
+	helpAreaCenterLng?: number;
+	helpAreaRadiusKm?: number;
+} | null): HelpArea | null {
+	if (
+		userRow?.helpAreaCenterLat == null
+		|| userRow?.helpAreaCenterLng == null
+		|| userRow?.helpAreaRadiusKm == null
+	) {
+		return null;
+	}
+	return {
+		centerLat: userRow.helpAreaCenterLat,
+		centerLng: userRow.helpAreaCenterLng,
+		radiusKm: userRow.helpAreaRadiusKm,
+	};
+}
+
+function enrichOpenRequestForHelper(
+	r: {
+		_id: any;
+		_creationTime: number;
+		category: string;
+		title: string;
+		summary: string;
+		details: string;
+		payload?: string;
+		locationLat?: number;
+		locationLng?: number;
+		needsDelivery?: boolean;
+		isUrgent?: boolean;
+		ownerSubject: string;
+		status: string;
+	},
+	/** Profile help area — drives the "In your area" badge. */
+	profileHelpArea: HelpArea | null,
+	/** Area used for distance sorting (usually the list location filter). */
+	distanceArea: HelpArea | null = profileHelpArea,
+) {
+	const needsDelivery = r.needsDelivery ?? extractNeedsDelivery(r.category, r.payload);
+	const isUrgent = r.isUrgent ?? extractIsUrgent(r.payload);
+	let distanceKm: number | null = null;
+	if (
+		distanceArea != null
+		&& r.locationLat != null
+		&& r.locationLng != null
+	) {
+		distanceKm = haversineDistanceKm(
+			distanceArea.centerLat,
+			distanceArea.centerLng,
+			r.locationLat,
+			r.locationLng,
+		);
+	}
+	let inYourArea = false;
+	if (
+		profileHelpArea != null
+		&& r.locationLat != null
+		&& r.locationLng != null
+	) {
+		const profileDistanceKm = haversineDistanceKm(
+			profileHelpArea.centerLat,
+			profileHelpArea.centerLng,
+			r.locationLat,
+			r.locationLng,
+		);
+		inYourArea = profileDistanceKm <= profileHelpArea.radiusKm;
+	}
+	const {
+		locationLat: _lat,
+		locationLng: _lng,
+		...redacted
+	} = redactHelpRequestForVolunteer(r);
+	return {
+		...redacted,
+		needsDelivery,
+		isUrgent,
+		inYourArea,
+		distanceKm,
+	};
+}
+
+function matchesLocationFilter(
+	r: { locationLat?: number; locationLng?: number },
+	filter: HelpArea,
+): boolean {
+	// Requests with no geocoded location stay visible.
+	if (r.locationLat == null || r.locationLng == null) {
+		return true;
+	}
+	return haversineDistanceKm(
+		filter.centerLat,
+		filter.centerLng,
+		r.locationLat,
+		r.locationLng,
+	) <= filter.radiusKm;
+}
+
+/** Urgent first, then nearer (unknown distance last), then newest. */
+function compareOpenRequestsForHelper(
+	a: { isUrgent: boolean; distanceKm: number | null; _creationTime: number },
+	b: { isUrgent: boolean; distanceKm: number | null; _creationTime: number },
+): number {
+	if (a.isUrgent !== b.isUrgent) {
+		return a.isUrgent ? -1 : 1;
+	}
+	const distA = a.distanceKm ?? Number.POSITIVE_INFINITY;
+	const distB = b.distanceKm ?? Number.POSITIVE_INFINITY;
+	if (distA !== distB) {
+		return distA - distB;
+	}
+	return b._creationTime - a._creationTime;
+}
+
 /** Pending requests from other users (offering help). */
 export const listPendingFromOthers = query({
-	args: {},
-	handler: async (ctx) => {
+	args: {
+		filterCenterLat: v.optional(v.number()),
+		filterCenterLng: v.optional(v.number()),
+		filterRadiusKm: v.optional(v.number()),
+	},
+	handler: async (ctx, args) => {
 		const identity = await ctx.auth.getUserIdentity() as Identity | null;
 		if (!identity) {
 			return [];
@@ -163,43 +288,163 @@ export const listPendingFromOthers = query({
 			.query("users")
 			.withIndex("by_subject", q => q.eq("subject", identity.subject))
 			.unique();
+		const profileHelpArea = helpAreaFromUser(userRow);
 
-		const hasHelpArea
-			= userRow?.helpAreaCenterLat != null
-				&& userRow?.helpAreaCenterLng != null
-				&& userRow?.helpAreaRadiusKm != null;
-
-		let mine = rows.filter(
-			r => r.ownerSubject !== identity.subject,
-		);
-
-		if (hasHelpArea) {
-			const centerLat = userRow!.helpAreaCenterLat!;
-			const centerLng = userRow!.helpAreaCenterLng!;
-			const radiusKm = userRow!.helpAreaRadiusKm!;
-			mine = mine.filter((r) => {
-				if (r.locationLat == null || r.locationLng == null) {
-					return false;
-				}
-				return haversineDistanceKm(
-					centerLat,
-					centerLng,
-					r.locationLat,
-					r.locationLng,
-				) <= radiusKm;
-			});
+		let filterArea: HelpArea | null = null;
+		if (
+			args.filterCenterLat != null
+			&& args.filterCenterLng != null
+			&& args.filterRadiusKm != null
+		) {
+			const radiusKm = Math.round(args.filterRadiusKm);
+			if (
+				args.filterCenterLat >= -90
+				&& args.filterCenterLat <= 90
+				&& args.filterCenterLng >= -180
+				&& args.filterCenterLng <= 180
+				&& radiusKm >= 1
+				&& radiusKm <= 30
+			) {
+				filterArea = {
+					centerLat: args.filterCenterLat,
+					centerLng: args.filterCenterLng,
+					radiusKm,
+				};
+			}
 		}
 
-		mine.sort((a, b) => b._creationTime - a._creationTime);
-		return mine.map((r) => {
-			const needsDelivery = r.needsDelivery ?? extractNeedsDelivery(r.category, r.payload);
-			const isUrgent = r.isUrgent ?? extractIsUrgent(r.payload);
+		const open = rows
+			.filter(r => r.ownerSubject !== identity.subject)
+			.filter(r => filterArea == null || matchesLocationFilter(r, filterArea))
+			.map(r => enrichOpenRequestForHelper(
+				r,
+				profileHelpArea,
+				filterArea ?? profileHelpArea,
+			));
+
+		open.sort(compareOpenRequestsForHelper);
+		return open.map(({ distanceKm: _distanceKm, ...item }) => item);
+	},
+});
+
+const ACTIVE_HOME_STATUSES = new Set([
+	"in_progress",
+	"awaiting_requester_acceptance",
+]);
+
+/** Dashboard summary for the home screen. */
+export const homeDashboard = query({
+	args: {},
+	handler: async (ctx) => {
+		const identity = await ctx.auth.getUserIdentity() as Identity | null;
+		if (!identity) {
 			return {
-				...redactHelpRequestForVolunteer(r),
-				needsDelivery,
-				isUrgent,
+				active: [],
+				pendingMine: [],
+				pendingMineTotal: 0,
+				openPreview: [],
+				openTotal: 0,
+				canHelpNow: false,
 			};
-		});
+		}
+		await upsertCurrentUser(ctx, identity);
+		const subject = identity.subject;
+
+		const owned = await ctx.db
+			.query("helpRequests")
+			.withIndex("by_owner", q => q.eq("ownerSubject", subject))
+			.collect();
+
+		const asHelper = await ctx.db
+			.query("helpRequests")
+			.withIndex("by_helper", q => q.eq("helperSubject", subject))
+			.collect();
+
+		const activeOwned = owned
+			.filter(r => ACTIVE_HOME_STATUSES.has(r.status))
+			.map(r => ({
+				_id: r._id,
+				_creationTime: r._creationTime,
+				title: r.title,
+				summary: r.summary,
+				status: r.status,
+				category: r.category,
+				role: "requester" as const,
+				isUrgent: r.isUrgent ?? extractIsUrgent(r.payload),
+			}));
+
+		const activeHelping = asHelper
+			.filter(r => ACTIVE_HOME_STATUSES.has(r.status))
+			.map(r => ({
+				_id: r._id,
+				_creationTime: r._creationTime,
+				title: r.title,
+				summary: r.summary,
+				status: r.status,
+				category: r.category,
+				role: "helper" as const,
+				isUrgent: r.isUrgent ?? extractIsUrgent(r.payload),
+			}));
+
+		const active = [...activeOwned, ...activeHelping];
+		active.sort((a, b) => b._creationTime - a._creationTime);
+
+		const pendingMine = owned
+			.filter(r => r.status === "pending")
+			.sort((a, b) => b._creationTime - a._creationTime)
+			.slice(0, 5)
+			.map(r => ({
+				_id: r._id,
+				_creationTime: r._creationTime,
+				title: r.title,
+				summary: r.summary,
+				status: r.status,
+				category: r.category,
+				isUrgent: r.isUrgent ?? extractIsUrgent(r.payload),
+			}));
+
+		const pendingMineTotal = owned.filter(r => r.status === "pending").length;
+
+		const userRow = await ctx.db
+			.query("users")
+			.withIndex("by_subject", q => q.eq("subject", subject))
+			.unique();
+		const canHelpNow = userRow?.canHelpNow === true;
+		const helpArea = helpAreaFromUser(userRow);
+
+		if (!canHelpNow) {
+			return {
+				active,
+				pendingMine,
+				pendingMineTotal,
+				openPreview: [],
+				openTotal: 0,
+				canHelpNow: false,
+			};
+		}
+
+		const openRows = await ctx.db
+			.query("helpRequests")
+			.withIndex("by_status", q => q.eq("status", "pending"))
+			.collect();
+
+		const openEnriched = openRows
+			.filter(r => r.ownerSubject !== subject)
+			.map(r => enrichOpenRequestForHelper(r, helpArea))
+			.sort(compareOpenRequestsForHelper);
+
+		const openPreview = openEnriched
+			.slice(0, 5)
+			.map(({ distanceKm: _distanceKm, ...item }) => item);
+
+		return {
+			active,
+			pendingMine,
+			pendingMineTotal,
+			openPreview,
+			openTotal: openEnriched.length,
+			canHelpNow: true,
+		};
 	},
 });
 
@@ -215,7 +460,7 @@ export const getAsHelper = query({
 			return null;
 		}
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc) {
 			return null;
 		}
@@ -275,7 +520,7 @@ export const getOfferHelperPreview = query({
 			return null;
 		}
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject !== identity.subject) {
 			return null;
 		}
@@ -300,14 +545,14 @@ export const accept = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject === identity.subject) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "assigned" || doc.assignedHelperSubject !== identity.subject) {
 			throw new Error("This request is not currently assigned to you.");
 		}
-		await ctx.db.patch(requestId, {
+		await ctx.db.patch("helpRequests", requestId, {
 			status: "awaiting_requester_acceptance",
 			helperSubject: identity.subject,
 		});
@@ -346,7 +591,7 @@ export const volunteerOfferHelp = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject === identity.subject) {
 			throw new Error("Not found");
 		}
@@ -356,7 +601,7 @@ export const volunteerOfferHelp = mutation({
 		if (doc.assignedHelperSubject) {
 			throw new Error("This request is being matched by a coordinator.");
 		}
-		await ctx.db.patch(requestId, {
+		await ctx.db.patch("helpRequests", requestId, {
 			status: "awaiting_requester_acceptance",
 			helperSubject: identity.subject,
 		});
@@ -393,14 +638,14 @@ export const declineAssigned = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.assignedHelperSubject !== identity.subject) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "assigned") {
 			throw new Error("Request is not pending your assignment.");
 		}
-		await ctx.db.patch(requestId, {
+		await ctx.db.patch("helpRequests", requestId, {
 			status: "pending",
 			assignedHelperSubject: undefined,
 		});
@@ -426,14 +671,14 @@ export const requesterAcceptMatch = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject !== identity.subject) {
 			throw new Error("Not found");
 		}
 		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperSubject) {
 			throw new Error("No match to accept.");
 		}
-		await ctx.db.patch(requestId, {
+		await ctx.db.patch("helpRequests", requestId, {
 			status: "in_progress",
 			emailRelayToken: randomRelayToken(),
 		});
@@ -473,7 +718,7 @@ export const requesterDeclineMatch = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject !== identity.subject) {
 			throw new Error("Not found");
 		}
@@ -481,7 +726,7 @@ export const requesterDeclineMatch = mutation({
 			throw new Error("No match to decline.");
 		}
 		const helper = doc.helperSubject;
-		await ctx.db.patch(requestId, {
+		await ctx.db.patch("helpRequests", requestId, {
 			status: "pending",
 			helperSubject: undefined,
 			assignedHelperSubject: undefined,
@@ -554,7 +799,7 @@ export const assignVolunteer = mutation({
 		if (!isAdminIdentity(identity)) {
 			throw new Error("Forbidden");
 		}
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc) {
 			throw new Error("Request not found.");
 		}
@@ -564,7 +809,7 @@ export const assignVolunteer = mutation({
 		if (doc.ownerSubject === volunteerSubject) {
 			throw new Error("Requester cannot be assigned as helper.");
 		}
-		await ctx.db.patch(requestId, {
+		await ctx.db.patch("helpRequests", requestId, {
 			status: "assigned",
 			assignedHelperSubject: volunteerSubject,
 			helperSubject: undefined,
@@ -604,6 +849,7 @@ export const create = mutation({
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
 
+		const coords = extractPayloadCoordinates(args.category, args.payload);
 		const requestId = await ctx.db.insert("helpRequests", {
 			ownerSubject: identity.subject,
 			category: args.category,
@@ -614,14 +860,19 @@ export const create = mutation({
 			payload: args.payload,
 			needsDelivery: extractNeedsDelivery(args.category, args.payload),
 			isUrgent: extractIsUrgent(args.payload),
+			...(coords != null
+				? { locationLat: coords.lat, locationLng: coords.lng }
+				: {}),
 		});
 
-		const address = extractGeocodableAddress(args.category, args.payload);
-		if (address) {
-			await ctx.scheduler.runAfter(0, internal.requestGeocode.geocodeRequest, {
-				requestId,
-				address,
-			});
+		if (coords == null) {
+			const address = extractGeocodableAddress(args.category, args.payload);
+			if (address != null) {
+				await ctx.scheduler.runAfter(0, internal.requestGeocode.geocodeRequest, {
+					requestId,
+					address,
+				});
+			}
 		}
 
 		return requestId;
@@ -633,7 +884,7 @@ export const cancel = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerSubject !== identity.subject) {
 			throw new Error("Not found");
 		}
@@ -643,7 +894,7 @@ export const cancel = mutation({
 			|| doc.status === "pending"
 			|| doc.status === "in_progress"
 		) {
-			await ctx.db.patch(requestId, { status: "cancelled" });
+			await ctx.db.patch("helpRequests", requestId, { status: "cancelled" });
 			await markNotificationsReadForRequest(
 				ctx,
 				requestId,
@@ -669,7 +920,7 @@ export const markComplete = mutation({
 	handler: async (ctx, { requestId }) => {
 		const identity = await requireIdentity(ctx);
 		await upsertCurrentUser(ctx, identity);
-		const doc = await ctx.db.get(requestId);
+		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc) {
 			throw new Error("Not found");
 		}
@@ -681,7 +932,7 @@ export const markComplete = mutation({
 		if (!isOwner && !isHelper) {
 			throw new Error("Forbidden");
 		}
-		await ctx.db.patch(requestId, { status: "complete" });
+		await ctx.db.patch("helpRequests", requestId, { status: "complete" });
 		const snippet = `"${doc.title}"`;
 		if (isOwner && doc.helperSubject) {
 			await createNotification(ctx, {

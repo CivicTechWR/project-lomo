@@ -9,7 +9,7 @@ export const patchRequestLocation = internalMutation({
 		locationLng: v.number(),
 	},
 	handler: async (ctx, { requestId, locationLat, locationLng }) => {
-		await ctx.db.patch(requestId, { locationLat, locationLng });
+		await ctx.db.patch("helpRequests", requestId, { locationLat, locationLng });
 	},
 });
 

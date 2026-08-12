@@ -60,6 +60,7 @@ export default defineSchema(
 		})
 			.index("by_owner", ["ownerSubject"])
 			.index("by_status", ["status"])
+			.index("by_helper", ["helperSubject"])
 			.index("by_assigned_helper", ["assignedHelperSubject"])
 			.index("by_email_relay_token", ["emailRelayToken"]),
 

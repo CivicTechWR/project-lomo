@@ -2,8 +2,8 @@ const LOMO_TAG = "[LoMo]";
 
 export const MESSAGE_EMAIL_FOOTER_SEPARATOR = "----";
 
-export const MESSAGE_EMAIL_REPLY_PROMPT =
-	"Reply to this email (plain text) to continue the conversation. Your email address stays private.";
+export const MESSAGE_EMAIL_REPLY_PROMPT
+	= "Reply to this email (plain text) to continue the conversation. Your email address stays private.";
 
 /** Subject for the first notification in a request thread. */
 export function messageEmailSubject(requestTitle: string): string {
