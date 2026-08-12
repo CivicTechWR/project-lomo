@@ -17,18 +17,14 @@ export type OpenRequestFilters = {
 };
 
 export const EMPTY_OPEN_REQUEST_FILTERS: OpenRequestFilters = {
-	categories: [...OPEN_REQUEST_CATEGORY_IDS],
+	categories: [],
 	urgentOnly: false,
 };
 
 export function hasActiveOpenRequestFilters(filters: OpenRequestFilters): boolean {
-	if (filters.categories.length !== OPEN_REQUEST_CATEGORY_IDS.length) {
+	// Empty categories means "all categories" — not an active filter.
+	if (filters.categories.length > 0) {
 		return true;
-	}
-	for (const id of OPEN_REQUEST_CATEGORY_IDS) {
-		if (!filters.categories.includes(id)) {
-			return true;
-		}
 	}
 	if (filters.urgentOnly) {
 		return true;
@@ -41,9 +37,10 @@ export function filterOpenRequests(
 	filters: OpenRequestFilters,
 ): OpenRequestListItem[] {
 	const selectedCategories = new Set(filters.categories);
+	const filterByCategory = selectedCategories.size > 0;
 
 	return requests.filter((item) => {
-		if (!selectedCategories.has(item.category)) {
+		if (filterByCategory && !selectedCategories.has(item.category)) {
 			return false;
 		}
 		if (filters.urgentOnly && !item.isUrgent) {

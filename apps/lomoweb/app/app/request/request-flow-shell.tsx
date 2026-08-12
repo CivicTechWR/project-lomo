@@ -1,8 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { LomoLogo } from "@repo/ui/icons";
-import { Text } from "@repo/ui/text";
 import { usePathname } from "next/navigation";
 import { RequestProgress } from "./request-progress";
 
@@ -70,8 +68,8 @@ export function RequestFlowShell({ children }: { children: ReactNode }) {
 	const filled = filledSegmentsForPath(pathname);
 
 	return (
-		<div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-8 pt-4 lg:max-w-none">
-			<div className="mb-6 flex justify-center">
+		<div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-10 pt-6 sm:px-6">
+			<div className="mb-8 flex justify-center">
 				<RequestProgress filledCount={filled} />
 			</div>
 			<div className="flex min-h-0 flex-1 flex-col">

@@ -2,7 +2,7 @@ import { OfferRequestDetailView } from "./offer-request-detail-view";
 
 export default function OfferRequestDetailPage() {
 	return (
-		<div className="mx-auto flex min-h-screen w-full max-w-lg flex-col px-4 py-8 lg:min-h-0 lg:max-w-none lg:w-full">
+		<div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
 			<OfferRequestDetailView />
 		</div>
 	);

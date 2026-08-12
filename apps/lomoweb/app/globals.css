@@ -78,11 +78,3 @@
 	font-family: var(--font-logo), cursive, sans-serif;
 }
 
-/* Desktop app chrome: fixed width, height grows with content (see app/app/layout.tsx). */
-@media (min-width: 1024px) {
-	.lomo-desktop-app-frame {
-		--lomo-app-width: min(100rem, calc(100vw - 2rem));
-		width: var(--lomo-app-width);
-		max-width: var(--lomo-app-width);
-	}
-}

@@ -2,7 +2,6 @@
 
 import type { FunctionReturnType } from "convex/server";
 import type { Preloaded } from "convex/react";
-import type { HomeAppMode } from "@/lib/app-home-mode";
 import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
@@ -17,11 +16,8 @@ import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import {
-	readStoredHomeMode,
-	writeStoredHomeMode,
-} from "@/lib/app-home-mode";
+import { useEffect, useState, type ReactNode } from "react";
+import { useHomeMode } from "@/lib/home-mode-context";
 import {
 	EMPTY_OPEN_REQUEST_FILTERS,
 	filterOpenRequests,
@@ -49,7 +45,7 @@ const HelpAreaMap = dynamic(
 	{
 		ssr: false,
 		loading: () => (
-			<div className="h-64 w-full animate-pulse rounded-[max(var(--radius-3),12px)] border border-gray-6 bg-gray-3" />
+			<div className="h-64 w-full animate-pulse rounded-[max(var(--radius-3),12px)] border border-gray-6 bg-gray-3 lg:h-80" />
 		),
 	},
 );
@@ -217,18 +213,8 @@ export function RequestsHome({
 }) {
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
-	const [mode, setMode] = useState<HomeAppMode>(
-		() => readStoredHomeMode() ?? "request_help",
-	);
+	const { mode, setMode } = useHomeMode();
 	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
-
-	const prevModeRef = useRef(mode);
-	useEffect(() => {
-		if (prevModeRef.current !== mode) {
-			prevModeRef.current = mode;
-			writeStoredHomeMode(mode);
-		}
-	}, [mode]);
 
 	const listArgs
 		= statusFilter === null ? {} : { statusFilter };
@@ -248,7 +234,7 @@ export function RequestsHome({
 	}
 
 	return (
-		<div className="flex w-full max-w-lg flex-col gap-6 lg:max-w-none">
+		<div className="flex w-full flex-col gap-6">
 			{isAdmin && (
 				<Button
 					variant="soft"
@@ -823,6 +809,18 @@ function OfferingHelpPanel() {
 					<ExclamationIcon />
 					Urgent
 				</Button>
+				{filtersActive && (
+					<button
+						type="button"
+						className="px-1 text-[length:var(--text-1)] text-gray-11 underline-offset-2 outline-none hover:text-gray-12 hover:underline focus-visible:ring-2 focus-visible:ring-gray-8"
+						onClick={() => {
+							setFilters(EMPTY_OPEN_REQUEST_FILTERS);
+							setLocationFilter(defaultLocation);
+						}}
+					>
+						Clear filters
+					</button>
+				)}
 			</div>
 
 			<ModalOverlay

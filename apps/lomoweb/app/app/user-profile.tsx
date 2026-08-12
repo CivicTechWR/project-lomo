@@ -42,22 +42,14 @@ export function UserProfile({
 	const [savingPreferences, setSavingPreferences] = useState(false);
 	const [savingSafety, setSavingSafety] = useState(false);
 
-	useEffect(() => {
-		if (profileRow) {
-			setFirstName(profileRow.firstName ?? "");
-			setPronouns(profileRow.pronouns ?? "");
-			setPhone(profileRow.phone ?? "");
-			setPreferenceValues(helperPreferencesFromProfile(profileRow));
-			setSafetyAcknowledged(!!profileRow.safetyAcknowledgedAt);
-		}
-	}, [profileRow]);
-
 	const syncedProfileRef = useRef(profileRow);
 	if (profileRow && profileRow !== syncedProfileRef.current) {
 		syncedProfileRef.current = profileRow;
 		setFirstName(profileRow.firstName ?? "");
 		setPronouns(profileRow.pronouns ?? "");
 		setPhone(profileRow.phone ?? "");
+		setPreferenceValues(helperPreferencesFromProfile(profileRow));
+		setSafetyAcknowledged(!!profileRow.safetyAcknowledgedAt);
 	}
 
 	if (!user) {
@@ -131,7 +123,7 @@ export function UserProfile({
 	}
 
 	return (
-		<Card size={3} variant="surface" className="w-full max-w-lg">
+		<Card size={3} variant="surface" className="w-full">
 			<div className="flex flex-col gap-4 p-4 sm:p-5">
 				<div className="flex items-center justify-between gap-3">
 					<Heading level={2} size={6}>
@@ -200,10 +192,10 @@ export function UserProfile({
 										variant="solid"
 										color="sage"
 										className="w-full"
-										isDisabled={saving}
+										isDisabled={savingProfile}
 										onPress={handleSaveVolunteerFields}
 									>
-										{saving ? "Saving…" : "Save profile"}
+										{savingProfile ? "Saving…" : "Save profile"}
 									</Button>
 								</div>
 							)}

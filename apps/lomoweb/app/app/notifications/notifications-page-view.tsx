@@ -6,7 +6,7 @@ import { NotificationsList } from "../notifications-panel";
 
 export function NotificationsPageView() {
 	return (
-		<div className="mx-auto flex w-full max-w-lg flex-col gap-6 px-4 py-8 lg:max-w-none">
+		<div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8 sm:px-6 lg:py-10">
 			<div>
 				<Heading level={1} size={7}>
 					Notifications

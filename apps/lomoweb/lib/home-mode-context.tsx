@@ -1,8 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
+	readStoredHomeMode,
 	writeStoredHomeMode,
 	type HomeAppMode,
 } from "@/lib/app-home-mode";
@@ -16,7 +17,16 @@ type HomeModeContextValue = {
 const HomeModeContext = createContext<HomeModeContextValue | null>(null);
 
 export function HomeModeProvider({ children }: { children: ReactNode }) {
+	// Always start with "home" so SSR and the first client render match.
+	// Restore the last mode from sessionStorage after mount.
 	const [mode, setModeState] = useState<HomeAppMode>("home");
+
+	useEffect(() => {
+		const stored = readStoredHomeMode();
+		if (stored) {
+			setModeState(stored);
+		}
+	}, []);
 
 	function setMode(next: HomeAppMode) {
 		setModeState(next);

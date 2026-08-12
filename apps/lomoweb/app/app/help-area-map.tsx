@@ -101,7 +101,7 @@ export function HelpAreaMap({
 	}, [centerLat, centerLng, radiusKm]);
 
 	return (
-		<div className="relative h-64 w-full overflow-hidden rounded-[max(var(--radius-3),12px)] border border-gray-6">
+		<div className="relative h-64 w-full overflow-hidden rounded-[max(var(--radius-3),12px)] border border-gray-6 lg:h-80">
 			<div ref={containerRef} className="absolute inset-0 z-0" />
 			<div
 				className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"

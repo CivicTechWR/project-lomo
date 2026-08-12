@@ -95,8 +95,8 @@ export function AppTopBar() {
 		<header
 			className={
 				"sticky top-0 z-30 flex shrink-0 items-center justify-between gap-2 "
-				+ "border-b border-gray-6 bg-gray-1/95 px-2 py-2 backdrop-blur sm:gap-3 sm:px-3 "
-				+ "supports-[backdrop-filter]:bg-gray-1/85 lg:rounded-t-[max(var(--radius-4),16px)]"
+				+ "border-b border-gray-6 bg-gray-1/95 px-4 py-2.5 backdrop-blur sm:gap-3 sm:px-6 "
+				+ "supports-[backdrop-filter]:bg-gray-1/85"
 			}
 		>
 			<Link

@@ -17,9 +17,9 @@ export function OnboardingFlowShell({ children }: { children: ReactNode }) {
 	const filled = filledSegmentsForPath(pathname);
 
 	return (
-		<div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-gray-1 lg:min-h-0">
-			<header className="border-b border-gray-5 bg-gray-1 px-4 py-3">
-				<div className="mx-auto flex w-full max-w-lg items-center justify-between lg:max-w-none">
+		<div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-gray-1">
+			<header className="border-b border-gray-5 bg-gray-1 px-4 py-3 sm:px-6">
+				<div className="mx-auto flex w-full max-w-lg items-center justify-between">
 					<div className="flex items-center gap-2">
 						<LomoLogo className="size-8 shrink-0" aria-hidden />
 						<Text size={4} weight="medium">
@@ -32,8 +32,8 @@ export function OnboardingFlowShell({ children }: { children: ReactNode }) {
 				</div>
 			</header>
 
-			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-8 pt-4 lg:max-w-none">
-				<div className="mb-6 flex justify-center">
+			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-4 pb-10 pt-6 sm:px-6">
+				<div className="mb-8 flex justify-center">
 					<OnboardingProgress filledCount={filled} />
 				</div>
 				<div className="flex min-h-0 flex-1 flex-col">
