@@ -81,7 +81,10 @@ export function ForgotPasswordForm() {
 						Check your email
 					</Heading>
 					<Text size={2} color="gray">
-						If an account exists for {email}, we sent a link to reset your password.
+						If an account exists for
+						{" "}
+						{email}
+						, we sent a link to reset your password.
 						The link expires in one hour.
 					</Text>
 				</div>
@@ -135,7 +138,8 @@ export function ForgotPasswordForm() {
 			</Button>
 
 			<Text size={2} color="gray" className="text-center">
-				Remember your password?{" "}
+				Remember your password?
+				{" "}
 				<Link href="/signin" color="terracotta">
 					Sign in
 				</Link>

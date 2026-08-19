@@ -78,7 +78,7 @@ export async function markNotificationsReadForRequest(
 		.withIndex("by_request", (q: any) => q.eq("requestId", requestId))
 		.collect();
 	for (const n of rows) {
-		if (!n.isRead && predicate(n)) {
+		if (n.isRead === false && predicate(n)) {
 			await ctx.db.patch("notifications", n._id, { isRead: true });
 		}
 	}

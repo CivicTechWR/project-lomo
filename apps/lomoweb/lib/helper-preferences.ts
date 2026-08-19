@@ -32,8 +32,8 @@ export const HELPER_PREFERENCE_GROUPS = [
 	},
 ] as const;
 
-export type HelperPreferenceId =
-	(typeof HELPER_PREFERENCE_GROUPS)[number]["options"][number]["id"];
+export type HelperPreferenceId
+	= (typeof HELPER_PREFERENCE_GROUPS)[number]["options"][number]["id"];
 
 export const HELPER_PREFERENCE_IDS: HelperPreferenceId[] = HELPER_PREFERENCE_GROUPS.flatMap(
 	group => group.options.map(option => option.id),

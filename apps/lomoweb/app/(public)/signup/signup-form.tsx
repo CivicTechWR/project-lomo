@@ -62,14 +62,6 @@ const SERVER_ERROR_MAP: Record<
 	},
 };
 
-function getRedirectPath(searchParams: URLSearchParams): string {
-	const redirect = searchParams.get("redirect");
-	if (redirect && redirect.startsWith("/app")) {
-		return redirect;
-	}
-	return "/app";
-}
-
 export function SignUpForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();

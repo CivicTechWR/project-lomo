@@ -44,8 +44,8 @@ export function emptyFoodDetails(): FoodRequestDetails {
 		peopleCount: "",
 		needsDelivery: false,
 		address: "",
-    addressLat: undefined,
-	  addressLng: undefined,
+		addressLat: undefined,
+		addressLng: undefined,
 		deliveryInstructions: "",
 	};
 }
@@ -61,15 +61,17 @@ export interface ItemsRequestDetails {
 	deliveryInstructions: string;
 }
 
-export const emptyItemsDetails = (): ItemsRequestDetails => ({
-	itemDescription: "",
-	sizeOrStyle: "",
-	needsDelivery: false,
-	address: "",
-	addressLat: undefined,
-	addressLng: undefined,
-	deliveryInstructions: "",
-});
+export function emptyItemsDetails(): ItemsRequestDetails {
+	return {
+		itemDescription: "",
+		sizeOrStyle: "",
+		needsDelivery: false,
+		address: "",
+		addressLat: undefined,
+		addressLng: undefined,
+		deliveryInstructions: "",
+	};
+}
 
 /** Custom / miscellaneous help (replaces deprecated ride flow in the UI). */
 export interface OtherRequestDetails {

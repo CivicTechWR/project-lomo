@@ -1,9 +1,12 @@
 "use client";
 
-import type { FunctionReturnType } from "convex/server";
-import type { Preloaded } from "convex/react";
-import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
+import type { Preloaded } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
+import type { ReactNode } from "react";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
+import type { OpenRequestFilters } from "@/lib/open-request-filters";
+import type { RequestCategoryId } from "@/lib/request-flow/types";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
@@ -14,30 +17,29 @@ import { Heading } from "@repo/ui/heading";
 import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
-import { useHomeMode } from "@/lib/home-mode-context";
-import {
-	EMPTY_OPEN_REQUEST_FILTERS,
-	filterOpenRequests,
-	hasActiveOpenRequestFilters,
-	type OpenRequestFilters,
-} from "@/lib/open-request-filters";
+import { useRef, useState } from "react";
 import {
 	DEFAULT_HELP_AREA_CENTER,
 	DEFAULT_HELP_AREA_RADIUS_KM,
 	HELP_AREA_RADIUS_MAX_KM,
 	HELP_AREA_RADIUS_MIN_KM,
 } from "@/lib/help-area";
-import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
-import type { RequestCategoryId } from "@/lib/request-flow/types";
 import {
 	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
 	statusBadgeColor,
 } from "@/lib/help-request-status";
-import dynamic from "next/dynamic";
+import { useHomeMode } from "@/lib/home-mode-context";
+import {
+	EMPTY_OPEN_REQUEST_FILTERS,
+	filterOpenRequests,
+	hasActiveOpenRequestFilters,
+
+} from "@/lib/open-request-filters";
+import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import { StatusFilterChips } from "./status-filter-chips";
 
 const HelpAreaMap = dynamic(
@@ -49,10 +51,6 @@ const HelpAreaMap = dynamic(
 		),
 	},
 );
-
-type OpenRequestListItem = FunctionReturnType<
-	typeof api.helpRequests.listPendingFromOthers
->[number];
 
 type HomeDashboard = NonNullable<
 	FunctionReturnType<typeof api.helpRequests.homeDashboard>
@@ -280,17 +278,14 @@ function HomeDashboardPanel(props: {
 	const [activeOpen, setActiveOpen] = useState(true);
 	const [pendingOpen, setPendingOpen] = useState(true);
 	const [openRequestsOpen, setOpenRequestsOpen] = useState(true);
-	const [initialized, setInitialized] = useState(false);
+	const initializedRef = useRef(false);
 
-	useEffect(() => {
-		if (!dashboard || initialized) {
-			return;
-		}
+	if (dashboard && !initializedRef.current) {
+		initializedRef.current = true;
 		setActiveOpen(dashboard.active.length > 0);
 		setPendingOpen(dashboard.pendingMine.length > 0);
 		setOpenRequestsOpen(dashboard.canHelpNow && dashboard.openPreview.length > 0);
-		setInitialized(true);
-	}, [dashboard, initialized]);
+	}
 
 	const showPending = dashboard === undefined || dashboard.pendingMineTotal > 0;
 	const showOpenRequests = dashboard !== undefined && dashboard.canHelpNow;
@@ -553,7 +548,9 @@ function RequestingHelpPanel(props: {
 					onPress={() => setStatusOpen(true)}
 				>
 					<FilterIcon />
-					Status: {statusFilterLabel}
+					Status:
+					{" "}
+					{statusFilterLabel}
 				</Button>
 			</div>
 
@@ -670,11 +667,11 @@ function MapPinIcon({ className }: { className?: string }) {
 	);
 }
 
-type LocationFilter = {
+interface LocationFilter {
 	centerLat: number;
 	centerLng: number;
 	radiusKm: number;
-};
+}
 
 function locationFilterFromProfile(row: {
 	helpAreaCenterLat?: number;
@@ -706,16 +703,15 @@ function OfferingHelpPanel() {
 	const [defaultLocation, setDefaultLocation] = useState<LocationFilter>(() =>
 		locationFilterFromProfile(undefined));
 
-	useEffect(() => {
-		if (locationReady || profileRow === undefined) {
-			return;
-		}
+	const locationInitRef = useRef(false);
+	if (!locationInitRef.current && profileRow !== undefined) {
+		locationInitRef.current = true;
 		const fromProfile = locationFilterFromProfile(profileRow);
 		setDefaultLocation(fromProfile);
 		setLocationFilter(fromProfile);
 		setLocationDraft(fromProfile);
 		setLocationReady(true);
-	}, [profileRow, locationReady]);
+	}
 
 	const openForOthers = useQuery(
 		api.helpRequests.listPendingFromOthers,
@@ -777,7 +773,9 @@ function OfferingHelpPanel() {
 					onPress={() => setCategoriesOpen(true)}
 				>
 					<FilterIcon />
-					Categories ({selectedCategoryCount})
+					Categories (
+					{selectedCategoryCount}
+					)
 				</Button>
 				<Button
 					size={1}
@@ -789,7 +787,9 @@ function OfferingHelpPanel() {
 					onPress={openLocationModal}
 				>
 					<MapPinIcon />
-					Area · {locationFilter.radiusKm}
+					Area ·
+					{" "}
+					{locationFilter.radiusKm}
 					{" "}
 					km
 				</Button>

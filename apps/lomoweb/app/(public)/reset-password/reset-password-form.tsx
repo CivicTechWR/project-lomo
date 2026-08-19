@@ -7,7 +7,7 @@ import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
 
@@ -40,18 +40,22 @@ export function ResetPasswordForm() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [token, setToken] = useState<string | null>(null);
 
-	useEffect(() => {
+	const lastSearchParamsRef = useRef(searchParams);
+	if (searchParams !== lastSearchParamsRef.current) {
+		lastSearchParamsRef.current = searchParams;
 		const urlError = searchParams.get("error");
 		if (urlError === "INVALID_TOKEN") {
 			setFormError("This reset link is invalid or has expired. Request a new one.");
-			return;
+			setToken(null);
 		}
-		const urlToken = searchParams.get("token");
-		setToken(urlToken);
-		if (!urlToken) {
-			setFormError("Missing reset token. Open the link from your email or request a new one.");
+		else {
+			const urlToken = searchParams.get("token");
+			setToken(urlToken);
+			if (!urlToken) {
+				setFormError("Missing reset token. Open the link from your email or request a new one.");
+			}
 		}
-	}, [searchParams]);
+	}
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
@@ -169,7 +173,8 @@ export function ResetPasswordForm() {
 			</Button>
 
 			<Text size={2} color="gray" className="text-center">
-				Need a new link?{" "}
+				Need a new link?
+				{" "}
 				<Link href="/forgot-password" color="terracotta">
 					Request reset again
 				</Link>

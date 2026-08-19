@@ -36,7 +36,7 @@ export function UserProfile({
 	const [pronouns, setPronouns] = useState("");
 	const [phone, setPhone] = useState("");
 	const [preferenceValues, setPreferenceValues] = useState(
-		helperPreferencesFromProfile(undefined),
+		() => helperPreferencesFromProfile(undefined),
 	);
 	const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
 	const [savingProfile, setSavingProfile] = useState(false);

@@ -6,9 +6,9 @@ import { Modal, ModalOverlay } from "@repo/ui/modal";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { NotificationsNavButton } from "./notifications-panel";
 import { authClient } from "@/lib/auth-client";
 import { useHomeMode } from "@/lib/home-mode-context";
+import { NotificationsNavButton } from "./notifications-panel";
 
 function MenuIcon({ className }: { className?: string }) {
 	return (

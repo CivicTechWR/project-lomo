@@ -4,12 +4,12 @@ import type L from "leaflet";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
 
-type HelpAreaMapProps = {
+interface HelpAreaMapProps {
 	centerLat: number;
 	centerLng: number;
 	radiusKm: number;
 	onCenterChange: (centerLat: number, centerLng: number) => void;
-};
+}
 
 export function HelpAreaMap({
 	centerLat,
@@ -47,7 +47,7 @@ export function HelpAreaMap({
 
 			leaflet.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+					"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
 				maxZoom: 19,
 			}).addTo(map);
 

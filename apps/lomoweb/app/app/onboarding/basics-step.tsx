@@ -7,7 +7,7 @@ import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { OnboardingStepFooter } from "./onboarding-step-footer";
 
 export function BasicsStep() {
@@ -18,12 +18,12 @@ export function BasicsStep() {
 	const [pronouns, setPronouns] = useState("");
 	const [saving, setSaving] = useState(false);
 
-	useEffect(() => {
-		if (profileRow) {
-			setFirstName(profileRow.firstName ?? "");
-			setPronouns(profileRow.pronouns ?? "");
-		}
-	}, [profileRow]);
+	const syncedRef = useRef(profileRow);
+	if (profileRow && profileRow !== syncedRef.current) {
+		syncedRef.current = profileRow;
+		setFirstName(profileRow.firstName ?? "");
+		setPronouns(profileRow.pronouns ?? "");
+	}
 
 	async function handleContinue() {
 		setSaving(true);

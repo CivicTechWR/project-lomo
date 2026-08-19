@@ -37,8 +37,8 @@ export const geocodeRequest = internalAction({
 			lat: string;
 			lon: string;
 		}>;
-		const hit = results[0];
-		if (!hit) {
+		const hit = results[0] as { lat: string; lon: string } | undefined;
+		if (hit == null) {
 			return;
 		}
 

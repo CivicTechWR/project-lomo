@@ -1,3 +1,4 @@
+/* eslint-disable node/prefer-global/process */
 import type { GenericCtx } from "@convex-dev/better-auth";
 import type { DataModel } from "./_generated/dataModel";
 import { createClient } from "@convex-dev/better-auth";
@@ -18,12 +19,14 @@ const LOCAL_DEV_ORIGINS = [
 	"http://127.0.0.1:3000",
 ] as const;
 
+const TRAILING_SLASH_RE = /\/$/;
+
 export function createAuth(ctx: GenericCtx<DataModel>) {
 	const { SITE_URL } = getSiteEnv();
-	const siteOrigin = SITE_URL.replace(/\/$/, "");
+	const siteOrigin = SITE_URL.replace(TRAILING_SLASH_RE, "");
 	const extraOrigins
 		= process.env.TRUSTED_ORIGINS?.split(",")
-			.map(origin => origin.trim().replace(/\/$/, ""))
+			.map(origin => origin.trim().replace(TRAILING_SLASH_RE, ""))
 			.filter(Boolean) ?? [];
 
 	return betterAuth({

@@ -7,7 +7,7 @@ import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
 
@@ -53,14 +53,12 @@ export function SignInForm() {
 	const [password, setPassword] = useState("");
 	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 	const [formError, setFormError] = useState<string | null>(null);
-	const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	const [successMessage] = useState<string | null>(() =>
+		searchParams.get("reset") === "success"
+			? "Your password was updated. Sign in with your new password."
+			: null,
+	);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	useEffect(() => {
-		if (searchParams.get("reset") === "success") {
-			setSuccessMessage("Your password was updated. Sign in with your new password.");
-		}
-	}, [searchParams]);
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();

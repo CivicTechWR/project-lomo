@@ -1,18 +1,19 @@
 "use client";
 
-import { Description, Group, Label } from "@repo/ui/field";
-import { Input, TextField } from "@repo/ui/text-field";
-import { Text } from "@repo/ui/text";
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import type { KeyboardEvent } from "react";
 import type { AddressSearchResult } from "@/lib/address-search";
+import { Description, Group, Label } from "@repo/ui/field";
+import { Text } from "@repo/ui/text";
+import { Input, TextField } from "@repo/ui/text-field";
+import { useEffect, useId, useRef, useState } from "react";
 
-export type AddressSelection = {
+export interface AddressSelection {
 	label: string;
 	lat: number;
 	lng: number;
-};
+}
 
-type AddressAutocompleteFieldProps = {
+interface AddressAutocompleteFieldProps {
 	name?: string;
 	label?: string;
 	description?: string;
@@ -24,7 +25,7 @@ type AddressAutocompleteFieldProps = {
 	onChange: (value: string) => void;
 	onSelect: (selection: AddressSelection) => void;
 	onClearSelection: () => void;
-};
+}
 
 export function AddressAutocompleteField({
 	name = "address",
@@ -49,16 +50,18 @@ export function AddressAutocompleteField({
 
 	const isVerified = selectedLat != null && selectedLng != null && value.trim().length > 0;
 
-	useEffect(() => {
+	const syncedValueRef = useRef(value);
+	if (value !== syncedValueRef.current) {
+		syncedValueRef.current = value;
 		setQuery(value);
-	}, [value]);
+	}
 
 	useEffect(() => {
 		const trimmed = query.trim();
 		if (trimmed.length < 3) {
-			setResults([]);
-			setLoading(false);
-			setSearchError(false);
+			setResults([]); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setLoading(false); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setSearchError(false); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
 			return;
 		}
 
@@ -67,8 +70,8 @@ export function AddressAutocompleteField({
 			isVerified
 			&& trimmed === value.trim()
 		) {
-			setResults([]);
-			setLoading(false);
+			setResults([]); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setLoading(false); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
 			return;
 		}
 

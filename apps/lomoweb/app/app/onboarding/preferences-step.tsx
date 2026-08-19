@@ -5,7 +5,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import {
 	HelperPreferencesFields,
 	helperPreferencesFromProfile,
@@ -17,14 +17,14 @@ export function PreferencesStep() {
 	const profileRow = useQuery(api.users.getMyProfileRow);
 	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
 	const completeOnboarding = useMutation(api.users.completeOnboarding);
-	const [values, setValues] = useState(helperPreferencesFromProfile(undefined));
+	const [values, setValues] = useState(() => helperPreferencesFromProfile(undefined));
 	const [saving, setSaving] = useState(false);
 
-	useEffect(() => {
-		if (profileRow) {
-			setValues(helperPreferencesFromProfile(profileRow));
-		}
-	}, [profileRow]);
+	const syncedRef = useRef(profileRow);
+	if (profileRow && profileRow !== syncedRef.current) {
+		syncedRef.current = profileRow;
+		setValues(helperPreferencesFromProfile(profileRow));
+	}
 
 	async function handleFinish() {
 		setSaving(true);
@@ -59,11 +59,13 @@ export function PreferencesStep() {
 				</Text>
 			</div>
 
-			{profileRow === undefined ? (
-				<Text size={2} color="gray">Loading…</Text>
-			) : (
-				<HelperPreferencesFields values={values} onChange={setValues} />
-			)}
+			{profileRow === undefined
+				? (
+						<Text size={2} color="gray">Loading…</Text>
+					)
+				: (
+						<HelperPreferencesFields values={values} onChange={setValues} />
+					)}
 
 			<OnboardingStepFooter
 				onBack={() => router.push("/app/onboarding/safety")}

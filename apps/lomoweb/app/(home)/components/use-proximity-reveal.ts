@@ -11,42 +11,49 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * - Respects `prefers-reduced-motion`: immediately returns 1 (no animation).
  */
 export function useProximityReveal(radius = 300) {
-	const ref = useRef<HTMLDivElement>(null);
-	const [progress, setProgress] = useState(0);
-	const rafId = useRef<number>(0);
-	const isTouchDevice = useRef(false);
+	const elementRef = useRef<HTMLDivElement>(null);
+	const rafIdRef = useRef<number>(0);
+	const isTouchDeviceRef = useRef(false);
 
 	// Detect reduced motion preference
-	const prefersReducedMotion = useRef(false);
+	const prefersReducedMotionRef = useRef(false);
 
+	const [progress, setProgress] = useState(() => {
+		// Can't access window here (SSR), so start at 0; the effect handles reduced-motion.
+		return 0;
+	});
+
+	// Initialization effect — detects preferences and sets initial progress.
+	// Intentionally sets state here since it's a one-time mount initialization
+	// that can't be expressed as lazy initial state (requires window access).
 	useEffect(() => {
-		prefersReducedMotion.current = window.matchMedia(
+		prefersReducedMotionRef.current = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
 		).matches;
 
-		if (prefersReducedMotion.current) {
-			setProgress(1);
+		if (prefersReducedMotionRef.current) {
+			setProgress(1); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
 			return;
 		}
 
 		// Detect touch device (no hover capability)
-		isTouchDevice.current = window.matchMedia("(hover: none)").matches;
+		isTouchDeviceRef.current = window.matchMedia("(hover: none)").matches;
 	}, []);
 
 	// Desktop: mousemove proximity
 	const handleMouseMove = useCallback(
 		(e: MouseEvent) => {
-			if (isTouchDevice.current || prefersReducedMotion.current)
+			if (isTouchDeviceRef.current || prefersReducedMotionRef.current)
 				return;
-			if (!ref.current)
+			if (!elementRef.current)
 				return;
 
 			// Cancel any pending rAF to avoid stacking
-			if (rafId.current)
-				cancelAnimationFrame(rafId.current);
+			if (rafIdRef.current)
+				cancelAnimationFrame(rafIdRef.current);
 
-			rafId.current = requestAnimationFrame(() => {
-				const el = ref.current;
+			rafIdRef.current = requestAnimationFrame(() => {
+				const el = elementRef.current;
 				if (!el)
 					return;
 
@@ -68,25 +75,25 @@ export function useProximityReveal(radius = 300) {
 
 	// Desktop: attach mousemove to window
 	useEffect(() => {
-		if (prefersReducedMotion.current || isTouchDevice.current)
+		if (prefersReducedMotionRef.current || isTouchDeviceRef.current)
 			return;
 
 		window.addEventListener("mousemove", handleMouseMove, { passive: true });
 		return () => {
 			window.removeEventListener("mousemove", handleMouseMove);
-			if (rafId.current)
-				cancelAnimationFrame(rafId.current);
+			if (rafIdRef.current)
+				cancelAnimationFrame(rafIdRef.current);
 		};
 	}, [handleMouseMove]);
 
 	// Mobile: IntersectionObserver one-shot
 	useEffect(() => {
-		if (prefersReducedMotion.current)
+		if (prefersReducedMotionRef.current)
 			return;
-		if (!isTouchDevice.current)
+		if (!isTouchDeviceRef.current)
 			return;
 
-		const el = ref.current;
+		const el = elementRef.current;
 		if (!el)
 			return;
 
@@ -104,5 +111,5 @@ export function useProximityReveal(radius = 300) {
 		return () => observer.disconnect();
 	}, []);
 
-	return { ref, progress };
+	return { ref: elementRef, progress };
 }
