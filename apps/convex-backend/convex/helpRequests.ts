@@ -25,14 +25,6 @@ interface Identity {
 	pictureUrl?: string;
 }
 
-function csvSet(raw: string | undefined): Set<string> {
-	return new Set(
-		(raw ?? "")
-			.split(",")
-			.map(v => v.trim())
-			.filter(Boolean),
-	);
-}
 const MAX_LIST_ROWS = 100;
 const MAX_ADMIN_ROWS = 200;
 const NAME_SPLIT_RE = /\s+/;
@@ -482,7 +474,7 @@ export const getAsHelper = query({
 		if (!doc) {
 			return null;
 		}
-		if (user && doc.ownerUserId === user._id) {
+		if (doc.ownerUserId === user._id) {
 			return null;
 		}
 		if (doc.status === "pending") {

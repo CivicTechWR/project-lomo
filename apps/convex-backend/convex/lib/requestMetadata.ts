@@ -1,5 +1,5 @@
 function parseDraft(payloadJson: string | undefined): Record<string, unknown> | null {
-	if (!payloadJson) {
+	if (payloadJson == null || payloadJson.length === 0) {
 		return null;
 	}
 	try {

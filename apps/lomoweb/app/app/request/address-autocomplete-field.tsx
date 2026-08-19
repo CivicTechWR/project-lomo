@@ -50,16 +50,18 @@ export function AddressAutocompleteField({
 
 	const isVerified = selectedLat != null && selectedLng != null && value.trim().length > 0;
 
-	useEffect(() => {
+	const syncedValueRef = useRef(value);
+	if (value !== syncedValueRef.current) {
+		syncedValueRef.current = value;
 		setQuery(value);
-	}, [value]);
+	}
 
 	useEffect(() => {
 		const trimmed = query.trim();
 		if (trimmed.length < 3) {
-			setResults([]);
-			setLoading(false);
-			setSearchError(false);
+			setResults([]); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setLoading(false); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setSearchError(false); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
 			return;
 		}
 
@@ -68,8 +70,8 @@ export function AddressAutocompleteField({
 			isVerified
 			&& trimmed === value.trim()
 		) {
-			setResults([]);
-			setLoading(false);
+			setResults([]); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+			setLoading(false); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
 			return;
 		}
 

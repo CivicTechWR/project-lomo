@@ -20,8 +20,6 @@ const MAX_MESSAGES_PER_REQUEST = 100;
 const ANGLE_EMAIL_RE = /<([^>]+)>/;
 const TRAILING_SLASH_RE = /\/$/;
 
-interface Identity { subject: string; email?: string; name?: string }
-
 function normalizeEmail(raw: string): string {
 	const trimmed = raw.trim().toLowerCase();
 	const angle = trimmed.match(ANGLE_EMAIL_RE);
@@ -164,7 +162,7 @@ export const post = mutation({
 
 		const otherUser = await ctx.db.get("users", otherUserId);
 		const replyTo = relayMailbox(doc.emailRelayToken);
-		if (otherUser?.email && replyTo) {
+		if (otherUser?.email != null && otherUser.email.length > 0 && replyTo != null && replyTo.length > 0) {
 			const link = conversationLink(
 				siteBaseUrl(),
 				requestId,
@@ -283,7 +281,7 @@ export const ingestInboundEmail = internalMutation({
 		const otherUser = await ctx.db.get("users", otherUserId);
 		const replyTo = relayMailbox(req.emailRelayToken);
 
-		if (otherUser?.email && replyTo) {
+		if (otherUser?.email != null && otherUser.email.length > 0 && replyTo != null && replyTo.length > 0) {
 			const link = conversationLink(
 				siteBaseUrl(),
 				req._id,

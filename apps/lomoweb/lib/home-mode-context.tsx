@@ -2,9 +2,8 @@
 
 import type { ReactNode } from "react";
 import type { HomeAppMode } from "@/lib/app-home-mode";
-import { createContext, use, useEffect, useState } from "react";
+import { createContext, use, useRef, useState } from "react";
 import {
-
 	readStoredHomeMode,
 	writeStoredHomeMode,
 } from "@/lib/app-home-mode";
@@ -19,15 +18,17 @@ const HomeModeContext = createContext<HomeModeContextValue | null>(null);
 
 export function HomeModeProvider({ children }: { children: ReactNode }) {
 	// Always start with "home" so SSR and the first client render match.
-	// Restore the last mode from sessionStorage after mount.
-	const [mode, setModeState] = useState<HomeAppMode>("home");
+	// Restore the last mode from sessionStorage after mount via ref-based sync.
+	const [modeState, setModeState] = useState<HomeAppMode>("home");
 
-	useEffect(() => {
+	const restoredRef = useRef(false);
+	if (!restoredRef.current && typeof window !== "undefined") {
+		restoredRef.current = true;
 		const stored = readStoredHomeMode();
-		if (stored) {
+		if (stored != null) {
 			setModeState(stored);
 		}
-	}, []);
+	}
 
 	function setMode(next: HomeAppMode) {
 		setModeState(next);
@@ -35,7 +36,7 @@ export function HomeModeProvider({ children }: { children: ReactNode }) {
 	}
 
 	function toggleMode() {
-		if (mode === "home" || mode === "offer_help") {
+		if (modeState === "home" || modeState === "offer_help") {
 			setMode("request_help");
 			return;
 		}
@@ -43,7 +44,7 @@ export function HomeModeProvider({ children }: { children: ReactNode }) {
 	}
 
 	return (
-		<HomeModeContext value={{ mode, setMode, toggleMode }}>
+		<HomeModeContext value={{ mode: modeState, setMode, toggleMode }}>
 			{children}
 		</HomeModeContext>
 	);

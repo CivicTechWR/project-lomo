@@ -7,7 +7,7 @@ import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { OnboardingStepFooter } from "./onboarding-step-footer";
 
 export function ContactStep() {
@@ -17,11 +17,11 @@ export function ContactStep() {
 	const [phone, setPhone] = useState("");
 	const [saving, setSaving] = useState(false);
 
-	useEffect(() => {
-		if (profileRow) {
-			setPhone(profileRow.phone ?? "");
-		}
-	}, [profileRow]);
+	const syncedRef = useRef(profileRow);
+	if (profileRow && profileRow !== syncedRef.current) {
+		syncedRef.current = profileRow;
+		setPhone(profileRow.phone ?? "");
+	}
 
 	async function handleContinue() {
 		setSaving(true);

@@ -1,3 +1,5 @@
+/* eslint-disable node/prefer-global/process */
+
 export async function postResendEmail(opts: {
 	apiKey: string;
 	from: string;
@@ -13,10 +15,10 @@ export async function postResendEmail(opts: {
 		subject: opts.subject,
 		text: opts.text,
 	};
-	if (opts.replyTo) {
+	if (opts.replyTo != null && opts.replyTo.length > 0) {
 		body.reply_to = [opts.replyTo];
 	}
-	if (opts.html) {
+	if (opts.html != null && opts.html.length > 0) {
 		body.html = opts.html;
 	}
 	const res = await fetch("https://api.resend.com/emails", {
@@ -36,7 +38,7 @@ export async function postResendEmail(opts: {
 export function getResendConfig(): { apiKey: string; from: string } | null {
 	const apiKey = process.env.RESEND_API_KEY;
 	const from = process.env.NOTIFICATIONS_FROM_EMAIL;
-	if (!apiKey || !from) {
+	if (apiKey == null || apiKey.length === 0 || from == null || from.length === 0) {
 		return null;
 	}
 	return { apiKey, from };

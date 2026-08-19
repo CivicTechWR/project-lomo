@@ -20,7 +20,7 @@ import { useQuery } from "convex/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import {
 	DEFAULT_HELP_AREA_CENTER,
 	DEFAULT_HELP_AREA_RADIUS_KM,
@@ -51,10 +51,6 @@ const HelpAreaMap = dynamic(
 		),
 	},
 );
-
-type OpenRequestListItem = FunctionReturnType<
-	typeof api.helpRequests.listPendingFromOthers
->[number];
 
 type HomeDashboard = NonNullable<
 	FunctionReturnType<typeof api.helpRequests.homeDashboard>
@@ -282,17 +278,14 @@ function HomeDashboardPanel(props: {
 	const [activeOpen, setActiveOpen] = useState(true);
 	const [pendingOpen, setPendingOpen] = useState(true);
 	const [openRequestsOpen, setOpenRequestsOpen] = useState(true);
-	const [initialized, setInitialized] = useState(false);
+	const initializedRef = useRef(false);
 
-	useEffect(() => {
-		if (!dashboard || initialized) {
-			return;
-		}
+	if (dashboard && !initializedRef.current) {
+		initializedRef.current = true;
 		setActiveOpen(dashboard.active.length > 0);
 		setPendingOpen(dashboard.pendingMine.length > 0);
 		setOpenRequestsOpen(dashboard.canHelpNow && dashboard.openPreview.length > 0);
-		setInitialized(true);
-	}, [dashboard, initialized]);
+	}
 
 	const showPending = dashboard === undefined || dashboard.pendingMineTotal > 0;
 	const showOpenRequests = dashboard !== undefined && dashboard.canHelpNow;
@@ -710,16 +703,15 @@ function OfferingHelpPanel() {
 	const [defaultLocation, setDefaultLocation] = useState<LocationFilter>(() =>
 		locationFilterFromProfile(undefined));
 
-	useEffect(() => {
-		if (locationReady || profileRow === undefined) {
-			return;
-		}
+	const locationInitRef = useRef(false);
+	if (!locationInitRef.current && profileRow !== undefined) {
+		locationInitRef.current = true;
 		const fromProfile = locationFilterFromProfile(profileRow);
 		setDefaultLocation(fromProfile);
 		setLocationFilter(fromProfile);
 		setLocationDraft(fromProfile);
 		setLocationReady(true);
-	}, [profileRow, locationReady]);
+	}
 
 	const openForOthers = useQuery(
 		api.helpRequests.listPendingFromOthers,
