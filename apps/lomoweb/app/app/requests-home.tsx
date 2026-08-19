@@ -1,9 +1,12 @@
 "use client";
 
-import type { FunctionReturnType } from "convex/server";
-import type { Preloaded } from "convex/react";
-import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
+import type { Preloaded } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
+import type { ReactNode } from "react";
+import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
+import type { OpenRequestFilters } from "@/lib/open-request-filters";
+import type { RequestCategoryId } from "@/lib/request-flow/types";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Badge } from "@repo/ui/badge";
@@ -14,30 +17,29 @@ import { Heading } from "@repo/ui/heading";
 import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
-import { useHomeMode } from "@/lib/home-mode-context";
-import {
-	EMPTY_OPEN_REQUEST_FILTERS,
-	filterOpenRequests,
-	hasActiveOpenRequestFilters,
-	type OpenRequestFilters,
-} from "@/lib/open-request-filters";
+import { useEffect, useState } from "react";
 import {
 	DEFAULT_HELP_AREA_CENTER,
 	DEFAULT_HELP_AREA_RADIUS_KM,
 	HELP_AREA_RADIUS_MAX_KM,
 	HELP_AREA_RADIUS_MIN_KM,
 } from "@/lib/help-area";
-import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
-import type { RequestCategoryId } from "@/lib/request-flow/types";
 import {
 	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
 	statusBadgeColor,
 } from "@/lib/help-request-status";
-import dynamic from "next/dynamic";
+import { useHomeMode } from "@/lib/home-mode-context";
+import {
+	EMPTY_OPEN_REQUEST_FILTERS,
+	filterOpenRequests,
+	hasActiveOpenRequestFilters,
+
+} from "@/lib/open-request-filters";
+import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import { StatusFilterChips } from "./status-filter-chips";
 
 const HelpAreaMap = dynamic(
@@ -553,7 +555,9 @@ function RequestingHelpPanel(props: {
 					onPress={() => setStatusOpen(true)}
 				>
 					<FilterIcon />
-					Status: {statusFilterLabel}
+					Status:
+					{" "}
+					{statusFilterLabel}
 				</Button>
 			</div>
 
@@ -670,11 +674,11 @@ function MapPinIcon({ className }: { className?: string }) {
 	);
 }
 
-type LocationFilter = {
+interface LocationFilter {
 	centerLat: number;
 	centerLng: number;
 	radiusKm: number;
-};
+}
 
 function locationFilterFromProfile(row: {
 	helpAreaCenterLat?: number;
@@ -777,7 +781,9 @@ function OfferingHelpPanel() {
 					onPress={() => setCategoriesOpen(true)}
 				>
 					<FilterIcon />
-					Categories ({selectedCategoryCount})
+					Categories (
+					{selectedCategoryCount}
+					)
 				</Button>
 				<Button
 					size={1}
@@ -789,7 +795,9 @@ function OfferingHelpPanel() {
 					onPress={openLocationModal}
 				>
 					<MapPinIcon />
-					Area · {locationFilter.radiusKm}
+					Area ·
+					{" "}
+					{locationFilter.radiusKm}
 					{" "}
 					km
 				</Button>

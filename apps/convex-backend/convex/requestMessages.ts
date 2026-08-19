@@ -1,16 +1,16 @@
 /* eslint-disable node/prefer-global/process */
 import type { Doc, Id } from "./_generated/dataModel";
+import type { QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import type { QueryCtx } from "./_generated/server";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
 import {
 	conversationLink,
 	formatMessageEmailBody,
 	messageEmailReplySubject,
 	messageEmailSubject,
 } from "./lib/messageEmail";
-import { getCurrentUserRow, getOrCreateCurrentUser } from "./lib/currentUser";
 import { extractNewReplyText } from "./lib/stripEmailReply";
 
 const MAX_BODY_LEN = 8000;

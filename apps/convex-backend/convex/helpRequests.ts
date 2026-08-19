@@ -3,11 +3,6 @@ import type { MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
-import { haversineDistanceKm } from "./lib/geo";
-import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
-import { purgeRequest } from "./lib/purgeRequest";
-import { extractGeocodableAddress, extractPayloadCoordinates } from "./lib/requestLocation";
-import { extractIsUrgent, extractNeedsDelivery } from "./lib/requestMetadata";
 import {
 	getCurrentUserRow,
 	getIdentity,
@@ -15,6 +10,11 @@ import {
 	isAdminIdentity,
 	requireIdentity,
 } from "./lib/currentUser";
+import { haversineDistanceKm } from "./lib/geo";
+import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
+import { purgeRequest } from "./lib/purgeRequest";
+import { extractGeocodableAddress, extractPayloadCoordinates } from "./lib/requestLocation";
+import { extractIsUrgent, extractNeedsDelivery } from "./lib/requestMetadata";
 import { redactHelpRequestForVolunteer } from "./redactHelpRequest";
 import { requestCategory, requestStatus } from "./schema";
 
@@ -168,11 +168,11 @@ export const get = query({
 	},
 });
 
-type HelpArea = {
+interface HelpArea {
 	centerLat: number;
 	centerLng: number;
 	radiusKm: number;
-};
+}
 
 function helpAreaFromUser(userRow: {
 	helpAreaCenterLat?: number;

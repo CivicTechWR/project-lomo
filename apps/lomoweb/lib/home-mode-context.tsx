@@ -1,18 +1,19 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import type { HomeAppMode } from "@/lib/app-home-mode";
+import { createContext, use, useEffect, useState } from "react";
 import {
+
 	readStoredHomeMode,
 	writeStoredHomeMode,
-	type HomeAppMode,
 } from "@/lib/app-home-mode";
 
-type HomeModeContextValue = {
+interface HomeModeContextValue {
 	mode: HomeAppMode;
 	setMode: (mode: HomeAppMode) => void;
 	toggleMode: () => void;
-};
+}
 
 const HomeModeContext = createContext<HomeModeContextValue | null>(null);
 
@@ -49,7 +50,7 @@ export function HomeModeProvider({ children }: { children: ReactNode }) {
 }
 
 export function useHomeMode(): HomeModeContextValue {
-	const value = useContext(HomeModeContext);
+	const value = use(HomeModeContext);
 	if (!value) {
 		throw new Error("useHomeMode must be used within HomeModeProvider");
 	}

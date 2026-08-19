@@ -1,18 +1,19 @@
 "use client";
 
-import { Description, Group, Label } from "@repo/ui/field";
-import { Input, TextField } from "@repo/ui/text-field";
-import { Text } from "@repo/ui/text";
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import type { KeyboardEvent } from "react";
 import type { AddressSearchResult } from "@/lib/address-search";
+import { Description, Group, Label } from "@repo/ui/field";
+import { Text } from "@repo/ui/text";
+import { Input, TextField } from "@repo/ui/text-field";
+import { useEffect, useId, useRef, useState } from "react";
 
-export type AddressSelection = {
+export interface AddressSelection {
 	label: string;
 	lat: number;
 	lng: number;
-};
+}
 
-type AddressAutocompleteFieldProps = {
+interface AddressAutocompleteFieldProps {
 	name?: string;
 	label?: string;
 	description?: string;
@@ -24,7 +25,7 @@ type AddressAutocompleteFieldProps = {
 	onChange: (value: string) => void;
 	onSelect: (selection: AddressSelection) => void;
 	onClearSelection: () => void;
-};
+}
 
 export function AddressAutocompleteField({
 	name = "address",

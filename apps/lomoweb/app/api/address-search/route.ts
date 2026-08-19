@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
 import type { AddressSearchResult } from "@/lib/address-search";
+import { NextResponse } from "next/server";
 
-type NominatimHit = {
+interface NominatimHit {
 	place_id: number;
 	display_name: string;
 	lat: string;
 	lon: string;
-};
+}
 
 /** Bias toward Kitchener–Waterloo (west, north, east, south). */
 const KW_VIEWBOX = "-80.75,43.55,-80.25,43.35";
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
 	try {
 		const response = await fetch(url.toString(), {
 			headers: {
-				Accept: "application/json",
+				"Accept": "application/json",
 				"User-Agent": "LoMo/1.0 (community help platform)",
 			},
 			cache: "no-store",

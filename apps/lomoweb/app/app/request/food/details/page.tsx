@@ -8,8 +8,8 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
-import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { GROCERY_TYPE_OPTIONS } from "@/lib/request-flow/food";
+import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 

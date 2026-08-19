@@ -4,10 +4,10 @@ import { Checkbox } from "@repo/ui/checkbox";
 import { Text } from "@repo/ui/text";
 import { SAFETY_NOTICES } from "@/lib/helper-preferences";
 
-type SafetyAcknowledgmentProps = {
+interface SafetyAcknowledgmentProps {
 	acknowledged: boolean;
 	onAcknowledgedChange: (value: boolean) => void;
-};
+}
 
 export function SafetyAcknowledgment({
 	acknowledged,

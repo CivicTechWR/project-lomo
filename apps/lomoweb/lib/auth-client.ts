@@ -10,8 +10,8 @@ function getAuthBaseURL(): string {
 	return clientEnv.NEXT_PUBLIC_SITE_URL;
 }
 
-export const AUTH_CONNECTION_ERROR_MESSAGE =
-	"Could not reach the sign-in service. Open LoMo at the URL in your environment (usually http://localhost:3000). If another app is using port 3000, stop it and restart `bun run dev`.";
+export const AUTH_CONNECTION_ERROR_MESSAGE
+	= "Could not reach the sign-in service. Open LoMo at the URL in your environment (usually http://localhost:3000). If another app is using port 3000, stop it and restart `bun run dev`.";
 
 export const authClient = createAuthClient({
 	baseURL: getAuthBaseURL(),

@@ -11,12 +11,12 @@ import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
-import { useHomeMode } from "@/lib/home-mode-context";
 import {
 	HELP_REQUEST_STATUS_LABEL,
 
 	statusBadgeColor,
 } from "@/lib/help-request-status";
+import { useHomeMode } from "@/lib/home-mode-context";
 
 export function OfferRequestDetailView() {
 	const router = useRouter();

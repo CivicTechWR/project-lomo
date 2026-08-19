@@ -169,7 +169,8 @@ export function ResetPasswordForm() {
 			</Button>
 
 			<Text size={2} color="gray" className="text-center">
-				Need a new link?{" "}
+				Need a new link?
+				{" "}
 				<Link href="/forgot-password" color="terracotta">
 					Request reset again
 				</Link>

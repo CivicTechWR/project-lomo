@@ -59,11 +59,13 @@ export function PreferencesStep() {
 				</Text>
 			</div>
 
-			{profileRow === undefined ? (
-				<Text size={2} color="gray">Loading…</Text>
-			) : (
-				<HelperPreferencesFields values={values} onChange={setValues} />
-			)}
+			{profileRow === undefined
+				? (
+						<Text size={2} color="gray">Loading…</Text>
+					)
+				: (
+						<HelperPreferencesFields values={values} onChange={setValues} />
+					)}
 
 			<OnboardingStepFooter
 				onBack={() => router.push("/app/onboarding/safety")}

@@ -1,12 +1,12 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
 import { useEffect } from "react";
-import { AppTopBar } from "./app-top-bar";
 import { HomeModeProvider } from "@/lib/home-mode-context";
+import { AppTopBar } from "./app-top-bar";
 
 export function AppChrome({ children }: { children: ReactNode }) {
 	const pathname = usePathname() ?? "";

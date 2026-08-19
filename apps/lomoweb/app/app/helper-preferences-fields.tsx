@@ -22,18 +22,18 @@ const HelpAreaMap = dynamic(
 	},
 );
 
-export type HelperPreferencesFormValues = {
+export interface HelperPreferencesFormValues {
 	canHelpNow: boolean;
 	helpPreferences: string[];
 	helpAreaCenterLat: number;
 	helpAreaCenterLng: number;
 	helpAreaRadiusKm: number;
-};
+}
 
-type HelperPreferencesFieldsProps = {
+interface HelperPreferencesFieldsProps {
 	values: HelperPreferencesFormValues;
 	onChange: (values: HelperPreferencesFormValues) => void;
-};
+}
 
 export function HelperPreferencesFields({ values, onChange }: HelperPreferencesFieldsProps) {
 	return (
