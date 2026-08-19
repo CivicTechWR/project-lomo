@@ -59,7 +59,6 @@ export const sendEmail = internalAction({
 	handler: async (_ctx, { to, subject, text, replyTo, html }) => {
 		const resend = getResendConfig();
 		if (!resend) {
-			// eslint-disable-next-line no-console
 			console.log("Email skipped: missing RESEND_API_KEY or NOTIFICATIONS_FROM_EMAIL");
 			return;
 		}
