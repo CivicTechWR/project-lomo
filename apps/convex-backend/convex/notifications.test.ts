@@ -1,7 +1,7 @@
 import { convexTest } from "convex-test";
 import { describe, test, expect } from "vitest";
 import schema from "./schema";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { register as registerBetterAuth } from "@convex-dev/better-auth/test";
 
 const modules = import.meta.glob("./**/*.ts");
@@ -13,6 +13,8 @@ function makeTest() {
 }
 
 describe("notifications: listMine", () => {
+
+  // Security
   test("returns empty array when unauthenticated", async () => {
     const t = makeTest();
     const notifications = await t.query(api.notifications.listMine, {});
@@ -69,48 +71,7 @@ describe("notifications: listMine", () => {
     expect(notifications.length).toBe(1);
   });
 
-  test("filters unread notifications when unreadOnly is true", async () => {
-    const t = makeTest();
-    
-    const userId = await t.run(async (ctx: any) => {
-      return await ctx.db.insert("users", {
-        name: "Filter User",
-        email: "filter@example.com",
-        tokenIdentifier: "user_filter_token_id",
-        subject: "user_filter_id",
-      } as any);
-    });
-
-    await t.run(async (ctx: any) => {
-      await ctx.db.insert("notifications", {
-        recipientUserId: userId,
-        isRead: false,
-        type: "volunteer_assigned",
-        title: "Test Notification",
-        body: "Test body",
-      } as any);
-      
-      await ctx.db.insert("notifications", {
-        recipientUserId: userId,
-        isRead: true,
-        type: "volunteer_assigned",
-        title: "Test Notification",
-        body: "Test body",
-      } as any);
-    });
-
-    const tAuth = t.withIdentity({ 
-      subject: "user_filter_id", 
-      tokenIdentifier: "user_filter_token_id", 
-      name: "Filter User", 
-      email: "filter@example.com" 
-    });
-    const unreadOnlyList = await tAuth.query(api.notifications.listMine, { unreadOnly: true });
-
-    expect(unreadOnlyList.length).toBe(1);
-    expect(unreadOnlyList[0].isRead).toBe(false);
-  });
-
+  // Data Retreival
   test("returns both read and unread notifications when unreadOnly is false", async () => {
     const t = makeTest();
     
@@ -183,6 +144,51 @@ describe("notifications: listMine", () => {
     expect(notifications[1].title).toBe("First Created");
   });
 
+
+  // Modifiers
+  test("filters unread notifications when unreadOnly is true", async () => {
+    const t = makeTest();
+    
+    const userId = await t.run(async (ctx: any) => {
+      return await ctx.db.insert("users", {
+        name: "Filter User",
+        email: "filter@example.com",
+        tokenIdentifier: "user_filter_token_id",
+        subject: "user_filter_id",
+      } as any);
+    });
+
+    await t.run(async (ctx: any) => {
+      await ctx.db.insert("notifications", {
+        recipientUserId: userId,
+        isRead: false,
+        type: "volunteer_assigned",
+        title: "Test Notification",
+        body: "Test body",
+      } as any);
+      
+      await ctx.db.insert("notifications", {
+        recipientUserId: userId,
+        isRead: true,
+        type: "volunteer_assigned",
+        title: "Test Notification",
+        body: "Test body",
+      } as any);
+    });
+
+    const tAuth = t.withIdentity({ 
+      subject: "user_filter_id", 
+      tokenIdentifier: "user_filter_token_id", 
+      name: "Filter User", 
+      email: "filter@example.com" 
+    });
+    const unreadOnlyList = await tAuth.query(api.notifications.listMine, { unreadOnly: true });
+
+    expect(unreadOnlyList.length).toBe(1);
+    expect(unreadOnlyList[0].isRead).toBe(false);
+  });
+
+  // Internal logic
   test("enriches notifications with help request data when requestId is present", async () => {
     const t = makeTest();
     
@@ -224,6 +230,7 @@ describe("notifications: listMine", () => {
     expect(notifications[0]).toHaveProperty("requestId");
   });
 
+  // Error handling
   test("handles notifications gracefully when requestId is missing or null", async () => {
     const t = makeTest();
     
@@ -418,5 +425,43 @@ describe("notifications: markRead", () => {
     const action = tAuth.mutation(api.notifications.markRead, { notificationId: fakeNotificationId });
 
     await expect(action).rejects.toThrow("Not found");
+  });
+});
+
+describe("notifications: sendEmail", () => {
+  test("sendEmail handles missing config gracefully without throwing", async () => {
+    const t = makeTest();
+    await expect(
+      t.action(internal.notifications.sendEmail, {
+        to: "test@example.com",
+        subject: "Test Subject",
+        text: "Hello, world",
+      })
+    ).resolves.toBeNull();
+  });
+
+  test("sendEmail accepts optional replyTo and html arguments", async () => {
+    const t = makeTest();
+    await expect(
+      t.action(internal.notifications.sendEmail, {
+        to: "test@example.com",
+        subject: "Test Subject",
+        text: "Hello, world",
+        replyTo: "reply@example.com",
+        html: "<p>Hello, world</p>",
+      })
+    ).resolves.toBeNull();
+  });
+
+  test("sendRelayEmail executes successfully with required replyTo", async () => {
+    const t = makeTest();
+    await expect(
+      t.action(internal.notifications.sendRelayEmail, {
+        to: "test@example.com",
+        subject: "Relay Subject",
+        text: "Relay text",
+        replyTo: "relay-shared@example.com",
+      })
+    ).resolves.toBeNull();
   });
 });
