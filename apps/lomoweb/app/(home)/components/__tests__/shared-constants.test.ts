@@ -37,9 +37,13 @@ describe("property 8: Homepage components reference shared constants for repeate
 	describe("sectionLabel usage", () => {
 		const filesExpectedToImportSectionLabel = [
 			"hero-section.tsx",
+			"how-it-works-section.tsx",
+		];
+
+		// find-section.tsx and share-section.tsx delegate to CategorySection which imports sectionLabel
+		const filesUsingIndirectSectionLabel = [
 			"find-section.tsx",
 			"share-section.tsx",
-			"how-it-works-section.tsx",
 		];
 
 		for (const file of filesExpectedToImportSectionLabel) {
@@ -49,6 +53,14 @@ describe("property 8: Homepage components reference shared constants for repeate
 				expect(content).toMatch(SECTION_LABEL_IMPORT_RE);
 			});
 
+			it(`**Validates: Requirements 13.4** — ${file} does not inline the full section label class string`, () => {
+				const content = readComponent(file);
+
+				expect(content).not.toContain(SECTION_LABEL_INLINE);
+			});
+		}
+
+		for (const file of filesUsingIndirectSectionLabel) {
 			it(`**Validates: Requirements 13.4** — ${file} does not inline the full section label class string`, () => {
 				const content = readComponent(file);
 

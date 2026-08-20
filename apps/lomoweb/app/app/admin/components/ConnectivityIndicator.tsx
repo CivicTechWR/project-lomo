@@ -1,0 +1,139 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+
+type ConnectionStatus = "connected" | "disconnected" | "reconnected";
+
+/**
+ * Monitors browser online/offline status as a proxy for Convex subscription
+ * connectivity. Displays a dismissible banner when disconnected and a brief
+ * success banner when reconnected (auto-dismisses after 3 seconds).
+ *
+ * Uses `aria-live="assertive"` so screen readers announce connectivity changes
+ * immediately (Req 9.4, 9.5).
+ */
+export function ConnectivityIndicator() {
+	const [status, setStatus] = useState<ConnectionStatus>(() =>
+		typeof navigator !== "undefined" && !navigator.onLine
+			? "disconnected"
+			: "connected",
+	);
+	const [dismissed, setDismissed] = useState(false);
+	const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const wasDisconnectedRef = useRef(
+		typeof navigator !== "undefined" && !navigator.onLine,
+	);
+
+	useEffect(() => {
+		function handleOffline() {
+			wasDisconnectedRef.current = true;
+			setDismissed(false);
+			setStatus("disconnected");
+		}
+
+		function handleOnline() {
+			if (wasDisconnectedRef.current) {
+				wasDisconnectedRef.current = false;
+				setDismissed(false);
+				setStatus("reconnected");
+
+				// Auto-dismiss reconnected banner after 3 seconds
+				reconnectTimerRef.current = setTimeout(() => {
+					setStatus("connected");
+				}, 3000);
+			}
+		}
+
+		window.addEventListener("offline", handleOffline);
+		window.addEventListener("online", handleOnline);
+
+		return () => {
+			window.removeEventListener("offline", handleOffline);
+			window.removeEventListener("online", handleOnline);
+			if (reconnectTimerRef.current) {
+				clearTimeout(reconnectTimerRef.current);
+			}
+		};
+	}, []);
+
+	const handleDismiss = useCallback(() => {
+		setDismissed(true);
+	}, []);
+
+	// Nothing to show
+	if (status === "connected" || dismissed) {
+		return (
+			<div aria-live="assertive" aria-atomic="true" className="sr-only">
+				{/* Empty — screen readers will announce when content appears */}
+			</div>
+		);
+	}
+
+	if (status === "disconnected") {
+		return (
+			<div
+				role="alert"
+				aria-live="assertive"
+				aria-atomic="true"
+				className="flex items-center justify-between gap-3 rounded-lg border border-yellow-8 bg-yellow-3 px-4 py-3 text-sm text-terracotta-9"
+			>
+				<span>
+					<strong className="font-semibold">Connection lost.</strong>
+					{" "}
+					Reconnecting&hellip;
+				</span>
+				<button
+					type="button"
+					onClick={handleDismiss}
+					className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded text-terracotta-9 hover:bg-yellow-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9"
+					aria-label="Dismiss connectivity warning"
+				>
+					<CloseIcon />
+				</button>
+			</div>
+		);
+	}
+
+	// reconnected
+	return (
+		<div
+			role="status"
+			aria-live="assertive"
+			aria-atomic="true"
+			className="flex items-center justify-between gap-3 rounded-lg border border-sage-7 bg-sage-3 px-4 py-3 text-sm text-terracotta-9"
+		>
+			<span>
+				<strong className="font-semibold">Connected.</strong>
+				{" "}
+				Data synced.
+			</span>
+			<button
+				type="button"
+				onClick={handleDismiss}
+				className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded text-terracotta-9 hover:bg-sage-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9"
+				aria-label="Dismiss connectivity status"
+			>
+				<CloseIcon />
+			</button>
+		</div>
+	);
+}
+
+function CloseIcon() {
+	return (
+		<svg
+			width={14}
+			height={14}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={2.5}
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+		>
+			<line x1="18" y1="6" x2="6" y2="18" />
+			<line x1="6" y1="6" x2="18" y2="18" />
+		</svg>
+	);
+}

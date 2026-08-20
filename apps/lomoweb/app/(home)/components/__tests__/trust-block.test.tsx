@@ -4,11 +4,6 @@ import { TrustBlock } from "../trust-block.tsx";
 
 // Mock the @repo/ui components
 vi.mock("@repo/ui", () => ({
-	Card: ({ children, className, variant, color, size }: { children: React.ReactNode; className?: string; variant?: string; color?: string; size?: number }) => (
-		<div className={className} data-testid="card" data-variant={variant} data-color={color} data-size={size}>
-			{children}
-		</div>
-	),
 	Text: ({ children, className, weight, size }: { children: React.ReactNode; className?: string; weight?: string; size?: number }) => (
 		<span className={className} data-weight={weight} data-size={size}>
 			{children}
@@ -33,8 +28,8 @@ const COMMUNITY_FIRST_ALWAYS_MATCH_REGEX = /Community-first, always/;
 describe("trustBlock", () => {
 	it("renders four Card elements", () => {
 		render(<TrustBlock />);
-		const cards = screen.getAllByTestId("card");
-		expect(cards).toHaveLength(4);
+		const items = screen.getAllByRole("listitem");
+		expect(items).toHaveLength(4);
 	});
 
 	it("renders \"Free & not-for-profit\" text", () => {
@@ -59,12 +54,12 @@ describe("trustBlock", () => {
 
 	it("renders all four value statements in the correct order", () => {
 		render(<TrustBlock />);
-		const cards = screen.getAllByTestId("card");
+		const items = screen.getAllByRole("listitem");
 
-		expect(cards[0]).toHaveTextContent("Free & not-for-profit");
-		expect(cards[1]).toHaveTextContent("No algorithms, no ads");
-		expect(cards[2]).toHaveTextContent("You own your data");
-		expect(cards[3]).toHaveTextContent("Community-first, always");
+		expect(items[0]).toHaveTextContent("Free & not-for-profit");
+		expect(items[1]).toHaveTextContent("No algorithms, no ads");
+		expect(items[2]).toHaveTextContent("You own your data");
+		expect(items[3]).toHaveTextContent("Community-first, always");
 	});
 
 	it("renders as a section with aria-label", () => {
@@ -98,8 +93,8 @@ describe("trustBlock", () => {
 
 	it("renders exactly one Card element per value statement", () => {
 		render(<TrustBlock />);
-		const cards = screen.getAllByTestId("card");
-		const textElements = cards.map(card => card.textContent);
+		const items = screen.getAllByRole("listitem");
+		const textElements = items.map(item => item.textContent);
 
 		// toContain does not support asymmetric matchers on arrays — use arrayContaining
 		expect(textElements).toEqual(

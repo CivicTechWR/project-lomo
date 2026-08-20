@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { HeroSection } from "../hero-section.tsx";
 
@@ -27,7 +28,7 @@ vi.mock("@repo/ui/heading", () => ({
 		children: React.ReactNode;
 		className?: string;
 	}) => {
-		const Element = `h${level}` as keyof JSX.IntrinsicElements;
+		const Element = `h${level}` as React.ElementType;
 		return (
 			<Element className={className}>
 				{children}

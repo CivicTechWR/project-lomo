@@ -1,7 +1,7 @@
 import type { Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { internalMutation } from "./_generated/server";
-import { NOTIFICATIONS, REQUESTERS, REQUESTS, SEED_PREFIX, VOLUNTEERS } from "./lib/seedData";
+import { ADMIN_SETTINGS, MESSAGES, NOTIFICATIONS, REQUESTERS, REQUESTS, SEED_PREFIX, VOLUNTEERS } from "./lib/seedData";
 
 /**
  * DEV-ONLY data seeder for the admin dashboard.
@@ -16,6 +16,11 @@ import { NOTIFICATIONS, REQUESTERS, REQUESTS, SEED_PREFIX, VOLUNTEERS } from "./
  * does NOT touch real auth users or requests you create through the app.
  *
  * Seed data lives in `convex/lib/seedData.ts`.
+ *
+ * Note: Convex's `_creationTime` is system-managed and cannot be backdated. The
+ * "attention needed" list depends on `_creationTime` being older than the threshold.
+ * For immediate testing, lower the threshold to 1 day via the admin settings UI,
+ * then wait ~24 hours — or just test the other dashboard sections first.
  */
 
 function isSeeded(value: string | undefined): boolean {
@@ -31,20 +36,41 @@ async function clearSeeded(ctx: MutationCtx) {
 		}
 	}
 
+	// Clear request messages that belong to seeded requests
+	const seededRequestIds = new Set<string>();
+	for (const request of await ctx.db.query("helpRequests").collect()) {
+		if (seededUserIds.has(request.ownerUserId)) {
+			seededRequestIds.add(request._id);
+		}
+	}
+
+	for (const message of await ctx.db.query("requestMessages").collect()) {
+		if (seededRequestIds.has(message.requestId)) {
+			await ctx.db.delete("requestMessages", message._id);
+		}
+	}
+
 	for (const notification of await ctx.db.query("notifications").collect()) {
 		if (seededUserIds.has(notification.recipientUserId)) {
 			await ctx.db.delete("notifications", notification._id);
 		}
 	}
 
-	for (const request of await ctx.db.query("helpRequests").collect()) {
-		if (seededUserIds.has(request.ownerUserId)) {
-			await ctx.db.delete("helpRequests", request._id);
-		}
+	for (const requestId of seededRequestIds) {
+		await ctx.db.delete("helpRequests", requestId as Id<"helpRequests">);
 	}
 
 	for (const userId of seededUserIds) {
 		await ctx.db.delete("users", userId as Id<"users">);
+	}
+
+	// Clear seeded admin settings (the singleton with key "global" inserted by seed)
+	const settingsDoc = await ctx.db
+		.query("adminSettings")
+		.withIndex("by_key", q => q.eq("key", "global"))
+		.unique();
+	if (settingsDoc) {
+		await ctx.db.delete("adminSettings", settingsDoc._id);
 	}
 }
 
@@ -53,8 +79,7 @@ export const run = internalMutation({
 	handler: async (ctx) => {
 		await clearSeeded(ctx);
 
-		// Insert users, keyed by handle so requests/notifications can resolve the
-		// generated document ids.
+		// --- Users ---
 		const userIdByHandle = new Map<string, Id<"users">>();
 		for (const u of [...VOLUNTEERS, ...REQUESTERS]) {
 			const id = await ctx.db.insert("users", {
@@ -77,8 +102,7 @@ export const run = internalMutation({
 			return id;
 		}
 
-		// Insert requests, keyed by title so notifications can reference them
-		// without relying on array positions.
+		// --- Requests ---
 		const requestIdByTitle = new Map<string, Id<"helpRequests">>();
 		for (const r of REQUESTS) {
 			const id = await ctx.db.insert("helpRequests", {
@@ -99,6 +123,25 @@ export const run = internalMutation({
 			requestIdByTitle.set(r.title, id);
 		}
 
+		// --- Request Messages ---
+		let messagesInserted = 0;
+		for (const m of MESSAGES) {
+			const requestId = requestIdByTitle.get(m.requestTitle);
+			if (!requestId) {
+				throw new Error(`Seed message references unknown request title: ${m.requestTitle}`);
+			}
+			await ctx.db.insert("requestMessages", {
+				requestId,
+				authorUserId: m.authorHandle !== undefined
+					? requireUser(m.authorHandle)
+					: undefined,
+				body: m.body,
+				source: m.source,
+			});
+			messagesInserted++;
+		}
+
+		// --- Notifications ---
 		for (const n of NOTIFICATIONS) {
 			await ctx.db.insert("notifications", {
 				recipientUserId: requireUser(n.recipientHandle),
@@ -114,11 +157,22 @@ export const run = internalMutation({
 			});
 		}
 
+		// --- Admin Settings ---
+		await ctx.db.insert("adminSettings", {
+			key: ADMIN_SETTINGS.key,
+			attentionThresholdDays: ADMIN_SETTINGS.attentionThresholdDays,
+			notifyOnNewPending: ADMIN_SETTINGS.notifyOnNewPending,
+			notifyOnConcernReport: ADMIN_SETTINGS.notifyOnConcernReport,
+			notifyOnCancellation: ADMIN_SETTINGS.notifyOnCancellation,
+		});
+
 		return {
 			volunteers: VOLUNTEERS.length,
 			requesters: REQUESTERS.length,
 			requests: REQUESTS.length,
+			messages: messagesInserted,
 			notifications: NOTIFICATIONS.length,
+			adminSettings: 1,
 		};
 	},
 });

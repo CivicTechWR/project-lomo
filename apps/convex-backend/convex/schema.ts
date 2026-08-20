@@ -42,6 +42,7 @@ export const notificationCtaAction = v.union(
 export const requestMessageSource = v.union(
 	v.literal("web"),
 	v.literal("email"),
+	v.literal("admin_note"),
 );
 
 export default defineSchema(
@@ -118,6 +119,8 @@ export default defineSchema(
 			helpAreaCenterLng: v.optional(v.number()),
 			/** Radius in kilometres (1–30). */
 			helpAreaRadiusKm: v.optional(v.number()),
+			/** When true, user is blocked from creating requests or sending messages. */
+			blocked: v.optional(v.boolean()),
 		})
 			.index("by_subject", ["subject"])
 			.index("by_token_identifier", ["tokenIdentifier"]),
@@ -135,6 +138,17 @@ export default defineSchema(
 			.index("by_recipient", ["recipientUserId"])
 			.index("by_recipient_read", ["recipientUserId", "isRead"])
 			.index("by_request", ["requestId"]),
+
+		adminSettings: defineTable({
+			/** Well-known key for singleton pattern ("global") */
+			key: v.string(),
+			/** Days before a pending unmatched request needs attention (1-30) */
+			attentionThresholdDays: v.number(),
+			/** Notification preferences */
+			notifyOnNewPending: v.boolean(),
+			notifyOnConcernReport: v.boolean(),
+			notifyOnCancellation: v.boolean(),
+		}).index("by_key", ["key"]),
 	},
 	{ schemaValidation: true },
 );
