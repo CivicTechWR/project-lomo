@@ -61,9 +61,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
  * - Active pill shows selected value(s) or count
  * - "Clear all" button when any filter is active
  * - Keyboard: Enter/Space opens dropdown, Escape closes, Arrow keys navigate
- * - Design: rounded-full, border terracotta-6, bg-white; active state with terracotta-9 bg + white text
- *
- * Requirements: 3.2, 3.8, 7.4, 15.3, 15.7, 15.13
+ * - Design: rounded-full, border gray-6, bg-white; active state with gray-12 bg + white text
  */
 export function FilterPillGroup({ filters, onClearAll }: FilterPillGroupProps) {
 	const hasActiveFilters = filters.some(f => f.selected.length > 0);
@@ -80,10 +78,10 @@ export function FilterPillGroup({ filters, onClearAll }: FilterPillGroupProps) {
 					onClick={onClearAll}
 					className={[
 						"rounded-full px-3 py-1.5",
-						"text-xs font-medium text-terracotta-9 underline",
+						"text-xs font-medium text-gray-11 underline",
 						"min-h-[44px] min-w-[44px]",
-						"outline-none focus-visible:ring-2 focus-visible:ring-[#F3C600] focus-visible:ring-offset-2",
-						"hover:text-terracotta-11",
+						"outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
+						"hover:text-gray-12",
 					].join(" ")}
 				>
 					Clear all
@@ -249,15 +247,15 @@ function FilterPill({ config }: FilterPillInternalProps) {
 					"flex items-center gap-1 rounded-full border px-3 py-1.5",
 					"text-xs font-medium",
 					"min-h-[44px] min-w-[44px]",
-					"outline-none focus-visible:ring-2 focus-visible:ring-[#F3C600] focus-visible:ring-offset-2",
+					"outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
 					"transition-colors",
 					isActive
-						? "border-terracotta-9 bg-terracotta-9 text-white"
-						: "border-terracotta-6 bg-white text-terracotta-9 hover:bg-terracotta-3",
+						? "border-gray-12 bg-gray-12 text-white"
+						: "border-gray-6 bg-white text-gray-12 hover:bg-gray-3",
 				].join(" ")}
 			>
 				<span>{displayLabel}</span>
-				<ChevronDownIcon className={isActive ? "text-white" : "text-terracotta-9"} />
+				<ChevronDownIcon className={isActive ? "text-white" : "text-gray-11"} />
 			</button>
 
 			{isOpen && (
@@ -273,9 +271,9 @@ function FilterPill({ config }: FilterPillInternalProps) {
 					tabIndex={0}
 					className={[
 						"absolute left-0 z-50 mt-1",
-						"min-w-[160px] rounded-xl border-2 border-terracotta-6 bg-white",
+						"min-w-[160px] rounded-xl border border-gray-6 bg-white",
 						"py-1 shadow-md",
-						"outline-none focus-visible:ring-2 focus-visible:ring-[#F3C600]",
+						"outline-none focus-visible:ring-2 focus-visible:ring-gray-8",
 					].join(" ")}
 				>
 					{options.map((option, index) => {
@@ -298,12 +296,12 @@ function FilterPill({ config }: FilterPillInternalProps) {
 									"cursor-pointer px-3 py-2 text-sm",
 									"min-h-[44px] flex items-center",
 									"outline-none",
-									focusedIndex === index ? "bg-terracotta-3" : "",
-									isSelected ? "font-medium text-terracotta-9" : "text-terracotta-9",
+									focusedIndex === index ? "bg-gray-3" : "",
+									isSelected ? "font-medium text-gray-12" : "text-gray-11",
 								].join(" ")}
 							>
 								{isSelected && (
-									<span className="mr-2 text-terracotta-9" aria-hidden="true">✓</span>
+									<span className="mr-2 text-gray-12" aria-hidden="true">✓</span>
 								)}
 								{option.label}
 							</li>

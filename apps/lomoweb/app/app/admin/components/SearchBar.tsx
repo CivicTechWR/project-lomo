@@ -63,9 +63,7 @@ export interface SearchBarProps {
  * - Visible label (sr-only) with aria-label as fallback
  * - Magnifying glass icon on the left
  * - Clear button (X) when text is present
- * - Design: rounded-full border-2 border-terracotta-6, bg-white, focus ring
- *
- * Requirements: 3.1, 3.2, 3.8, 7.4, 15.3, 15.7
+ * - Design: rounded-full border border-gray-6, bg-white, focus ring
  */
 export function SearchBar({
 	value,
@@ -105,7 +103,7 @@ export function SearchBar({
 			<div className="relative flex items-center">
 				{/* Magnifying glass icon */}
 				<div className="pointer-events-none absolute left-3 flex items-center">
-					<SearchIcon className="text-terracotta-9" />
+					<SearchIcon className="text-gray-9" />
 				</div>
 
 				<input
@@ -119,10 +117,10 @@ export function SearchBar({
 					maxLength={100}
 					aria-label="Search requests"
 					className={[
-						"w-full rounded-full border-2 border-terracotta-6 bg-white",
+						"w-full rounded-full border border-gray-6 bg-white",
 						"py-2.5 pl-10 pr-10",
-						"text-sm text-terracotta-9 placeholder:text-terracotta-6",
-						"outline-none focus-visible:ring-2 focus-visible:ring-[#F3C600] focus-visible:ring-offset-2",
+						"text-sm text-gray-12 placeholder:text-gray-9",
+						"outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
 						"min-h-[44px]",
 					].join(" ")}
 				/>
@@ -137,8 +135,8 @@ export function SearchBar({
 						className={[
 							"absolute right-3 flex items-center justify-center",
 							"size-6 rounded-full",
-							"text-terracotta-9 hover:bg-terracotta-3",
-							"outline-none focus-visible:ring-2 focus-visible:ring-[#F3C600] focus-visible:ring-offset-2",
+							"text-gray-11 hover:bg-gray-3",
+							"outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
 						].join(" ")}
 					>
 						<ClearIcon />

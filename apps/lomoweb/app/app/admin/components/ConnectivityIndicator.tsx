@@ -75,21 +75,23 @@ export function ConnectivityIndicator() {
 				role="alert"
 				aria-live="assertive"
 				aria-atomic="true"
-				className="flex items-center justify-between gap-3 rounded-lg border border-yellow-8 bg-yellow-3 px-4 py-3 text-sm text-terracotta-9"
+				className="mx-auto w-full max-w-4xl px-4 pt-3 sm:px-6"
 			>
-				<span>
-					<strong className="font-semibold">Connection lost.</strong>
-					{" "}
-					Reconnecting&hellip;
-				</span>
-				<button
-					type="button"
-					onClick={handleDismiss}
-					className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded text-terracotta-9 hover:bg-yellow-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9"
-					aria-label="Dismiss connectivity warning"
-				>
-					<CloseIcon />
-				</button>
+				<div className="flex items-center justify-between gap-3 rounded-lg border border-yellow-8 bg-yellow-3 px-4 py-3 text-sm text-gray-12">
+					<span>
+						<strong className="font-semibold">Connection lost.</strong>
+						{" "}
+						Reconnecting&hellip;
+					</span>
+					<button
+						type="button"
+						onClick={handleDismiss}
+						className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded text-gray-12 hover:bg-yellow-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-8"
+						aria-label="Dismiss connectivity warning"
+					>
+						<CloseIcon />
+					</button>
+				</div>
 			</div>
 		);
 	}
@@ -100,21 +102,23 @@ export function ConnectivityIndicator() {
 			role="status"
 			aria-live="assertive"
 			aria-atomic="true"
-			className="flex items-center justify-between gap-3 rounded-lg border border-sage-7 bg-sage-3 px-4 py-3 text-sm text-terracotta-9"
+			className="mx-auto w-full max-w-4xl px-4 pt-3 sm:px-6"
 		>
-			<span>
-				<strong className="font-semibold">Connected.</strong>
-				{" "}
-				Data synced.
-			</span>
-			<button
-				type="button"
-				onClick={handleDismiss}
-				className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded text-terracotta-9 hover:bg-sage-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9"
-				aria-label="Dismiss connectivity status"
-			>
-				<CloseIcon />
-			</button>
+			<div className="flex items-center justify-between gap-3 rounded-lg border border-sage-7 bg-sage-3 px-4 py-3 text-sm text-gray-12">
+				<span>
+					<strong className="font-semibold">Connected.</strong>
+					{" "}
+					Data synced.
+				</span>
+				<button
+					type="button"
+					onClick={handleDismiss}
+					className="inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded text-gray-12 hover:bg-sage-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-8"
+					aria-label="Dismiss connectivity status"
+				>
+					<CloseIcon />
+				</button>
+			</div>
 		</div>
 	);
 }

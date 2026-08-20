@@ -17,10 +17,10 @@ function SettingsSkeleton() {
 	return (
 		<div className="flex flex-col gap-6">
 			{["section-prefs", "section-notifs", "section-magic"].map(key => (
-				<Card key={key} border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
-					<div className="h-5 w-40 animate-pulse rounded bg-terracotta-3" />
-					<div className="mt-4 h-10 w-full animate-pulse rounded bg-terracotta-3" />
-					<div className="mt-3 h-4 w-3/4 animate-pulse rounded bg-terracotta-3" />
+				<Card key={key} size={2} className="rounded-[20px] border border-gray-6">
+					<div className="h-5 w-40 animate-pulse rounded bg-gray-3" />
+					<div className="mt-4 h-10 w-full animate-pulse rounded bg-gray-3" />
+					<div className="mt-3 h-4 w-3/4 animate-pulse rounded bg-gray-3" />
 				</Card>
 			))}
 		</div>
@@ -41,7 +41,7 @@ interface ToggleSwitchProps {
 function ToggleSwitch({ id, label, checked, onChange }: ToggleSwitchProps) {
 	return (
 		<div className="flex items-center justify-between gap-3 py-2">
-			<label htmlFor={id} className="text-sm font-medium text-terracotta-9">
+			<label htmlFor={id} className="text-sm font-medium text-gray-12">
 				{label}
 			</label>
 			<button
@@ -53,8 +53,8 @@ function ToggleSwitch({ id, label, checked, onChange }: ToggleSwitchProps) {
 				className={`
 					relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full
 					border-2 border-transparent transition-colors
-					focus-visible:ring-2 focus-visible:ring-terracotta-9 focus-visible:ring-offset-2
-					${checked ? "bg-sage-9" : "bg-terracotta-4"}
+					focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2
+					${checked ? "bg-sage-9" : "bg-gray-4"}
 				`}
 			>
 				<span
@@ -169,18 +169,18 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 	return (
 		<div className="flex flex-col gap-6">
 			{/* Admin Preferences Section */}
-			<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+			<Card size={2} className="rounded-[20px] border border-gray-6">
 				<Heading level={2} size={5} weight="medium" className="mb-4">
 					Admin Preferences
 				</Heading>
 				<div className="flex flex-col gap-2">
 					<label
 						htmlFor="attention-threshold"
-						className="text-sm font-medium text-terracotta-9"
+						className="text-sm font-medium text-gray-12"
 					>
 						Attention threshold (days)
 					</label>
-					<Text size={1} color="terracotta" className="mb-1">
+					<Text size={1} color="gray" className="mb-1">
 						Requests pending longer than this are flagged for attention (1-30 days).
 					</Text>
 					<input
@@ -194,16 +194,16 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 						aria-describedby={thresholdError ? "threshold-error" : undefined}
 						aria-invalid={!!thresholdError}
 						className={`
-							w-full rounded-lg border-2 px-3 py-2 text-sm text-terracotta-9
-							focus:outline-none focus:ring-2 focus:ring-terracotta-9 focus:ring-offset-2
-							${thresholdError ? "border-darkred-5" : "border-terracotta-6"}
+							w-full rounded-lg border px-3 py-2 text-sm text-gray-12
+							focus:outline-none focus:ring-2 focus:ring-gray-8 focus:ring-offset-2
+							${thresholdError ? "border-red-8" : "border-gray-6"}
 						`}
 					/>
 					{thresholdError && (
 						<Text
 							id="threshold-error"
 							size={1}
-							className="text-darkred-9"
+							className="text-red-9"
 						>
 							{thresholdError}
 						</Text>
@@ -212,11 +212,11 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 			</Card>
 
 			{/* Notification Settings Section */}
-			<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+			<Card size={2} className="rounded-[20px] border border-gray-6">
 				<Heading level={2} size={5} weight="medium" className="mb-4">
 					Notification Settings
 				</Heading>
-				<div className="flex flex-col divide-y divide-terracotta-3">
+				<div className="flex flex-col divide-y divide-gray-4">
 					<ToggleSwitch
 						id="notify-new-pending"
 						label="New pending request alerts"
@@ -239,22 +239,22 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 			</Card>
 
 			{/* Magic Link Management Section */}
-			<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+			<Card size={2} className="rounded-[20px] border border-gray-6">
 				<Heading level={2} size={5} weight="medium" className="mb-4">
 					Magic Link Management
 				</Heading>
-				<Text size={2} color="terracotta" className="mb-3">
+				<Text size={2} color="gray" className="mb-3">
 					Generate single-use magic links to invite new users to the platform.
 				</Text>
 				<Button
 					variant="outline"
-					color="terracotta"
+					color="gray"
 					size={2}
 					isDisabled
 				>
 					Generate Magic Link
 				</Button>
-				<Text size={1} color="terracotta" className="mt-2 italic">
+				<Text size={1} color="gray" className="mt-2 italic">
 					Coming soon
 				</Text>
 			</Card>
@@ -263,9 +263,7 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 			<div className="flex flex-col items-start gap-3">
 				<Button
 					variant="solid"
-					color="yellow"
-					border="medium"
-					borderColor="terracotta"
+					color="sage"
 					size={3}
 					isDisabled={hasValidationError || isSaving}
 					onPress={handleSave}
@@ -293,7 +291,7 @@ export default function AdminSettingsPage() {
 
 	return (
 		<AdminErrorBoundary level="section">
-			<div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
+			<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
 				<Heading level={1} size={6} weight="bold" className="mb-6">
 					Settings
 				</Heading>

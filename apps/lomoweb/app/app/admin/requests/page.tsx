@@ -52,12 +52,12 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
 const STATUS_LABEL_REGEX = /_/g;
 
 /** Maps statusBadgeColor tokens to Badge component color props */
-const BADGE_COLOR_MAP: Record<string, "gray" | "yellow" | "sage" | "darkred"> = {
+const BADGE_COLOR_MAP: Record<string, "gray" | "yellow" | "sage"> = {
 	"gray-6": "gray",
 	"yellow-5": "yellow",
 	"sage-4": "sage",
 	"sage-9": "sage",
-	"darkred-5": "darkred",
+	"darkred-5": "gray",
 };
 
 /* -------------------------------------------------------------------------- */
@@ -68,29 +68,29 @@ function RequestListSkeleton() {
 	return (
 		<div className="flex flex-col gap-4">
 			{/* Search bar skeleton */}
-			<div className="h-11 w-full animate-pulse rounded-full bg-terracotta-3" />
+			<div className="h-11 w-full animate-pulse rounded-full bg-gray-3" />
 
 			{/* Filter pills skeleton */}
 			<div className="flex gap-2">
-				<div className="h-8 w-24 animate-pulse rounded-full bg-terracotta-3" />
-				<div className="h-8 w-20 animate-pulse rounded-full bg-terracotta-3" />
-				<div className="h-8 w-22 animate-pulse rounded-full bg-terracotta-3" />
+				<div className="h-8 w-24 animate-pulse rounded-full bg-gray-3" />
+				<div className="h-8 w-20 animate-pulse rounded-full bg-gray-3" />
+				<div className="h-8 w-22 animate-pulse rounded-full bg-gray-3" />
 			</div>
 
 			{/* Card skeletons */}
 			<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Loading requests">
 				{Array.from({ length: 6 }, (_, i) => `skeleton-${i}`).map(key => (
 					<li key={key}>
-						<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+						<Card size={2} className="rounded-[20px] border border-gray-6">
 							<div className="flex items-start gap-3">
-								<div className="h-10 w-10 animate-pulse rounded-full bg-terracotta-3" />
+								<div className="h-10 w-10 animate-pulse rounded-full bg-gray-3" />
 								<div className="flex-1">
-									<div className="h-4 w-40 animate-pulse rounded bg-terracotta-3" />
-									<div className="mt-2 h-3 w-24 animate-pulse rounded bg-terracotta-3" />
-									<div className="mt-2 h-3 w-56 animate-pulse rounded bg-terracotta-3" />
+									<div className="h-4 w-40 animate-pulse rounded bg-gray-3" />
+									<div className="mt-2 h-3 w-24 animate-pulse rounded bg-gray-3" />
+									<div className="mt-2 h-3 w-56 animate-pulse rounded bg-gray-3" />
 									<div className="mt-2 flex gap-2">
-										<div className="h-5 w-16 animate-pulse rounded-full bg-terracotta-3" />
-										<div className="h-5 w-14 animate-pulse rounded-full bg-terracotta-3" />
+										<div className="h-5 w-16 animate-pulse rounded-full bg-gray-3" />
+										<div className="h-5 w-14 animate-pulse rounded-full bg-gray-3" />
 									</div>
 								</div>
 							</div>
@@ -146,12 +146,12 @@ function RequestCard({ request }: { request: RequestCardData }) {
 		<li>
 			<Link
 				href={`/app/admin/requests/${request._id}`}
-				className="block rounded-[20px] border-2 border-terracotta-6 bg-white p-4 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F3C600] focus-visible:ring-offset-2"
+				className="block rounded-[20px] border border-gray-6 bg-white p-4 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2"
 			>
 				<div className="flex items-start gap-3">
 					{/* Owner avatar placeholder */}
 					<div
-						className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-terracotta-3 text-sm font-semibold text-terracotta-9"
+						className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-3 text-sm font-semibold text-gray-12"
 						aria-hidden="true"
 					>
 						{initial}
@@ -159,17 +159,17 @@ function RequestCard({ request }: { request: RequestCardData }) {
 
 					<div className="min-w-0 flex-1">
 						{/* Title */}
-						<p className="truncate font-medium text-terracotta-9">
+						<p className="truncate font-medium text-gray-12">
 							{request.title}
 						</p>
 
 						{/* Owner name */}
-						<p className="mt-0.5 text-sm text-terracotta-8">
+						<p className="mt-0.5 text-sm text-gray-11">
 							{ownerName}
 						</p>
 
 						{/* Description excerpt */}
-						<p className="mt-1 text-sm text-terracotta-7">
+						<p className="mt-1 text-sm text-gray-10">
 							{excerpt}
 						</p>
 
@@ -182,13 +182,13 @@ function RequestCard({ request }: { request: RequestCardData }) {
 
 							{/* Urgency badge */}
 							{request.isUrgent && (
-								<Badge variant="solid" color="darkred" size={1}>
+								<Badge variant="soft" color="red" size={1}>
 									Urgent
 								</Badge>
 							)}
 
 							{/* Category */}
-							<Badge variant="soft" color="terracotta" size={1}>
+							<Badge variant="soft" color="gray" size={1}>
 								{request.category}
 							</Badge>
 						</div>
@@ -196,7 +196,7 @@ function RequestCard({ request }: { request: RequestCardData }) {
 						{/* Assigned helper */}
 						{helperName && (
 							<div className="mt-2">
-								<Text size={1} color="terracotta">
+								<Text size={1} color="gray">
 									Helper:
 									{" "}
 									{helperName}
@@ -206,8 +206,8 @@ function RequestCard({ request }: { request: RequestCardData }) {
 
 						{/* Latest coordinator note */}
 						{latestNote && (
-							<div className="mt-1.5 rounded border border-terracotta-4 bg-terracotta-2 px-2 py-1">
-								<Text size={1} color="terracotta">
+							<div className="mt-1.5 rounded-lg border border-gray-4 bg-gray-2 px-2 py-1">
+								<Text size={1} color="gray">
 									Note:
 									{" "}
 									{latestNote.body.length > 60
@@ -229,12 +229,12 @@ function RequestCard({ request }: { request: RequestCardData }) {
 
 function EmptyState() {
 	return (
-		<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+		<Card size={2} className="rounded-[20px] border border-gray-6">
 			<div className="flex flex-col items-center gap-2 py-6 text-center">
-				<Text size={3} weight="medium" color="terracotta">
+				<Text size={3} weight="medium" color="gray">
 					No requests match your criteria
 				</Text>
-				<Text size={2} color="terracotta">
+				<Text size={2} color="gray">
 					Try adjusting your search or filters to see more results.
 				</Text>
 			</div>
@@ -323,11 +323,11 @@ export default function RequestsPage() {
 	];
 
 	return (
-		<div className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
-			<Heading level={1} size={6} weight="bold" className="mb-4">
+		<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
+			<Heading level={1} size={6} weight="bold" className="mb-6">
 				Requests
 				{!isLoading && (
-					<span className="ml-2 text-lg font-normal text-terracotta-8">
+					<span className="ml-2 text-lg font-normal text-gray-11">
 						(
 						{resultCount}
 						)

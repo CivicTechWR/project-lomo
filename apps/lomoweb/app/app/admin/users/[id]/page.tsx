@@ -252,7 +252,7 @@ export default function UserDetailPage() {
 
 	if (isLoading) {
 		return (
-			<div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
+			<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
 				<div aria-live="polite" aria-atomic="true" className="sr-only">
 					Loading user details
 				</div>
@@ -263,9 +263,9 @@ export default function UserDetailPage() {
 
 	if (!userData) {
 		return (
-			<div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-6 sm:px-6 lg:py-8">
-				<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
-					<Text size={3} color="terracotta" className="text-center">
+			<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 lg:py-10">
+				<Card size={2} className="rounded-[20px] border border-gray-6">
+					<Text size={3} color="gray" className="text-center">
 						User not found.
 					</Text>
 				</Card>
@@ -284,7 +284,7 @@ export default function UserDetailPage() {
 	const helpPreferences = userData.helpPreferences ?? [];
 
 	return (
-		<div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
+		<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
 			{/* aria-live region for loaded state */}
 			<div aria-live="polite" aria-atomic="true" className="sr-only">
 				{`User details loaded for ${userData.name ?? "user"}`}

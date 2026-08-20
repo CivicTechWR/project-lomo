@@ -6,7 +6,7 @@ import { useQuery } from "convex/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { HomeModeProvider } from "@/lib/home-mode-context";
-import { AppTopBar } from "./app-top-bar";
+import { AppSidebar } from "./app-sidebar";
 
 export function AppChrome({ children }: { children: ReactNode }) {
 	const pathname = usePathname() ?? "";
@@ -33,10 +33,10 @@ export function AppChrome({ children }: { children: ReactNode }) {
 
 	return (
 		<HomeModeProvider>
-			<AppTopBar />
-			<div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto">
+			<AppSidebar />
+			<main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 lg:pb-0">
 				{children}
-			</div>
+			</main>
 		</HomeModeProvider>
 	);
 }

@@ -49,25 +49,25 @@ function UserListSkeleton() {
 	return (
 		<div className="flex flex-col gap-4">
 			{/* Search skeleton */}
-			<div className="h-11 w-full animate-pulse rounded-full bg-terracotta-3" />
+			<div className="h-11 w-full animate-pulse rounded-full bg-gray-3" />
 
 			{/* Filter pills skeleton */}
 			<div className="flex gap-2">
-				<div className="h-8 w-24 animate-pulse rounded-full bg-terracotta-3" />
-				<div className="h-8 w-28 animate-pulse rounded-full bg-terracotta-3" />
+				<div className="h-8 w-24 animate-pulse rounded-full bg-gray-3" />
+				<div className="h-8 w-28 animate-pulse rounded-full bg-gray-3" />
 			</div>
 
 			{/* Card skeletons */}
 			<ul className="grid grid-cols-1 gap-4 sm:grid-cols-2" aria-label="Loading users">
 				{Array.from({ length: 6 }, (_, i) => `skeleton-${i}`).map(key => (
 					<li key={key}>
-						<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+						<Card size={2} className="rounded-[20px] border border-gray-6">
 							<div className="flex items-start gap-3">
-								<div className="h-10 w-10 animate-pulse rounded-full bg-terracotta-3" />
+								<div className="h-10 w-10 animate-pulse rounded-full bg-gray-3" />
 								<div className="flex-1">
-									<div className="h-4 w-32 animate-pulse rounded bg-terracotta-3" />
-									<div className="mt-2 h-3 w-48 animate-pulse rounded bg-terracotta-3" />
-									<div className="mt-2 h-3 w-20 animate-pulse rounded bg-terracotta-3" />
+									<div className="h-4 w-32 animate-pulse rounded bg-gray-3" />
+									<div className="mt-2 h-3 w-48 animate-pulse rounded bg-gray-3" />
+									<div className="mt-2 h-3 w-20 animate-pulse rounded bg-gray-3" />
 								</div>
 							</div>
 						</Card>
@@ -102,11 +102,11 @@ function SearchBar({
 				value={value}
 				onChange={e => onChange(e.target.value)}
 				maxLength={100}
-				className="h-11 w-full rounded-full border-2 border-terracotta-6 bg-white px-4 py-2 text-sm text-terracotta-9 placeholder:text-terracotta-6 focus:border-terracotta-9 focus:outline-none focus:ring-2 focus:ring-terracotta-9 focus:ring-offset-2"
+				className="h-11 w-full rounded-full border border-gray-6 bg-white px-4 py-2 text-sm text-gray-12 placeholder:text-gray-9 focus:border-gray-8 focus:outline-none focus:ring-2 focus:ring-gray-8 focus:ring-offset-2"
 			/>
 			{/* Search icon */}
 			<svg
-				className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-terracotta-6"
+				className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-9"
 				aria-hidden="true"
 				fill="none"
 				stroke="currentColor"
@@ -152,10 +152,10 @@ function FilterPills({
 							type="button"
 							aria-pressed={isActive}
 							onClick={() => onStatusChange(opt.value)}
-							className={`min-h-[44px] min-w-[44px] rounded-full border-2 px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9 focus-visible:ring-offset-2 ${
+							className={`min-h-[44px] min-w-[44px] rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2 ${
 								isActive
-									? "border-terracotta-9 bg-terracotta-9 text-white"
-									: "border-terracotta-6 bg-white text-terracotta-9 hover:bg-terracotta-2"
+									? "border-gray-12 bg-gray-12 text-white"
+									: "border-gray-6 bg-white text-gray-12 hover:bg-gray-3"
 							}`}
 						>
 							{opt.label}
@@ -175,10 +175,10 @@ function FilterPills({
 							type="button"
 							aria-pressed={isActive}
 							onClick={() => onTimeChange(opt.value)}
-							className={`min-h-[44px] min-w-[44px] rounded-full border-2 px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9 focus-visible:ring-offset-2 ${
+							className={`min-h-[44px] min-w-[44px] rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2 ${
 								isActive
-									? "border-terracotta-9 bg-terracotta-9 text-white"
-									: "border-terracotta-6 bg-white text-terracotta-9 hover:bg-terracotta-2"
+									? "border-gray-12 bg-gray-12 text-white"
+									: "border-gray-6 bg-white text-gray-12 hover:bg-gray-3"
 							}`}
 						>
 							{opt.label}
@@ -216,12 +216,12 @@ function UserCard({ user }: { user: UserCardUser }) {
 		<li>
 			<Link
 				href={`/app/admin/users/${user._id}`}
-				className="block rounded-[20px] border-2 border-terracotta-6 bg-white p-4 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-terracotta-9 focus-visible:ring-offset-2"
+				className="block rounded-[20px] border border-gray-6 bg-white p-4 transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2"
 			>
 				<div className="flex items-start gap-3">
 					{/* Avatar */}
 					<div
-						className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-terracotta-3 text-sm font-semibold text-terracotta-9"
+						className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-3 text-sm font-semibold text-gray-12"
 						aria-hidden="true"
 					>
 						{initial}
@@ -230,7 +230,7 @@ function UserCard({ user }: { user: UserCardUser }) {
 					<div className="min-w-0 flex-1">
 						{/* Name + status badge */}
 						<div className="flex items-center gap-2">
-							<p className="truncate font-medium text-terracotta-9">
+							<p className="truncate font-medium text-gray-12">
 								{user.name ?? "Unnamed User"}
 							</p>
 							<Badge variant="soft" color={badgeColor} size={1}>
@@ -240,14 +240,14 @@ function UserCard({ user }: { user: UserCardUser }) {
 
 						{/* Email */}
 						{user.email && (
-							<p className="mt-0.5 truncate text-sm text-terracotta-8">
+							<p className="mt-0.5 truncate text-sm text-gray-11">
 								{user.email}
 							</p>
 						)}
 
 						{/* Meta row: registration date */}
 						<div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-							<Text size={1} color="terracotta">
+							<Text size={1} color="gray">
 								Joined
 								{" "}
 								{registrationDate}
@@ -266,12 +266,12 @@ function UserCard({ user }: { user: UserCardUser }) {
 
 function EmptyState() {
 	return (
-		<Card border="medium" borderColor="terracotta" size={2} className="rounded-[20px]">
+		<Card size={2} className="rounded-[20px] border border-gray-6">
 			<div className="flex flex-col items-center gap-2 py-6 text-center">
-				<Text size={3} weight="medium" color="terracotta">
+				<Text size={3} weight="medium" color="gray">
 					No users match your criteria
 				</Text>
-				<Text size={2} color="terracotta">
+				<Text size={2} color="gray">
 					Try adjusting your search or filters.
 				</Text>
 			</div>
@@ -315,11 +315,11 @@ export default function UsersPage() {
 	const userCount = filteredUsers.length;
 
 	return (
-		<div className="mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 lg:py-8">
-			<Heading level={1} size={6} weight="bold" className="mb-1">
+		<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
+			<Heading level={1} size={6} weight="bold" className="mb-6">
 				All Users
 				{!isLoading && (
-					<span className="ml-2 text-lg font-normal text-terracotta-8">
+					<span className="ml-2 text-lg font-normal text-gray-11">
 						(
 						{userCount}
 						)
@@ -333,13 +333,9 @@ export default function UsersPage() {
 			</div>
 
 			{isLoading
-				? (
-						<div className="mt-4">
-							<UserListSkeleton />
-						</div>
-					)
+				? <UserListSkeleton />
 				: (
-						<div className="mt-4 flex flex-col gap-4">
+						<div className="flex flex-col gap-4">
 							{/* Search */}
 							<SearchBar value={search} onChange={setSearch} />
 
