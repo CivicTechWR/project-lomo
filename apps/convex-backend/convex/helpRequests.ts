@@ -3,6 +3,7 @@ import type { MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { requireAdmin } from "./lib/adminAuth";
 import {
 	getCurrentUserRow,
 	getIdentity,
@@ -762,10 +763,7 @@ export const isAdmin = query({
 export const listAllForAdmin = query({
 	args: { statusFilter: v.optional(requestStatus) },
 	handler: async (ctx, { statusFilter }) => {
-		const identity = await requireIdentity(ctx);
-		if (!isAdminIdentity(identity)) {
-			throw new Error("Forbidden");
-		}
+		await requireAdmin(ctx);
 		const rows = statusFilter
 			? await ctx.db
 					.query("helpRequests")
@@ -787,6 +785,37 @@ export const listAllForAdmin = query({
 				helper: publicUserSummary(helper),
 			};
 		}));
+	},
+});
+
+export const adminGetRequest = query({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			return null;
+
+		const owner = await ctx.db.get("users", doc.ownerUserId);
+		const helper = doc.helperUserId ? await ctx.db.get("users", doc.helperUserId) : null;
+		const assignedHelper = doc.assignedHelperUserId
+			? await ctx.db.get("users", doc.assignedHelperUserId)
+			: null;
+
+		// Messages including admin_note (admin can see all)
+		const messages = await ctx.db
+			.query("requestMessages")
+			.withIndex("by_request", q => q.eq("requestId", requestId))
+			.order("asc")
+			.take(100);
+
+		return {
+			...doc,
+			owner: publicUserSummary(owner),
+			helper: publicUserSummary(helper),
+			assignedHelper: publicUserSummary(assignedHelper),
+			messages,
+		};
 	},
 });
 
@@ -1042,5 +1071,111 @@ export const markComplete = mutation({
 				requestId,
 			});
 		}
+	},
+});
+
+export const adminMarkComplete = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		if (doc.status !== "in_progress") {
+			throw new Error("Only in-progress requests can be marked complete.");
+		}
+		await ctx.db.patch("helpRequests", requestId, { status: "complete" });
+
+		// Notify the request owner
+		await createNotification(ctx, {
+			recipientUserId: doc.ownerUserId,
+			type: "help_request_completed",
+			title: "Request marked complete",
+			body: `A coordinator marked "${doc.title}" complete.`,
+			requestId,
+		});
+		// Notify the helper if one is assigned
+		if (doc.helperUserId) {
+			await createNotification(ctx, {
+				recipientUserId: doc.helperUserId,
+				type: "help_request_completed",
+				title: "Request marked complete",
+				body: `A coordinator marked "${doc.title}" complete.`,
+				requestId,
+			});
+		}
+	},
+});
+
+export const adminCancelRequest = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		if (doc.status === "complete" || doc.status === "cancelled") {
+			throw new Error("Cannot cancel a completed or already-cancelled request.");
+		}
+		await ctx.db.patch("helpRequests", requestId, { status: "cancelled" });
+
+		// Notify the request owner
+		await createNotification(ctx, {
+			recipientUserId: doc.ownerUserId,
+			type: "request_cancelled",
+			title: "Request cancelled by coordinator",
+			body: `A coordinator cancelled "${doc.title}".`,
+			requestId,
+		});
+		// Notify the helper if one is assigned
+		if (doc.helperUserId) {
+			await createNotification(ctx, {
+				recipientUserId: doc.helperUserId,
+				type: "request_cancelled",
+				title: "Request cancelled by coordinator",
+				body: `A coordinator cancelled "${doc.title}".`,
+				requestId,
+			});
+		}
+	},
+});
+
+export const adminAddNote = mutation({
+	args: { requestId: v.id("helpRequests"), body: v.string() },
+	handler: async (ctx, { requestId, body }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		const trimmed = body.trim();
+		if (trimmed.length === 0)
+			throw new Error("Note cannot be empty.");
+		await ctx.db.insert("requestMessages", {
+			requestId,
+			body: trimmed,
+			source: "admin_note",
+		});
+	},
+});
+
+export const adminToggleUrgent = mutation({
+	args: { requestId: v.id("helpRequests"), isUrgent: v.boolean() },
+	handler: async (ctx, { requestId, isUrgent }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		await ctx.db.patch("helpRequests", requestId, { isUrgent });
+	},
+});
+
+export const adminUpdatePayload = mutation({
+	args: { requestId: v.id("helpRequests"), payload: v.string() },
+	handler: async (ctx, { requestId, payload }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		await ctx.db.patch("helpRequests", requestId, { payload });
 	},
 });

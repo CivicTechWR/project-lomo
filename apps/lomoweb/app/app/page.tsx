@@ -6,7 +6,7 @@ export default async function AppPage() {
 	const preloadedUser = await preloadAuthQuery(api.auth.getCurrentUser);
 
 	return (
-		<div className="mx-auto flex min-h-0 w-full max-w-2xl flex-1 flex-col px-4 py-8 sm:px-6 lg:max-w-3xl lg:py-10">
+		<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
 			<RequestsHome preloadedUser={preloadedUser} />
 		</div>
 	);

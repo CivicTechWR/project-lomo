@@ -93,7 +93,10 @@ export const listForRequest = query({
 			.withIndex("by_request", q => q.eq("requestId", requestId))
 			.order("desc")
 			.take(MAX_MESSAGES_PER_REQUEST);
-		return rows.sort((a, b) => a._creationTime - b._creationTime);
+
+		// Filter out admin notes — these are only visible in admin views
+		const visible = rows.filter(m => m.source !== "admin_note");
+		return visible.sort((a, b) => a._creationTime - b._creationTime);
 	},
 });
 
