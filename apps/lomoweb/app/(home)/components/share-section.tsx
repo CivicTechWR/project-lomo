@@ -10,9 +10,9 @@ const categories = [
 ];
 
 const images: Record<string, { src: string; alt: string }> = {
-	supplies: { src: "/lomo-bg.jpg", alt: "Community member dropping off supplies" },
-	microgrant: { src: "/lomo-bg.jpg", alt: "Funding a microgrant for a neighbour" },
-	produce: { src: "/lomo-bg.jpg", alt: "Sharing garden produce with the community" },
+	supplies: { src: "/lomo-supplies.jpg", alt: "Community member dropping off supplies" },
+	microgrant: { src: "/lomo-money.jpg", alt: "Funding a microgrant for a neighbour" },
+	produce: { src: "/lomo-corn.jpg", alt: "Sharing garden produce with the community" },
 };
 
 export function ShareSection() {

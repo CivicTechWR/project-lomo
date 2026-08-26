@@ -13,10 +13,10 @@ const categories: CategoryItem[] = [
 ];
 
 const images: Record<string, { src: string; alt: string }> = {
-	grocery: { src: "/lomo-bg.jpg", alt: "Grocery sharing in the community" },
-	checkins: { src: "/lomo-bg.jpg", alt: "Neighbors checking in on each other" },
-	crisis: { src: "/lomo-bg.jpg", alt: "Community crisis support fund" },
-	meals: { src: "/lomo-bg.jpg", alt: "Warm meals shared between neighbors" },
+	grocery: { src: "/lomo-groceries.jpg", alt: "Grocery sharing in the community" },
+	checkins: { src: "/lomo-walk.jpg", alt: "Neighbors checking in on each other" },
+	crisis: { src: "/lomo-money.jpg", alt: "Community crisis support fund" },
+	meals: { src: "/lomo-meal.jpg", alt: "Warm meals shared between neighbors" },
 };
 
 export function FindSection() {

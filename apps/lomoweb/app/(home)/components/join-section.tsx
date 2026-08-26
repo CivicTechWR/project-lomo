@@ -16,7 +16,7 @@ export function JoinSection() {
 						size={8}
 						className="font-display font-black leading-tight tracking-tight text-black"
 					>
-						Join The Circle
+						Join The Community
 					</Heading>
 
 					<Text size={2} className="text-black/60 font-display font-bold italic tracking-wide">
@@ -24,10 +24,10 @@ export function JoinSection() {
 					</Text>
 
 					{/* Static oval image — no badge overlay */}
-					<div className="relative w-full max-w-[650px] aspect-[2.2/1] mt-8 mx-4 sm:mx-0 max-h-[60vh] sm:max-h-none">
+					<div className="relative w-full max-w-[650px] aspect-[1.8/1] mt-8 mx-4 sm:mx-0 max-h-[60vh] sm:max-h-none">
 						<div className="relative w-full h-full rounded-full border-2 border-black overflow-hidden shadow-[0px_2px_8px_rgba(0,0,0,0.10)] bg-white">
 							<ProximityImage
-								src="/lomo-bg.jpg"
+								src="/lomo-food.jpg"
 								alt="Diverse community members gathered together in a warm, supportive circle"
 								fill
 								sizes="(max-width: 768px) 100vw, 650px"
@@ -43,7 +43,7 @@ export function JoinSection() {
 						size={3}
 						className={ctaButton}
 					>
-						Join the Circle
+						Join the Community
 					</Button>
 				</div>
 			</div>
