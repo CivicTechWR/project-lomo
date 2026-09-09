@@ -81,7 +81,7 @@
 		"tailwind-variants": "3.3.1"
 	},
 	"devDependencies": {
-		"actions-up": "1.18.0",
+		"actions-up": "1.19.0",
 		"eslint": "catalog:",
 		"lefthook": "^2.1.12",
 		"turbo": "^2.10.12"
