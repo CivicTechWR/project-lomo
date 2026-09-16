@@ -1,10 +1,15 @@
 import type { RequestDraft } from "./types";
+import { formatNeededBy } from "./needed-by";
 
 export function summarizeOtherDraftBody(draft: RequestDraft): string {
 	const o = draft.otherDetails;
 	const lines: string[] = [];
 	if (o.whatNeed.trim()) {
 		lines.push(o.whatNeed.trim());
+	}
+	const neededBy = formatNeededBy(draft.neededBy);
+	if (neededBy) {
+		lines.push(`Needed: ${neededBy}`);
 	}
 	if (o.whenText.trim()) {
 		lines.push(`When: ${o.whenText.trim()}`);

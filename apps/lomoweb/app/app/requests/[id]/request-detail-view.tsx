@@ -234,7 +234,7 @@ export function RequestDetailView() {
 				{doc.category}
 			</Text>
 
-			<div className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+			<div className="rounded-2 border border-gray-6 bg-gray-1 p-4">
 				<Text size={2} className="whitespace-pre-wrap">
 					{doc.details}
 				</Text>
@@ -253,7 +253,7 @@ export function RequestDetailView() {
 			{st === "awaiting_requester_acceptance" && (
 				<div className="flex flex-col gap-4">
 					{helperIntro && (
-						<div className="rounded-lg border border-sage-6 bg-sage-2 px-4 py-3">
+						<div className="rounded-2 border border-sage-6 bg-sage-2 px-4 py-3">
 							<Text size={2} color="gray">
 								{helperIntro}
 							</Text>

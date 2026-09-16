@@ -1,4 +1,5 @@
 import type { RequestDraft } from "./types";
+import { formatNeededBy } from "./needed-by";
 
 const NEED_LABEL: Record<
 	| "education_career"
@@ -43,8 +44,12 @@ export function summarizeMicrograntDraftBody(draft: RequestDraft): string {
 	if (d.amountRange === "100_plus" && d.amountOver100Text.trim()) {
 		lines.push(`Amount detail: ${d.amountOver100Text.trim()}`);
 	}
+	const neededBy = formatNeededBy(draft.neededBy);
+	if (neededBy) {
+		lines.push(`Needed by: ${neededBy}`);
+	}
 	if (d.needByText.trim()) {
-		lines.push(`Needed by: ${d.needByText.trim()}`);
+		lines.push(`Timing notes: ${d.needByText.trim()}`);
 	}
 	if (d.optionalDetails.trim()) {
 		lines.push(d.optionalDetails.trim());

@@ -58,7 +58,7 @@ export default function OtherPreviewPage() {
 		<>
 			<div className="flex flex-1 flex-col gap-5">
 				<Heading size={7}>Request preview</Heading>
-				<div className="flex min-w-0 flex-col gap-3 rounded-lg border border-gray-6 bg-gray-1 p-4">
+				<div className="flex min-w-0 flex-col gap-3 rounded-2 border border-gray-6 bg-gray-1 p-4">
 					<Text size={3} weight="medium">{title}</Text>
 					<Text size={2} className="whitespace-pre-wrap">
 						{body}

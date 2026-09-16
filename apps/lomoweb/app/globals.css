@@ -1,11 +1,7 @@
 @import "@repo/ui/theme.css";
 @source "../src";
 
-/* ── Brand surface tokens (homepage warm background & accents) ── */
-@theme inline {
-	--color-surface-warm: #f5efe8;
-	--color-accent-underline: #28729d;
-}
+/* Brand surface and elevation tokens live in @repo/ui's theme.css. */
 
 /* ── Auth page animations ── */
 

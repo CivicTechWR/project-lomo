@@ -10,6 +10,9 @@ export type { CardProps } from "./card/index.ts";
 export { Checkbox, CheckboxCard, CheckboxCardGroup, CheckboxGroup, CheckboxIndicator } from "./checkbox/index.ts";
 export type { CheckboxCardGroupProps, CheckboxCardProps, CheckboxGroupProps, CheckboxIndicatorProps, CheckboxProps } from "./checkbox/index.ts";
 
+export { Calendar, DatePicker } from "./date-picker/index.ts";
+export type { CalendarProps, DatePickerProps } from "./date-picker/index.ts";
+
 export { Description, FieldError, Group, InputSlot, Label } from "./field/index.ts";
 export type { DescriptionProps, FieldErrorProps, GroupProps, InputSlotProps, LabelProps } from "./field/index.ts";
 
@@ -18,6 +21,9 @@ export type { FieldColor, FieldContextValue, FieldSize, FieldVariant } from "./f
 
 export { Heading } from "./heading/index.ts";
 export type { HeadingProps } from "./heading/index.ts";
+
+export { Icon } from "./icons/index.ts";
+export type { IconName, IconProps } from "./icons/index.ts";
 
 export { LoaderIcon } from "./icons/index.ts";
 export type { LoaderIconProps } from "./icons/index.ts";

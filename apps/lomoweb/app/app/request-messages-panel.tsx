@@ -67,7 +67,7 @@ export function RequestMessagesPanel({
 	}
 
 	return (
-		<div className="flex flex-col gap-4 rounded-lg border border-gray-6 bg-gray-1 p-4">
+		<div className="flex flex-col gap-4 rounded-2 border border-gray-6 bg-gray-1 p-4">
 			<Heading level={2} size={5}>
 				Messages
 			</Heading>
@@ -89,7 +89,7 @@ export function RequestMessagesPanel({
 								return (
 									<div
 										key={m._id}
-										className={`flex min-w-0 flex-col gap-1 rounded-md border px-3 py-2 ${
+										className={`flex min-w-0 flex-col gap-1 rounded-1 border px-3 py-2 ${
 											mine
 												? "border-sage-7 bg-sage-3 ml-4"
 												: "border-gray-6 bg-gray-2 mr-4"

@@ -33,7 +33,8 @@ The page renders sections in this order:
 
 ### Key patterns
 
-- **Shared styles** — `styles.ts` exports reusable Tailwind class strings via a `tw()` utility (section padding, button variants, badge styles, card surfaces).
+- **Shared styles** — `styles.ts` exports reusable Tailwind class strings via a `tw()` utility (section padding, button variants, badge styles, card surfaces). Brand elevation (`--shadow-brand*`) and the warm surface/underline tokens (`--color-surface-warm`, `--color-accent-underline`) live in `@repo/ui`'s `theme.css`, not here — they must be declared inside a file that also has `@import "tailwindcss"`, or Tailwind never registers them and the classes compile to nothing.
+- **Known gap:** `ctaButton` / `secondaryButton` / `infoBadge` pass `variant`/`color`/`size` to the design-system `Button` _and_ override background, border, radius, padding, shadow, and font via `className`. The variant props are currently decorative. The correct fix is a first-class `brand` variant in `@repo/ui`'s `button.variants.ts`; not yet done because it changes the rendered homepage and needs visual review first.
 - **CategorySection** — A reusable layout component used by both `FindSection` and `ShareSection`. Accepts `layout="image-first"` or `layout="text-first"` to alternate visual rhythm between sections.
 - **CategoryPicker** — Client component that lets users toggle category badges to swap the displayed image card.
 - **Design system components** — Buttons, headings, text, badges, cards, and links are imported from `@repo/ui`.
@@ -43,8 +44,8 @@ The page renders sections in this order:
 
 - **Colors** — Warm palette: terracotta (CTAs, accents), yellow (brand, highlights), sage (secondary), black borders.
 - **Typography** — Display font (`Andada Pro`) for headings and buttons, `Geist` for body, `MuseoModerno` for the logo.
-- **Shapes** — Rounded pills (`rounded-full`), large radius cards (`rounded-5`), 2px black borders throughout.
-- **Images** — Grayscale by default with warm overlay; color on hover. Contained in oval/rounded frames with black borders.
+- **Shapes** — Rounded pills (`rounded-full`), large radius cards (`rounded-5`), 2px black borders throughout. Pill rendering depends on `data-radius="full"` being set on `<html>` in the root `app/layout.tsx` — it must only be set there. Setting it on a route group's own layout instead (as `(home)`, `(public)`, and onboarding each used to) leaves every other route group on the square-cornered default; `app/__tests__/radius-scale.test.ts` guards against this regressing.
+- **Images** — Grayscale by default with warm overlay; color on hover. Contained in oval/rounded frames with black borders. Every photo slot on the homepage is declared in `lib/imagery.ts` (src + alt), so swapping the current placeholder (`PLACEHOLDER_PHOTO`, currently `/lomo-bg.jpg` everywhere) for real photography is a one-file edit.
 
 ### Adding a new section
 

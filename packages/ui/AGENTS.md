@@ -94,6 +94,13 @@ The `Group` component is shared between single-line inputs (should pill) and Tex
 
 Extend this pattern for any future multi-line field types that share the Group wrapper.
 
+**Never hardcode a pixel radius** (`rounded-[20px]`), even to match a design
+mock exactly — it ignores `--radius-factor` and drifts from every other
+surface the moment the preset changes. If a design genuinely needs a pixel
+floor alongside a token, compose it: `rounded-[max(var(--radius-3),12px)]`.
+`apps/lomoweb`'s `app/__tests__/radius-scale.test.ts` enforces this across
+the app; there is currently no equivalent guard inside this package.
+
 **Token selection by component size:**
 
 - Size 1 → `--radius-1` (interactive) or `--radius-3` (container)
@@ -111,11 +118,91 @@ Extend this pattern for any future multi-line field types that share the Group w
 
 See [STYLING_API.md](./STYLING_API.md) for the full component authoring contract.
 
+## Icons
+
+Icons are Font Awesome 7 glyphs (`@fortawesome/free-solid-svg-icons` +
+`@fortawesome/react-fontawesome`), accessed through a semantic registry —
+never import `@fortawesome/*` or render an inline `<svg>` outside of
+`src/icons/`.
+
+```tsx
+import { Icon } from "@repo/ui/icons";
+
+function Example() {
+	return (
+		<>
+			<Icon name="openRequests" className="size-5" />
+			{/* labelled = accessible name, not hidden */}
+			<Icon name="close" label="Close" />
+		</>
+	);
+}
+```
+
+- **`src/icons/icon-registry.ts`** — maps semantic names (`openRequests`,
+  `calendar`, `chevronLeft`, …) to Font Awesome glyphs. Add new icons here;
+  call sites should never reference an `fa*` import directly. This is what
+  lets an icon be re-picked, or the whole package swapped out, in one file.
+- **`src/icons/icon.component.tsx`** — sets `config.autoAddCss = false` and
+  reproduces Font Awesome's `.svg-inline--fa` layout rules as Tailwind
+  classes instead. This avoids importing CSS from `node_modules` across the
+  workspace boundary, and — because `autoAddCss` is off — nothing injects a
+  `<style>` tag at runtime.
+- **`label` vs decorative:** pass `label` only when the icon is the sole
+  carrier of meaning (an icon-only button). It renders as `aria-label`, not
+  react-fontawesome's `title` prop — as of `react-fontawesome` 3.x, `title`
+  renders no `<title>` element, so an icon "titled" that way has no
+  accessible name at all. Omit `label` when the icon sits beside visible
+  text; it's then `aria-hidden` so the label isn't announced twice.
+- **Dependency alignment:** `@fortawesome/fontawesome-svg-core`,
+  `@fortawesome/free-solid-svg-icons`, and `@fortawesome/react-fontawesome`
+  must stay on compatible majors (currently 7.x core/icons, 3.x react
+  wrapper — react-fontawesome 3 supports Font Awesome "~6 || ~7").
+
+## Date Picker
+
+`src/date-picker/` wraps React Aria's `DatePicker` + `Calendar`.
+
+The public API speaks in plain `{ year, month, day }` objects
+(`PlainDate`), not `@internationalized/date` values:
+
+```tsx
+import { DatePicker } from "@repo/ui/date-picker";
+
+function Example() {
+	return (
+		<DatePicker value={{ year: 2026, month: 3, day: 1 }} onChange={setDate}>
+			<Label>Needed by</Label>
+		</DatePicker>
+	);
+}
+```
+
+This is deliberate — apps consuming `@repo/ui` don't need
+`@internationalized/date` or `react-aria-components` as their own
+dependencies (they're `@repo/ui`-only), and a plain object can't carry a
+timezone into a field that only ever means "a calendar day".
+
+**`@internationalized/date` must stay pinned to the exact version
+`react-aria-components` resolves** (currently `3.12.0`, from
+`react-aria-components`'s `^3.12.0`). A caret range like `^3.12.3` will
+install a _second_ copy; the two copies' `CalendarDate` classes have
+different private field brands, and TypeScript rejects one as not
+assignable to the other's `DateValue`. Check with:
+
+```bash
+readlink -f node_modules/@internationalized/date
+```
+
+If more than one version shows up under
+`node_modules/.bun/@internationalized+date@*`, re-pin and reinstall.
+
 ## Adding a Component to the Showcase
 
-The showcase lives at `apps/webapp/src/routes/showcase/` and serves as a
-development-only documentation site for the design system. When you add a
-new component to `@repo/ui`, add a corresponding showcase page:
+The showcase lives at `apps/documentation/src/routes/showcase/` (Vite +
+TanStack Router) and serves as a development-only documentation site for the
+design system. When you add a new component to `@repo/ui`, add a
+corresponding showcase page:
 
 1. **Create the component** in `packages/ui/src/<name>/` following the
    existing structure (`index.ts`, `<name>.variants.ts`, `<name>.component.tsx`).
@@ -123,7 +210,7 @@ new component to `@repo/ui`, add a corresponding showcase page:
 2. **Export from the barrel** — add the component and its props type to
    `packages/ui/src/index.ts`.
 
-3. **Create a showcase route** at `apps/webapp/src/routes/showcase/<name>.tsx`.
+3. **Create a showcase route** at `apps/documentation/src/routes/showcase/<name>.tsx`.
    Follow the existing pages as a template. Each page should include:
    - `PageHeader` — component name + one-line description
    - `PropTable` — all public props with type and default value

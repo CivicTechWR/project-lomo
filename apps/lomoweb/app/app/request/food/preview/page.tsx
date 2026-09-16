@@ -75,7 +75,7 @@ export default function FoodPreviewPage() {
 					</div>
 				</div>
 
-				<div className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+				<div className="rounded-2 border border-gray-6 bg-gray-1 p-4">
 					<Text size={2} className="whitespace-pre-wrap">
 						{body}
 					</Text>

@@ -57,7 +57,7 @@ export default function CeremonyPreviewPage() {
 		<>
 			<div className="flex flex-1 flex-col gap-5">
 				<Heading size={7}>Request preview</Heading>
-				<div className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+				<div className="rounded-2 border border-gray-6 bg-gray-1 p-4">
 					<Text size={3} weight="medium">{title}</Text>
 					<Text size={2} className="mt-3 whitespace-pre-wrap">{body}</Text>
 				</div>

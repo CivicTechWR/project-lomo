@@ -5,6 +5,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { NeededByField } from "../../needed-by-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -28,7 +29,7 @@ const AMOUNT_OPTIONS = [
 
 export default function PaperworkDetailsPage() {
 	const router = useRouter();
-	const { draft, setMicrograntDetails } = useRequestDraft();
+	const { draft, setMicrograntDetails, setNeededBy } = useRequestDraft();
 	const d = draft.micrograntDetails;
 
 	function handleNext() {
@@ -47,7 +48,7 @@ export default function PaperworkDetailsPage() {
 					Small, one-time financial help. Limited funds. Not guaranteed.
 				</Text>
 
-				<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
+				<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 					<Text size={3} weight="medium">What would this help with?</Text>
 					<Text size={2} color="gray" className="mt-1">
 						Choose the option that fits best.
@@ -59,8 +60,8 @@ export default function PaperworkDetailsPage() {
 								type="button"
 								className={
 									d.needType === opt.id
-										? "rounded-lg border border-gray-8 bg-gray-3 px-3 py-2 text-left"
-										: "rounded-lg border border-gray-6 bg-gray-1 px-3 py-2 text-left"
+										? "rounded-2 border border-gray-8 bg-gray-3 px-3 py-2 text-left"
+										: "rounded-2 border border-gray-6 bg-gray-1 px-3 py-2 text-left"
 								}
 								onClick={() => setMicrograntDetails({ needType: opt.id })}
 							>
@@ -81,7 +82,7 @@ export default function PaperworkDetailsPage() {
 					)}
 				</div>
 
-				<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
+				<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 					<Text size={3} weight="medium">About how much would help?</Text>
 					<Text size={2} color="gray" className="mt-1">Select a range.</Text>
 					<div className="mt-3 flex flex-wrap gap-2">
@@ -113,13 +114,16 @@ export default function PaperworkDetailsPage() {
 					)}
 				</div>
 
+				<NeededByField value={draft.neededBy} onChange={setNeededBy} />
+
+				{/* Optional nuance on top of the deadline above. */}
 				<TextField
 					name="needByText"
 					value={d.needByText}
 					onChange={v => setMicrograntDetails({ needByText: v })}
 				>
-					<Label>When do you need this by?</Label>
-					<Group><Input placeholder="e.g., today, tomorrow, Monday" /></Group>
+					<Label>Anything else about timing? (optional)</Label>
+					<Group><Input placeholder="e.g., before rent is due" /></Group>
 				</TextField>
 
 				<TextField

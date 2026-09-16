@@ -12,6 +12,13 @@ export function GetConfig(options) {
 			...options,
 			ignores: [
 				"**/convex/_generated/**",
+				/*
+				 * Local dev deployment state written by `convex dev`. Generated, holds
+				 * an adminKey and instanceSecret, and is gitignored via a nested
+				 * `.convex/.gitignore` that the root-level gitignore plugin doesn't
+				 * read — so it has to be ignored explicitly here.
+				 */
+				"**/.convex/**",
 				...(options?.ignores ?? []),
 			],
 			stylistic: {

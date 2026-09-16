@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { OnboardingStepFooter } from "./onboarding-step-footer";
 import { SafetyAcknowledgment } from "./safety-acknowledgment";
+import { stepHeading } from "./styles";
 
 export function SafetyStep() {
 	const router = useRouter();
@@ -31,7 +32,7 @@ export function SafetyStep() {
 
 	return (
 		<div className="flex min-h-full flex-col gap-6">
-			<Heading level={2} size={8} className="font-display">
+			<Heading level={2} size={8} className={stepHeading}>
 				Safety &amp; Boundaries
 			</Heading>
 

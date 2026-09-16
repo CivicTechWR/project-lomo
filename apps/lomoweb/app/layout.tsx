@@ -36,6 +36,12 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
+			// LoMo's visual language is pill-based end to end. `data-radius="full"`
+			// resolves `--radius-full` to 9999px and `--radius-factor` to 2.5 for the
+			// whole document. Setting it once here — rather than per route group — is
+			// what keeps `/app` from rendering every `rounded-full` as a 0px square,
+			// which is the default the design system inherits from Radix.
+			data-radius="full"
 			className={`${geistSans.variable} ${geistMono.variable} ${museoModerno.variable} h-full antialiased`}
 		>
 			<head>

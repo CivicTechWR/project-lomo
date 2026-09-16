@@ -15,11 +15,14 @@ Components needed to implement the LoMo prototype, derived from the Stitch proje
 
 ### Tier 2 — Forms (unlocks onboarding + request creation)
 
-- **Checkbox** — Single checkbox with label. Wraps RAC `Checkbox`. Used for consent/terms agreement and preference selection.
+- ~~**Checkbox**~~ — Shipped (`src/checkbox/`), including `CheckboxCard` / `CheckboxCardGroup`.
+- ~~**Switch**~~ — Shipped (`src/switch/`).
+- ~~**DatePicker**~~ — Shipped (`src/date-picker/`), built on RAC `DatePicker` + `Calendar`. Public API takes plain `{ year, month, day }` objects rather than `@internationalized/date` values — see `AGENTS.md` § Date Picker.
 - **RadioGroup** — Set of mutually exclusive options. Wraps RAC `RadioGroup` + `Radio`. Supports card-style radio items (icon + title + description) for category/sub-category selection.
-- **Switch** — Toggle for binary preferences. Wraps RAC `Switch`. Used in account setup and preference screens.
-- **Select** — Dropdown selector with popover listbox. Wraps RAC `Select` + `ListBox` + `Popover`. Used for community selector and form dropdowns.
-- **ProgressBar** — Determinate progress indicator. Wraps RAC `ProgressBar`. Used for multi-step form flows (e.g., "Step 2 of 4 — 50% complete").
+- **Select** — Dropdown selector with popover listbox. Wraps RAC `Select` + `ListBox` + `Popover`. `apps/lomoweb` currently hand-rolls a native `<select>` in the admin request-edit page for lack of this.
+- **SearchField** — Wraps RAC `SearchField`. Three call sites in `apps/lomoweb` currently fall back to a raw `<input type="search">` for lack of this (admin search bar, volunteer-assign search, user search).
+- **Slider** — Wraps RAC `Slider`. Two call sites in `apps/lomoweb` (helper preferences radius, open-requests radius filter) currently fall back to a raw `<input type="range">` for lack of this.
+- **ProgressBar** — Determinate progress indicator. Wraps RAC `ProgressBar`. Used for multi-step form flows (e.g., "Step 2 of 4 — 50% complete"). Note `apps/lomoweb`'s onboarding and request-flow progress bars are currently hand-rolled rather than waiting on this.
 
 ### Tier 3 — Data display (unlocks feed + dashboard)
 

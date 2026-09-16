@@ -17,7 +17,7 @@ export function HomeFooter() {
 					</div>
 
 					{/* Safety Alert */}
-					<div className="w-full md:w-auto md:max-w-md bg-terracotta-9/20 rounded-5 border-2 border-black p-4 md:p-5 text-center shadow-[0px_2px_8px_rgba(0,0,0,0.10)]">
+					<div className="w-full md:w-auto md:max-w-md bg-terracotta-9/20 rounded-5 border-2 border-black p-4 md:p-5 text-center shadow-brand">
 						<div className="flex flex-col items-center gap-2">
 							<span className="text-xl">⚠️ Safety First</span>
 							<Text size={2} className="text-gray-1/90 leading-relaxed font-medium">

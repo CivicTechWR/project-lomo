@@ -8,10 +8,7 @@ export default function AuthLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<div
-			className="flex min-h-screen flex-col bg-terracotta-2 py-8 px-6"
-			data-radius="full"
-		>
+		<div className="flex min-h-screen flex-col bg-terracotta-2 py-8 px-6">
 			{/* Main content — vertically centered */}
 			<div className="m-auto w-full max-w-104 flex-1 flex flex-col justify-center gap-2">
 				{/* Logo */}

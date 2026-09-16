@@ -105,10 +105,17 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 		helperPreferencesFromProfile(profileRow),
 	);
 	const [savingPreferences, setSavingPreferences] = useState(false);
+	/*
+	 * Confirmation that the write landed. Without it the only signal was the button
+	 * label flicking back from "Saving…", which is easy to miss and left users
+	 * unsure whether a toggle had actually persisted.
+	 */
+	const [preferencesSaved, setPreferencesSaved] = useState(false);
 	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
 
 	async function handleSavePreferences() {
 		setSavingPreferences(true);
+		setPreferencesSaved(false);
 		try {
 			await updateHelperPreferences({
 				canHelpNow: preferenceValues.canHelpNow,
@@ -117,6 +124,8 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 				helpAreaCenterLng: preferenceValues.helpAreaCenterLng,
 				helpAreaRadiusKm: preferenceValues.helpAreaRadiusKm,
 			});
+			// Only set on success, so it can't claim a save that threw.
+			setPreferencesSaved(true);
 		}
 		catch (e) {
 			console.error(e);
@@ -133,7 +142,11 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 		<div className="flex flex-col gap-4">
 			<HelperPreferencesFields
 				values={preferenceValues}
-				onChange={setPreferenceValues}
+				onChange={(next) => {
+					setPreferenceValues(next);
+					// Any further edit makes the confirmation stale.
+					setPreferencesSaved(false);
+				}}
 			/>
 			<Button
 				variant="solid"
@@ -144,6 +157,23 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 			>
 				{savingPreferences ? "Saving…" : "Save preferences"}
 			</Button>
+			{/*
+			  `role="status"` so the confirmation is announced rather than
+			  only being a visual change next to the button.
+			*/}
+			<div role="status" aria-live="polite">
+				{preferencesSaved
+					? (
+							<Text size={2} color="sage">
+								Preferences saved.
+								{" "}
+								{preferenceValues.canHelpNow
+									? "You'll see open requests again."
+									: "You're now Resting — Open Requests is hidden."}
+							</Text>
+						)
+					: null}
+			</div>
 		</div>
 	);
 }
@@ -217,7 +247,6 @@ export function UserProfile({
 	const user = usePreloadedAuthQuery(preloadedUser);
 	const profileRow = useQuery(api.users.getMyProfileRow, user ? {} : "skip");
 	const deleteMyAccount = useMutation(api.users.deleteMyAccount);
-
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
 	const [deletePassword, setDeletePassword] = useState("");
 	const [deleteError, setDeleteError] = useState<string | null>(null);

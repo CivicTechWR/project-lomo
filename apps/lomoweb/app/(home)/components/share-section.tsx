@@ -1,5 +1,6 @@
 import { Badge } from "@repo/ui/badge";
 
+import { SHARE_PHOTOS } from "@/lib/imagery";
 import { CategorySection } from "./category-section";
 import { infoBadge } from "./styles";
 
@@ -8,12 +9,6 @@ const categories = [
 	{ key: "microgrant", label: "Funding A Microgrant", color: "yellow" as const },
 	{ key: "produce", label: "Sharing Extra Garden Produce", color: "terracotta" as const },
 ];
-
-const images: Record<string, { src: string; alt: string }> = {
-	supplies: { src: "/lomo-supplies.jpg", alt: "Community member dropping off supplies" },
-	microgrant: { src: "/lomo-money.jpg", alt: "Funding a microgrant for a neighbour" },
-	produce: { src: "/lomo-corn.jpg", alt: "Sharing garden produce with the community" },
-};
 
 export function ShareSection() {
 	return (
@@ -35,7 +30,7 @@ export function ShareSection() {
 				</div>
 			)}
 			categories={categories}
-			images={images}
+			images={SHARE_PHOTOS}
 			defaultKey="supplies"
 		/>
 	);

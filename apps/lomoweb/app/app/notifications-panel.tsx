@@ -8,56 +8,6 @@ import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
 
-export function MailIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			className={className}
-			width={20}
-			height={20}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden
-		>
-			<rect x="2" y="4" width="20" height="16" rx="2" />
-			<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-		</svg>
-	);
-}
-
-/** Icon button linking to the notifications page, with unread badge. */
-export function NotificationsNavButton() {
-	const unread = useQuery(api.notifications.listMine, { unreadOnly: true });
-	const count = unread?.length ?? 0;
-	const loading = unread === undefined;
-
-	return (
-		<Link
-			href="/app/notifications"
-			className={
-				"relative inline-flex min-h-9 min-w-9 items-center justify-center rounded-[max(var(--radius-2),var(--radius-full))] "
-				+ "text-gray-11 outline-none transition-colors hover:bg-gray-3 focus-visible:ring-2 "
-				+ "focus-visible:ring-gray-8 focus-visible:ring-offset-2"
-			}
-			aria-label={
-				!loading && count > 0
-					? `Notifications, ${count} unread`
-					: "Notifications"
-			}
-		>
-			<MailIcon />
-			{!loading && count > 0 && (
-				<span className="absolute -right-0.5 -top-0.5 flex min-w-[1.125rem] items-center justify-center rounded-full bg-red-9 px-1 text-[10px] font-semibold leading-none text-white">
-					{count > 9 ? "9+" : count}
-				</span>
-			)}
-		</Link>
-	);
-}
-
 export function NotificationsList({ unreadOnly = false }: { unreadOnly?: boolean }) {
 	const notifications = useQuery(api.notifications.listMine, { unreadOnly });
 	const markRead = useMutation(api.notifications.markRead);
@@ -200,7 +150,7 @@ export function NotificationsList({ unreadOnly = false }: { unreadOnly?: boolean
 								{n.openPath && (
 									<Link
 										href={n.openPath}
-										className="inline-flex min-h-8 items-center rounded-md border border-gray-6 px-3 text-sm"
+										className="inline-flex min-h-8 items-center rounded-1 border border-gray-6 px-3 text-sm"
 									>
 										{n.ctaLabel ?? "Open"}
 									</Link>

@@ -19,10 +19,10 @@ export function SelectionCard(props: {
 			onClick={onClick}
 			className={
 				disabled
-					? "flex w-full cursor-not-allowed flex-col gap-2 rounded-lg border border-gray-5 bg-gray-2 p-4 text-left opacity-60"
+					? "flex w-full cursor-not-allowed flex-col gap-2 rounded-2 border border-gray-5 bg-gray-2 p-4 text-left opacity-60"
 					: selected
-						? "flex w-full flex-col gap-2 rounded-lg border border-gray-8 bg-gray-3 p-4 text-left shadow-sm transition-colors"
-						: "flex w-full flex-col gap-2 rounded-lg border border-gray-6 bg-gray-1 p-4 text-left transition-colors hover:border-gray-7 hover:bg-gray-2"
+						? "flex w-full flex-col gap-2 rounded-2 border border-gray-8 bg-gray-3 p-4 text-left shadow-sm transition-colors"
+						: "flex w-full flex-col gap-2 rounded-2 border border-gray-6 bg-gray-1 p-4 text-left transition-colors hover:border-gray-7 hover:bg-gray-2"
 			}
 		>
 			<div className="flex items-start gap-3">

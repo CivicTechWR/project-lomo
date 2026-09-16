@@ -12,6 +12,7 @@ import {
 	messageEmailSubject,
 } from "./lib/messageEmail";
 import { extractNewReplyText } from "./lib/stripEmailReply";
+import { assertNotBlocked } from "./lib/userStatus";
 
 const MAX_BODY_LEN = 8000;
 const MAX_MESSAGES_PER_HOUR = 30;
@@ -93,7 +94,10 @@ export const listForRequest = query({
 			.withIndex("by_request", q => q.eq("requestId", requestId))
 			.order("desc")
 			.take(MAX_MESSAGES_PER_REQUEST);
-		return rows.sort((a, b) => a._creationTime - b._creationTime);
+
+		// Filter out admin notes — these are only visible in admin views
+		const visible = rows.filter(m => m.source !== "admin_note");
+		return visible.sort((a, b) => a._creationTime - b._creationTime);
 	},
 });
 
@@ -122,6 +126,7 @@ export const post = mutation({
 	},
 	handler: async (ctx, { requestId, body }) => {
 		const { user } = await getOrCreateCurrentUser(ctx);
+		assertNotBlocked(user);
 		const trimmed = body.trim();
 		if (trimmed.length === 0) {
 			throw new Error("Message cannot be empty.");

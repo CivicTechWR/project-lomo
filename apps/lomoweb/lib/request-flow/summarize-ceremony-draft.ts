@@ -1,4 +1,5 @@
 import type { RequestDraft } from "./types";
+import { formatNeededBy } from "./needed-by";
 
 const ROLE_LABEL: Record<"firekeeping" | "ceremony_support", string> = {
 	firekeeping: "Firekeeping",
@@ -22,6 +23,10 @@ export function summarizeCeremonyDraftBody(draft: RequestDraft): string {
 	}
 	if (d.helperNotes.trim()) {
 		lines.push(`Notes: ${d.helperNotes.trim()}`);
+	}
+	const neededBy = formatNeededBy(draft.neededBy);
+	if (neededBy) {
+		lines.push(`Needed: ${neededBy}`);
 	}
 	if (d.whenText.trim()) {
 		lines.push(`When: ${d.whenText.trim()}`);

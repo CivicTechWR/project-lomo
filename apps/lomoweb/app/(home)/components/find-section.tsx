@@ -2,6 +2,7 @@ import type { CategoryItem } from "./category-badge-selector";
 
 import { Badge } from "@repo/ui/badge";
 
+import { FIND_PHOTOS } from "@/lib/imagery";
 import { CategorySection } from "./category-section";
 import { infoBadge } from "./styles";
 
@@ -11,13 +12,6 @@ const categories: CategoryItem[] = [
 	{ key: "crisis", label: "Crisis Funds", color: "red" },
 	{ key: "meals", label: "Warm Meals", color: "sage" },
 ];
-
-const images: Record<string, { src: string; alt: string }> = {
-	grocery: { src: "/lomo-groceries.jpg", alt: "Grocery sharing in the community" },
-	checkins: { src: "/lomo-walk.jpg", alt: "Neighbors checking in on each other" },
-	crisis: { src: "/lomo-money.jpg", alt: "Community crisis support fund" },
-	meals: { src: "/lomo-meal.jpg", alt: "Warm meals shared between neighbors" },
-};
 
 export function FindSection() {
 	return (
@@ -39,7 +33,7 @@ export function FindSection() {
 				</div>
 			)}
 			categories={categories}
-			images={images}
+			images={FIND_PHOTOS}
 			defaultKey="grocery"
 		/>
 	);

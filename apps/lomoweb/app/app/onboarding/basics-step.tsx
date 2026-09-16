@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@repo/convex-backend/convex/_generated/api";
-import { Group, Label } from "@repo/ui/field";
+import { Description, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { OnboardingStepFooter } from "./onboarding-step-footer";
+import { fieldGroup, fieldHint, fieldLabel, stepBody, stepHeading } from "./styles";
 
 export function BasicsStep() {
 	const router = useRouter();
@@ -45,23 +46,24 @@ export function BasicsStep() {
 
 	return (
 		<div className="flex min-h-full flex-col gap-6">
-			<div className="flex flex-col gap-2">
-				<Heading level={2} size={8} className="font-display">
+			<div className="flex flex-col gap-3">
+				<Heading level={2} size={8} className={stepHeading}>
 					About you
 				</Heading>
-				<Text size={2} color="gray">
+				<Text size={3} className={stepBody}>
 					When you offer to help, requesters see this information.
 				</Text>
 			</div>
 
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-col gap-5">
 				<TextField
 					name="firstName"
+					autoComplete="given-name"
 					value={firstName}
 					onChange={setFirstName}
 				>
-					<Label>First name</Label>
-					<Group>
+					<Label className={fieldLabel}>First name</Label>
+					<Group className={fieldGroup}>
 						<Input placeholder="e.g. Sam" />
 					</Group>
 				</TextField>
@@ -70,8 +72,9 @@ export function BasicsStep() {
 					value={pronouns}
 					onChange={setPronouns}
 				>
-					<Label>Pronouns (optional)</Label>
-					<Group>
+					<Label className={fieldLabel}>Pronouns</Label>
+					<Description className={fieldHint}>Optional</Description>
+					<Group className={fieldGroup}>
 						<Input placeholder="e.g. they/them" />
 					</Group>
 				</TextField>

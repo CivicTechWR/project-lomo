@@ -1,6 +1,25 @@
 /**
  * Shared types for the multi-step help request flow.
  * Category-specific steps live under `app/app/request/[category]/`.
+ *
+ * ## The two kinds of "when"
+ *
+ * Timing is captured twice, on purpose, and the two are not redundant:
+ *
+ * 1. `RequestDraft.neededBy` — a machine-readable deadline shared by every
+ *    category. Indexed on the backend so requests can be sorted, filtered, and
+ *    checked by the admin deadline alert.
+ *
+ * 2. `whenText` / `needByText` / `preferredTime` — free prose, per category.
+ *    These are intentionally NOT date inputs. Their placeholders invite answers a
+ *    date value cannot hold: "flexible this week" is an availability window, and
+ *    "Saturday at dawn" is a shifting reference point that pinning to a clock
+ *    time would misrepresent. Replacing them with a picker would force people
+ *    with no fixed time to invent one, producing data that looks structured but
+ *    is fabricated.
+ *
+ * So: automate against `neededBy`, show `*Text` to the human reading the
+ * request. Please don't "fix" the prose fields by turning them into pickers.
  */
 
 export type RequestCategoryId
@@ -183,6 +202,38 @@ export function emptyCeremonyDetails(): CeremonyRequestDetails {
 	};
 }
 
+/**
+ * Which control produced a deadline, kept so the picker can restore its own
+ * selection when the requester navigates back to the step.
+ */
+export type NeededByPresetId
+	= | "today"
+		| "tomorrow"
+		| "this_week"
+		| "next_week"
+		| "exact";
+
+/**
+ * When help stops being useful.
+ *
+ * Deliberately a *deadline* rather than a preferred appointment. A requester who
+ * answers "sometime this week" has no fixed time but does have a last useful
+ * moment, so a window can be recorded without forcing them to invent a precise
+ * slot. This is the value the admin deadline alert compares against, and it is
+ * denormalized onto `helpRequests.neededBy` so it can be indexed.
+ *
+ * Separate from the free-text "when" fields, which stay prose — see the note on
+ * those fields below.
+ */
+export interface NeededBy {
+	/** Milliseconds since epoch — the latest moment the help still helps. */
+	at: number;
+	/** True when `at` came from a window ("this week"), not an exact date. */
+	flexible: boolean;
+	/** The control that produced `at`. */
+	preset: NeededByPresetId;
+}
+
 export interface RequestDraft {
 	category: RequestCategoryId | null;
 	foodKind: FoodKindId | null;
@@ -193,6 +244,11 @@ export interface RequestDraft {
 	micrograntDetails: MicrograntRequestDetails;
 	ceremonyDetails: CeremonyRequestDetails;
 	urgency: RequestUrgencyId | null;
+	/**
+	 * Shared across every category. `null` means the requester chose "no fixed
+	 * date", which is a valid answer — those requests are never deadline-urgent.
+	 */
+	neededBy: NeededBy | null;
 }
 
 export function emptyDraft(): RequestDraft {
@@ -206,5 +262,6 @@ export function emptyDraft(): RequestDraft {
 		micrograntDetails: emptyMicrograntDetails(),
 		ceremonyDetails: emptyCeremonyDetails(),
 		urgency: null,
+		neededBy: null,
 	};
 }

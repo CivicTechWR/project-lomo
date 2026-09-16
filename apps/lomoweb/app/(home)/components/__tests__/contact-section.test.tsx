@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import fc from "fast-check";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ContactSection } from "../contact-section.tsx";
 
@@ -13,7 +14,7 @@ vi.mock("@repo/ui/heading", () => ({
 		children: React.ReactNode;
 		className?: string;
 	}) => {
-		const Element = `h${level}` as keyof JSX.IntrinsicElements;
+		const Element = `h${level}` as React.ElementType;
 		return <Element className={className}>{children}</Element>;
 	},
 }));

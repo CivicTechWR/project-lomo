@@ -6,6 +6,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { NeededByField } from "../../needed-by-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
@@ -45,7 +46,7 @@ const WALK_TYPE_OPTIONS = [
 
 export default function SupportDetailsPage() {
 	const router = useRouter();
-	const { draft, setPublicWalkDetails } = useRequestDraft();
+	const { draft, setPublicWalkDetails, setNeededBy } = useRequestDraft();
 	const d = draft.publicWalkDetails;
 
 	function toggleWalkType(id: (typeof WALK_TYPE_OPTIONS)[number]["id"]) {
@@ -58,8 +59,10 @@ export default function SupportDetailsPage() {
 	}
 
 	function handleNext() {
-		if (!d.preferredTime.trim() || !d.location.trim()) {
-			window.alert("Please add a preferred time and a public walk location.");
+		// A walk is a meeting, so it needs a day. The time-of-day box stays optional
+		// — "sometime that afternoon" is a reasonable thing not to have pinned down.
+		if (draft.neededBy == null || !d.location.trim()) {
+			window.alert("Please choose a day for the walk and a public walk location.");
 			return;
 		}
 		router.push("/app/request/support/preview");
@@ -74,14 +77,21 @@ export default function SupportDetailsPage() {
 					time.
 				</Text>
 
+				<NeededByField
+					value={draft.neededBy}
+					onChange={setNeededBy}
+					label="When would you like to walk?"
+					description="Pick the day. You can add a time of day below if you have one in mind."
+				/>
+
 				<TextField
 					name="preferredTime"
 					value={d.preferredTime}
 					onChange={v => setPublicWalkDetails({ preferredTime: v })}
 				>
-					<Label>When would you like to walk?</Label>
+					<Label>Time of day (optional)</Label>
 					<Group>
-						<Input placeholder="Preferred time (date and time)" />
+						<Input placeholder="e.g. mid-morning, after 5pm" />
 					</Group>
 				</TextField>
 
@@ -122,7 +132,7 @@ export default function SupportDetailsPage() {
 				</TextField>
 				<Text size={1} color="gray">Please choose a public, well-lit place.</Text>
 
-				<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
+				<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 					<Text size={3} weight="medium">
 						What kind of walk is this? (Optional)
 					</Text>

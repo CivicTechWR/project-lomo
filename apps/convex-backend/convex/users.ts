@@ -1,9 +1,12 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { authComponent, createAuth } from "./auth";
+import { requireAdmin } from "./lib/adminAuth";
 import { getCurrentUserRow, getOrCreateCurrentUser, requireIdentity } from "./lib/currentUser";
 import { normalizeHelpPreferences } from "./lib/helperPreferences";
 import { purgeUserAppData } from "./lib/purgeUserAppData";
+
+const MAX_ADMIN_ROWS = 200;
 
 const INVALID_PASSWORD_RE = /invalid.?password/i;
 const SESSION_EXPIRED_RE = /session.?expired/i;
@@ -137,5 +140,76 @@ export const deleteMyAccount = mutation({
 			);
 		}
 		await purgeUserAppData(ctx, subject);
+	},
+});
+
+export const listAllForAdmin = query({
+	args: {},
+	handler: async (ctx) => {
+		await requireAdmin(ctx);
+		const users = await ctx.db.query("users").take(MAX_ADMIN_ROWS);
+		return users.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+	},
+});
+
+export const adminGetUser = query({
+	args: { userId: v.id("users") },
+	handler: async (ctx, { userId }) => {
+		await requireAdmin(ctx);
+		const user = await ctx.db.get("users", userId);
+		if (!user)
+			return null;
+
+		const requests = await ctx.db
+			.query("helpRequests")
+			.withIndex("by_owner_user_id", q => q.eq("ownerUserId", userId))
+			.take(MAX_ADMIN_ROWS);
+
+		return { ...user, requests };
+	},
+});
+
+export const adminBlockUser = mutation({
+	args: { userId: v.id("users") },
+	handler: async (ctx, { userId }) => {
+		await requireAdmin(ctx);
+		const user = await ctx.db.get("users", userId);
+		if (!user)
+			throw new Error("User not found.");
+		await ctx.db.patch("users", userId, { blocked: true });
+
+		// Cancel any active requests owned by this user
+		const activeRequests = await ctx.db
+			.query("helpRequests")
+			.withIndex("by_owner_user_id", q => q.eq("ownerUserId", userId))
+			.take(MAX_ADMIN_ROWS);
+
+		const cancellableStatuses = new Set(["pending", "assigned", "awaiting_requester_acceptance", "in_progress"]);
+		for (const req of activeRequests) {
+			if (cancellableStatuses.has(req.status)) {
+				await ctx.db.patch("helpRequests", req._id, { status: "cancelled" });
+			}
+		}
+	},
+});
+
+/**
+ * Lifts a block. Admin-only, like blocking — there is no self-service path to
+ * either direction.
+ *
+ * Only the `blocked` flag is cleared. The user's own settings (`isVolunteer`,
+ * `canHelpNow`) were never touched by blocking, so their derived status returns
+ * to whatever they had chosen. Requests cancelled when they were blocked stay
+ * cancelled; reviving them would resurrect matches the other party has already
+ * moved on from.
+ */
+export const adminUnblockUser = mutation({
+	args: { userId: v.id("users") },
+	handler: async (ctx, { userId }) => {
+		await requireAdmin(ctx);
+		const user = await ctx.db.get("users", userId);
+		if (!user)
+			throw new Error("User not found.");
+		await ctx.db.patch("users", userId, { blocked: false });
 	},
 });

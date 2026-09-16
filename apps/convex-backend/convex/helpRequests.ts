@@ -3,6 +3,7 @@ import type { MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { requireAdmin } from "./lib/adminAuth";
 import {
 	getCurrentUserRow,
 	getIdentity,
@@ -14,7 +15,12 @@ import { haversineDistanceKm } from "./lib/geo";
 import { markNotificationsReadForRequest } from "./lib/notificationHelpers";
 import { purgeRequest } from "./lib/purgeRequest";
 import { extractGeocodableAddress, extractPayloadCoordinates } from "./lib/requestLocation";
-import { extractIsUrgent, extractNeedsDelivery, resolveIsUrgent } from "./lib/requestMetadata";
+import {
+	extractNeededBy,
+	extractNeedsDelivery,
+	resolveIsUrgent,
+} from "./lib/requestMetadata";
+import { assertNotBlocked, canOfferHelp, isBlocked } from "./lib/userStatus";
 import { redactHelpRequestForVolunteer } from "./redactHelpRequest";
 import { requestCategory, requestStatus } from "./schema";
 
@@ -297,6 +303,14 @@ export const listPendingFromOthers = query({
 			return [];
 		}
 		const user = await getCurrentUserRow(ctx);
+		/*
+		 * Resting and blocked users get nothing here. Hiding the Open Requests tab
+		 * in the UI is not enough on its own — this query is callable directly, and
+		 * "taking a break" has to mean the requests are genuinely withheld.
+		 */
+		if (!canOfferHelp(user)) {
+			return [];
+		}
 		const rows = await ctx.db
 			.query("helpRequests")
 			.withIndex("by_status", q => q.eq("status", "pending"))
@@ -432,7 +446,11 @@ export const homeDashboard = query({
 		const pendingMineTotal = owned.filter(r => r.status === "pending").length;
 
 		const userRow = user;
-		const canHelpNow = userRow.canHelpNow === true;
+		/*
+		 * Named `canHelpNow` for the client, but it answers "may this user browse
+		 * open requests", which is false while resting *and* while blocked.
+		 */
+		const canHelpNow = canOfferHelp(userRow);
 		const helpArea = helpAreaFromUser(userRow);
 
 		if (!canHelpNow) {
@@ -540,6 +558,7 @@ export const accept = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
 		const { user } = await getOrCreateCurrentUser(ctx);
+		assertNotBlocked(user);
 		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerUserId === user._id) {
 			throw new Error("Not found");
@@ -582,6 +601,16 @@ export const volunteerOfferHelp = mutation({
 	args: { requestId: v.id("helpRequests") },
 	handler: async (ctx, { requestId }) => {
 		const { user } = await getOrCreateCurrentUser(ctx);
+		assertNotBlocked(user);
+		/*
+		 * Resting users cannot offer help either. Without this a stale tab left
+		 * open before the break started could still submit an offer.
+		 */
+		if (!canOfferHelp(user)) {
+			throw new Error(
+				"You're currently resting. Turn \"I can offer support\" back on in your profile to help again.",
+			);
+		}
 		const doc = await ctx.db.get("helpRequests", requestId);
 		if (!doc || doc.ownerUserId === user._id) {
 			throw new Error("Not found");
@@ -777,10 +806,7 @@ export const isAdmin = query({
 export const listAllForAdmin = query({
 	args: { statusFilter: v.optional(requestStatus) },
 	handler: async (ctx, { statusFilter }) => {
-		const identity = await requireIdentity(ctx);
-		if (!isAdminIdentity(identity)) {
-			throw new Error("Forbidden");
-		}
+		await requireAdmin(ctx);
 		const rows = statusFilter
 			? await ctx.db
 					.query("helpRequests")
@@ -805,6 +831,37 @@ export const listAllForAdmin = query({
 	},
 });
 
+export const adminGetRequest = query({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			return null;
+
+		const owner = await ctx.db.get("users", doc.ownerUserId);
+		const helper = doc.helperUserId ? await ctx.db.get("users", doc.helperUserId) : null;
+		const assignedHelper = doc.assignedHelperUserId
+			? await ctx.db.get("users", doc.assignedHelperUserId)
+			: null;
+
+		// Messages including admin_note (admin can see all)
+		const messages = await ctx.db
+			.query("requestMessages")
+			.withIndex("by_request", q => q.eq("requestId", requestId))
+			.order("asc")
+			.take(100);
+
+		return {
+			...doc,
+			owner: publicUserSummary(owner),
+			helper: publicUserSummary(helper),
+			assignedHelper: publicUserSummary(assignedHelper),
+			messages,
+		};
+	},
+});
+
 export const listVolunteersForAdmin = query({
 	args: {},
 	handler: async (ctx) => {
@@ -813,8 +870,13 @@ export const listVolunteersForAdmin = query({
 			throw new Error("Forbidden");
 		}
 		const users = await ctx.db.query("users").take(MAX_ADMIN_ROWS);
+		/*
+		 * Blocked accounts are excluded: assigning one would notify a user who is
+		 * barred from accepting, leaving the request stuck. Resting volunteers stay
+		 * in the list — a coordinator can still reach out and ask.
+		 */
 		return users
-			.filter(u => u.isVolunteer !== false)
+			.filter(u => u.isVolunteer !== false && !isBlocked(u))
 			.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
 	},
 });
@@ -836,6 +898,9 @@ export const assignVolunteer = mutation({
 		const volunteer = await ctx.db.get("users", volunteerUserId);
 		if (!volunteer) {
 			throw new Error("Volunteer not found.");
+		}
+		if (isBlocked(volunteer)) {
+			throw new Error("This account is blocked and cannot be assigned.");
 		}
 		if (doc.status !== "pending") {
 			throw new Error("Only pending requests can be assigned.");
@@ -935,6 +1000,7 @@ export const create = mutation({
 	},
 	handler: async (ctx, args) => {
 		const { user } = await getOrCreateCurrentUser(ctx);
+		assertNotBlocked(user);
 
 		const coords = extractPayloadCoordinates(args.category, args.payload);
 		const requestId = await ctx.db.insert("helpRequests", {
@@ -950,6 +1016,7 @@ export const create = mutation({
 				payload: args.payload,
 				details: args.details,
 			}),
+			...extractNeededBy(args.payload),
 			...(coords != null
 				? { locationLat: coords.lat, locationLng: coords.lng }
 				: {}),
@@ -1060,5 +1127,111 @@ export const markComplete = mutation({
 				requestId,
 			});
 		}
+	},
+});
+
+export const adminMarkComplete = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		if (doc.status !== "in_progress") {
+			throw new Error("Only in-progress requests can be marked complete.");
+		}
+		await ctx.db.patch("helpRequests", requestId, { status: "complete" });
+
+		// Notify the request owner
+		await createNotification(ctx, {
+			recipientUserId: doc.ownerUserId,
+			type: "help_request_completed",
+			title: "Request marked complete",
+			body: `A coordinator marked "${doc.title}" complete.`,
+			requestId,
+		});
+		// Notify the helper if one is assigned
+		if (doc.helperUserId) {
+			await createNotification(ctx, {
+				recipientUserId: doc.helperUserId,
+				type: "help_request_completed",
+				title: "Request marked complete",
+				body: `A coordinator marked "${doc.title}" complete.`,
+				requestId,
+			});
+		}
+	},
+});
+
+export const adminCancelRequest = mutation({
+	args: { requestId: v.id("helpRequests") },
+	handler: async (ctx, { requestId }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		if (doc.status === "complete" || doc.status === "cancelled") {
+			throw new Error("Cannot cancel a completed or already-cancelled request.");
+		}
+		await ctx.db.patch("helpRequests", requestId, { status: "cancelled" });
+
+		// Notify the request owner
+		await createNotification(ctx, {
+			recipientUserId: doc.ownerUserId,
+			type: "request_cancelled",
+			title: "Request cancelled by coordinator",
+			body: `A coordinator cancelled "${doc.title}".`,
+			requestId,
+		});
+		// Notify the helper if one is assigned
+		if (doc.helperUserId) {
+			await createNotification(ctx, {
+				recipientUserId: doc.helperUserId,
+				type: "request_cancelled",
+				title: "Request cancelled by coordinator",
+				body: `A coordinator cancelled "${doc.title}".`,
+				requestId,
+			});
+		}
+	},
+});
+
+export const adminAddNote = mutation({
+	args: { requestId: v.id("helpRequests"), body: v.string() },
+	handler: async (ctx, { requestId, body }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		const trimmed = body.trim();
+		if (trimmed.length === 0)
+			throw new Error("Note cannot be empty.");
+		await ctx.db.insert("requestMessages", {
+			requestId,
+			body: trimmed,
+			source: "admin_note",
+		});
+	},
+});
+
+export const adminToggleUrgent = mutation({
+	args: { requestId: v.id("helpRequests"), isUrgent: v.boolean() },
+	handler: async (ctx, { requestId, isUrgent }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		await ctx.db.patch("helpRequests", requestId, { isUrgent });
+	},
+});
+
+export const adminUpdatePayload = mutation({
+	args: { requestId: v.id("helpRequests"), payload: v.string() },
+	handler: async (ctx, { requestId, payload }) => {
+		await requireAdmin(ctx);
+		const doc = await ctx.db.get("helpRequests", requestId);
+		if (!doc)
+			throw new Error("Request not found.");
+		await ctx.db.patch("helpRequests", requestId, { payload });
 	},
 });

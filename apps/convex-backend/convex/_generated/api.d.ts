@@ -8,9 +8,12 @@
  * @module
  */
 
+import type * as adminDashboard from "../adminDashboard.js";
+import type * as adminSettings from "../adminSettings.js";
 import type * as auth from "../auth.js";
 import type * as helpRequests from "../helpRequests.js";
 import type * as http from "../http.js";
+import type * as lib_adminAuth from "../lib/adminAuth.js";
 import type * as lib_currentUser from "../lib/currentUser.js";
 import type * as lib_geo from "../lib/geo.js";
 import type * as lib_helperPreferences from "../lib/helperPreferences.js";
@@ -24,6 +27,7 @@ import type * as lib_resendEmail from "../lib/resendEmail.js";
 import type * as lib_seedData from "../lib/seedData.js";
 import type * as lib_siteEnv from "../lib/siteEnv.js";
 import type * as lib_stripEmailReply from "../lib/stripEmailReply.js";
+import type * as lib_userStatus from "../lib/userStatus.js";
 import type * as lib_verifyResendWebhook from "../lib/verifyResendWebhook.js";
 import type * as notifications from "../notifications.js";
 import type * as redactHelpRequest from "../redactHelpRequest.js";
@@ -40,9 +44,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  adminDashboard: typeof adminDashboard;
+  adminSettings: typeof adminSettings;
   auth: typeof auth;
   helpRequests: typeof helpRequests;
   http: typeof http;
+  "lib/adminAuth": typeof lib_adminAuth;
   "lib/currentUser": typeof lib_currentUser;
   "lib/geo": typeof lib_geo;
   "lib/helperPreferences": typeof lib_helperPreferences;
@@ -56,6 +63,7 @@ declare const fullApi: ApiFromModules<{
   "lib/seedData": typeof lib_seedData;
   "lib/siteEnv": typeof lib_siteEnv;
   "lib/stripEmailReply": typeof lib_stripEmailReply;
+  "lib/userStatus": typeof lib_userStatus;
   "lib/verifyResendWebhook": typeof lib_verifyResendWebhook;
   notifications: typeof notifications;
   redactHelpRequest: typeof redactHelpRequest;

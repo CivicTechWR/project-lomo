@@ -38,7 +38,7 @@ export default function PaperworkDeliveryPage() {
 					We'll only ask for what's needed to complete the microgrant.
 				</Text>
 
-				<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
+				<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 					<Text size={3} weight="medium">How should the microgrant be sent?</Text>
 					<Text size={2} color="gray" className="mt-1">Choose at least one.</Text>
 					<div className="mt-3 flex flex-col gap-3">
@@ -75,7 +75,7 @@ export default function PaperworkDeliveryPage() {
 				)}
 
 				{d.methods.includes("e_transfer") && (
-					<div className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+					<div className="rounded-2 border border-gray-6 bg-gray-1 p-4">
 						<TextField
 							name="etransferContact"
 							value={d.etransferContact}
@@ -97,7 +97,7 @@ export default function PaperworkDeliveryPage() {
 				)}
 
 				{d.methods.includes("gift_card") && (
-					<div className="rounded-lg border border-gray-6 bg-gray-1 p-4">
+					<div className="rounded-2 border border-gray-6 bg-gray-1 p-4">
 						<TextField
 							name="giftCardEmail"
 							value={d.giftCardEmail}

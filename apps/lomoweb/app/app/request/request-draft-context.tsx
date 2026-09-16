@@ -7,6 +7,7 @@ import type {
 	FoodRequestDetails,
 	ItemsRequestDetails,
 	MicrograntRequestDetails,
+	NeededBy,
 	OtherRequestDetails,
 	PublicWalkRequestDetails,
 	RequestCategoryId,
@@ -39,6 +40,8 @@ interface RequestDraftContextValue {
 	setCeremonyDetails: (patch: Partial<CeremonyRequestDetails>) => void;
 	setCeremonyDetailsAll: (details: CeremonyRequestDetails) => void;
 	setUrgency: (urgency: RequestUrgencyId | null) => void;
+	/** `null` records "no fixed date", which is a valid answer. */
+	setNeededBy: (neededBy: NeededBy | null) => void;
 	resetDraft: () => void;
 }
 
@@ -127,6 +130,10 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 		setDraft(prev => ({ ...prev, urgency }));
 	}, []);
 
+	const setNeededBy = useCallback((neededBy: NeededBy | null) => {
+		setDraft(prev => ({ ...prev, neededBy }));
+	}, []);
+
 	const resetDraft = useCallback(() => {
 		setDraft(emptyDraft());
 	}, []);
@@ -150,6 +157,7 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 				setCeremonyDetails,
 				setCeremonyDetailsAll,
 				setUrgency,
+				setNeededBy,
 				resetDraft,
 			}) satisfies RequestDraftContextValue,
 		[
@@ -169,6 +177,7 @@ export function RequestDraftProvider({ children }: { children: ReactNode }) {
 			setCeremonyDetails,
 			setCeremonyDetailsAll,
 			setUrgency,
+			setNeededBy,
 			resetDraft,
 		],
 	);

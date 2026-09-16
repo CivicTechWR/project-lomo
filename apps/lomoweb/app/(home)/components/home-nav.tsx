@@ -31,7 +31,7 @@ export function HomeNav() {
 									variant="solid"
 									color="terracotta"
 									size={2}
-									className="min-h-8 flex items-center justify-center bg-terracotta-9 hover:bg-terracotta-10 text-white border-2 border-black rounded-full px-4 py-0.5 font-display font-black text-sm shadow-[0px_2px_8px_rgba(0,0,0,0.10)] hover:shadow-[0px_4px_12px_rgba(0,0,0,0.15)] transition-shadow duration-150"
+									className="min-h-8 flex items-center justify-center bg-terracotta-9 hover:bg-terracotta-10 text-white border-2 border-black rounded-full px-4 py-0.5 font-display font-black text-sm shadow-brand hover:shadow-brand-hover transition-shadow duration-150"
 								>
 									Sign Up
 								</Button>

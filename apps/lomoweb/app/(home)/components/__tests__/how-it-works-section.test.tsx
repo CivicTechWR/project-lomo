@@ -1,5 +1,6 @@
 import { render } from "@testing-library/react";
 import fc from "fast-check";
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { HowItWorksSection } from "../how-it-works-section.tsx";
 
@@ -13,7 +14,7 @@ vi.mock("@repo/ui/card", () => ({
 
 vi.mock("@repo/ui/heading", () => ({
 	Heading: ({ children, level, ...props }: { children: React.ReactNode; level: number; [key: string]: any }) => {
-		const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+		const Tag = `h${level}` as React.ElementType;
 		return <Tag {...props}>{children}</Tag>;
 	},
 }));
@@ -52,10 +53,10 @@ describe("howItWorksSection - Property 2: How It Works steps render in the corre
 						expect(stepLabels).toHaveLength(4);
 
 						// Assert the labels contain the required keywords in the correct order
-						expect(stepLabels[0]).toContain("Post a need");
-						expect(stepLabels[1]).toContain("help");
-						expect(stepLabels[2]).toContain("accept");
-						expect(stepLabels[3]).toContain("Connect safely");
+						expect(stepLabels[0]).toContain("Ask for what you need");
+						expect(stepLabels[1]).toContain("steps forward");
+						expect(stepLabels[2]).toContain("choose");
+						expect(stepLabels[3]).toContain("Connect when you're ready");
 
 						// Verify no steps are missing or out of order
 						expect(stepLabels[0].length).toBeGreaterThan(0);

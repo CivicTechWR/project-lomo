@@ -9,6 +9,7 @@
 		"./button": "./src/button/index.ts",
 		"./card": "./src/card/index.ts",
 		"./checkbox": "./src/checkbox/index.ts",
+		"./date-picker": "./src/date-picker/index.ts",
 		"./text": "./src/text/index.ts",
 		"./heading": "./src/heading/index.ts",
 		"./link": "./src/link/index.ts",
@@ -29,6 +30,10 @@
 		"react-dom": "catalog:"
 	},
 	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^7",
+		"@fortawesome/free-solid-svg-icons": "^7",
+		"@fortawesome/react-fontawesome": "^3",
+		"@internationalized/date": "3.12.0",
 		"@radix-ui/colors": "3.0.0",
 		"react-aria": "3.47.0",
 		"react-aria-components": "1.16.0",

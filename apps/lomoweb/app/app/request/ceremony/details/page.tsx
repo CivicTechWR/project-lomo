@@ -5,12 +5,13 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { NeededByField } from "../../needed-by-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
 
 export default function CeremonyDetailsPage() {
 	const router = useRouter();
-	const { draft, setCeremonyDetails } = useRequestDraft();
+	const { draft, setCeremonyDetails, setNeededBy } = useRequestDraft();
 	const d = draft.ceremonyDetails;
 
 	function handleNext() {
@@ -65,12 +66,23 @@ export default function CeremonyDetailsPage() {
 					<Group><TextArea rows={3} placeholder="Protocols, boundaries, important notes" /></Group>
 				</TextField>
 
+				<NeededByField
+					value={draft.neededBy}
+					onChange={setNeededBy}
+					label="When is the ceremony?"
+				/>
+
+				{/*
+				  Deliberately still prose. Ceremony timing is often given relative to
+				  something other than a clock ("at dawn"), and a picker would force a
+				  precision the requester did not intend.
+				*/}
 				<TextField
 					name="whenText"
 					value={d.whenText}
 					onChange={v => setCeremonyDetails({ whenText: v })}
 				>
-					<Label>When?</Label>
+					<Label>Time of day or other timing details</Label>
 					<Group><Input placeholder="e.g., Saturday at dawn" /></Group>
 				</TextField>
 

@@ -3,6 +3,7 @@
 import { Button } from "@repo/ui/button";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
+import { JOIN_PHOTO } from "@/lib/imagery";
 import { ProximityImage } from "./proximity-image";
 import { ctaButton, sectionPadding, warmOverlay } from "./styles";
 
@@ -24,11 +25,11 @@ export function JoinSection() {
 					</Text>
 
 					{/* Static oval image — no badge overlay */}
-					<div className="relative w-full max-w-[650px] aspect-[1.8/1] mt-8 mx-4 sm:mx-0 max-h-[60vh] sm:max-h-none">
-						<div className="relative w-full h-full rounded-full border-2 border-black overflow-hidden shadow-[0px_2px_8px_rgba(0,0,0,0.10)] bg-white">
+					<div className="relative w-full max-w-[650px] aspect-[2.2/1] mt-8 mx-4 sm:mx-0 max-h-[60vh] sm:max-h-none">
+						<div className="relative w-full h-full rounded-full border-2 border-black overflow-hidden shadow-brand bg-white">
 							<ProximityImage
-								src="/lomo-food.jpg"
-								alt="Diverse community members gathered together in a warm, supportive circle"
+								src={JOIN_PHOTO.src}
+								alt={JOIN_PHOTO.alt}
 								fill
 								sizes="(max-width: 768px) 100vw, 650px"
 							/>

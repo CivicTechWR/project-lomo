@@ -15,9 +15,9 @@ import { RequestStepFooter } from "../../request-step-footer";
 
 function groceryTileClass(selected: boolean): string {
 	if (selected) {
-		return "flex min-h-[4.25rem] flex-col items-center justify-center rounded-lg border border-gray-8 bg-gray-3 p-2 text-center shadow-sm transition-colors";
+		return "flex min-h-[4.25rem] flex-col items-center justify-center rounded-2 border border-gray-8 bg-gray-3 p-2 text-center shadow-sm transition-colors";
 	}
-	return "flex min-h-[4.25rem] flex-col items-center justify-center rounded-lg border border-gray-6 bg-gray-1 p-2 text-center transition-colors hover:border-gray-7 hover:bg-gray-2";
+	return "flex min-h-[4.25rem] flex-col items-center justify-center rounded-2 border border-gray-6 bg-gray-1 p-2 text-center transition-colors hover:border-gray-7 hover:bg-gray-2";
 }
 
 export default function FoodDetailsPage() {
@@ -135,7 +135,12 @@ export default function FoodDetailsPage() {
 				>
 					<Label>For how many people?</Label>
 					<Group>
-						<Input inputMode="numeric" placeholder="e.g., 2" />
+						{/*
+						  `type="number"` so the value is actually constrained to digits —
+						  `inputMode` alone only hints the mobile keyboard and still accepts
+						  letters. `min={1}` because a request for zero people is meaningless.
+						*/}
+						<Input type="number" inputMode="numeric" min={1} placeholder="e.g., 2" />
 					</Group>
 				</TextField>
 
@@ -143,7 +148,7 @@ export default function FoodDetailsPage() {
 					<Text size={3} weight="medium" className="text-gray-12">
 						Delivery
 					</Text>
-					<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
+					<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 						<Checkbox
 							isSelected={d.needsDelivery}
 							onChange={(v) => {

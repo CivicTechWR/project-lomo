@@ -6,7 +6,7 @@ export default function RequestCategoryPage() {
 		<Suspense
 			fallback={(
 				<div
-					className="min-h-[min(40vh,320px)] animate-pulse rounded-lg bg-gray-3"
+					className="min-h-[min(40vh,320px)] animate-pulse rounded-2 bg-gray-3"
 					aria-hidden
 				/>
 			)}

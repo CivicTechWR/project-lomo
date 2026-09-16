@@ -29,7 +29,7 @@
  * 2. Export from packages/ui/src/index.ts.
  * 3. Replace the plain HTML elements in the Playground component below.
  * 4. Add showcase pages for the new components following the guide in
- *    packages/ui/AGENTS.md.
+ *    packages/ui/AGENTS.md § "Adding a Component to the Showcase".
  */
 
 import { Heading, Text } from "@repo/ui";

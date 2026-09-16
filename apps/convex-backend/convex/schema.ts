@@ -42,6 +42,7 @@ export const notificationCtaAction = v.union(
 export const requestMessageSource = v.union(
 	v.literal("web"),
 	v.literal("email"),
+	v.literal("admin_note"),
 );
 
 export default defineSchema(
@@ -66,6 +67,25 @@ export default defineSchema(
 			needsDelivery: v.optional(v.boolean()),
 			isUrgent: v.optional(v.boolean()),
 			/**
+			 * Milliseconds since epoch — the latest moment this help is still useful.
+			 *
+			 * Denormalized out of `payload` so deadlines are sortable and filterable,
+			 * the same reason `locationLat`/`locationLng` are lifted out. Deliberately
+			 * a deadline rather than a preferred time: a request answered "flexible
+			 * this week" still has a last-useful moment (end of that week), so a
+			 * window can be stored without inventing a precise appointment.
+			 *
+			 * Unset means the requester gave no fixed date, which is a valid answer —
+			 * such requests are simply never deadline-urgent.
+			 */
+			neededBy: v.optional(v.number()),
+			/**
+			 * True when `neededBy` came from a window ("this week") rather than an
+			 * exact date the requester chose. Lets the UI say "sometime this week"
+			 * instead of implying false precision.
+			 */
+			neededByFlexible: v.optional(v.boolean()),
+			/**
 			 * Opaque token for masked email relay (local-part only; domain from EMAIL_RELAY_DOMAIN).
 			 * Set when the requester accepts the match (in_progress).
 			 */
@@ -74,6 +94,8 @@ export default defineSchema(
 			.index("by_owner_user_id", ["ownerUserId"])
 			.index("by_owner_user_id_and_status", ["ownerUserId", "status"])
 			.index("by_status", ["status"])
+			/* Finds pending requests whose deadline is approaching. */
+			.index("by_status_and_needed_by", ["status", "neededBy"])
 			.index("by_helper", ["helperUserId"])
 			.index("by_assigned_helper", ["assignedHelperUserId"])
 			.index("by_email_relay_token", ["emailRelayToken"]),
@@ -118,6 +140,8 @@ export default defineSchema(
 			helpAreaCenterLng: v.optional(v.number()),
 			/** Radius in kilometres (1–30). */
 			helpAreaRadiusKm: v.optional(v.number()),
+			/** When true, user is blocked from creating requests or sending messages. */
+			blocked: v.optional(v.boolean()),
 		})
 			.index("by_subject", ["subject"])
 			.index("by_token_identifier", ["tokenIdentifier"]),
@@ -135,6 +159,17 @@ export default defineSchema(
 			.index("by_recipient", ["recipientUserId"])
 			.index("by_recipient_read", ["recipientUserId", "isRead"])
 			.index("by_request", ["requestId"]),
+
+		adminSettings: defineTable({
+			/** Well-known key for singleton pattern ("global") */
+			key: v.string(),
+			/** Days before a pending unmatched request needs attention (1-30) */
+			attentionThresholdDays: v.number(),
+			/** Notification preferences */
+			notifyOnNewPending: v.boolean(),
+			notifyOnConcernReport: v.boolean(),
+			notifyOnCancellation: v.boolean(),
+		}).index("by_key", ["key"]),
 	},
 	{ schemaValidation: true },
 );

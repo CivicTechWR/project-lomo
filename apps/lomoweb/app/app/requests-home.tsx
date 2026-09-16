@@ -14,6 +14,7 @@ import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
 import { Checkbox, CheckboxGroup } from "@repo/ui/checkbox";
 import { Heading } from "@repo/ui/heading";
+import { Icon } from "@repo/ui/icons";
 import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
@@ -41,6 +42,7 @@ import {
 } from "@/lib/open-request-filters";
 import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import { isRequestUrgent } from "@/lib/request-urgency";
+import { canOfferHelp } from "@/lib/user-status";
 import { StatusFilterChips } from "./status-filter-chips";
 
 const HelpAreaMap = dynamic(
@@ -57,66 +59,15 @@ type HomeDashboard = NonNullable<
 	FunctionReturnType<typeof api.helpRequests.homeDashboard>
 >;
 
-function FilterIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			className={className}
-			width={14}
-			height={14}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden
-		>
-			<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-		</svg>
-	);
-}
-
-function ExclamationIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			className={className}
-			width={14}
-			height={14}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden
-		>
-			<circle cx="12" cy="12" r="10" />
-			<line x1="12" y1="8" x2="12" y2="12" />
-			<line x1="12" y1="16" x2="12.01" y2="16" />
-		</svg>
-	);
-}
-
+/** Disclosure chevron that rotates a quarter turn once its section is open. */
 function ChevronIcon({ expanded, className }: { expanded: boolean; className?: string }) {
 	return (
-		<svg
-			className={className}
-			width={16}
-			height={16}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden
-			style={{
-				transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
-				transition: "transform 150ms ease",
-			}}
-		>
-			<polyline points="9 18 15 12 9 6" />
-		</svg>
+		<Icon
+			name="chevronRight"
+			className={`size-4 transition-transform duration-150 ${
+				expanded ? "rotate-90" : ""
+			} ${className ?? ""}`}
+		/>
 	);
 }
 
@@ -548,7 +499,7 @@ function RequestingHelpPanel(props: {
 					className="gap-1.5 !rounded-full"
 					onPress={() => setStatusOpen(true)}
 				>
-					<FilterIcon />
+					<Icon name="filter" className="size-3.5" />
 					Status:
 					{" "}
 					{statusFilterLabel}
@@ -657,26 +608,6 @@ function RequestingHelpPanel(props: {
 	);
 }
 
-function MapPinIcon({ className }: { className?: string }) {
-	return (
-		<svg
-			className={className}
-			width={14}
-			height={14}
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={2}
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden
-		>
-			<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-			<circle cx="12" cy="10" r="3" />
-		</svg>
-	);
-}
-
 interface LocationFilter {
 	centerLat: number;
 	centerLng: number;
@@ -699,6 +630,50 @@ function locationFiltersEqual(a: LocationFilter, b: LocationFilter): boolean {
 	return Math.abs(a.centerLat - b.centerLat) < 0.0001
 		&& Math.abs(a.centerLng - b.centerLng) < 0.0001
 		&& a.radiusKm === b.radiusKm;
+}
+
+/**
+ * Shown instead of the open request list while the user is resting or blocked.
+ *
+ * The mode is remembered in `sessionStorage`, so someone can switch on resting
+ * in their profile and land back here with `offer_help` still selected. Without
+ * this the panel would render an empty list and read as a bug rather than as the
+ * break they asked for.
+ */
+function RestingPanel({ blocked }: { blocked: boolean }) {
+	const router = useRouter();
+
+	return (
+		<>
+			<div>
+				<Heading level={1} size={7}>
+					Open requests
+				</Heading>
+			</div>
+			<Card size={2} variant="surface" className="p-6">
+				<div className="flex flex-col items-center gap-4 text-center">
+					<Badge variant="soft" size={1} color={blocked ? "red" : "yellow"}>
+						{blocked ? "Blocked" : "Resting"}
+					</Badge>
+					<Text size={3} color="gray">
+						{blocked
+							? "Your account is currently restricted, so open requests aren't available. Contact a coordinator if you think this is a mistake."
+							: "You're taking a break, so open requests are hidden. Nothing is waiting on you."}
+					</Text>
+					{!blocked && (
+						<Button
+							variant="solid"
+							color="sage"
+							size={2}
+							onPress={() => router.push("/app/profile")}
+						>
+							Update helper preferences
+						</Button>
+					)}
+				</div>
+			</Card>
+		</>
+	);
 }
 
 function OfferingHelpPanel() {
@@ -724,9 +699,16 @@ function OfferingHelpPanel() {
 		setLocationReady(true);
 	}
 
+	/*
+	 * Treated as "may help" until the profile arrives so the list can start
+	 * loading. The backend withholds open requests for resting and blocked users
+	 * regardless of what is asked for here.
+	 */
+	const mayOfferHelp = profileRow === undefined || canOfferHelp(profileRow);
+
 	const openForOthers = useQuery(
 		api.helpRequests.listPendingFromOthers,
-		locationReady
+		locationReady && mayOfferHelp
 			? {
 					filterCenterLat: locationFilter.centerLat,
 					filterCenterLng: locationFilter.centerLng,
@@ -734,6 +716,11 @@ function OfferingHelpPanel() {
 				}
 			: "skip",
 	);
+
+	// Placed after every hook above so the hook order stays stable across renders.
+	if (profileRow !== undefined && !mayOfferHelp) {
+		return <RestingPanel blocked={profileRow?.blocked === true} />;
+	}
 
 	const filteredRequests = openForOthers === undefined
 		? undefined
@@ -784,7 +771,7 @@ function OfferingHelpPanel() {
 					className="gap-1.5 !rounded-full"
 					onPress={() => setCategoriesOpen(true)}
 				>
-					<FilterIcon />
+					<Icon name="filter" className="size-3.5" />
 					Categories (
 					{selectedCategoryCount}
 					)
@@ -798,7 +785,7 @@ function OfferingHelpPanel() {
 					className="gap-1.5 !rounded-full"
 					onPress={openLocationModal}
 				>
-					<MapPinIcon />
+					<Icon name="mapPin" className="size-3.5" />
 					Area ·
 					{" "}
 					{locationFilter.radiusKm}
@@ -818,7 +805,7 @@ function OfferingHelpPanel() {
 							urgentOnly: !current.urgentOnly,
 						}))}
 				>
-					<ExclamationIcon />
+					<Icon name="alert" className="size-3.5" />
 					Urgent
 				</Button>
 				{filtersActive && (
@@ -845,7 +832,9 @@ function OfferingHelpPanel() {
 						<Heading id="open-request-category-filter-title" level={2} size={4}>
 							Categories
 						</Heading>
+						{/* Named by the dialog's own heading, which is this group's only label. */}
 						<CheckboxGroup
+							aria-labelledby="open-request-category-filter-title"
 							value={filters.categories}
 							onChange={(value) => {
 								setFilters(current => ({

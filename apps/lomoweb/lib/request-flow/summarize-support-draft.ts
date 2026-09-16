@@ -1,4 +1,5 @@
 import type { RequestDraft } from "./types";
+import { formatNeededBy } from "./needed-by";
 
 const WALK_LENGTH_LABEL: Record<"10_15" | "20_30" | "45_60", string> = {
 	"10_15": "10-15 minutes",
@@ -20,6 +21,10 @@ const WALK_TYPE_LABEL: Record<
 export function summarizeSupportDraftBody(draft: RequestDraft): string {
 	const lines: string[] = [];
 	const d = draft.publicWalkDetails;
+	const neededBy = formatNeededBy(draft.neededBy);
+	if (neededBy) {
+		lines.push(`Needed: ${neededBy}`);
+	}
 	if (d.preferredTime.trim()) {
 		lines.push(`Preferred time: ${d.preferredTime.trim()}`);
 	}

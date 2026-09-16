@@ -60,7 +60,7 @@ export default function ItemsDetailsPage() {
 					<Text size={3} weight="medium" className="text-gray-12">
 						Delivery
 					</Text>
-					<div className="rounded-lg border border-gray-6 bg-gray-2 p-4">
+					<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 						<Checkbox
 							isSelected={d.needsDelivery}
 							onChange={(v) => {
