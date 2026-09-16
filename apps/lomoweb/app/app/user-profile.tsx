@@ -112,6 +112,11 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 		helperPreferencesFromProfile(profileRow),
 	);
 	const [savingPreferences, setSavingPreferences] = useState(false);
+	/*
+	 * Confirmation that the write landed. Without it the only signal was the button
+	 * label flicking back from "Saving…", which is easy to miss and left users
+	 * unsure whether a toggle had actually persisted.
+	 */
 	const [preferencesSaved, setPreferencesSaved] = useState(false);
 	const updateHelperPreferences = useUpdateHelperPreferences();
 	const shouldSync = useServerRowSync(profileRow);
@@ -122,6 +127,7 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 
 	async function handleSavePreferences() {
 		setSavingPreferences(true);
+		setPreferencesSaved(false);
 		try {
 			await updateHelperPreferences({
 				canHelpNow: preferenceValues.canHelpNow,
@@ -130,6 +136,7 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 				helpAreaCenterLng: preferenceValues.helpAreaCenterLng,
 				helpAreaRadiusKm: preferenceValues.helpAreaRadiusKm,
 			});
+			// Only set on success, so it can't claim a save that threw.
 			setPreferencesSaved(true);
 		}
 		catch (e) {
@@ -149,6 +156,7 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 				values={preferenceValues}
 				onChange={(next) => {
 					setPreferenceValues(next);
+					// Any further edit makes the confirmation stale.
 					setPreferencesSaved(false);
 				}}
 			/>
@@ -161,6 +169,10 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 			>
 				{savingPreferences ? "Saving…" : "Save preferences"}
 			</Button>
+			{/*
+			  `role="status"` so the confirmation is announced rather than
+			  only being a visual change next to the button.
+			*/}
 			<div role="status" aria-live="polite">
 				{preferencesSaved
 					? (

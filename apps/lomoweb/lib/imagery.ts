@@ -37,21 +37,21 @@ export const HERO_ILLUSTRATION: Photo = {
 
 /** "Find What You Need" — keyed by category. */
 export const FIND_PHOTOS: Record<string, Photo> = {
-	grocery: { src: PLACEHOLDER_PHOTO, alt: "Grocery sharing in the community" },
-	checkins: { src: PLACEHOLDER_PHOTO, alt: "Neighbors checking in on each other" },
-	crisis: { src: PLACEHOLDER_PHOTO, alt: "Community crisis support fund" },
-	meals: { src: PLACEHOLDER_PHOTO, alt: "Warm meals shared between neighbors" },
+	grocery: { src: "/lomo-groceries.jpg", alt: "Grocery sharing in the community" },
+	checkins: { src: "/lomo-walk.jpg", alt: "Neighbors checking in on each other" },
+	crisis: { src: "/lomo-money.jpg", alt: "Community crisis support fund" },
+	meals: { src: "/lomo-meal.jpg", alt: "Warm meals shared between neighbors" },
 };
 
 /** "Share What You Can" — keyed by category. */
 export const SHARE_PHOTOS: Record<string, Photo> = {
-	supplies: { src: PLACEHOLDER_PHOTO, alt: "Community member dropping off supplies" },
-	microgrant: { src: PLACEHOLDER_PHOTO, alt: "Funding a microgrant for a neighbour" },
-	produce: { src: PLACEHOLDER_PHOTO, alt: "Sharing garden produce with the community" },
+	supplies: { src: "/lomo-supplies.jpg", alt: "Community member dropping off supplies" },
+	microgrant: { src: "/lomo-money.jpg", alt: "Funding a microgrant for a neighbour" },
+	produce: { src: "/lomo-corn.jpg", alt: "Sharing garden produce with the community" },
 };
 
 /** "Join The Circle" — the single oval image above the sign-up call to action. */
 export const JOIN_PHOTO: Photo = {
-	src: PLACEHOLDER_PHOTO,
+	src: "/lomo-food.jpg",
 	alt: "Diverse community members gathered together in a warm, supportive circle",
 };
