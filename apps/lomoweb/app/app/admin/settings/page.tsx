@@ -1,14 +1,13 @@
 "use client";
 
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
 import { Description, FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
-import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAdminSettings, useUpdateAdminSettings } from "@/lib/hooks/use-admin";
 import { AdminErrorBoundary } from "../components/AdminErrorBoundary";
 
 /* -------------------------------------------------------------------------- */
@@ -84,21 +83,18 @@ interface SettingsData {
 }
 
 function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
-	const updateSettings = useMutation(api.adminSettings.updateSettings);
+	const updateSettings = useUpdateAdminSettings();
 
-	// Local form state initialized from loaded settings
 	const [threshold, setThreshold] = useState<number>(initialSettings.attentionThresholdDays);
 	const [notifyOnNewPending, setNotifyOnNewPending] = useState(initialSettings.notifyOnNewPending);
 	const [notifyOnConcernReport, setNotifyOnConcernReport] = useState(initialSettings.notifyOnConcernReport);
 	const [notifyOnCancellation, setNotifyOnCancellation] = useState(initialSettings.notifyOnCancellation);
 
-	// Validation and UI state
 	const [thresholdError, setThresholdError] = useState<string | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-	// Clear success timeout on unmount
 	useEffect(() => {
 		return () => {
 			if (successTimerRef.current) {
@@ -117,7 +113,6 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 		return null;
 	}, []);
 
-	// react-aria's TextField reports the raw string rather than a change event.
 	const handleThresholdChange = useCallback((raw: string) => {
 		const num = Number.parseInt(raw, 10);
 		if (Number.isNaN(num)) {
@@ -131,7 +126,6 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 	}, [validateThreshold]);
 
 	const handleSave = useCallback(async () => {
-		// Final validation
 		const error = validateThreshold(threshold);
 		if (error) {
 			setThresholdError(error);
@@ -150,7 +144,6 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 			});
 			setSuccessMessage("Settings saved");
 
-			// Clear success message after 3 seconds
 			if (successTimerRef.current) {
 				clearTimeout(successTimerRef.current);
 			}
@@ -170,15 +163,10 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 
 	return (
 		<div className="flex flex-col gap-6">
-			{/* Admin Preferences Section */}
 			<Card size={2} className="rounded-4 border border-gray-6">
 				<Heading level={2} size={5} weight="medium" className="mb-4">
 					Admin Preferences
 				</Heading>
-				{/*
-				  `TextField` handles the label, description, and error associations, so
-				  the manual htmlFor / aria-describedby / aria-invalid wiring is gone.
-				*/}
 				<TextField
 					name="attentionThreshold"
 					value={String(threshold)}
@@ -196,7 +184,6 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 				</TextField>
 			</Card>
 
-			{/* Notification Settings Section */}
 			<Card size={2} className="rounded-4 border border-gray-6">
 				<Heading level={2} size={5} weight="medium" className="mb-4">
 					Notification Settings
@@ -223,7 +210,6 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 				</div>
 			</Card>
 
-			{/* Magic Link Management Section */}
 			<Card size={2} className="rounded-4 border border-gray-6">
 				<Heading level={2} size={5} weight="medium" className="mb-4">
 					Magic Link Management
@@ -244,7 +230,6 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 				</Text>
 			</Card>
 
-			{/* Save Button + Success Message */}
 			<div className="flex flex-col items-start gap-3">
 				<Button
 					variant="solid"
@@ -266,12 +251,8 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 	);
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              SettingsPage                                    */
-/* -------------------------------------------------------------------------- */
-
 export default function AdminSettingsPage() {
-	const settings = useQuery(api.adminSettings.getSettings);
+	const settings = useAdminSettings();
 	const isLoading = settings === undefined;
 
 	return (
@@ -281,7 +262,6 @@ export default function AdminSettingsPage() {
 					Settings
 				</Heading>
 
-				{/* aria-live region for loading state */}
 				<div aria-live="polite" aria-atomic="true" className="sr-only">
 					{isLoading ? "Loading settings" : "Settings loaded"}
 				</div>

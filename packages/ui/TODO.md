@@ -11,7 +11,7 @@
 
 ## Component Roadmap
 
-Components needed to implement the LoMo prototype, derived from the Stitch project "LOMO PROJECT [CLAUDE CODE]." Only generic design system primitives — app-level compositions (Navbar, Sidebar, RequestCard, etc.) live in `apps/webapp/`.
+Components needed to implement the LoMo prototype, derived from the Stitch project "LOMO PROJECT [CLAUDE CODE]." Only generic design system primitives — app-level compositions (Navbar, Sidebar, RequestCard, etc.) live in `apps/lomoweb/`.
 
 ### Tier 2 — Forms (unlocks onboarding + request creation)
 

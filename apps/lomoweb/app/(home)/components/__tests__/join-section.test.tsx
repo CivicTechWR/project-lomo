@@ -39,15 +39,15 @@ vi.mock("@repo/ui/button", () => ({
 				),
 }));
 
-const JOIN_THE_CIRCLE_REGEX = /Join the Circle/i;
+const JOIN_THE_COMMUNITY_REGEX = /Join The Community/i;
 const FREE_REGEX = /free/i;
 const SOCIAL_MEDIA_REGEX = /social media/i;
 const DATA_REGEX = /data/i;
 
 describe("joinSection", () => {
-	it("asserts heading 'Join the Circle' is present", () => {
+	it("asserts heading 'Join The Community' is present", () => {
 		render(<JoinSection />);
-		const heading = screen.getByRole("heading", { name: JOIN_THE_CIRCLE_REGEX, level: 2 });
+		const heading = screen.getByRole("heading", { name: JOIN_THE_COMMUNITY_REGEX, level: 2 });
 		expect(heading).toBeInTheDocument();
 	});
 

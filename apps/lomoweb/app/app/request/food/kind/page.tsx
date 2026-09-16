@@ -1,12 +1,12 @@
 "use client";
 
 import { Heading } from "@repo/ui/heading";
+import { SelectionCard } from "@repo/ui/selection-card";
 import { Text } from "@repo/ui/text";
 import { useRouter } from "next/navigation";
 import { FOOD_KIND_OPTIONS } from "@/lib/request-flow/food";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
-import { SelectionCard } from "../../selection-card";
 
 export default function FoodKindPage() {
 	const router = useRouter();

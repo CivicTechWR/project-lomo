@@ -58,8 +58,8 @@ export function ResetPasswordForm({ initialToken, initialUrlError }: ResetPasswo
 	const tokenError = urlError === "INVALID_TOKEN"
 		? "This reset link is invalid or has expired. Request a new one."
 		: !token
-			? "Missing reset token. Open the link from your email or request a new one."
-			: null;
+				? "Missing reset token. Open the link from your email or request a new one."
+				: null;
 
 	const canSubmit
 		= password.length >= 8
@@ -178,6 +178,8 @@ export function ResetPasswordForm({ initialToken, initialUrlError }: ResetPasswo
 				color="yellow"
 				isDisabled={!canSubmit}
 				className="mt-2"
+				border="large"
+				borderColor="terracotta"
 			>
 				{isSubmitting ? "Updating..." : "Update password"}
 			</Button>

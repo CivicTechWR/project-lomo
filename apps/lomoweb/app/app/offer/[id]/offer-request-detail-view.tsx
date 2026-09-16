@@ -15,8 +15,8 @@ import {
 	HELP_REQUEST_STATUS_LABEL,
 	statusBadgeColor,
 } from "@/lib/help-request-status";
-import { isRequestUrgent } from "@/lib/request-urgency";
 import { useHomeMode } from "@/lib/home-mode-context";
+import { isRequestUrgent } from "@/lib/request-urgency";
 
 export function OfferRequestDetailView() {
 	const router = useRouter();

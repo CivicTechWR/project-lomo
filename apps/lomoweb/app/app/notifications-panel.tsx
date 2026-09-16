@@ -1,20 +1,28 @@
 "use client";
 
 import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { Text } from "@repo/ui/text";
-import { useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
+import {
+	useAcceptAssignedRequest,
+	useDeclineAssignedRequest,
+	useRequesterAcceptMatch,
+	useRequesterDeclineMatch,
+} from "@/lib/hooks/use-help-requests";
+import {
+	useMarkNotificationRead,
+	useMyNotifications,
+} from "@/lib/hooks/use-notifications";
 
 export function NotificationsList({ unreadOnly = false }: { unreadOnly?: boolean }) {
-	const notifications = useQuery(api.notifications.listMine, { unreadOnly });
-	const markRead = useMutation(api.notifications.markRead);
-	const acceptAssigned = useMutation(api.helpRequests.accept);
-	const declineAssigned = useMutation(api.helpRequests.declineAssigned);
-	const requesterAcceptMatch = useMutation(api.helpRequests.requesterAcceptMatch);
-	const requesterDeclineMatch = useMutation(api.helpRequests.requesterDeclineMatch);
+	const notifications = useMyNotifications(unreadOnly);
+	const markRead = useMarkNotificationRead();
+	const acceptAssigned = useAcceptAssignedRequest();
+	const declineAssigned = useDeclineAssignedRequest();
+	const requesterAcceptMatch = useRequesterAcceptMatch();
+	const requesterDeclineMatch = useRequesterDeclineMatch();
 	const [busyId, setBusyId] = useState<string | null>(null);
 	type NotificationDoc = NonNullable<typeof notifications>[number];
 

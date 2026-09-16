@@ -42,6 +42,29 @@ describe("desktop sidebar stays pinned to the viewport", () => {
 		).toContain("lg:h-screen");
 	});
 
+	it("uses a floating navigation rail at the tablet breakpoint", () => {
+		const source = read(SIDEBAR);
+
+		expect(source).toContain("md:flex lg:hidden");
+		expect(source).toContain("rounded-6");
+		expect(source).toContain("shadow-[0_12px_28px");
+	});
+
+	it("uses the primary-action treatment for active navigation items", () => {
+		const source = read(SIDEBAR);
+
+		expect(source).toContain("border-transparent bg-terracotta-9 text-white");
+		expect(source).toContain("isActive ? \"text-white\" : \"text-gray-11\"");
+	});
+
+	it("uses the floating bottom navigation only below the tablet breakpoint", () => {
+		expect(read(SIDEBAR)).toContain("md:hidden");
+	});
+
+	it("supports a 320px minimum viewport width", () => {
+		expect(read(ROOT_LAYOUT)).toContain("min-w-80");
+	});
+
 	it("lets a taller-than-viewport nav list scroll inside the sidebar", () => {
 		const source = read(SIDEBAR);
 

@@ -1,8 +1,8 @@
 import type { api } from "@repo/convex-backend/convex/_generated/api";
 import type { FunctionReturnType } from "convex/server";
 import type { RequestCategoryId } from "@/lib/request-flow/types";
-import { isRequestUrgent } from "@/lib/request-urgency";
 import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
+import { isRequestUrgent } from "@/lib/request-urgency";
 
 type OpenRequestListItem = FunctionReturnType<
 	typeof api.helpRequests.listPendingFromOthers

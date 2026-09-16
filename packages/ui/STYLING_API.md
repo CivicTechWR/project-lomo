@@ -33,7 +33,8 @@ Variant fragments live in `src/variants/`:
 
 - **`interactiveBase`** — shared base classes for all interactive components
 - **`interactiveSizes`** — size scale object (`"1"` through `"4"`)
-- **`solidColors` / `softColors` / `outlineColors` / `ghostColors`** — color maps keyed by `ScaleColor`
+- **`solidColors` / `softColors` / `outlineColors` / `ghostColors` / `surfaceColors`** — color maps keyed by `ScaleColor`
+- **`solidColorsHighContrast` / `softColorsHighContrast` / `surfaceColorsHighContrast` / `outlineColorsHighContrast`** — high-contrast color maps keyed by `ScaleColor`
 - **`focusRings`** — focus ring styles keyed by `ScaleColor`
 - **`typographySizes`** — typography scale (`"1"` through `"9"`)
 

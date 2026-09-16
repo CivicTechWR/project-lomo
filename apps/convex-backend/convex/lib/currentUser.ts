@@ -36,7 +36,7 @@ export function isAdminIdentity(identity: AuthIdentity): boolean {
 
 export async function getIdentity(ctx: ReadCtx): Promise<AuthIdentity | null> {
 	const identity = await ctx.auth.getUserIdentity();
-	return identity ? (identity as AuthIdentity) : null;
+	return identity || null;
 }
 
 export async function requireIdentity(ctx: ReadCtx): Promise<AuthIdentity> {

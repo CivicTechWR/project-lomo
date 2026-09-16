@@ -8,16 +8,18 @@
 	},
 	"scripts": {
 		"clean": "rm -rf dist .turbo ./tsbuildinfo.json",
+		"typecheck": "echo \"No typecheck for @repo/eslint-config\"",
+		"test": "echo \"No tests for @repo/eslint-config\"",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix"
 	},
 	"devDependencies": {
-		"@antfu/eslint-config": "7.7.0",
-		"@eslint-react/eslint-plugin": "2.13.0",
+		"@antfu/eslint-config": "catalog:",
+		"@eslint-react/eslint-plugin": "catalog:",
 		"eslint": "catalog:",
-		"eslint-config-next": "16.2.1",
+		"eslint-config-next": "16.3.4",
 		"eslint-plugin-format": "2.0.1",
-		"eslint-plugin-react-hooks": "7.0.1",
-		"eslint-plugin-react-refresh": "0.5.2"
+		"eslint-plugin-react-hooks": "catalog:",
+		"eslint-plugin-react-refresh": "0.5.6"
 	}
 }

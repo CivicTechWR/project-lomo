@@ -133,6 +133,8 @@ export function ForgotPasswordForm() {
 				color="yellow"
 				isDisabled={isSubmitting}
 				className="mt-2"
+				border="large"
+				borderColor="terracotta"
 			>
 				{isSubmitting ? "Sending..." : "Send reset link"}
 			</Button>

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { CategoryPicker } from "../category-picker.tsx";
 
 vi.mock("next/image", () => ({
-	default: (props: any) => <img {...props} />,
+	default: ({ fill: _fill, priority: _priority, placeholder: _placeholder, quality: _quality, ...props }: any) => <img {...props} />,
 }));
 
 vi.mock("@repo/ui/badge", () => ({

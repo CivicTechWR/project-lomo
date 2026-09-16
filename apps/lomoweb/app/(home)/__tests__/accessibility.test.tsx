@@ -12,8 +12,34 @@ import { ShareSection } from "../components/share-section.tsx";
 import { TrustBlock } from "../components/trust-block.tsx";
 
 vi.mock("next/image", () => ({
-	default: ({ alt, src, className }: { alt: string; src: string; className?: string }) => (
-		<img alt={alt} src={src} className={className} />
+	default: ({
+		alt,
+		src,
+		className,
+		"aria-hidden": ariaHidden,
+		fill: _fill,
+		priority: _priority,
+		placeholder: _placeholder,
+		quality: _quality,
+		...props
+	}: {
+		"alt"?: string;
+		"src": string;
+		"className"?: string;
+		"aria-hidden"?: boolean | "true" | "false";
+		"fill"?: boolean;
+		"priority"?: boolean;
+		"placeholder"?: string;
+		"quality"?: number | string;
+		[key: string]: any;
+	}) => (
+		<img
+			alt={alt ?? ""}
+			src={src}
+			className={className}
+			aria-hidden={ariaHidden as unknown as boolean}
+			{...props}
+		/>
 	),
 }));
 
@@ -113,12 +139,19 @@ describe("accessibility Audit for Homepage", () => {
 		expect(h1s).toHaveLength(1);
 	});
 
-	it("all images have alt attributes (empty alt is valid for decorative images)", () => {
+	it("decorative images are hidden from assistive tech and informative images have alt text", () => {
 		const { container } = render(<AssembledHomePage />);
 		const images = [...container.querySelectorAll("img")];
 		expect(images.length).toBeGreaterThan(0);
 		for (const img of images) {
 			expect(img).toHaveAttribute("alt");
+			const isDecorative = img.getAttribute("aria-hidden") === "true";
+			if (isDecorative) {
+				expect(img.getAttribute("alt")?.trim() ?? "").toBe("");
+			}
+			else {
+				expect(img.getAttribute("alt")?.trim()).not.toBe("");
+			}
 		}
 	});
 

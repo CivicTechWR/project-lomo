@@ -8,6 +8,19 @@ export interface RequestCategoryMeta {
 	implemented: boolean;
 }
 
+export const REQUEST_CATEGORY_ROUTE_MAP: Record<RequestCategoryId, string> = {
+	food: "/app/request/food/kind",
+	items: "/app/request/items/details",
+	other: "/app/request/other/details",
+	support: "/app/request/support/details",
+	paperwork: "/app/request/paperwork/details",
+	ceremony: "/app/request/ceremony/role",
+};
+
+export function getCategoryRoute(id: RequestCategoryId): string {
+	return REQUEST_CATEGORY_ROUTE_MAP[id];
+}
+
 export const REQUEST_CATEGORIES: RequestCategoryMeta[] = [
 	{
 		id: "food",

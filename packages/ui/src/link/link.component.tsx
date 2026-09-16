@@ -2,7 +2,8 @@
 
 import type { LinkProps as AriaLinkProps } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
-import { Link as AriaLink, composeRenderProps } from "react-aria-components";
+import { Link as AriaLink } from "react-aria-components";
+import { cn } from "../utils/cn.ts";
 import { linkVariants } from "./link.variants.ts";
 
 export type LinkProps = AriaLinkProps & VariantProps<typeof linkVariants>;
@@ -22,8 +23,11 @@ export function Link({
 	return (
 		<AriaLink
 			{...props}
-			className={composeRenderProps(className, cls =>
-				linkVariants({ color, size, weight, underline, highContrast, trim, truncate, wrap, class: cls }))}
+			className={values =>
+				cn(
+					linkVariants({ color, size, weight, underline, highContrast, trim, truncate, wrap }),
+					typeof className === "function" ? className(values) : className,
+				)}
 		/>
 	);
 }

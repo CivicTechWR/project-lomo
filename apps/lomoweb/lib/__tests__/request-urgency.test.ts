@@ -59,7 +59,10 @@ describe("filterOpenRequests urgent filter", () => {
 
 	it("includes legacy urgent requests when urgentOnly is enabled", () => {
 		const filtered = filterOpenRequests(
-			[urgentRequest, normalRequest],
+			[
+				urgentRequest as unknown as Parameters<typeof filterOpenRequests>[0][number],
+				normalRequest as unknown as Parameters<typeof filterOpenRequests>[0][number],
+			],
 			{ categories: [], urgentOnly: true },
 		);
 		expect(filtered).toHaveLength(1);

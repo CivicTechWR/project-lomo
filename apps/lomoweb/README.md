@@ -38,6 +38,7 @@ The page renders sections in this order:
 - **CategorySection** — A reusable layout component used by both `FindSection` and `ShareSection`. Accepts `layout="image-first"` or `layout="text-first"` to alternate visual rhythm between sections.
 - **CategoryPicker** — Client component that lets users toggle category badges to swap the displayed image card.
 - **Design system components** — Buttons, headings, text, badges, cards, and links are imported from `@repo/ui`.
+- **Data hooks layer (`lib/hooks/`)** — Domain-bound custom React hooks (`use-user-profile.ts`, `use-help-requests.ts`, `use-request-messages.ts`, `use-notifications.ts`, `use-admin.ts`) encapsulate Convex query and mutation calls to separate reactive data fetching from presentation UI components.
 - **Accessibility** — Skip-to-content link in the layout, `aria-label` on every `<section>`, `sr-only` headings where visual headings are absent, 44px minimum touch targets (`min-h-11`).
 
 ### Visual design language

@@ -46,7 +46,7 @@ export const softColors: Record<Colors, string> = {
 		"data-hovered:bg-yellow-4 data-pressed:bg-yellow-5",
 	),
 	gray: tw(
-		"bg-gray-3 text-gray-11",
+		"bg-white text-gray-11",
 		"data-hovered:bg-gray-4 data-pressed:bg-gray-5",
 	),
 	red: tw(

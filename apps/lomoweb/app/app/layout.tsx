@@ -12,7 +12,7 @@ export default async function ProtectedLayout({
 	}
 
 	return (
-		<div className="flex min-h-screen w-full bg-gray-1">
+		<div className="flex min-h-screen w-full bg-surface-warm">
 			<AppChrome>{children}</AppChrome>
 		</div>
 	);

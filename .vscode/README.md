@@ -8,7 +8,7 @@ The [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemN
 
 ```jsonc
 "tailwindCSS.experimental.configFile": {
-    "apps/webapp/src/app.css": ["apps/webapp/**"],
+    "apps/lomoweb/app/globals.css": ["apps/lomoweb/**"],
     "packages/ui/src/theme/theme.css": ["packages/ui/**"]
 }
 ```

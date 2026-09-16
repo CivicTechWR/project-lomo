@@ -37,6 +37,13 @@ const ADMIN_TABS: NavTab[] = [
 	{ id: "settings", label: "Settings", href: "/app/admin/settings", icon: "settings" },
 ];
 
+const ADMIN_EXIT_TAB: NavTab = {
+	id: "exit-admin",
+	label: "Back to App",
+	href: "/app",
+	icon: "back",
+};
+
 // --- Helpers ---
 
 function getActiveAppTabId(pathname: string, homeMode: string): string {
@@ -76,8 +83,9 @@ function getActiveAdminTabId(pathname: string): string {
  * Unified app sidebar navigation.
  *
  * Renders as:
- * - Sidebar on lg+ viewport (left side, fixed width)
- * - Bottom tab bar on smaller viewports (fixed to bottom)
+ * - Labelled sidebar on lg+ viewports (left side, fixed width)
+ * - Floating navigation rail on md viewports
+ * - Bottom tab bar on compact viewports (fixed to bottom)
  *
  * Automatically switches between regular app tabs and admin tabs
  * based on the current route.
@@ -104,6 +112,10 @@ export function AppSidebar() {
 	const activeTabId = isOnAdminRoute
 		? getActiveAdminTabId(pathname)
 		: getActiveAppTabId(pathname, mode);
+
+	const phoneTabs = isOnAdminRoute
+		? [...ADMIN_TABS, ADMIN_EXIT_TAB]
+		: tabs;
 
 	const handleTabClick = useCallback(
 		(tab: NavTab) => {
@@ -134,118 +146,139 @@ export function AppSidebar() {
 	return (
 		<>
 			{/* Desktop sidebar (lg+) */}
-			{/*
-			  Pinned to the viewport rather than stretching with the page.
-			  `h-screen` gives it a definite height so the flex row can't grow it to the
-			  full content height — which is what previously pushed Sign out and
-			  Settings to the bottom of a long page instead of the bottom of the screen.
-			  The document remains the scroll container, so the `window.scrollTo` in
-			  `handleTabClick` still works.
-			*/}
 			<nav
 				aria-label={isOnAdminRoute ? "Admin navigation" : "App navigation"}
-				className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-gray-6 lg:bg-gray-1"
+				className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-60 lg:shrink-0 lg:flex-col border-r-3 border-terracotta-9 bg-surface-warm p-2"
 			>
-				{/* Logo header */}
-				<div className="flex h-14 shrink-0 items-center border-b border-gray-6 px-4">
-					<Link
-						href="/app"
-						className="flex items-center gap-2 rounded-1 outline-none ring-gray-8 focus-visible:ring-2 focus-visible:ring-offset-2"
-					>
-						<LomoLogo className="size-7 shrink-0" aria-hidden />
-						<span className="font-display text-lg font-semibold text-gray-12">
-							{isOnAdminRoute ? "LoMo Admin" : "LoMo"}
-						</span>
-					</Link>
-				</div>
-
-				{/* Back to app link (admin only) */}
-				{isOnAdminRoute && (
-					<div className="shrink-0 px-3 pt-3">
-						<Link
-							href="/app"
-							className="flex items-center gap-2 rounded-2 px-3 py-2 text-sm font-medium text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-						>
-							<Icon name="back" className="size-4" />
-							<span>Back to app</span>
-						</Link>
-					</div>
-				)}
-
-				{/*
-				  A list of links, not a tablist. Activating one is a route change, and
-				  there are no tabpanels for a `tablist` to own — so `role="tab"` would
-				  promise arrow-key traversal and panel swapping that never happen. The
-				  enclosing <nav> supplies the landmark and label.
-				*/}
-				{/*
-				  `min-h-0` is load-bearing: without it a flex child refuses to shrink
-				  below its content, so a nav list taller than the viewport would overflow
-				  the pinned sidebar instead of scrolling inside it.
-				*/}
-				<ul role="list" className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-3">
-					{tabs.map(tab => (
-						<li key={tab.id}>
-							<SidebarTab
-								tab={tab}
-								isActive={activeTabId === tab.id}
-								onTabClick={handleTabClick}
-							/>
-						</li>
-					))}
-
-					{/* Admin link for non-admin routes */}
-					{!isOnAdminRoute && isAdmin && (
-						<li>
-							<div role="presentation" className="my-2 border-t border-gray-6" />
-							<Link
-								href="/app/admin"
-								className="flex min-h-11 items-center gap-3 rounded-2 px-3 py-2.5 text-sm font-medium text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-							>
-								<Icon name="admin" className="size-5 text-gray-11" />
-								<span>Admin</span>
-							</Link>
-						</li>
-					)}
-				</ul>
-
-				{/* Sign out, pinned to the bottom of the viewport-height sidebar */}
-				<div className="shrink-0 border-t border-gray-6 p-3">
-					<button
-						type="button"
-						onClick={() => void handleSignOut()}
-						className="flex w-full items-center gap-3 rounded-2 px-3 py-2.5 text-sm font-medium text-gray-11 transition-colors hover:bg-gray-3 hover:text-gray-12"
-					>
-						<Icon name="signOut" className="size-5" />
-						<span>Sign out</span>
-					</button>
-				</div>
+				<RailContent
+					isOnAdminRoute={isOnAdminRoute}
+					isAdmin={isAdmin ?? false}
+					tabs={tabs}
+					activeTabId={activeTabId}
+					onTabClick={handleTabClick}
+					onSignOut={handleSignOut}
+				/>
 			</nav>
 
-			{/* Mobile/tablet bottom bar (below lg) */}
+			{/* Medium screens use a floating navigation rail, following Material 3's adaptive layout. */}
 			<nav
 				aria-label={isOnAdminRoute ? "Admin navigation" : "App navigation"}
-				className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-6 bg-gray-1/95 backdrop-blur supports-[backdrop-filter]:bg-gray-1/85 lg:hidden"
+				className="sticky top-3 ml-3 hidden h-[calc(100vh-1.5rem)] w-56 shrink-0 flex-col rounded-6 border-3 border-terracotta-9 bg-surface-warm p-2 shadow-[0_12px_28px_rgba(74,53,47,0.18),0_2px_10px_rgba(74,53,47,0.10)] md:flex lg:hidden"
 			>
-				<ul role="list" className="flex items-center justify-around px-2 py-1">
-					{tabs.map(tab => (
-						<li key={tab.id}>
-							<BottomTab
-								tab={tab}
-								isActive={activeTabId === tab.id}
-								onTabClick={handleTabClick}
-							/>
-						</li>
-					))}
-				</ul>
+				<RailContent
+					isOnAdminRoute={isOnAdminRoute}
+					isAdmin={isAdmin ?? false}
+					tabs={tabs}
+					activeTabId={activeTabId}
+					onTabClick={handleTabClick}
+					onSignOut={handleSignOut}
+				/>
+			</nav>
+
+			{/* Compact mobile bottom bar (below md) */}
+			<nav
+				aria-label={isOnAdminRoute ? "Admin navigation" : "App navigation"}
+				className="fixed inset-x-0 bottom-3 z-40 flex min-w-80 justify-center px-3 md:hidden"
+			>
+				<div className="w-full max-w-lg rounded-full border-2 border-terracotta-9 bg-surface-warm shadow-[0_12px_28px_rgba(74,53,47,0.18),0_2px_10px_rgba(74,53,47,0.10)]">
+					<ul role="list" className="flex items-center justify-between gap-1 p-1.5">
+						{phoneTabs.map(tab => (
+							<li key={tab.id} className="flex-1">
+								<BottomTab
+									tab={tab}
+									isActive={activeTabId === tab.id}
+									onTabClick={handleTabClick}
+								/>
+							</li>
+						))}
+					</ul>
+				</div>
 			</nav>
 		</>
 	);
 }
 
-// --- SidebarTab Component ---
+// --- Shared Rail Content Component ---
 
-function SidebarTab({
+function RailContent({
+	isOnAdminRoute,
+	isAdmin,
+	tabs,
+	activeTabId,
+	onTabClick,
+	onSignOut,
+}: {
+	isOnAdminRoute: boolean;
+	isAdmin: boolean;
+	tabs: NavTab[];
+	activeTabId: string;
+	onTabClick: (tab: NavTab) => void;
+	onSignOut: () => Promise<void>;
+}) {
+	return (
+		<>
+			<Link
+				href="/app"
+				aria-label={isOnAdminRoute ? "LoMo Admin" : "LoMo"}
+				className="flex h-14 shrink-0 items-center gap-3 rounded-full px-3 outline-none ring-gray-8 focus-visible:ring-2 focus-visible:ring-offset-2"
+			>
+				<LomoLogo className="size-8 shrink-0" aria-hidden />
+				<span className="font-logo text-2xl font-semibold text-gray-12">
+					{isOnAdminRoute ? "LoMo Admin" : "LoMo"}
+				</span>
+			</Link>
+
+			{/* Back to app link (admin only) */}
+			{isOnAdminRoute && (
+				<Link
+					href="/app"
+					className="mt-3 flex h-12 shrink-0 items-center gap-3 rounded-full px-3 text-sm font-medium text-gray-11 outline-none transition-colors hover:bg-terracotta-1 hover:text-gray-12 focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2"
+				>
+					<Icon name="back" className="size-4" />
+					<span>Back to app</span>
+				</Link>
+			)}
+
+			<ul role="list" className="mt-3 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
+				{tabs.map(tab => (
+					<li key={tab.id}>
+						<RailTab
+							tab={tab}
+							isActive={activeTabId === tab.id}
+							onTabClick={onTabClick}
+						/>
+					</li>
+				))}
+
+				{/* Admin link for non-admin routes */}
+				{!isOnAdminRoute && isAdmin && (
+					<li className="mt-1 border-t border-terracotta-9/15 pt-2">
+						<Link
+							href="/app/admin"
+							aria-label="Admin"
+							className="flex h-12 w-full items-center gap-3 rounded-full px-3 text-sm font-medium text-gray-11 outline-none transition-colors hover:bg-terracotta-1 hover:text-gray-12 focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2"
+						>
+							<Icon name="admin" className="size-5" />
+							<span>Admin</span>
+						</Link>
+					</li>
+				)}
+			</ul>
+
+			<button
+				type="button"
+				onClick={() => void onSignOut()}
+				aria-label="Sign out"
+				className="flex h-12 w-full shrink-0 items-center gap-3 rounded-full px-3 text-sm font-medium text-gray-11 outline-none transition-colors hover:bg-terracotta-1 hover:text-gray-12 focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2"
+			>
+				<Icon name="signOut" className="size-5" />
+				<span>Sign out</span>
+			</button>
+		</>
+	);
+}
+
+function RailTab({
 	tab,
 	isActive,
 	onTabClick,
@@ -256,7 +289,6 @@ function SidebarTab({
 }) {
 	const handleClick = useCallback(
 		(e: React.MouseEvent) => {
-			// For mode-based tabs, always prevent default link behavior
 			if (tab.homeMode) {
 				e.preventDefault();
 				onTabClick(tab);
@@ -276,19 +308,16 @@ function SidebarTab({
 			aria-current={isActive ? "page" : undefined}
 			onClick={handleClick}
 			className={[
-				"flex items-center gap-3 rounded-2 px-3 py-2.5",
-				"min-h-11 min-w-11",
-				"text-sm font-medium transition-colors",
-				"outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
+				"flex h-12 w-full items-center gap-3 rounded-full border-2 px-3 text-sm font-medium",
+				"outline-none transition-colors focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
 				isActive
-					? "bg-gray-4 text-gray-12"
-					: "text-gray-11 hover:bg-gray-3 hover:text-gray-12",
+					? "border-transparent bg-terracotta-9 text-white"
+					: "border-transparent text-gray-11 hover:bg-terracotta-1 hover:text-gray-12",
 			].join(" ")}
 		>
-			{/* size-5 matches BottomTab so both nav variants read at the same weight. */}
 			<Icon
 				name={tab.icon}
-				className={`size-5 ${isActive ? "text-gray-12" : "text-gray-11"}`}
+				className={`size-5 ${isActive ? "text-white" : "text-gray-11"}`}
 			/>
 			<span>{tab.label}</span>
 		</Link>
@@ -328,16 +357,18 @@ function BottomTab({
 			aria-current={isActive ? "page" : undefined}
 			onClick={handleClick}
 			className={[
-				"flex flex-col items-center justify-center gap-0.5",
-				"min-h-11 min-w-11 px-2 py-1",
-				"text-xs font-medium transition-colors",
+				"flex w-full flex-col items-center justify-center gap-1",
+				"min-h-11 min-w-0 rounded-full px-2 py-1.5",
+				"text-[11px] font-medium leading-none transition-all duration-150",
 				"outline-none focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2",
-				isActive ? "text-gray-12" : "text-gray-11",
+				isActive
+					? "bg-terracotta-9 text-white shadow-[0_4px_12px_rgba(74,53,47,0.18)]"
+					: "bg-transparent text-gray-11 hover:bg-terracotta-1 hover:text-gray-12",
 			].join(" ")}
 		>
 			<Icon
 				name={tab.icon}
-				className={`size-5 ${isActive ? "text-gray-12" : "text-gray-11"}`}
+				className={`size-5 ${isActive ? "text-white" : "text-gray-11"}`}
 			/>
 			<span>{tab.label}</span>
 		</Link>

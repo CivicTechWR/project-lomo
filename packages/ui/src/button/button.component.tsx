@@ -5,11 +5,8 @@ import type {
 	ButtonProps as AriaProps,
 } from "react-aria-components";
 import type { VariantProps } from "tailwind-variants";
-import {
-	Button as AriaButton,
-	Link as AriaLink,
-	composeRenderProps,
-} from "react-aria-components";
+import { Button as AriaButton, Link as AriaLink } from "react-aria-components";
+import { cn } from "../utils/cn.ts";
 import { buttonVariants } from "./button.variants.ts";
 
 type ButtonBaseProps = AriaProps & AriaLinkProps & Omit<VariantProps<typeof buttonVariants>, "icon">;
@@ -21,30 +18,32 @@ export function Button({
 	variant,
 	size,
 	color,
-	border,
+	border = "small",
 	borderColor,
 	textColor,
 	icon,
 	className,
 	...props
 }: ButtonProps) {
-	const renderStyles = (cls: string) =>
-		buttonVariants({
-			variant,
-			size,
-			color,
-			border,
-			borderColor,
-			textColor,
-			icon,
-			class: cls,
-		});
+	const renderStyles = buttonVariants({
+		variant,
+		size,
+		color,
+		border,
+		borderColor,
+		textColor,
+		icon,
+	});
 
 	if (props.href) {
 		return (
 			<AriaLink
 				{...props}
-				className={composeRenderProps(className as any, renderStyles)}
+				className={values =>
+					cn(
+						renderStyles,
+						typeof className === "function" ? className(values) : className,
+					)}
 			/>
 		);
 	}
@@ -52,7 +51,11 @@ export function Button({
 	return (
 		<AriaButton
 			{...props}
-			className={composeRenderProps(className as any, renderStyles)}
+			className={values =>
+				cn(
+					renderStyles,
+					typeof className === "function" ? className(values) : className,
+				)}
 		/>
 	);
 }

@@ -50,7 +50,7 @@ export const cardSurfaceColors: ColorMap = {
 		"data-pressed:shadow-[inset_0_0_0_1px_var(--color-yellow-8)]",
 	),
 	gray: tw(
-		"bg-gray-3 shadow-[var(--shadow-card-surface)]",
+		"bg-white shadow-[var(--shadow-card-surface)]",
 		"data-hovered:shadow-[var(--shadow-card-surface-hover)]",
 		"data-pressed:shadow-[var(--shadow-card-surface-active)]",
 	),

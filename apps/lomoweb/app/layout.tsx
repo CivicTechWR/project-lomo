@@ -60,7 +60,7 @@ export default function RootLayout({
 					rel="stylesheet"
 				/>
 			</head>
-			<body className="min-h-full flex flex-col bg-surface-warm">
+			<body className="min-h-full min-w-80 flex flex-col bg-surface-warm">
 				<ConvexClientProvider>{children}</ConvexClientProvider>
 			</body>
 		</html>

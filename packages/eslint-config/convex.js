@@ -12,6 +12,8 @@ export function GetConfig(options) {
 			...options,
 			ignores: [
 				"**/convex/_generated/**",
+				"**/.agents/**",
+				".agents/**",
 				/*
 				 * Local dev deployment state written by `convex dev`. Generated, holds
 				 * an adminKey and instanceSecret, and is gitignored via a nested

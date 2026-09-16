@@ -2,8 +2,6 @@
 
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
-import type { FunctionReturnType } from "convex/server";
-import type { ReactNode } from "react";
 import type { HelpRequestStatus, HelpRequestStatusFilter } from "@/lib/help-request-status";
 import type { OpenRequestFilters } from "@/lib/open-request-filters";
 import type { RequestCategoryId } from "@/lib/request-flow/types";
@@ -19,7 +17,6 @@ import { Modal, ModalOverlay } from "@repo/ui/modal";
 import { Text } from "@repo/ui/text";
 import { useQuery } from "convex/react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import {
@@ -43,6 +40,7 @@ import {
 import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
 import { isRequestUrgent } from "@/lib/request-urgency";
 import { canOfferHelp } from "@/lib/user-status";
+import { HomeDashboardPanel, RequestCardLink } from "./home-dashboard-panel";
 import { StatusFilterChips } from "./status-filter-chips";
 
 const HelpAreaMap = dynamic(
@@ -54,107 +52,6 @@ const HelpAreaMap = dynamic(
 		),
 	},
 );
-
-type HomeDashboard = NonNullable<
-	FunctionReturnType<typeof api.helpRequests.homeDashboard>
->;
-
-/** Disclosure chevron that rotates a quarter turn once its section is open. */
-function ChevronIcon({ expanded, className }: { expanded: boolean; className?: string }) {
-	return (
-		<Icon
-			name="chevronRight"
-			className={`size-4 transition-transform duration-150 ${
-				expanded ? "rotate-90" : ""
-			} ${className ?? ""}`}
-		/>
-	);
-}
-
-function HomeSection(props: {
-	id: string;
-	title: string;
-	count: number;
-	expanded: boolean;
-	onExpandedChange: (expanded: boolean) => void;
-	children: ReactNode;
-}) {
-	const { id, title, count, expanded, onExpandedChange, children } = props;
-	const panelId = `${id}-panel`;
-
-	return (
-		<section className="flex flex-col gap-3">
-			<button
-				type="button"
-				className="flex w-full items-center gap-2 rounded-[var(--radius-2)] text-left outline-none ring-gray-8 focus-visible:ring-2"
-				aria-expanded={expanded}
-				aria-controls={panelId}
-				onClick={() => onExpandedChange(!expanded)}
-			>
-				<ChevronIcon expanded={expanded} className="shrink-0 text-gray-11" />
-				<Heading level={2} size={5} className="min-w-0 flex-1">
-					{title}
-				</Heading>
-				<Badge variant="soft" size={1} color="gray">
-					{count}
-				</Badge>
-			</button>
-			{expanded
-				? (
-						<div id={panelId} className="flex flex-col gap-3">
-							{children}
-						</div>
-					)
-				: null}
-		</section>
-	);
-}
-
-function RequestCardLink(props: {
-	href: string;
-	title: string;
-	summary: string;
-	badges?: ReactNode;
-}) {
-	const { href, title, summary, badges } = props;
-	return (
-		<Link
-			href={href}
-			className="block rounded-[max(var(--radius-3),12px)] outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-gray-8 focus-visible:ring-offset-2"
-		>
-			<Card
-				size={2}
-				variant="surface"
-				className="p-4 transition-colors hover:bg-gray-2"
-			>
-				<div className="flex items-start justify-between gap-3">
-					<div className="min-w-0 flex-1">
-						<Text size={3} weight="medium" className="line-clamp-2">
-							{title}
-						</Text>
-						<Text size={2} color="gray" className="mt-1 line-clamp-2">
-							{summary}
-						</Text>
-					</div>
-					{badges
-						? (
-								<div className="flex shrink-0 flex-col items-end gap-1">
-									{badges}
-								</div>
-							)
-						: null}
-				</div>
-			</Card>
-		</Link>
-	);
-}
-
-function activeRoleLabel(item: HomeDashboard["active"][number]): string {
-	if (item.status === "awaiting_requester_acceptance") {
-		return item.role === "requester" ? "Accept offer" : "Awaiting acceptance";
-	}
-	return item.role === "requester" ? "Receiving help" : "Offering help";
-}
 
 export function RequestsHome({
 	preloadedUser,
@@ -220,239 +117,6 @@ export function RequestsHome({
 	);
 }
 
-function HomeDashboardPanel(props: {
-	dashboard: HomeDashboard | undefined;
-	onViewAllMine: () => void;
-	onViewAllOpen: () => void;
-	onNewRequest: () => void;
-}) {
-	const { dashboard, onViewAllMine, onViewAllOpen, onNewRequest } = props;
-	const [activeOpen, setActiveOpen] = useState(true);
-	const [pendingOpen, setPendingOpen] = useState(true);
-	const [openRequestsOpen, setOpenRequestsOpen] = useState(true);
-	const initializedRef = useRef(false);
-
-	if (dashboard && !initializedRef.current) {
-		initializedRef.current = true;
-		setActiveOpen(dashboard.active.length > 0);
-		setPendingOpen(dashboard.pendingMine.length > 0);
-		setOpenRequestsOpen(dashboard.canHelpNow && dashboard.openPreview.length > 0);
-	}
-
-	const showPending = dashboard === undefined || dashboard.pendingMineTotal > 0;
-	const showOpenRequests = dashboard !== undefined && dashboard.canHelpNow;
-
-	return (
-		<>
-			<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-				<div>
-					<Heading level={1} size={7}>
-						Home
-					</Heading>
-					<Text size={2} color="gray" className="mt-1">
-						Your active matches, pending requests for support, and nearby open requests.
-					</Text>
-				</div>
-				<div className="flex shrink-0 flex-wrap items-center gap-2">
-					<Button
-						variant="solid"
-						color="sage"
-						size={2}
-						onPress={onNewRequest}
-					>
-						New request
-					</Button>
-				</div>
-			</div>
-
-			{dashboard === undefined && (
-				<Text size={2} color="gray">
-					Loading…
-				</Text>
-			)}
-
-			{dashboard !== undefined && (
-				<div className="flex flex-col gap-8">
-					<HomeSection
-						id="active-matches"
-						title="Support in progress"
-						count={dashboard.active.length}
-						expanded={activeOpen}
-						onExpandedChange={setActiveOpen}
-					>
-						{dashboard.active.length === 0
-							? (
-									<Card size={2} variant="surface" className="p-6">
-										<Text size={3} color="gray" className="text-center">
-											No active matches right now. When someone offers help — or
-											you&apos;re helping someone — it will show up here.
-										</Text>
-									</Card>
-								)
-							: (
-									<ul className="flex flex-col gap-3">
-										{dashboard.active.map(item => (
-											<li key={`${item.role}-${item._id}`}>
-												<RequestCardLink
-													href={
-														item.role === "requester"
-															? `/app/requests/${item._id}`
-															: `/app/offer/${item._id}`
-													}
-													title={item.title}
-													summary={item.summary}
-													badges={(
-														<>
-															<Badge
-																variant="soft"
-																size={1}
-																color={
-																	item.status === "awaiting_requester_acceptance"
-																		? "terracotta"
-																		: "sage"
-																}
-															>
-																{activeRoleLabel(item)}
-															</Badge>
-															<Badge
-																variant="soft"
-																size={1}
-																color={statusBadgeColor(item.status as HelpRequestStatus)}
-															>
-																{HELP_REQUEST_STATUS_LABEL[item.status as HelpRequestStatus]}
-															</Badge>
-														</>
-													)}
-												/>
-											</li>
-										))}
-									</ul>
-								)}
-					</HomeSection>
-
-					{showPending && (
-						<HomeSection
-							id="pending-requests"
-							title="My requests for support"
-							count={dashboard.pendingMineTotal}
-							expanded={pendingOpen}
-							onExpandedChange={setPendingOpen}
-						>
-							{dashboard.pendingMine.length === 0
-								? (
-										<Card size={2} variant="surface" className="p-6">
-											<Text size={3} color="gray" className="text-center">
-												You don&apos;t have any pending requests.
-											</Text>
-										</Card>
-									)
-								: (
-										<>
-											<ul className="flex flex-col gap-3">
-												{dashboard.pendingMine.map(item => (
-													<li key={item._id}>
-														<RequestCardLink
-															href={`/app/requests/${item._id}`}
-															title={item.title}
-															summary={item.summary}
-															badges={(
-																<>
-																	{isRequestUrgent(item)
-																		? (
-																				<Badge variant="soft" size={1} color="red">
-																					Urgent
-																				</Badge>
-																			)
-																		: null}
-																	<Badge variant="soft" size={1} color="amber">
-																		Pending
-																	</Badge>
-																</>
-															)}
-														/>
-													</li>
-												))}
-											</ul>
-											<Button
-												variant="soft"
-												color="gray"
-												size={2}
-												className="self-start"
-												onPress={onViewAllMine}
-											>
-												View all my requests
-											</Button>
-										</>
-									)}
-						</HomeSection>
-					)}
-
-					{showOpenRequests && (
-						<HomeSection
-							id="open-requests"
-							title="Open requests"
-							count={dashboard.openTotal}
-							expanded={openRequestsOpen}
-							onExpandedChange={setOpenRequestsOpen}
-						>
-							{dashboard.openPreview.length === 0
-								? (
-										<Card size={2} variant="surface" className="p-6">
-											<Text size={3} color="gray" className="text-center">
-												No open requests right now. Check back again soon.
-											</Text>
-										</Card>
-									)
-								: (
-										<>
-											<ul className="flex flex-col gap-3">
-												{dashboard.openPreview.map(item => (
-													<li key={item._id}>
-														<RequestCardLink
-															href={`/app/offer/${item._id}`}
-															title={item.title}
-															summary={item.summary}
-															badges={(
-																<>
-																	{item.inYourArea
-																		? (
-																				<Badge variant="soft" size={1} color="sage">
-																					In your area
-																				</Badge>
-																			)
-																		: null}
-																	{isRequestUrgent(item)
-																		? (
-																				<Badge variant="soft" size={1} color="red">
-																					Urgent
-																				</Badge>
-																			)
-																		: null}
-																</>
-															)}
-														/>
-													</li>
-												))}
-											</ul>
-											<Button
-												variant="soft"
-												color="gray"
-												size={2}
-												className="self-start"
-												onPress={onViewAllOpen}
-											>
-												View all open requests
-											</Button>
-										</>
-									)}
-						</HomeSection>
-					)}
-				</div>
-			)}
-		</>
-	);
-}
-
 function RequestingHelpPanel(props: {
 	router: ReturnType<typeof useRouter>;
 	statusFilter: HelpRequestStatusFilter;
@@ -480,8 +144,10 @@ function RequestingHelpPanel(props: {
 				<div className="flex shrink-0 flex-wrap items-center gap-2">
 					<Button
 						variant="solid"
-						color="sage"
+						color="yellow"
 						size={2}
+						border="large"
+						borderColor="terracotta"
 						onPress={() => router.push("/app/request?fresh=1")}
 					>
 						New request
@@ -563,8 +229,10 @@ function RequestingHelpPanel(props: {
 					<div className="mt-4 flex justify-center">
 						<Button
 							variant="solid"
-							color="sage"
+							color="yellow"
 							size={2}
+							border="large"
+							borderColor="terracotta"
 							onPress={() => router.push("/app/request?fresh=1")}
 						>
 							Start a request
@@ -663,8 +331,10 @@ function RestingPanel({ blocked }: { blocked: boolean }) {
 					{!blocked && (
 						<Button
 							variant="solid"
-							color="sage"
+							color="yellow"
 							size={2}
+							border="large"
+							borderColor="terracotta"
 							onPress={() => router.push("/app/profile")}
 						>
 							Update helper preferences

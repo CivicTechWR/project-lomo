@@ -1,13 +1,16 @@
 "use client";
 
 import { Heading } from "@repo/ui/heading";
+import { SelectionCard } from "@repo/ui/selection-card";
 import { Text } from "@repo/ui/text";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
+import {
+	getCategoryRoute,
+	REQUEST_CATEGORIES,
+} from "@/lib/request-flow/categories";
 import { useRequestDraft } from "./request-draft-context";
 import { RequestStepFooter } from "./request-step-footer";
-import { SelectionCard } from "./selection-card";
 
 export function CategoryStep() {
 	const router = useRouter();
@@ -26,24 +29,7 @@ export function CategoryStep() {
 			return;
 		}
 		setCategory(cat.id);
-		if (cat.id === "food") {
-			router.push("/app/request/food/kind");
-		}
-		if (cat.id === "items") {
-			router.push("/app/request/items/details");
-		}
-		if (cat.id === "other") {
-			router.push("/app/request/other/details");
-		}
-		if (cat.id === "support") {
-			router.push("/app/request/support/details");
-		}
-		if (cat.id === "paperwork") {
-			router.push("/app/request/paperwork/details");
-		}
-		if (cat.id === "ceremony") {
-			router.push("/app/request/ceremony/role");
-		}
+		router.push(getCategoryRoute(cat.id));
 	}
 
 	return (

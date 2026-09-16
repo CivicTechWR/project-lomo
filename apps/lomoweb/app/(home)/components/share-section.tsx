@@ -2,7 +2,7 @@ import { Badge } from "@repo/ui/badge";
 
 import { SHARE_PHOTOS } from "@/lib/imagery";
 import { CategorySection } from "./category-section";
-import { infoBadge } from "./styles";
+import { infoBadge, sectionLabel } from "./styles";
 
 const categories = [
 	{ key: "supplies", label: "Dropping Off Supplies", color: "sage" as const },
@@ -21,6 +21,7 @@ export function ShareSection() {
 			body="When you have capacity or extra resources, respond to open requests from neighbours. No obligation, no timeline — just community care when it works for you."
 			badges={(
 				<div className="flex flex-wrap gap-2 pt-2">
+					<span className={`${sectionLabel} sr-only`}>Solidarity, Not Charity</span>
 					<Badge variant="soft" color="terracotta" size={2} className={infoBadge}>
 						🌟 Voluntary & Direct
 					</Badge>

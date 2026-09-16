@@ -6,18 +6,19 @@
 		"dev": "convex dev",
 		"logs": "convex logs",
 		"typecheck": "tsc -p convex",
+		"test": "bun test",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
-		"@convex-dev/better-auth": "0.11.4",
-		"better-auth": "1.6.22",
-		"convex": "^1.39.1",
+		"@convex-dev/better-auth": "catalog:",
+		"better-auth": "catalog:",
+		"convex": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@repo/eslint-config": "workspace:*",
-		"@types/node": "^24.12.4",
+		"@types/node": "catalog:",
 		"eslint": "catalog:",
 		"typescript": "catalog:"
 	}

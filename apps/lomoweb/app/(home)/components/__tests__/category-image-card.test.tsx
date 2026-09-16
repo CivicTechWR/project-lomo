@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { CategoryImageCard } from "../category-image-card.tsx";
 
 vi.mock("next/image", () => ({
-	default: (props: any) => <img {...props} />,
+	default: ({ fill: _fill, priority: _priority, placeholder: _placeholder, quality: _quality, ...props }: any) => <img {...props} />,
 }));
 
 const WHITESPACE_RE = /\s/g;

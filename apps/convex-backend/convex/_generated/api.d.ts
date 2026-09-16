@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as admin_dashboard from "../admin/dashboard.js";
+import type * as admin_settings from "../admin/settings.js";
 import type * as adminDashboard from "../adminDashboard.js";
 import type * as adminSettings from "../adminSettings.js";
 import type * as auth from "../auth.js";
@@ -29,13 +31,24 @@ import type * as lib_siteEnv from "../lib/siteEnv.js";
 import type * as lib_stripEmailReply from "../lib/stripEmailReply.js";
 import type * as lib_userStatus from "../lib/userStatus.js";
 import type * as lib_verifyResendWebhook from "../lib/verifyResendWebhook.js";
+import type * as messaging_emailRelay from "../messaging/emailRelay.js";
+import type * as messaging_mutations from "../messaging/mutations.js";
+import type * as messaging_queries from "../messaging/queries.js";
 import type * as notifications from "../notifications.js";
+import type * as notifications_actions from "../notifications/actions.js";
+import type * as notifications_mutations from "../notifications/mutations.js";
+import type * as notifications_queries from "../notifications/queries.js";
 import type * as redactHelpRequest from "../redactHelpRequest.js";
 import type * as requestGeocode from "../requestGeocode.js";
 import type * as requestMessages from "../requestMessages.js";
+import type * as requests_helpers from "../requests/helpers.js";
+import type * as requests_mutations from "../requests/mutations.js";
+import type * as requests_queries from "../requests/queries.js";
 import type * as resendInboundHttp from "../resendInboundHttp.js";
 import type * as seed from "../seed.js";
 import type * as users from "../users.js";
+import type * as users_mutations from "../users/mutations.js";
+import type * as users_queries from "../users/queries.js";
 
 import type {
   ApiFromModules,
@@ -44,6 +57,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "admin/dashboard": typeof admin_dashboard;
+  "admin/settings": typeof admin_settings;
   adminDashboard: typeof adminDashboard;
   adminSettings: typeof adminSettings;
   auth: typeof auth;
@@ -65,13 +80,24 @@ declare const fullApi: ApiFromModules<{
   "lib/stripEmailReply": typeof lib_stripEmailReply;
   "lib/userStatus": typeof lib_userStatus;
   "lib/verifyResendWebhook": typeof lib_verifyResendWebhook;
+  "messaging/emailRelay": typeof messaging_emailRelay;
+  "messaging/mutations": typeof messaging_mutations;
+  "messaging/queries": typeof messaging_queries;
   notifications: typeof notifications;
+  "notifications/actions": typeof notifications_actions;
+  "notifications/mutations": typeof notifications_mutations;
+  "notifications/queries": typeof notifications_queries;
   redactHelpRequest: typeof redactHelpRequest;
   requestGeocode: typeof requestGeocode;
   requestMessages: typeof requestMessages;
+  "requests/helpers": typeof requests_helpers;
+  "requests/mutations": typeof requests_mutations;
+  "requests/queries": typeof requests_queries;
   resendInboundHttp: typeof resendInboundHttp;
   seed: typeof seed;
   users: typeof users;
+  "users/mutations": typeof users_mutations;
+  "users/queries": typeof users_queries;
 }>;
 
 /**

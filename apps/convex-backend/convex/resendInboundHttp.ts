@@ -3,12 +3,12 @@ import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
 import { parseSvixHeaders, verifyResendWebhookPayload } from "./lib/verifyResendWebhook";
 
-const SCRIPT_TAG_RE = /<script[\s\S]*?<\/script>/gi;
-const STYLE_TAG_RE = /<style[\s\S]*?<\/style>/gi;
+const SCRIPT_TAG_RE = /<script\b[\s\S]*?<\/script\b[^>]*>/gi;
+const STYLE_TAG_RE = /<style\b[\s\S]*?<\/style\b[^>]*>/gi;
 const HTML_TAG_RE = /<[^>]+>/g;
 const WHITESPACE_RE = /\s+/g;
 
-function stripHtmlToText(html: string): string {
+export function stripHtmlToText(html: string): string {
 	return html
 		.replace(SCRIPT_TAG_RE, " ")
 		.replace(STYLE_TAG_RE, " ")

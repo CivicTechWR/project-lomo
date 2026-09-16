@@ -31,6 +31,54 @@ const borderColors: Record<string, string> = {
 	darkred: "border-[var(--darkred-9)]",
 };
 
+function createVariantColorCompoundVariants() {
+	const variants = [
+		{ variant: "solid", map: solidColors },
+		{ variant: "soft", map: softColors },
+		{ variant: "outline", map: outlineColors },
+		{ variant: "ghost", map: ghostColors },
+	] as const;
+
+	const colors = [
+		"terracotta",
+		"sage",
+		"yellow",
+		"gray",
+		"red",
+		"amber",
+		"darkred",
+	] as const;
+
+	return variants.flatMap(({ variant, map }) =>
+		colors.map(color => ({
+			variant,
+			color,
+			class: map[color],
+		})),
+	);
+}
+
+function createBorderCompoundVariants() {
+	const borders = ["small", "medium", "large"] as const;
+	const colors = [
+		"terracotta",
+		"sage",
+		"yellow",
+		"gray",
+		"red",
+		"amber",
+		"darkred",
+	] as const;
+
+	return borders.flatMap(border =>
+		colors.map(borderColor => ({
+			border,
+			borderColor,
+			class: borderColors[borderColor],
+		})),
+	);
+}
+
 export const buttonVariants = tv({
 	base: interactiveBase,
 	variants: {
@@ -79,92 +127,8 @@ export const buttonVariants = tv({
 		{ icon: true, size: 2, class: "w-10 min-w-0 px-0" },
 		{ icon: true, size: 3, class: "w-12 min-w-0 px-0" },
 		{ icon: true, size: 4, class: "w-14 min-w-0 px-0" },
-		// Solid
-		{ variant: "solid", color: "terracotta", class: solidColors.terracotta },
-		{ variant: "solid", color: "sage", class: solidColors.sage },
-		{ variant: "solid", color: "yellow", class: solidColors.yellow },
-		{ variant: "solid", color: "gray", class: solidColors.gray },
-		{ variant: "solid", color: "red", class: solidColors.red },
-		{ variant: "solid", color: "amber", class: solidColors.amber },
-		{ variant: "solid", color: "darkred", class: solidColors.darkred },
-		// Soft
-		{ variant: "soft", color: "terracotta", class: softColors.terracotta },
-		{ variant: "soft", color: "sage", class: softColors.sage },
-		{ variant: "soft", color: "yellow", class: softColors.yellow },
-		{ variant: "soft", color: "gray", class: softColors.gray },
-		{ variant: "soft", color: "red", class: softColors.red },
-		{ variant: "soft", color: "amber", class: softColors.amber },
-		{ variant: "soft", color: "darkred", class: softColors.darkred },
-		// Outline
-		{
-			variant: "outline",
-			color: "terracotta",
-			class: outlineColors.terracotta,
-		},
-		{ variant: "outline", color: "sage", class: outlineColors.sage },
-		{ variant: "outline", color: "yellow", class: outlineColors.yellow },
-		{ variant: "outline", color: "gray", class: outlineColors.gray },
-		{ variant: "outline", color: "red", class: outlineColors.red },
-		{ variant: "outline", color: "amber", class: outlineColors.amber },
-		{ variant: "outline", color: "darkred", class: outlineColors.darkred },
-		// Ghost
-		{ variant: "ghost", color: "terracotta", class: ghostColors.terracotta },
-		{ variant: "ghost", color: "sage", class: ghostColors.sage },
-		{ variant: "ghost", color: "yellow", class: ghostColors.yellow },
-		{ variant: "ghost", color: "gray", class: ghostColors.gray },
-		{ variant: "ghost", color: "red", class: ghostColors.red },
-		{ variant: "ghost", color: "amber", class: ghostColors.amber },
-		{ variant: "ghost", color: "darkred", class: ghostColors.darkred },
-		// Border + BorderColor combinations
-		{
-			border: "small",
-			borderColor: "terracotta",
-			class: `${borderColors.terracotta}`,
-		},
-		{ border: "small", borderColor: "sage", class: `${borderColors.sage}` },
-		{ border: "small", borderColor: "yellow", class: `${borderColors.yellow}` },
-		{ border: "small", borderColor: "gray", class: `${borderColors.gray}` },
-		{ border: "small", borderColor: "red", class: `${borderColors.red}` },
-		{ border: "small", borderColor: "amber", class: `${borderColors.amber}` },
-		{
-			border: "small",
-			borderColor: "darkred",
-			class: `${borderColors.darkred}`,
-		},
-		{
-			border: "medium",
-			borderColor: "terracotta",
-			class: `${borderColors.terracotta}`,
-		},
-		{ border: "medium", borderColor: "sage", class: `${borderColors.sage}` },
-		{
-			border: "medium",
-			borderColor: "yellow",
-			class: `${borderColors.yellow}`,
-		},
-		{ border: "medium", borderColor: "gray", class: `${borderColors.gray}` },
-		{ border: "medium", borderColor: "red", class: `${borderColors.red}` },
-		{ border: "medium", borderColor: "amber", class: `${borderColors.amber}` },
-		{
-			border: "medium",
-			borderColor: "darkred",
-			class: `${borderColors.darkred}`,
-		},
-		{
-			border: "large",
-			borderColor: "terracotta",
-			class: `${borderColors.terracotta}`,
-		},
-		{ border: "large", borderColor: "sage", class: `${borderColors.sage}` },
-		{ border: "large", borderColor: "yellow", class: `${borderColors.yellow}` },
-		{ border: "large", borderColor: "gray", class: `${borderColors.gray}` },
-		{ border: "large", borderColor: "red", class: `${borderColors.red}` },
-		{ border: "large", borderColor: "amber", class: `${borderColors.amber}` },
-		{
-			border: "large",
-			borderColor: "darkred",
-			class: `${borderColors.darkred}`,
-		},
+		...createVariantColorCompoundVariants(),
+		...createBorderCompoundVariants(),
 	],
 	defaultVariants: {
 		variant: "solid",

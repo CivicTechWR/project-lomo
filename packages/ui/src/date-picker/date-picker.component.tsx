@@ -86,7 +86,7 @@ export function DatePicker({
 		<FieldContext value={{ variant, size, color }}>
 			<AriaDatePicker
 				{...props}
-				value={toCalendarDate(value)}
+				value={toCalendarDate(value) as DateValue | null}
 				onChange={next => onChange?.(toPlainDate(next))}
 				className={composeRenderProps(className, cls =>
 					cn("flex w-full flex-col", fieldGaps[size], cls))}

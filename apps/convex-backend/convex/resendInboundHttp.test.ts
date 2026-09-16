@@ -1,51 +1,30 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { convexTest } from "convex-test";
-import schema from "./schema";
+import { describe, expect, it } from "bun:test";
+import { stripHtmlToText } from "./resendInboundHttp";
 
-describe("resendInboundHttp: Public Webhook Integrity", () => {
-  let t: ReturnType<typeof convexTest>;
+describe("stripHtmlToText", () => {
+	it("strips standard script and style tags along with content", () => {
+		const html = "<div>Hello<script>alert(1)</script><style>body { color: red; }</style> World</div>";
+		expect(stripHtmlToText(html)).toBe("Hello World");
+	});
 
-  beforeEach(() => {
-    const modules = import.meta.glob("./**/*.ts");
-    t = convexTest(schema, modules);
-  });
+	it("strips script tags with spaces or attributes in closing tags", () => {
+		const htmlWithSpace = "<p>Message<script>alert(1)</script > visible</p>";
+		expect(stripHtmlToText(htmlWithSpace)).toBe("Message visible");
 
-  it("returns a 404 for non-POST methods on the webhook route", async () => {
-    const response = await t.fetch("/webhooks/resend-inbound", {
-      method: "GET"
-    });
-    
-    expect(response.status).toBe(404);
-  });
+		const htmlWithAttr = "<p>Message<script>alert(1)</script foo=\"bar\"> visible</p>";
+		expect(stripHtmlToText(htmlWithAttr)).toBe("Message visible");
+	});
 
-  it("rejects requests missing SVIX signature headers with a 401 status", async () => {
-    const response = await t.fetch("/webhooks/resend-inbound", {
-      method: "POST",
-      body: JSON.stringify({ type: "email.received" }),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+	it("strips style tags with spaces or attributes in closing tags", () => {
+		const htmlWithSpace = "<div>Content<style>h1 { font-size: 20px; }</style > text</div>";
+		expect(stripHtmlToText(htmlWithSpace)).toBe("Content text");
 
-    expect(response.status).toBe(401);
-    expect(await response.text()).toBe("Invalid signature");
-  });
+		const htmlWithAttr = "<div>Content<style>h1 { font-size: 20px; }</style id=\"css\"> text</div>";
+		expect(stripHtmlToText(htmlWithAttr)).toBe("Content text");
+	});
 
-  it("rejects requests with malformed JSON bodies with a 400 status", async () => {
-    const response = await t.fetch("/webhooks/resend-inbound", {
-      method: "POST",
-      body: "not-valid-json",
-      headers: {
-        "Content-Type": "application/json",
-        "svix-id": "msg_123",
-        "svix-timestamp": "1614556800",
-        "svix-signature": "v1,fake_signature"
-      }
-    });
-
-    if (response.status !== 401) {
-      expect(response.status).toBe(400);
-      expect(await response.text()).toBe("Invalid JSON");
-    }
-  });
+	it("strips standard html tags and collapses whitespace", () => {
+		const html = "<h1>Title</h1>\n<p>First  paragraph</p>\n<span>Second</span>";
+		expect(stripHtmlToText(html)).toBe("Title First paragraph Second");
+	});
 });

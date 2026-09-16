@@ -35,7 +35,16 @@ export { Link } from "./link/index.ts";
 export type { LinkProps } from "./link/index.ts";
 
 export { DialogTrigger, Modal, ModalOverlay } from "./modal/index.ts";
+
 export type { ModalOverlayProps, ModalProps } from "./modal/index.ts";
+export { SegmentedProgress } from "./progress/index.ts";
+
+export type { SegmentedProgressProps } from "./progress/index.ts";
+export { SelectionCard } from "./selection-card/index.ts";
+
+export type { SelectionCardProps } from "./selection-card/index.ts";
+export { StepFooter } from "./step-footer/index.ts";
+export type { StepFooterProps } from "./step-footer/index.ts";
 export { Switch } from "./switch/index.ts";
 export type { SwitchProps } from "./switch/index.ts";
 export { Input, TextArea, TextField } from "./text-field/index.ts";

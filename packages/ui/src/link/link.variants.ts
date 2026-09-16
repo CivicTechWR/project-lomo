@@ -23,9 +23,9 @@ export const linkVariants = tv({
 		weight: fontWeights,
 		trim: trimVariants,
 		underline: {
-			auto: "",
+			auto: tw("underline"),
 			always: tw("underline"),
-			hover: "",
+			hover: tw("no-underline data-hovered:underline"),
 			none: tw("no-underline"),
 		},
 		color: {
@@ -76,7 +76,7 @@ export const linkVariants = tv({
 		size: 3,
 		weight: "regular",
 		color: "terracotta",
-		underline: "auto",
+		underline: "always",
 		highContrast: false,
 		trim: "normal",
 		truncate: false,

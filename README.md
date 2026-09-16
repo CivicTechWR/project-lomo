@@ -41,7 +41,6 @@ A platform for people to post asks and offers, matched with others in their comm
 
 - Main app: Next.js 16 + Convex + Better Auth (`apps/lomoweb`)
 - Backend: Convex backend-as-a-service (`apps/convex-backend`)
-- Design system showcase: Vite 7 + TanStack Router + React 19 (`apps/documentation`)
 - Component library: Tailwind v4 + react-aria-components (`packages/ui`)
 - Shared lint config: ESLint with antfu preset (`packages/eslint-config`)
 - Package manager: Bun 1.3.8+ (monorepo workspaces)
@@ -78,6 +77,8 @@ This starts all apps via Turborepo. Turbo's TUI keeps each process in its own lo
 |---------|-------------|
 | `bun run dev` | Start all apps in Turbo's terminal UI |
 | `bun run build` | Build all packages |
+| `bun run typecheck` | Run type checking across all packages |
+| `bun run test` | Run test suites across all packages |
 | `bun run lint` | Lint all packages |
 | `bun run lint:fix` | Auto-fix lint issues |
 
@@ -85,6 +86,15 @@ This starts all apps via Turborepo. Turbo's TUI keeps each process in its own lo
 
 **How this strengthens Waterloo Region's civic fabric:**
 By lowering the barrier to asking for and offering help, LoMo helps build the trust networks and mutual aid capacity that communities need to be resilient.
+
+## Architecture & Decision Records
+
+Key architectural decisions are recorded as Architecture Decision Records (ADRs) in [`docs/decisions/`](docs/decisions/):
+- [ADR-0001: Next.js 16, Convex, and Better Auth Stack](docs/decisions/0001-use-convex-nextjs-better-auth.md)
+- [ADR-0002: Tailwind v4 and React Aria Design System (`@repo/ui`)](docs/decisions/0002-tailwind-v4-react-aria-design-system.md)
+- [ADR-0003: Yellow CTA Button Treatment](docs/decisions/0003-yellow-cta-button-treatment.md)
+- [ADR-0004: Adaptive Three-Tier Responsive Navigation Layout](docs/decisions/0004-adaptive-three-tier-navigation.md)
+- [ADR-0005: Modular Domain Architecture and Custom Data Hooks Layer](docs/decisions/0005-modular-domain-architecture-and-data-hooks.md)
 
 ## AI Agents
 

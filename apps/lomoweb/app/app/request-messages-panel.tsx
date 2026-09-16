@@ -1,26 +1,28 @@
 "use client";
 
 import type { Doc, Id } from "@repo/convex-backend/convex/_generated/dataModel";
-import { api } from "@repo/convex-backend/convex/_generated/api";
 import { Button } from "@repo/ui/button";
 import { Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { TextArea, TextField } from "@repo/ui/text-field";
-import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
+import {
+	usePostRequestMessage,
+	useRequestMessages,
+	useRequestRelayAddress,
+} from "@/lib/hooks/use-request-messages";
+import { useMyProfileRow } from "@/lib/hooks/use-user-profile";
 
 export function RequestMessagesPanel({
 	requestId,
 }: {
 	requestId: Id<"helpRequests">;
 }) {
-	const me = useQuery(api.users.getMyProfileRow);
-	const messages = useQuery(api.requestMessages.listForRequest, { requestId });
-	const relay = useQuery(api.requestMessages.getRelayAddressForRequest, {
-		requestId,
-	});
-	const post = useMutation(api.requestMessages.post);
+	const me = useMyProfileRow();
+	const messages = useRequestMessages(requestId);
+	const relay = useRequestRelayAddress(requestId);
+	const post = usePostRequestMessage();
 	const [draft, setDraft] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 
