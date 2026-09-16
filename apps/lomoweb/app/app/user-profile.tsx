@@ -1,5 +1,6 @@
 "use client";
 
+import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { api } from "@repo/convex-backend/convex/_generated/api";
@@ -14,12 +15,228 @@ import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { useServerRowSync } from "@/lib/use-server-row-sync";
 import {
 	HelperPreferencesFields,
 	helperPreferencesFromProfile,
 } from "./helper-preferences-fields";
 import { SafetyAcknowledgment } from "./onboarding/safety-acknowledgment";
+
+type ProfileRow = Doc<"users">;
+
+function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
+	const [firstName, setFirstName] = useState(() => profileRow.firstName ?? "");
+	const [pronouns, setPronouns] = useState(() => profileRow.pronouns ?? "");
+	const [phone, setPhone] = useState(() => profileRow.phone ?? "");
+	const [savingProfile, setSavingProfile] = useState(false);
+	const updatePublicProfile = useMutation(api.users.updatePublicProfile);
+
+	async function handleSaveVolunteerFields() {
+		setSavingProfile(true);
+		try {
+			await updatePublicProfile({
+				firstName,
+				pronouns,
+				phone: phone.trim() || undefined,
+			});
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your profile.",
+			);
+		}
+		finally {
+			setSavingProfile(false);
+		}
+	}
+
+	return (
+		<div className="flex flex-col gap-4">
+			<TextField
+				name="firstName"
+				value={firstName}
+				onChange={setFirstName}
+				className="w-full"
+			>
+				<Label>First name (shown to requesters)</Label>
+				<Group>
+					<Input placeholder="e.g. Sam" />
+				</Group>
+			</TextField>
+			<TextField
+				name="pronouns"
+				value={pronouns}
+				onChange={setPronouns}
+				className="w-full"
+			>
+				<Label>Pronouns (optional)</Label>
+				<Group>
+					<Input placeholder="e.g. they/them" />
+				</Group>
+			</TextField>
+			<TextField
+				name="phone"
+				type="tel"
+				autoComplete="tel"
+				value={phone}
+				onChange={setPhone}
+				className="w-full"
+			>
+				<Label>Mobile number (optional)</Label>
+				<Group>
+					<Input placeholder="e.g. +1 519 555 0100" />
+				</Group>
+			</TextField>
+			<Button
+				variant="solid"
+				color="sage"
+				className="w-full"
+				isDisabled={savingProfile}
+				onPress={handleSaveVolunteerFields}
+			>
+				{savingProfile ? "Saving…" : "Save profile"}
+			</Button>
+		</div>
+	);
+}
+
+function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
+	const [preferenceValues, setPreferenceValues] = useState(() =>
+		helperPreferencesFromProfile(profileRow),
+	);
+	const [savingPreferences, setSavingPreferences] = useState(false);
+	/*
+	 * Confirmation that the write landed. Without it the only signal was the button
+	 * label flicking back from "Saving…", which is easy to miss and left users
+	 * unsure whether a toggle had actually persisted.
+	 */
+	const [preferencesSaved, setPreferencesSaved] = useState(false);
+	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
+
+	async function handleSavePreferences() {
+		setSavingPreferences(true);
+		setPreferencesSaved(false);
+		try {
+			await updateHelperPreferences({
+				canHelpNow: preferenceValues.canHelpNow,
+				helpPreferences: preferenceValues.helpPreferences,
+				helpAreaCenterLat: preferenceValues.helpAreaCenterLat,
+				helpAreaCenterLng: preferenceValues.helpAreaCenterLng,
+				helpAreaRadiusKm: preferenceValues.helpAreaRadiusKm,
+			});
+			// Only set on success, so it can't claim a save that threw.
+			setPreferencesSaved(true);
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your preferences.",
+			);
+		}
+		finally {
+			setSavingPreferences(false);
+		}
+	}
+
+	return (
+		<div className="flex flex-col gap-4">
+			<HelperPreferencesFields
+				values={preferenceValues}
+				onChange={(next) => {
+					setPreferenceValues(next);
+					// Any further edit makes the confirmation stale.
+					setPreferencesSaved(false);
+				}}
+			/>
+			<Button
+				variant="solid"
+				color="sage"
+				className="w-full"
+				isDisabled={savingPreferences}
+				onPress={handleSavePreferences}
+			>
+				{savingPreferences ? "Saving…" : "Save preferences"}
+			</Button>
+			{/*
+			  `role="status"` so the confirmation is announced rather than
+			  only being a visual change next to the button.
+			*/}
+			<div role="status" aria-live="polite">
+				{preferencesSaved
+					? (
+							<Text size={2} color="sage">
+								Preferences saved.
+								{" "}
+								{preferenceValues.canHelpNow
+									? "You'll see open requests again."
+									: "You're now Resting — Open Requests is hidden."}
+							</Text>
+						)
+					: null}
+			</div>
+		</div>
+	);
+}
+
+function SafetyForm({ profileRow }: { profileRow: ProfileRow }) {
+	const [safetyAcknowledged, setSafetyAcknowledged] = useState(() =>
+		Boolean(profileRow.safetyAcknowledgedAt),
+	);
+	const [savingSafety, setSavingSafety] = useState(false);
+	const acknowledgeSafety = useMutation(api.users.acknowledgeSafety);
+
+	async function handleSaveSafety() {
+		if (!safetyAcknowledged) {
+			return;
+		}
+		setSavingSafety(true);
+		try {
+			await acknowledgeSafety({});
+		}
+		catch (e) {
+			console.error(e);
+			window.alert(
+				e instanceof Error ? e.message : "Could not save your acknowledgment.",
+			);
+		}
+		finally {
+			setSavingSafety(false);
+		}
+	}
+
+	return (
+		<div className="flex flex-col gap-4">
+			{profileRow.safetyAcknowledgedAt
+				? (
+						<Badge variant="soft" size={1} color="sage">
+							Acknowledged
+						</Badge>
+					)
+				: null}
+			<SafetyAcknowledgment
+				acknowledged={safetyAcknowledged}
+				onAcknowledgedChange={setSafetyAcknowledged}
+			/>
+			<Button
+				variant="outline"
+				color="gray"
+				className="w-full"
+				isDisabled={
+					!safetyAcknowledged
+					|| savingSafety
+					|| !!profileRow.safetyAcknowledgedAt
+				}
+				onPress={handleSaveSafety}
+			>
+				{profileRow.safetyAcknowledgedAt
+					? "Safety notices on file"
+					: savingSafety
+						? "Saving…"
+						: "Confirm acknowledgment"}
+			</Button>
+		</div>
+	);
+}
 
 export function UserProfile({
 	preloadedUser,
@@ -29,47 +246,11 @@ export function UserProfile({
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
 	const profileRow = useQuery(api.users.getMyProfileRow, user ? {} : "skip");
-	const updatePublicProfile = useMutation(api.users.updatePublicProfile);
-	const updateHelperPreferences = useMutation(api.users.updateHelperPreferences);
-	const acknowledgeSafety = useMutation(api.users.acknowledgeSafety);
 	const deleteMyAccount = useMutation(api.users.deleteMyAccount);
-	const [firstName, setFirstName] = useState("");
-	const [pronouns, setPronouns] = useState("");
-	const [phone, setPhone] = useState("");
-	const [preferenceValues, setPreferenceValues] = useState(
-		() => helperPreferencesFromProfile(undefined),
-	);
-	const [safetyAcknowledged, setSafetyAcknowledged] = useState(false);
-	const [savingProfile, setSavingProfile] = useState(false);
-	const [savingPreferences, setSavingPreferences] = useState(false);
-	/*
-	 * Confirmation that the write landed. Without it the only signal was the button
-	 * label flicking back from "Saving…", which is easy to miss and left users
-	 * unsure whether a toggle had actually persisted.
-	 */
-	const [preferencesSaved, setPreferencesSaved] = useState(false);
-	const [savingSafety, setSavingSafety] = useState(false);
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
 	const [deletePassword, setDeletePassword] = useState("");
 	const [deleteError, setDeleteError] = useState<string | null>(null);
 	const [deletingAccount, setDeletingAccount] = useState(false);
-
-	/*
-	 * Load the stored values into the form. This has to be a hook with a sentinel
-	 * rather than `useRef(profileRow)`: this page is usually reached by client-side
-	 * navigation, so the query is already resolved on the first render, and
-	 * seeding the ref with the row made the sync condition false forever. The form
-	 * then kept its defaults — showing "I can offer support" as off whatever was
-	 * saved, and writing those defaults back on save.
-	 */
-	const shouldSyncProfile = useServerRowSync(profileRow);
-	if (shouldSyncProfile && profileRow) {
-		setFirstName(profileRow.firstName ?? "");
-		setPronouns(profileRow.pronouns ?? "");
-		setPhone(profileRow.phone ?? "");
-		setPreferenceValues(helperPreferencesFromProfile(profileRow));
-		setSafetyAcknowledged(!!profileRow.safetyAcknowledgedAt);
-	}
 
 	if (!user) {
 		return null;
@@ -101,70 +282,6 @@ export function UserProfile({
 		}
 	}
 
-	async function handleSaveVolunteerFields() {
-		setSavingProfile(true);
-		try {
-			await updatePublicProfile({
-				firstName,
-				pronouns,
-				phone: phone.trim() || undefined,
-			});
-		}
-		catch (e) {
-			console.error(e);
-			window.alert(
-				e instanceof Error ? e.message : "Could not save your profile.",
-			);
-		}
-		finally {
-			setSavingProfile(false);
-		}
-	}
-
-	async function handleSavePreferences() {
-		setSavingPreferences(true);
-		setPreferencesSaved(false);
-		try {
-			await updateHelperPreferences({
-				canHelpNow: preferenceValues.canHelpNow,
-				helpPreferences: preferenceValues.helpPreferences,
-				helpAreaCenterLat: preferenceValues.helpAreaCenterLat,
-				helpAreaCenterLng: preferenceValues.helpAreaCenterLng,
-				helpAreaRadiusKm: preferenceValues.helpAreaRadiusKm,
-			});
-			// Only set on success, so it can't claim a save that threw.
-			setPreferencesSaved(true);
-		}
-		catch (e) {
-			console.error(e);
-			window.alert(
-				e instanceof Error ? e.message : "Could not save your preferences.",
-			);
-		}
-		finally {
-			setSavingPreferences(false);
-		}
-	}
-
-	async function handleSaveSafety() {
-		if (!safetyAcknowledged) {
-			return;
-		}
-		setSavingSafety(true);
-		try {
-			await acknowledgeSafety({});
-		}
-		catch (e) {
-			console.error(e);
-			window.alert(
-				e instanceof Error ? e.message : "Could not save your acknowledgment.",
-			);
-		}
-		finally {
-			setSavingSafety(false);
-		}
-	}
-
 	return (
 		<Card size={3} variant="surface" className="w-full">
 			<div className="flex flex-col gap-4 p-4 sm:p-5">
@@ -188,59 +305,14 @@ export function UserProfile({
 						leave it blank, matched volunteers will email you through a masked
 						address so your real email stays private.
 					</Text>
-					{profileRow === undefined
+					{profileRow == null
 						? (
 								<Text size={2} color="gray">
 									Loading…
 								</Text>
 							)
 						: (
-								<div className="flex flex-col gap-4">
-									<TextField
-										name="firstName"
-										value={firstName}
-										onChange={setFirstName}
-										className="w-full"
-									>
-										<Label>First name (shown to requesters)</Label>
-										<Group>
-											<Input placeholder="e.g. Sam" />
-										</Group>
-									</TextField>
-									<TextField
-										name="pronouns"
-										value={pronouns}
-										onChange={setPronouns}
-										className="w-full"
-									>
-										<Label>Pronouns (optional)</Label>
-										<Group>
-											<Input placeholder="e.g. they/them" />
-										</Group>
-									</TextField>
-									<TextField
-										name="phone"
-										type="tel"
-										autoComplete="tel"
-										value={phone}
-										onChange={setPhone}
-										className="w-full"
-									>
-										<Label>Mobile number (optional)</Label>
-										<Group>
-											<Input placeholder="e.g. +1 519 555 0100" />
-										</Group>
-									</TextField>
-									<Button
-										variant="solid"
-										color="sage"
-										className="w-full"
-										isDisabled={savingProfile}
-										onPress={handleSaveVolunteerFields}
-									>
-										{savingProfile ? "Saving…" : "Save profile"}
-									</Button>
-								</div>
+								<ProfileForm key={profileRow._id} profileRow={profileRow} />
 							)}
 				</div>
 
@@ -255,42 +327,10 @@ export function UserProfile({
 								</Text>
 							)
 						: (
-								<div className="flex flex-col gap-4">
-									<HelperPreferencesFields
-										values={preferenceValues}
-										onChange={(next) => {
-											setPreferenceValues(next);
-											// Any further edit makes the confirmation stale.
-											setPreferencesSaved(false);
-										}}
-									/>
-									<Button
-										variant="solid"
-										color="sage"
-										className="w-full"
-										isDisabled={savingPreferences}
-										onPress={handleSavePreferences}
-									>
-										{savingPreferences ? "Saving…" : "Save preferences"}
-									</Button>
-									{/*
-									  `role="status"` so the confirmation is announced rather than
-									  only being a visual change next to the button.
-									*/}
-									<div role="status" aria-live="polite">
-										{preferencesSaved
-											? (
-													<Text size={2} color="sage">
-														Preferences saved.
-														{" "}
-														{preferenceValues.canHelpNow
-															? "You'll see open requests again."
-															: "You're now Resting — Open Requests is hidden."}
-													</Text>
-												)
-											: null}
-									</div>
-								</div>
+								<HelperPreferencesForm
+									key={profileRow._id}
+									profileRow={profileRow}
+								/>
 							)}
 				</div>
 
@@ -305,36 +345,7 @@ export function UserProfile({
 								</Text>
 							)
 						: (
-								<div className="flex flex-col gap-4">
-									{profileRow.safetyAcknowledgedAt
-										? (
-												<Badge variant="soft" size={1} color="sage">
-													Acknowledged
-												</Badge>
-											)
-										: null}
-									<SafetyAcknowledgment
-										acknowledged={safetyAcknowledged}
-										onAcknowledgedChange={setSafetyAcknowledged}
-									/>
-									<Button
-										variant="outline"
-										color="gray"
-										className="w-full"
-										isDisabled={
-											!safetyAcknowledged
-											|| savingSafety
-											|| !!profileRow.safetyAcknowledgedAt
-										}
-										onPress={handleSaveSafety}
-									>
-										{profileRow.safetyAcknowledgedAt
-											? "Safety notices on file"
-											: savingSafety
-												? "Saving…"
-												: "Confirm acknowledgment"}
-									</Button>
-								</div>
+								<SafetyForm key={profileRow._id} profileRow={profileRow} />
 							)}
 				</div>
 

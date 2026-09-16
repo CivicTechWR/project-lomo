@@ -14,15 +14,15 @@ export function ContactSection() {
 					</Heading>
 
 					<Text size={3} className="text-black/70 font-medium leading-relaxed">
-						Questions, ideas, or want to start a circle in your area? Reach out any time.
+						Questions, ideas, or want to support us? Reach out any time.
 					</Text>
 
 					<div className="inline-flex items-center gap-2 mt-2">
 						<Link
-							href="mailto:hello@lomo.community"
+							href="mailto:slapstickdevelopment@gmail.com"
 							className="font-display font-bold text-lg text-terracotta-11 hover:text-terracotta-10 underline decoration-2 underline-offset-4 transition-colors min-h-11 inline-flex items-center"
 						>
-							hello@lomo.community
+							slapstickdevelopment@gmail.com
 						</Link>
 					</div>
 				</div>

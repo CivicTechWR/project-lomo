@@ -8,6 +8,7 @@ import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { URGENCY_OPTIONS } from "@/lib/request-flow/food";
+import { serializeRequestPayload } from "@/lib/request-flow/serialize-request-payload";
 import {
 	itemsRequestListSummary,
 	itemsRequestTitle,
@@ -39,6 +40,7 @@ export default function ItemsPreviewPage() {
 				title,
 				summary: itemsRequestListSummary(draft),
 				details: body,
+				payload: serializeRequestPayload(draft),
 			});
 			resetDraft();
 			router.replace("/app");

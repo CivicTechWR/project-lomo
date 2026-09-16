@@ -17,7 +17,7 @@ export function JoinSection() {
 						size={8}
 						className="font-display font-black leading-tight tracking-tight text-black"
 					>
-						Join The Circle
+						Join The Community
 					</Heading>
 
 					<Text size={2} className="text-black/60 font-display font-bold italic tracking-wide">
@@ -44,7 +44,7 @@ export function JoinSection() {
 						size={3}
 						className={ctaButton}
 					>
-						Join the Circle
+						Join the Community
 					</Button>
 				</div>
 			</div>

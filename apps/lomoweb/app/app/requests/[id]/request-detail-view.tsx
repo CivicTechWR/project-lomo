@@ -13,9 +13,9 @@ import { useState } from "react";
 import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
 import {
 	HELP_REQUEST_STATUS_LABEL,
-
 	statusBadgeColor,
 } from "@/lib/help-request-status";
+import { isRequestUrgent } from "@/lib/request-urgency";
 
 function formatHelperIntro(preview: {
 	firstName: string | null;
@@ -208,15 +208,24 @@ export function RequestDetailView() {
 				<Heading level={1} size={7} className="min-w-0 flex-1">
 					{doc.title}
 				</Heading>
-				<Badge
-					variant="soft"
-					size={2}
-					color={statusBadgeColor(st)}
-				>
-					{st === "awaiting_requester_acceptance"
-						? "Awaiting confirmation"
-						: HELP_REQUEST_STATUS_LABEL[st]}
-				</Badge>
+				<div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+					{isRequestUrgent(doc)
+						? (
+								<Badge variant="soft" size={2} color="red">
+									Urgent
+								</Badge>
+							)
+						: null}
+					<Badge
+						variant="soft"
+						size={2}
+						color={statusBadgeColor(st)}
+					>
+						{st === "awaiting_requester_acceptance"
+							? "Awaiting confirmation"
+							: HELP_REQUEST_STATUS_LABEL[st]}
+					</Badge>
+				</div>
 			</div>
 
 			<Text size={2} color="gray">

@@ -68,3 +68,26 @@ export function extractNeededBy(
 
 	return { neededBy: at, neededByFlexible: neededBy.flexible === true };
 }
+
+const LEGACY_URGENT_DETAILS = /\burgency:\s*urgent\b/i;
+
+function urgencyTextIndicatesUrgent(text: string | undefined): boolean {
+	return text != null && LEGACY_URGENT_DETAILS.test(text);
+}
+
+/** Resolve urgency from denormalized field, payload snapshot, or legacy details text. */
+export function resolveIsUrgent(request: {
+	isUrgent?: boolean;
+	payload?: string;
+	details?: string;
+	summary?: string;
+}): boolean {
+	if (request.isUrgent === true) {
+		return true;
+	}
+	if (extractIsUrgent(request.payload)) {
+		return true;
+	}
+	return urgencyTextIndicatesUrgent(request.details)
+		|| urgencyTextIndicatesUrgent(request.summary);
+}

@@ -27,10 +27,11 @@ export function CategoryPicker({
 	const [activeKey, setActiveKey] = useState(defaultKey);
 	const activeImage = images[activeKey] ?? images[defaultKey];
 
+	// Peek slightly past the image edge into the column gap — not far enough to hit the text.
 	const badgePositionClass
 		= badgePosition === "left"
-			? "lg:left-0 lg:-translate-x-1/2 xl:-translate-x-3/4 lg:items-end"
-			: "lg:right-0 lg:translate-x-1/2 xl:translate-x-3/4 lg:items-start";
+			? "lg:left-0 lg:-translate-x-1/4 lg:items-start"
+			: "lg:right-0 lg:translate-x-1/4 lg:items-end";
 
 	return (
 		<div className="flex flex-col lg:relative lg:w-full lg:aspect-4/3">

@@ -7,7 +7,7 @@ import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
 
@@ -29,7 +29,19 @@ const SERVER_ERROR_MAP: Record<string, { field?: keyof FieldErrors; message: str
 	PASSWORD_TOO_LONG: { field: "password", message: "Password is too long" },
 };
 
-export function ResetPasswordForm() {
+function readTokenFromWindow(): string | undefined {
+	if (typeof window === "undefined") {
+		return undefined;
+	}
+	return new URLSearchParams(window.location.search).get("token") ?? undefined;
+}
+
+interface ResetPasswordFormProps {
+	initialToken?: string;
+	initialUrlError?: string;
+}
+
+export function ResetPasswordForm({ initialToken, initialUrlError }: ResetPasswordFormProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
@@ -38,24 +50,22 @@ export function ResetPasswordForm() {
 	const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 	const [formError, setFormError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [token, setToken] = useState<string | null>(null);
+	const [windowToken] = useState(readTokenFromWindow);
 
-	const lastSearchParamsRef = useRef(searchParams);
-	if (searchParams !== lastSearchParamsRef.current) {
-		lastSearchParamsRef.current = searchParams;
-		const urlError = searchParams.get("error");
-		if (urlError === "INVALID_TOKEN") {
-			setFormError("This reset link is invalid or has expired. Request a new one.");
-			setToken(null);
-		}
-		else {
-			const urlToken = searchParams.get("token");
-			setToken(urlToken);
-			if (!urlToken) {
-				setFormError("Missing reset token. Open the link from your email or request a new one.");
-			}
-		}
-	}
+	const token = initialToken ?? searchParams.get("token") ?? windowToken ?? undefined;
+	const urlError = initialUrlError ?? searchParams.get("error") ?? undefined;
+
+	const tokenError = urlError === "INVALID_TOKEN"
+		? "This reset link is invalid or has expired. Request a new one."
+		: !token
+			? "Missing reset token. Open the link from your email or request a new one."
+			: null;
+
+	const canSubmit
+		= password.length >= 8
+			&& confirmPassword.length > 0
+			&& !isSubmitting
+			&& urlError !== "INVALID_TOKEN";
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
@@ -156,9 +166,9 @@ export function ResetPasswordForm() {
 				)}
 			</TextField>
 
-			{formError && (
+			{(formError ?? tokenError) && (
 				<div className="rounded-[var(--radius-2)] border border-red-6 bg-red-2 px-4 py-3">
-					<Text size={2} color="red">{formError}</Text>
+					<Text size={2} color="red">{formError ?? tokenError}</Text>
 				</div>
 			)}
 
@@ -166,7 +176,7 @@ export function ResetPasswordForm() {
 				type="submit"
 				variant="solid"
 				color="yellow"
-				isDisabled={isSubmitting || !token}
+				isDisabled={!canSubmit}
 				className="mt-2"
 			>
 				{isSubmitting ? "Updating..." : "Update password"}

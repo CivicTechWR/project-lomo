@@ -7,6 +7,7 @@ import { Text } from "@repo/ui/text";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { serializeRequestPayload } from "@/lib/request-flow/serialize-request-payload";
 import {
 	micrograntRequestListSummary,
 	micrograntRequestTitle,
@@ -36,6 +37,7 @@ export default function PaperworkPreviewPage() {
 				title,
 				summary: micrograntRequestListSummary(draft),
 				details: body,
+				payload: serializeRequestPayload(draft),
 			});
 			resetDraft();
 			router.replace("/app");

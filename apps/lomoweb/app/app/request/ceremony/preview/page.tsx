@@ -7,6 +7,7 @@ import { Text } from "@repo/ui/text";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { serializeRequestPayload } from "@/lib/request-flow/serialize-request-payload";
 import {
 	ceremonyRequestListSummary,
 	ceremonyRequestTitle,
@@ -36,6 +37,7 @@ export default function CeremonyPreviewPage() {
 				title,
 				summary: ceremonyRequestListSummary(draft),
 				details: body,
+				payload: serializeRequestPayload(draft),
 			});
 			resetDraft();
 			router.replace("/app");

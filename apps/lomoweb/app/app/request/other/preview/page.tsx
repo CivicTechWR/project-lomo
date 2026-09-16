@@ -7,6 +7,7 @@ import { Text } from "@repo/ui/text";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { serializeRequestPayload } from "@/lib/request-flow/serialize-request-payload";
 import {
 	otherRequestListSummary,
 	otherRequestTitle,
@@ -37,6 +38,7 @@ export default function OtherPreviewPage() {
 				title,
 				summary: otherRequestListSummary(draft),
 				details: body,
+				payload: serializeRequestPayload(draft),
 			});
 			resetDraft();
 			router.replace("/app");
