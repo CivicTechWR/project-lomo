@@ -94,6 +94,14 @@ bun playwright-cli install
 
 This installs Playwright browser binaries, system dependencies, and initializes the `.playwright-cli/` workspace configuration for CLI/agent-driven runs.
 
+### 9. Run E2E tests
+
+```bash
+bun run test:e2e
+```
+
+The runner starts a disposable local Convex database and removes its temporary project after the run. Your development database and `.env.local` are left untouched. Keep ports `3000`, `3210`, and `3211` free; stop the normal dev stack before running E2E if it is using them.
+
 For AI agent browser testing, the workspace includes `@playwright/cli`. Agents can launch and inspect local pages interactively:
 
 ```bash
@@ -103,7 +111,7 @@ bunx playwright-cli click <ref>
 bunx playwright-cli close
 ```
 
-### 9. Optional cleanup
+### 10. Optional cleanup
 
 To remove only the seeded rows without reinserting them:
 

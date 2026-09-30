@@ -45,7 +45,7 @@
 		"lint:fix": "turbo run lint:fix",
 		"typecheck": "turbo run typecheck",
 		"test": "turbo run test",
-		"test:e2e": "playwright test",
+		"test:e2e": "bun scripts/run-e2e.mjs",
 		"build": "turbo run build",
 		"dev": "turbo run dev --ui=tui",
 		"prepare": "lefthook install"
