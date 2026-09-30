@@ -102,6 +102,8 @@ bun run test:e2e
 
 The runner starts a disposable local Convex database and removes its temporary project after the run. Your development database and `.env.local` are left untouched. Keep ports `3000`, `3210`, and `3211` free; stop the normal dev stack before running E2E if it is using them.
 
+The current suite checks the homepage and signup, then creates a requester account, completes onboarding, posts an "Other" help request, and confirms it appears under My Requests. The request uses a synthetic location; the backend may send it to OpenStreetMap Nominatim for geocoding. App data remains in the disposable local database.
+
 For AI agent browser testing, the workspace includes `@playwright/cli`. Agents can launch and inspect local pages interactively:
 
 ```bash

@@ -36,15 +36,15 @@ Run Playwright account-creation and help-request-creation scenarios against a di
 - [x] Failed and interrupted runs leave no temporary backend process or directory behind.
 
 ### Phase 3: Add Browser Scenarios
-- Validate the actual signup flow, including whether account verification is required and how it can be handled locally.
-- Add a Playwright test that creates a uniquely named account and verifies the signed-in state.
-- Using that account, create a help request through the user-facing request flow and verify it appears in the account's request list or detail view.
-- Keep test data isolated in the disposable database; do not rely on preexisting development fixtures.
+- [x] Validate the actual signup flow: Better Auth does not require email verification.
+- [x] Add a Playwright test that creates a uniquely named account and verifies the signed-in onboarding state.
+- [x] Create a help request through the user-facing request flow and verify it appears in the account's My Requests list.
+- [x] Keep test data isolated in the disposable database; do not rely on preexisting development fixtures.
 
 ### Checkpoint: User Flows
-- Signup and request creation pass on a clean disposable database.
-- Repeated E2E runs do not depend on previous runs' users or requests.
-- Existing unit tests and type checks for touched packages pass.
+- [x] Signup and request creation pass on a clean disposable database.
+- [x] E2E runs do not depend on previous runs' users or requests.
+- [x] Existing unit tests and type checks for touched packages pass.
 
 ## Risks and Mitigations
 | Risk | Impact | Mitigation |

@@ -14,16 +14,18 @@
   - Files: `package.json`, `playwright.config.ts`, `scripts/run-e2e.mjs`, and `GETTING_STARTED.md`.
   - Dependencies: Task 1.
 
-- [ ] **Task 3: Cover account creation**
+- [x] **Task 3: Cover account creation**
   - Acceptance: A clean E2E database can create a unique account through the user-facing signup flow and reach the expected authenticated state without external email delivery.
-  - Verify: Run the account scenario repeatedly against freshly provisioned local data.
-  - Files likely touched: `tests/` and, only if required, isolated test setup.
+  - Verified: The signup E2E creates a unique `.test` email account and reaches the protected `/app/onboarding/basics` page; signup succeeds without email verification or external email delivery.
+  - Verify: `bun run test:e2e` passed both the signup and homepage specs on a fresh local database. Cleanup left no temp directory or listeners, and development DB/env fingerprints were unchanged. `bun x tsc --noEmit` and `git diff --check` passed.
+  - Files: `tests/Signup.spec.ts`.
   - Dependencies: Task 2; confirm signup/verification behavior first.
 
-- [ ] **Task 4: Cover request creation**
+- [x] **Task 4: Cover request creation**
   - Acceptance: The E2E-created account can create a help request through the user-facing flow and observe it in the expected app view.
-  - Verify: Run signup plus request creation against a clean local E2E database.
-  - Files likely touched: `tests/`.
+  - Verified: The test creates an account, completes onboarding, posts an “Other” request through the preview flow, and finds its unique title under My Requests.
+  - Verify: `bun run test:e2e` passed all three specs with three workers. No temp project or service remained, and development DB/env fingerprints were unchanged. Typecheck, focused lint, and `git diff --check` passed.
+  - Files: `tests/RequestCreation.spec.ts`.
   - Dependencies: Tasks 2 and 3.
 
 ## Final Verification
