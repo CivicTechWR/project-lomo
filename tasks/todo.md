@@ -11,10 +11,10 @@
 
 ## Phase 2: Configuration
 
-- [ ] Extend the settings schema and mutation with a validated `phoneNumberAllowedCountries` array, defaulting to `CA` and `US`.
-- [ ] Add a public settings query for onboarding country codes and labels.
-- [ ] Add admin settings controls and validation feedback.
-- [ ] Run frontend and backend tests, type checks, and lint.
+- [x] Extend the settings schema and mutation with a validated `phoneNumberAllowedCountries` array, defaulting to `CA` and `US`.
+- [x] Add a public settings query for onboarding country codes and labels.
+- [x] Add admin settings controls and validation feedback.
+- [x] Run frontend and backend tests, type checks, and lint.
 
 ## Phase 3: Onboarding
 

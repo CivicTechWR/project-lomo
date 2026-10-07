@@ -1,10 +1,9 @@
 import type { CountryCode } from "libphonenumber-js";
 import {
-
-	isPossiblePhoneNumber,
 	isSupportedCountry as isSupportedCountryLibrary,
 	parsePhoneNumberWithError,
 } from "libphonenumber-js";
+import { isValidPhoneNumber } from "libphonenumber-js/max";
 
 export interface PhoneNumberValidation {
 	isValid: boolean;
@@ -24,6 +23,8 @@ export const PHONE_NUMBER_COUNTRY_LABELS: Readonly<Record<string, string>> = {
 	JP: "Japan",
 	ZA: "South Africa",
 };
+
+const NON_DIGITS = /\D/g;
 
 export function normalizeAllowedCountries(
 	allowedCountries: readonly string[],
@@ -57,13 +58,14 @@ export function validatePhoneNumber(
 		return { isValid: false, e164: null };
 	}
 
+	const digits = trimmed.replace(NON_DIGITS, "");
 	for (const country of supportedCountries) {
-		if (!isPossiblePhoneNumber(trimmed, country)) {
+		if (!isValidPhoneNumber(digits, country)) {
 			continue;
 		}
 
 		try {
-			const parsed = parsePhoneNumberWithError(trimmed, country);
+			const parsed = parsePhoneNumberWithError(digits, country);
 			if (
 				parsed.country
 				&& parsed.number

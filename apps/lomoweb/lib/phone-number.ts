@@ -1,17 +1,18 @@
 import type { CountryCode } from "libphonenumber-js";
 import {
 	AsYouType,
-
-	isPossiblePhoneNumber,
 	isSupportedCountry,
 	parsePhoneNumberWithError,
 } from "libphonenumber-js";
+import { isValidPhoneNumber } from "libphonenumber-js/max";
 
 export interface PhoneNumberValidation {
 	isValid: boolean;
 	isPossible: boolean;
 	e164: string | null;
 }
+
+const NON_DIGITS = /\D/g;
 
 export function formatPhoneNumber(value: string, country: string): string {
 	const countryCode = getCountryCode(country);
@@ -30,15 +31,18 @@ export function validatePhoneNumber(value: string, country: string): PhoneNumber
 	}
 
 	const trimmed = value.trim();
-	const isPossible = trimmed.length > 0 && isPossiblePhoneNumber(trimmed, countryCode);
+	if (trimmed.length === 0) {
+		return { isValid: false, isPossible: false, e164: null };
+	}
 
-	if (!isPossible) {
+	const digits = trimmed.replace(NON_DIGITS, "");
+	if (!isValidPhoneNumber(digits, countryCode)) {
 		return { isValid: false, isPossible: false, e164: null };
 	}
 
 	try {
-		const parsed = parsePhoneNumberWithError(trimmed, countryCode);
-		if (parsed.country !== countryCode) {
+		const parsed = parsePhoneNumberWithError(digits, countryCode);
+		if (!parsed.country || !parsed.number || parsed.country !== countryCode) {
 			return { isValid: false, isPossible: true, e164: null };
 		}
 
