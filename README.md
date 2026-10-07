@@ -65,16 +65,18 @@ A platform for people to post asks and offers, matched with others in their comm
 ### Getting started
 
 ```bash
-bun install
-bun run dev
+bun run setup
 ```
 
-This starts all apps via Turborepo. Turbo's TUI keeps each process in its own log view. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+One command installs dependencies, creates env files, configures a local Convex backend (no account needed), seeds demo data, and starts the app at http://localhost:3000. After that, `bun run dev` is all you need day to day.
+
+`bun run dev` starts all apps via Turborepo. Turbo's TUI keeps each process in its own log view. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ### Available commands
 
 | Command | Description |
 |---------|-------------|
+| `bun run setup` | One-time (and rerunnable) local setup, then starts the app |
 | `bun run dev` | Start all apps in Turbo's terminal UI |
 | `bun run build` | Build all packages |
 | `bun run typecheck` | Run type checking across all packages |
