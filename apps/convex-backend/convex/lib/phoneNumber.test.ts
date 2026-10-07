@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
 	isPhoneNumberAllowed,
+	normalizeAllowedCountries,
 	normalizePhoneNumber,
 	validatePhoneNumber,
 } from "./phoneNumber";
@@ -31,5 +32,16 @@ describe("phone_number", () => {
 	it("rejects empty and malformed country allowlists", () => {
 		expect(isPhoneNumberAllowed("CA", [])).toBe(false);
 		expect(isPhoneNumberAllowed("CA", ["CA", "CA"])).toBe(true);
+	});
+
+	it("normalizes and validates configured country codes", () => {
+		expect(normalizeAllowedCountries([" ca ", "US"])).toEqual(["CA", "US"]);
+		expect(normalizeAllowedCountries(["CA", "GB"])).toEqual(["CA", "GB"]);
+	});
+
+	it("rejects empty, duplicate, and unsupported country lists", () => {
+		expect(normalizeAllowedCountries([])).toBeNull();
+		expect(normalizeAllowedCountries(["CA", "CA"])).toBeNull();
+		expect(normalizeAllowedCountries(["XX"])).toBeNull();
 	});
 });

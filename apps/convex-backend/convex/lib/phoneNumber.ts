@@ -11,6 +11,35 @@ export interface PhoneNumberValidation {
 	e164: string | null;
 }
 
+export const DEFAULT_PHONE_NUMBER_ALLOWED_COUNTRIES = ["CA", "US"] as const;
+
+export const PHONE_NUMBER_COUNTRY_LABELS: Readonly<Record<string, string>> = {
+	CA: "Canada",
+	US: "United States",
+	GB: "United Kingdom",
+	AU: "Australia",
+	DE: "Germany",
+	FR: "France",
+	IN: "India",
+	JP: "Japan",
+	ZA: "South Africa",
+};
+
+export function normalizeAllowedCountries(
+	allowedCountries: readonly string[],
+): CountryCode[] | null {
+	const normalized = allowedCountries.map(country => country.trim().toUpperCase());
+	if (
+		normalized.length === 0
+		|| new Set(normalized).size !== normalized.length
+		|| normalized.some(country => !isSupportedCountryLibrary(country))
+	) {
+		return null;
+	}
+
+	return normalized as CountryCode[];
+}
+
 export function normalizePhoneNumber(value: string, country: string): string | null {
 	const validation = validatePhoneNumber(value, [country]);
 	return validation.isValid ? validation.e164 : null;
