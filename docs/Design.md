@@ -174,7 +174,7 @@ The homepage navigation and in-app navigation should not be treated as the same 
 - both should honor the same typography, border treatment, colors, and affordances
 - the product shell should remain consistent even when the layout role differs
 
-**App shell navigation (verified, see §11.7):** the in-app nav (`AppSidebar`) uses Material Design 3's adaptive layout as its explicit behavioral reference — three structural tiers, one shared pill-based visual grammar:
+**App shell navigation (verified in the current implementation):** the in-app nav (`AppSidebar`) uses Material Design 3's adaptive layout as its explicit behavioral reference — three structural tiers, one shared pill-based visual grammar:
 - phone (`<768px`): a floating bottom pill bar
 - tablet (`768–1023px`): a floating navigation rail
 - laptop/PC (`≥1024px`): the same rail styling, attached to the viewport edge instead of floating

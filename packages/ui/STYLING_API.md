@@ -16,16 +16,16 @@ src/
 
 ## Props Contract
 
-Every interactive component exposes:
+Interactive components may expose variant props inferred from their own
+`tv()` definition. The available props and defaults are component-specific;
+for example, `Button` defaults to a solid, size-2, terracotta treatment, while
+`TextField` defaults to a surface, size-2, gray treatment. Consult the
+component's exported props type and implementation for its exact contract.
 
-| Prop        | Type                       | Default        | Description               |
-| ----------- | -------------------------- | -------------- | ------------------------- |
-| `variant`   | Component-specific union   | `"solid"`      | Visual style              |
-| `size`      | `"1" \| "2" \| "3" \| "4"` | `"2"`          | Size scale                |
-| `color`     | `ScaleColor`               | `"terracotta"` | Color from the palette    |
-| `className` | `string`                   | —              | Merged via tailwind-merge |
-
-All other props from the underlying React Aria Components primitive are forwarded, including `style`, event handlers, and accessibility props.
+Where a component wraps a React Aria Components primitive, it forwards the
+primitive props supported by its wrapper. Check that component's type
+definition for any omissions or custom props. Consumer `className` values are
+merged with generated classes using `tailwind-merge`.
 
 ## Composing tv() with Shared Fragments
 
@@ -104,7 +104,9 @@ RAC uses `data-*` attributes for states. Our variant fragments target:
 
 ## className Override Protocol
 
-Consumer `className` is passed through `tv()`'s `class` option, which uses `tailwind-merge` under the hood. This means consumer classes win over component defaults:
+Consumer `className` is merged with generated classes using `tailwind-merge`
+(directly or through the component's variant helper). Conflicting consumer
+utilities therefore take precedence:
 
 ```tsx
 <Button className="w-full">Full Width</Button>;
