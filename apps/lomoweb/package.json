@@ -18,7 +18,7 @@
 		"better-auth": "catalog:",
 		"convex": "catalog:",
 		"leaflet": "^1.9.4",
-		"next": "16.3.5",
+		"next": "16.3.8",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"server-only": "0.0.1",

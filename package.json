@@ -47,6 +47,7 @@
 		"test": "turbo run test",
 		"test:e2e": "bun scripts/run-e2e.mjs",
 		"build": "turbo run build",
+		"setup": "bun apps/convex-backend/scripts/setup.ts",
 		"dev": "turbo run dev --ui=tui",
 		"prepare": "lefthook install"
 	},
@@ -84,11 +85,11 @@
 	"devDependencies": {
 		"@playwright/cli": "^0.1.21",
 		"@playwright/test": "^1.63.0",
-		"actions-up": "1.20.0",
+		"actions-up": "1.21.0",
 		"eslint": "catalog:",
-		"lefthook": "^2.1.14",
+		"lefthook": "^2.1.16",
 		"playwright": "^1.63.0",
-		"turbo": "^2.11.2"
+		"turbo": "^2.11.7"
 	},
 	"dependencies": {
 		"@zxcvbn-ts/core": "^4.2.0",

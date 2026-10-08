@@ -87,6 +87,7 @@ bun --filter=@repo/ui run lint:fix
 
 | Command | Description |
 |---------|-------------|
+| `bun run setup` | One-command local onboarding (see Local Dev Setup) |
 | `bun run dev` | Start all apps in Turbo TUI |
 | `bun run build` | Build all packages |
 | `bun run typecheck` | Run type checking across all packages |
@@ -127,42 +128,19 @@ bunx playwright-cli close                         # Terminate browser session
 
 ## Local Dev Setup
 
-When a user asks you to set up their local environment, run these steps in order:
+Local setup is a single command, implemented in `apps/convex-backend/scripts/setup.ts`:
 
-**Step 1 — Copy the frontend env file** (skip if `apps/lomoweb/.env.local` already exists):
 ```bash
-cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
+bun run setup
 ```
 
-**Step 2 — Set the required Convex environment variables** (run from repo root):
-```bash
-bunx convex env set SITE_URL http://localhost:3000 --project-dir apps/convex-backend
-bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32) --project-dir apps/convex-backend
-bunx convex env set ADMIN_EMAILS "your@email.com" --project-dir apps/convex-backend
-```
+It installs dependencies, creates `apps/lomoweb/.env.local`, creates a local Convex deployment (anonymous on first run — no login), sets any missing Convex env vars (`SITE_URL`, generated `BETTER_AUTH_SECRET`, `ADMIN_EMAILS` from `git config user.email`), pushes the backend, seeds demo data, syncs the Convex URLs into the web env file, and then starts `bun run dev`. It is idempotent: existing env vars are never overwritten and seeding only resets seeded rows. Flags: `--admin-email <email>`, `--no-dev`, `--no-seed`.
 
-These are stored in Convex's deployment config, not in a local file. They only need to be set once per deployment; rerunning them is safe and simply replaces the existing values.
+Because it runs `bun install`, **ask the user to run `bun run setup` themselves** rather than running it for them (see "Do NOT" below).
 
-**Step 3 — Start the app stack**:
-```bash
-bun run dev
-```
+If you change what the backend needs at startup (a new required Convex env var, a new bootstrap step), update `setup.ts` and `GETTING_STARTED.md` in the same change so onboarding stays one command.
 
-This launches the monorepo apps, including the Convex backend.
-
-**Step 4 — Seed the local database** (after the backend has started successfully):
-```bash
-cd apps/convex-backend
-bunx convex run seed:run
-```
-
-This populates the local database with the built-in demo users, help requests, and notifications for local development. Rerunning it resets the seeded data to the default fixtures.
-
-If you want to remove only the seed data without reinserting it:
-```bash
-cd apps/convex-backend
-bunx convex run seed:clear
-```
+Manual Convex commands (from `apps/convex-backend`, with the backend running): `bunx convex env set NAME value`, `bunx convex run seed:run`, `bunx convex run seed:clear`.
 
 ## Do NOT
 
