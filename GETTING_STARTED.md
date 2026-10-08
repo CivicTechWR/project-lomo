@@ -145,7 +145,6 @@ project-lomo/
 | `bun run typecheck` | Run type checking across all packages |
 | `bun run test` | Run test suites across all monorepo packages |
 | `bun run test:e2e` | Run Playwright end-to-end tests |
-| `bun run test:e2e` | Run Playwright end-to-end tests |
 | `bun run lint` | Lint all packages |
 | `bun run lint:fix` | Auto-fix lint issues |
 | `bun --filter=@repo/lomoweb run test` | Run the Next.js app test suite |

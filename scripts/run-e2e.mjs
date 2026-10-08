@@ -1,10 +1,10 @@
-import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
-import { createConnection, createServer } from "node:net";
+import { randomBytes } from "node:crypto";
 import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { createConnection, createServer } from "node:net";
+import { basename, dirname, join, resolve } from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const backendSource = join(repoRoot, "apps/convex-backend");
@@ -38,7 +38,7 @@ async function assertPortAvailable(port) {
 			rejectListen(error);
 		});
 		server.listen(port, "127.0.0.1", () => {
-			server.close((error) => error ? rejectListen(error) : resolveListen());
+			server.close(error => error ? rejectListen(error) : resolveListen());
 		});
 	});
 }
@@ -86,7 +86,7 @@ async function stopProcess(handle) {
 	let timeout;
 	await Promise.race([
 		handle.done.catch(() => {}),
-		new Promise(resolveTimeout => {
+		new Promise((resolveTimeout) => {
 			timeout = setTimeout(resolveTimeout, 3000);
 		}),
 	]);
@@ -141,7 +141,7 @@ async function createTempBackend(tempRoot) {
 	await symlink(join(backendSource, "node_modules"), join(backendDir, "node_modules"), "dir");
 	await writeFile(
 		join(backendDir, ".e2e-deployment.env"),
-		`SITE_URL=${siteUrl}\nBETTER_AUTH_SECRET=${randomBytes(32).toString("hex")}\nADMIN_EMAILS=e2e-admin@example.test\n`,
+		`SITE_URL=${siteUrl}\nBETTER_AUTH_SECRET=${randomBytes(32).toString("hex")}\nADMIN_EMAILS=e2e-admin@example.test\nGEOCODING_ENABLED=false\n`,
 		{ mode: 0o600 },
 	);
 	return backendDir;
@@ -228,9 +228,13 @@ async function main() {
 		await stopProcess(convexProcess);
 		if (tempRoot) {
 			const safeTempRoot = resolve(tempRoot);
-			if (dirname(safeTempRoot) !== repoRoot || !safeTempRoot.split("/").at(-1)?.startsWith(tempPrefix))
-				throw new Error(`Refusing to remove unexpected temporary path: ${safeTempRoot}`);
-			await rm(safeTempRoot, { recursive: true, force: true });
+			if (dirname(safeTempRoot) !== repoRoot || !basename(safeTempRoot).startsWith(tempPrefix)) {
+				console.error(`Refusing to remove unexpected temporary path: ${safeTempRoot}`);
+				process.exitCode = 1;
+			}
+			else {
+				await rm(safeTempRoot, { recursive: true, force: true });
+			}
 		}
 		for (const signal of signals)
 			process.off(signal, onSignal);
