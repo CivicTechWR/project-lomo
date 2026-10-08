@@ -1,9 +1,9 @@
+import { expect, it } from "bun:test";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
-import { expect, it } from "vitest";
 import { stopProcess } from "../scripts/run-e2e.mjs";
 
 it("ignores processes that failed to spawn", async () => {

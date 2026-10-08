@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      DO_NOT_TRACK: "1"
       NEXT_PUBLIC_CONVEX_URL: https://placeholder.convex.cloud
       NEXT_PUBLIC_CONVEX_SITE_URL: https://placeholder.convex.site
       NEXT_PUBLIC_SITE_URL: http://localhost:3000

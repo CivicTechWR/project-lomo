@@ -13,6 +13,7 @@ if (!siteUrl) {
 
 export default defineConfig({
 	testDir: "./tests",
+	testMatch: "**/*.spec.ts",
 	fullyParallel: true,
 	reporter: "list",
 	use: {
