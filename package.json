@@ -44,7 +44,7 @@
 		"lint": "eslint --no-warn-ignored eslint.config.mjs playwright.config.ts scripts tests && turbo run lint",
 		"lint:fix": "eslint --no-warn-ignored --fix eslint.config.mjs playwright.config.ts scripts tests && turbo run lint:fix",
 		"typecheck": "tsc --noEmit && turbo run typecheck",
-		"test": "turbo run test",
+		"test": "bun test scripts/run-e2e.test.mjs && turbo run test",
 		"test:e2e": "bun scripts/run-e2e.mjs",
 		"build": "turbo run build",
 		"setup": "bun scripts/setup.ts",

@@ -92,13 +92,17 @@ function startProcess(command, args, options) {
 
 function signalProcess(handle, signal) {
 	const { child } = handle;
-	if (child.exitCode !== null || child.signalCode !== null || !child.pid)
+	if (!child.pid)
 		return;
 	try {
-		if (process.platform === "win32")
+		if (process.platform === "win32") {
+			if (child.exitCode !== null || child.signalCode !== null)
+				return;
 			child.kill(signal);
-		else
+		}
+		else {
 			process.kill(-child.pid, signal);
+		}
 	}
 	catch (error) {
 		if (error.code !== "ESRCH")
@@ -106,11 +110,34 @@ function signalProcess(handle, signal) {
 	}
 }
 
-async function stopProcess(handle) {
-	if (!handle || handle.child.exitCode !== null || handle.child.signalCode !== null)
+function processGroupExists(pid) {
+	try {
+		process.kill(-pid, 0);
+		return true;
+	}
+	catch (error) {
+		if (error.code === "ESRCH")
+			return false;
+		throw error;
+	}
+}
+
+export async function stopProcess(handle) {
+	if (!handle?.child.pid)
 		return;
 
 	signalProcess(handle, "SIGTERM");
+	if (process.platform !== "win32") {
+		const deadline = Date.now() + 3000;
+		while (Date.now() < deadline && processGroupExists(handle.child.pid))
+			await new Promise(resolveWait => setTimeout(resolveWait, 100));
+
+		if (processGroupExists(handle.child.pid))
+			signalProcess(handle, "SIGKILL");
+		await handle.done.catch(() => {});
+		return;
+	}
+
 	let timeout;
 	await Promise.race([
 		handle.done.catch(() => {}),
@@ -271,4 +298,5 @@ async function main() {
 	}
 }
 
-await main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url))
+	await main();
