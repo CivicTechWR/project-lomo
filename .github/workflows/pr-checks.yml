@@ -46,6 +46,22 @@ jobs:
       - name: Lint, type check, test, and build
         run: bunx turbo run lint lint:root typecheck typecheck:root test test:root build
 
+      - name: Restore Playwright browsers
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Restore Convex local backend
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ~/.cache/convex
+          key: convex-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            convex-${{ runner.os }}-
+
       - name: Install Playwright Chromium
         run: bun x playwright install --with-deps chromium
 
