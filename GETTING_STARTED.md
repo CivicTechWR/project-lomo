@@ -150,7 +150,7 @@ project-lomo/
 | `bun run lint:fix` | Auto-fix lint issues |
 | `bun --filter=@repo/lomoweb run test` | Run the Next.js app test suite |
 
-`lint`, `typecheck`, and `test` run through Turborepo, including root-level tasks (`//#lint:root`, `//#typecheck:root`, `//#test:root`), so unchanged work is replayed from the local cache (`.turbo/cache`). CI restores that cache between runs, and also caches the Playwright browsers and the local Convex backend download used by E2E (`~/.cache/ms-playwright`, `~/.cache/convex`), keyed on `bun.lock`. CI sets `DO_NOT_TRACK=1`. To opt out of Turborepo telemetry locally, run `bunx turbo telemetry disable`.
+`lint`, `typecheck`, and `test` run through Turborepo, including root-level tasks (`//#lint:root`, `//#typecheck:root`, `//#test:root`), so unchanged work is replayed from the local cache (`.turbo/cache`). CI restores that cache between runs and sets `DO_NOT_TRACK=1`. To opt out of Turborepo telemetry locally, run `bunx turbo telemetry disable`.
 
 Root tests in `tests/` use Bun's runner (`bun test`) and `*.spec.ts` files are Playwright E2E tests; `vitest` is only available inside `apps/lomoweb`.
 
