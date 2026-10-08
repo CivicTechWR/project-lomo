@@ -273,3 +273,4 @@ dmypy.json
 .kiro/
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+.tmp-lomo-e2e-*/

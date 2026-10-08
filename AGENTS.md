@@ -128,7 +128,7 @@ bunx playwright-cli close                         # Terminate browser session
 
 ## Local Dev Setup
 
-Local setup is a single command, implemented in `apps/convex-backend/scripts/setup.ts`:
+Local setup is a single command, implemented in `scripts/setup.ts`:
 
 ```bash
 bun run setup
@@ -138,7 +138,7 @@ It installs dependencies, creates `apps/lomoweb/.env.local`, creates a local Con
 
 Because it runs `bun install`, **ask the user to run `bun run setup` themselves** rather than running it for them (see "Do NOT" below).
 
-If you change what the backend needs at startup (a new required Convex env var, a new bootstrap step), update `setup.ts` and `GETTING_STARTED.md` in the same change so onboarding stays one command.
+If you change what the backend needs at startup (a new required Convex env var, a new bootstrap step), update `scripts/setup.ts` and `GETTING_STARTED.md` in the same change so onboarding stays one command.
 
 Manual Convex commands (from `apps/convex-backend`, with the backend running): `bunx convex env set NAME value`, `bunx convex run seed:run`, `bunx convex run seed:clear`.
 

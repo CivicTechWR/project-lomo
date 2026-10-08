@@ -151,20 +151,25 @@ async function main() {
 	let tempRoot;
 	let convexProcess;
 	let playwrightProcess;
+	const signals = ["SIGINT", "SIGTERM", "SIGHUP"];
 	const onSignal = (signal) => {
+		receivedSignal ??= signal;
 		for (const handle of processes)
-			signalProcess(handle, signal);
+			signalProcess(handle, signal === "SIGHUP" ? "SIGTERM" : signal);
 	};
-	const onInterrupt = () => onSignal("SIGINT");
-	const onTerminate = () => onSignal("SIGTERM");
-	process.once("SIGINT", onInterrupt);
-	process.once("SIGTERM", onTerminate);
+	const checkInterrupted = () => {
+		if (receivedSignal)
+			throw new Error(`Interrupted by ${receivedSignal}; cleaning up.`);
+	};
+	for (const signal of signals)
+		process.on(signal, onSignal);
 
 	try {
 		for (const port of [3000, 3210, 3211])
 			await assertPortAvailable(port);
 
 		tempRoot = await mkdtemp(join(repoRoot, tempPrefix));
+		checkInterrupted();
 		const backendDir = await createTempBackend(tempRoot);
 		const convexEnv = isolatedEnvironment({
 			SITE_URL: siteUrl,
@@ -175,6 +180,7 @@ async function main() {
 			cwd: backendDir,
 			env: convexEnv,
 		});
+		checkInterrupted();
 		await cp(join(backendSource, "convex"), join(backendDir, "convex"), { recursive: true });
 		await runCommand("bunx", ["convex", "env", "set", "--from-file", ".e2e-deployment.env"], {
 			cwd: backendDir,
@@ -185,6 +191,7 @@ async function main() {
 			env: convexEnv,
 		});
 
+		checkInterrupted();
 		convexProcess = startProcess("bunx", ["convex", "dev", "--typecheck", "disable", "--codegen", "disable"], {
 			cwd: backendDir,
 			env: convexEnv,
@@ -195,6 +202,7 @@ async function main() {
 		await waitForPort(3210, 90000);
 		await waitForPort(3211, 90000);
 
+		checkInterrupted();
 		const testEnv = isolatedEnvironment({
 			LOMO_E2E_ISOLATED: "1",
 			NEXT_PUBLIC_CONVEX_URL: convexApiUrl,
@@ -223,8 +231,8 @@ async function main() {
 				throw new Error(`Refusing to remove unexpected temporary path: ${safeTempRoot}`);
 			await rm(safeTempRoot, { recursive: true, force: true });
 		}
-		process.off("SIGINT", onInterrupt);
-		process.off("SIGTERM", onTerminate);
+		for (const signal of signals)
+			process.off(signal, onSignal);
 		if (receivedSignal)
 			process.exitCode = receivedSignal === "SIGINT" ? 130 : 143;
 	}

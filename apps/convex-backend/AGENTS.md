@@ -23,7 +23,7 @@ Commands are run from `apps/convex-backend` or via workspace filtering:
 | **Seed Database**   | `bunx convex run seed:run`   | Populates local Convex deployment with demo fixtures         |
 | **Clear Seed Data** | `bunx convex run seed:clear` | Removes seeded rows from local database                      |
 
-`scripts/setup.ts` (run from the repo root as `bun run setup`) bootstraps a fresh checkout: local deployment, required env vars, push, and seed. If you add a Convex env var the backend requires to start, add it to the `wanted` map in that script. Scripts in `scripts/` are linted without type information because they sit outside `convex/tsconfig.json`.
+The repository-level `../../scripts/setup.ts` (run from the repo root as `bun run setup`) bootstraps a fresh checkout: local deployment, required env vars, push, and seed. If you add a Convex env var the backend requires to start, add it to the `wanted` map in that script. Backend scripts in `scripts/` are linted without type information because they sit outside `convex/tsconfig.json`.
 
 <!-- convex-ai-start -->
 

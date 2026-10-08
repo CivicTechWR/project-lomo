@@ -47,7 +47,7 @@
 		"test": "turbo run test",
 		"test:e2e": "bun scripts/run-e2e.mjs",
 		"build": "turbo run build",
-		"setup": "bun apps/convex-backend/scripts/setup.ts",
+		"setup": "bun scripts/setup.ts",
 		"dev": "turbo run dev --ui=tui",
 		"prepare": "lefthook install"
 	},
