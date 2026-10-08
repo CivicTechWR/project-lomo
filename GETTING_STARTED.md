@@ -4,7 +4,7 @@ This guide walks you through setting up the LoMo project for local development.
 
 ## Prerequisites
 
-- **[Bun](https://bun.sh) 1.3.8+** — package manager and runtime
+- **[Bun](https://bun.sh) 1.4.2+** — package manager and runtime
 - **[Node.js](https://nodejs.org) >=22** — required runtime
 - **[Git](https://git-scm.com) 2.30+**
 
