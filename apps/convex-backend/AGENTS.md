@@ -16,10 +16,10 @@ Top-level entry files (`users.ts`, `helpRequests.ts`, `requestMessages.ts`, `not
 
 Commands are run from `apps/convex-backend` or via workspace filtering:
 
-| Task                | Command                      | Description                                                  |
-| ------------------- | ---------------------------- | ------------------------------------------------------------ |
-| **Run Unit Tests**  | `bun test`                   | Runs unit test suites (`**/*.test.ts`) using Bun test runner |
-| **Typecheck**       | `tsc -p convex`              | Validates TypeScript types across Convex functions           |
+| Task                | Command                      | Description                                                       |
+| ------------------- | ---------------------------- | ----------------------------------------------------------------- |
+| **Run Unit Tests**  | `bun test`                   | Runs unit test suites (`**/*.test.ts`) using Bun test runner      |
+| **Typecheck**       | `tsc -p convex`              | Validates TypeScript types across Convex functions                |
 | **Seed Database**   | `bunx convex run seed:run`   | Populates the configured Convex dev deployment with demo fixtures |
 | **Clear Seed Data** | `bunx convex run seed:clear` | Removes demo-user records and resets the singleton admin settings |
 
