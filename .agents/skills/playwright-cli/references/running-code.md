@@ -224,7 +224,7 @@ playwright-cli run-code "async page => {
   await page.getByRole('textbox', { name: 'Password' }).fill('secret');
   await page.getByRole('button', { name: 'Sign in' }).click();
   await page.waitForURL('**/dashboard');
-  await page.context().storageState({ path: 'auth.json' });
+  await page.context().storageState({ path: 'session.auth-state.json' });
   return 'Login successful';
 }"
 

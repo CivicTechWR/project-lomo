@@ -44,7 +44,7 @@ jobs:
         run: bun run test
 
       - name: Install Playwright Chromium
-        run: bun playwright install --with-deps chromium
+        run: bun x playwright install --with-deps chromium
 
       - name: E2E tests
         run: bun run test:e2e

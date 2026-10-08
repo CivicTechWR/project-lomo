@@ -13,14 +13,14 @@ Save and restore complete browser state including cookies and storage.
 playwright-cli state-save
 
 # Save to specific filename
-playwright-cli state-save my-auth-state.json
+playwright-cli state-save session.auth-state.json
 ```
 
 ### Restore Storage State
 
 ```bash
 # Load storage state from file
-playwright-cli state-load my-auth-state.json
+playwright-cli state-load session.auth-state.json
 
 # Reload page to apply cookies
 playwright-cli open https://example.com
@@ -240,10 +240,10 @@ playwright-cli fill e2 "password123"
 playwright-cli click e3
 
 # Save the authenticated state
-playwright-cli state-save auth.json
+playwright-cli state-save session.auth-state.json
 
 # Step 2: Later, restore state and skip login
-playwright-cli state-load auth.json
+playwright-cli state-load session.auth-state.json
 playwright-cli open https://app.example.com/dashboard
 # Already logged in!
 ```
@@ -256,12 +256,12 @@ playwright-cli open https://example.com
 playwright-cli eval "() => { document.cookie = 'session=abc123'; localStorage.setItem('user', 'john'); }"
 
 # Save state to file
-playwright-cli state-save my-session.json
+playwright-cli state-save session.auth-state.json
 
 # ... later, in a new session ...
 
 # Restore state
-playwright-cli state-load my-session.json
+playwright-cli state-load session.auth-state.json
 playwright-cli open https://example.com
 # Cookies and localStorage are restored!
 ```

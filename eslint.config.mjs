@@ -4,6 +4,7 @@ export default [
 	...(await sharedConfig),
 	{
 		ignores: [
+			".agents/**",
 			"apps/**",
 			"packages/**",
 			"playwright-report/**",

@@ -1,5 +1,10 @@
 pre-commit:
   commands:
+    lint-root:
+      root: ./
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx eslint --no-warn-ignored --fix {staged_files}
+      stage_fixed: true
     lint-convex-backend:
       root: apps/convex-backend/
       glob: "*.{js,ts,jsx,tsx}"
