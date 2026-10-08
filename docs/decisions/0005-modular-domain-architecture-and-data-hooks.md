@@ -16,9 +16,9 @@ As the LoMo codebase grows, placing all Convex queries and mutations in flat fil
    - `convex/messaging/` — In-app message threads & masked email relay
    - `convex/notifications/` — Recipient notifications & CTA routing
    - `convex/admin/` — Admin dashboard metrics, attention thresholds, redactions
-   Top-level API entry files (`convex/users.ts`, `convex/helpRequests.ts`, etc.) re-export queries and mutations from domain submodules to preserve 100% API contract compatibility.
+   Top-level API entry files (`convex/users.ts`, `convex/helpRequests.ts`, etc.) re-export queries and mutations from domain submodules to preserve the existing client-facing function references.
 
-2. **Frontend Custom Data Hooks Layer (`@repo/lomoweb`):** Extract domain-bound React hooks under `apps/lomoweb/lib/hooks/` (`use-user-profile.ts`, `use-help-requests.ts`, `use-request-messages.ts`, `use-notifications.ts`, `use-admin.ts`). Presentation UI components consume these custom hooks instead of executing raw `useQuery(api...)` calls directly in UI render functions.
+2. **Frontend Custom Data Hooks Layer (`@repo/lomoweb`):** Extract domain-bound React hooks under `apps/lomoweb/lib/hooks/` (`use-user-profile.ts`, `use-help-requests.ts`, `use-request-messages.ts`, `use-notifications.ts`, `use-admin.ts`) to encapsulate common domain data access. Components may use these hooks or call Convex hooks directly where a focused abstraction is not useful.
 
 ## Alternatives Considered
 

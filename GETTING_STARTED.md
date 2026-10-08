@@ -41,7 +41,7 @@ That one command does everything a new contributor needs:
 6. Copies the Convex URLs into `apps/lomoweb/.env.local`
 7. Starts the app stack with `bun run dev` — open http://localhost:3000
 
-It's safe to rerun at any time (for example after pulling, or if something gets out of sync). Existing Convex env vars are never overwritten, and seeding only resets the seeded demo rows — data you created through the app is left alone.
+You can rerun setup after pulling or if something gets out of sync. Existing Convex environment variables are not overwritten. Seeding removes and recreates records owned by seeded demo users (including their requests and related messages/notifications) and resets the singleton admin settings document. Keep data you need to preserve under a non-seeded account; unrelated records are left alone, but records linked to seeded accounts or requests are subject to cleanup.
 
 Options:
 
@@ -55,9 +55,9 @@ Pass flags directly, e.g. `bun run setup --admin-email you@example.com`.
 
 Signing up with the admin email gives you access to the admin panel at `/app/admin`.
 
-The seed command inserts sample users, requests, messages, and notifications for local development and admin dashboard testing. It is idempotent and resets only the seeded demo rows.
+The seed command inserts sample users, requests, messages, and notifications for development and admin dashboard testing in the currently configured Convex dev deployment. It is idempotent for demo data, but also resets the singleton admin settings document; use non-seeded accounts for data you need to preserve.
 
-Seeded requests carry a spread of deadlines (`neededByInDays` in `apps/convex-backend/convex/lib/seedData.ts`, resolved relative to seed time) — including one already overdue and unmatched, and one no-deadline request — so the admin dashboard has something to show under every "needs attention" case without waiting for real data to accumulate.
+Seeded requests cover several deadline-based attention cases (`neededByInDays` in `apps/convex-backend/convex/lib/seedData.ts`, resolved relative to seed time), including one overdue and unmatched and one with no deadline. The age-based attention case cannot be seeded because Convex controls record creation times; see the comments in `apps/convex-backend/convex/seed.ts`.
 
 ### Day-to-day
 

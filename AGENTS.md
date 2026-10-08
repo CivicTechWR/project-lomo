@@ -1,6 +1,6 @@
 # AGENTS.md
 
-AI agent instructions for the LoMo project. This is the single source of truth — `CLAUDE.md` symlinks here. Each app has its own `AGENTS.md` for app-specific conventions.
+Root-level AI agent instructions for the LoMo project. Each app and package may also have an `AGENTS.md` for more specific conventions.
 
 ## Project Overview
 
@@ -72,7 +72,7 @@ This keeps tests stable as the product evolves without turning them into a lock 
 
 ## Commands
 
-Run all commands from the repo root. **Always target specific packages** using `bun --filter=<package_name>` instead of running monorepo-wide commands or cd-ing into directories.
+Run commands from the repo root. For package-specific tasks, target the package with `bun --filter=<package_name>`. Use the root Turbo commands when a task intentionally covers the whole monorepo.
 
 ### Targeting a specific package
 
@@ -136,7 +136,7 @@ Local setup is a single command, implemented in `scripts/setup.ts`:
 bun run setup
 ```
 
-It installs dependencies, creates `apps/lomoweb/.env.local`, creates a local Convex deployment (anonymous on first run — no login), sets any missing Convex env vars (`SITE_URL`, generated `BETTER_AUTH_SECRET`, `ADMIN_EMAILS` from `git config user.email`), pushes the backend, seeds demo data, syncs the Convex URLs into the web env file, and then starts `bun run dev`. It is idempotent: existing env vars are never overwritten and seeding only resets seeded rows. Flags: `--admin-email <email>`, `--no-dev`, `--no-seed`.
+It installs dependencies, creates `apps/lomoweb/.env.local`, creates a local Convex deployment (anonymous on first run — no login), sets any missing Convex env vars (`SITE_URL`, generated `BETTER_AUTH_SECRET`, `ADMIN_EMAILS` from `git config user.email`), pushes the backend, seeds demo data, syncs the Convex URLs into the web env file, and then starts `bun run dev`. It is safe to rerun for setup, but seeding recreates records owned by seeded demo users and resets the singleton admin settings document; do not use the seeded accounts for data you need to keep. Existing Convex environment variables are not overwritten. Flags: `--admin-email <email>`, `--no-dev`, `--no-seed`.
 
 Because it runs `bun install`, **ask the user to run `bun run setup` themselves** rather than running it for them (see "Do NOT" below).
 

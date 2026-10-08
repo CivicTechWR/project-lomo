@@ -20,8 +20,8 @@ Commands are run from `apps/convex-backend` or via workspace filtering:
 | ------------------- | ---------------------------- | ------------------------------------------------------------ |
 | **Run Unit Tests**  | `bun test`                   | Runs unit test suites (`**/*.test.ts`) using Bun test runner |
 | **Typecheck**       | `tsc -p convex`              | Validates TypeScript types across Convex functions           |
-| **Seed Database**   | `bunx convex run seed:run`   | Populates local Convex deployment with demo fixtures         |
-| **Clear Seed Data** | `bunx convex run seed:clear` | Removes seeded rows from local database                      |
+| **Seed Database**   | `bunx convex run seed:run`   | Populates the configured Convex dev deployment with demo fixtures |
+| **Clear Seed Data** | `bunx convex run seed:clear` | Removes demo-user records and resets the singleton admin settings |
 
 The repository-level `../../scripts/setup.ts` (run from the repo root as `bun run setup`) bootstraps a fresh checkout: local deployment, required env vars, push, and seed. If you add a Convex env var the backend requires to start, add it to the `wanted` map in that script. Backend scripts in `scripts/` are linted without type information because they sit outside `convex/tsconfig.json`.
 
