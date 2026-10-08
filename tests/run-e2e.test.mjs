@@ -1,4 +1,4 @@
-import { expect, it } from "bun:test";
+/* global expect, it */
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
