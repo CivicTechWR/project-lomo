@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
 import { expect, it } from "vitest";
-import { stopProcess } from "./run-e2e.mjs";
+import { stopProcess } from "../scripts/run-e2e.mjs";
 
 it("ignores processes that failed to spawn", async () => {
 	await expect(stopProcess({

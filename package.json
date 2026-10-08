@@ -41,10 +41,13 @@
 		"version": "echo 'Template version:' $npm_package_version",
 		"changelog": "echo 'See CHANGELOG.md for release notes'",
 		"release": "echo 'Use GitHub Releases for official releases'",
-		"lint": "eslint --no-warn-ignored eslint.config.mjs playwright.config.ts scripts tests && turbo run lint",
+		"lint": "turbo run lint lint:root",
+		"lint:root": "eslint --no-warn-ignored eslint.config.mjs playwright.config.ts scripts tests",
 		"lint:fix": "eslint --no-warn-ignored --fix eslint.config.mjs playwright.config.ts scripts tests && turbo run lint:fix",
-		"typecheck": "tsc --noEmit && turbo run typecheck",
-		"test": "bun test scripts/run-e2e.test.mjs && turbo run test",
+		"typecheck": "turbo run typecheck typecheck:root",
+		"typecheck:root": "tsc --noEmit",
+		"test": "turbo run test test:root",
+		"test:root": "bun test tests/run-e2e.test.mjs",
 		"test:e2e": "bun scripts/run-e2e.mjs",
 		"build": "turbo run build",
 		"setup": "bun scripts/setup.ts",
@@ -95,6 +98,7 @@
 		"eslint": "catalog:",
 		"lefthook": "^2.1.16",
 		"playwright": "^1.63.0",
-		"turbo": "^2.11.7"
+		"turbo": "^2.11.7",
+		"typescript": "catalog:"
 	}
 }

@@ -131,6 +131,8 @@ project-lomo/
 ├── packages/
 │   ├── ui/                   # Component library (Tailwind v4 + react-aria-components)
 │   └── eslint-config/        # Shared ESLint configuration
+├── scripts/                  # Development and test-runner scripts
+├── tests/                    # Root-level end-to-end and runner tests
 └── package.json              # Root workspace config (Bun + Turborepo)
 ```
 
