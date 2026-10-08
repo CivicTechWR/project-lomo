@@ -41,8 +41,8 @@
 		"version": "echo 'Template version:' $npm_package_version",
 		"changelog": "echo 'See CHANGELOG.md for release notes'",
 		"release": "echo 'Use GitHub Releases for official releases'",
-		"lint": "eslint --no-warn-ignored eslint.config.mjs playwright.config.ts scripts && turbo run lint",
-		"lint:fix": "eslint --no-warn-ignored --fix eslint.config.mjs playwright.config.ts scripts && turbo run lint:fix",
+		"lint": "eslint --no-warn-ignored eslint.config.mjs playwright.config.ts scripts tests && turbo run lint",
+		"lint:fix": "eslint --no-warn-ignored --fix eslint.config.mjs playwright.config.ts scripts tests && turbo run lint:fix"
 		"typecheck": "tsc --noEmit && turbo run typecheck",
 		"test": "turbo run test",
 		"test:e2e": "bun scripts/run-e2e.mjs",
