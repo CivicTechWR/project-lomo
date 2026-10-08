@@ -117,8 +117,8 @@ playwright-cli tab-select 0
 
 ```bash
 playwright-cli state-save
-playwright-cli state-save auth.json
-playwright-cli state-load auth.json
+playwright-cli state-save session.auth-state.json
+playwright-cli state-load session.auth-state.json
 
 # Cookies
 playwright-cli cookie-list

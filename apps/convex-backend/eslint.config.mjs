@@ -8,5 +8,7 @@ const convexTsconfigPath = fileURLToPath(
 export default GetConfig({
 	typescript: {
 		tsconfigPath: convexTsconfigPath,
+		// Bun CLI scripts sit outside the Convex tsconfig, so lint them without type info.
+		ignoresTypeAware: ["scripts/**"],
 	},
 });

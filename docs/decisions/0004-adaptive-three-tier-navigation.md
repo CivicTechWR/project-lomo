@@ -12,7 +12,7 @@ LoMo must support devices ranging from small mobile screens (320px minimum) to l
 ## Decision
 Adopt Material Design 3's adaptive navigation layout pattern, implementing three responsive navigation tiers sharing a unified visual grammar:
 1. **Phone (<768px):** Floating bottom pill navigation bar fixed at the bottom of the viewport.
-2. **Tablet (768px - 1023px):** Floating navigation rail fixed on the left margin (`md:flex lg:hidden`).
+2. **Tablet (768px - 1023px):** Floating navigation rail sticky near the top of the left margin (`md:flex lg:hidden`).
 3. **Laptop/PC (≥1024px):** Navigation sidebar attached directly to the left viewport edge (`lg:flex`).
 
 When in admin routes (`/app/admin/*`), all three responsive tiers render admin navigation controls and provide a prominent, keyboard-accessible "Back to app" exit control to return to `/app`.

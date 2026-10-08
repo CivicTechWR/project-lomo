@@ -1,10 +1,10 @@
-import { randomBytes } from "node:crypto";
 import { spawn } from "node:child_process";
-import { createConnection, createServer } from "node:net";
+import { randomBytes } from "node:crypto";
 import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { createConnection, createServer } from "node:net";
+import { basename, dirname, join, resolve } from "node:path";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const backendSource = join(repoRoot, "apps/convex-backend");
@@ -15,16 +15,44 @@ const siteUrl = "http://localhost:3000";
 const processes = new Set();
 let receivedSignal;
 
+// Only these parent variables are forwarded so local/CI credentials never reach child processes.
+const inheritedEnvNames = [
+	"PATH",
+	"HOME",
+	"USER",
+	"LOGNAME",
+	"SHELL",
+	"LANG",
+	"LC_ALL",
+	"TZ",
+	"TMPDIR",
+	"TEMP",
+	"TMP",
+	"SystemRoot",
+	"USERPROFILE",
+	"APPDATA",
+	"LOCALAPPDATA",
+	"DISPLAY",
+	"XDG_RUNTIME_DIR",
+	"XDG_CACHE_HOME",
+	"XDG_CONFIG_HOME",
+	"XDG_DATA_HOME",
+	"BUN_INSTALL",
+	"PLAYWRIGHT_BROWSERS_PATH",
+	"PLAYWRIGHT_HTML_OPEN",
+];
+
 function isolatedEnvironment(extra = {}) {
-	const env = {
-		...process.env,
+	const env = {};
+	for (const name of inheritedEnvNames) {
+		if (process.env[name] !== undefined)
+			env[name] = process.env[name];
+	}
+	return {
+		...env,
 		...extra,
 		CI: "1",
 	};
-	delete env.CONVEX_DEPLOY_KEY;
-	delete env.CONVEX_DEPLOYMENT;
-	delete env.CONVEX_SELF_HOSTED_URL;
-	return env;
 }
 
 async function assertPortAvailable(port) {
@@ -38,7 +66,7 @@ async function assertPortAvailable(port) {
 			rejectListen(error);
 		});
 		server.listen(port, "127.0.0.1", () => {
-			server.close((error) => error ? rejectListen(error) : resolveListen());
+			server.close(error => error ? rejectListen(error) : resolveListen());
 		});
 	});
 }
@@ -64,13 +92,17 @@ function startProcess(command, args, options) {
 
 function signalProcess(handle, signal) {
 	const { child } = handle;
-	if (child.exitCode !== null || child.signalCode !== null || !child.pid)
+	if (!child.pid)
 		return;
 	try {
-		if (process.platform === "win32")
+		if (process.platform === "win32") {
+			if (child.exitCode !== null || child.signalCode !== null)
+				return;
 			child.kill(signal);
-		else
+		}
+		else {
 			process.kill(-child.pid, signal);
+		}
 	}
 	catch (error) {
 		if (error.code !== "ESRCH")
@@ -78,15 +110,38 @@ function signalProcess(handle, signal) {
 	}
 }
 
-async function stopProcess(handle) {
-	if (!handle || handle.child.exitCode !== null || handle.child.signalCode !== null)
+function processGroupExists(pid) {
+	try {
+		process.kill(-pid, 0);
+		return true;
+	}
+	catch (error) {
+		if (error.code === "ESRCH")
+			return false;
+		throw error;
+	}
+}
+
+export async function stopProcess(handle) {
+	if (!handle?.child.pid)
 		return;
 
 	signalProcess(handle, "SIGTERM");
+	if (process.platform !== "win32") {
+		const deadline = Date.now() + 3000;
+		while (Date.now() < deadline && processGroupExists(handle.child.pid))
+			await new Promise(resolveWait => setTimeout(resolveWait, 100));
+
+		if (processGroupExists(handle.child.pid))
+			signalProcess(handle, "SIGKILL");
+		await handle.done.catch(() => {});
+		return;
+	}
+
 	let timeout;
 	await Promise.race([
 		handle.done.catch(() => {}),
-		new Promise(resolveTimeout => {
+		new Promise((resolveTimeout) => {
 			timeout = setTimeout(resolveTimeout, 3000);
 		}),
 	]);
@@ -141,7 +196,7 @@ async function createTempBackend(tempRoot) {
 	await symlink(join(backendSource, "node_modules"), join(backendDir, "node_modules"), "dir");
 	await writeFile(
 		join(backendDir, ".e2e-deployment.env"),
-		`SITE_URL=${siteUrl}\nBETTER_AUTH_SECRET=${randomBytes(32).toString("hex")}\nADMIN_EMAILS=e2e-admin@example.test\n`,
+		`SITE_URL=${siteUrl}\nBETTER_AUTH_SECRET=${randomBytes(32).toString("hex")}\nADMIN_EMAILS=e2e-admin@example.test\nGEOCODING_ENABLED=false\n`,
 		{ mode: 0o600 },
 	);
 	return backendDir;
@@ -151,22 +206,28 @@ async function main() {
 	let tempRoot;
 	let convexProcess;
 	let playwrightProcess;
+	const signals = ["SIGINT", "SIGTERM", "SIGHUP"];
 	const onSignal = (signal) => {
+		receivedSignal ??= signal;
 		for (const handle of processes)
-			signalProcess(handle, signal);
+			signalProcess(handle, signal === "SIGHUP" ? "SIGTERM" : signal);
 	};
-	const onInterrupt = () => onSignal("SIGINT");
-	const onTerminate = () => onSignal("SIGTERM");
-	process.once("SIGINT", onInterrupt);
-	process.once("SIGTERM", onTerminate);
+	const checkInterrupted = () => {
+		if (receivedSignal)
+			throw new Error(`Interrupted by ${receivedSignal}; cleaning up.`);
+	};
+	for (const signal of signals)
+		process.on(signal, onSignal);
 
 	try {
 		for (const port of [3000, 3210, 3211])
 			await assertPortAvailable(port);
 
 		tempRoot = await mkdtemp(join(repoRoot, tempPrefix));
+		checkInterrupted();
 		const backendDir = await createTempBackend(tempRoot);
 		const convexEnv = isolatedEnvironment({
+			CONVEX_AGENT_MODE: "anonymous",
 			SITE_URL: siteUrl,
 		});
 
@@ -175,6 +236,7 @@ async function main() {
 			cwd: backendDir,
 			env: convexEnv,
 		});
+		checkInterrupted();
 		await cp(join(backendSource, "convex"), join(backendDir, "convex"), { recursive: true });
 		await runCommand("bunx", ["convex", "env", "set", "--from-file", ".e2e-deployment.env"], {
 			cwd: backendDir,
@@ -185,6 +247,7 @@ async function main() {
 			env: convexEnv,
 		});
 
+		checkInterrupted();
 		convexProcess = startProcess("bunx", ["convex", "dev", "--typecheck", "disable", "--codegen", "disable"], {
 			cwd: backendDir,
 			env: convexEnv,
@@ -195,6 +258,7 @@ async function main() {
 		await waitForPort(3210, 90000);
 		await waitForPort(3211, 90000);
 
+		checkInterrupted();
 		const testEnv = isolatedEnvironment({
 			LOMO_E2E_ISOLATED: "1",
 			NEXT_PUBLIC_CONVEX_URL: convexApiUrl,
@@ -219,15 +283,20 @@ async function main() {
 		await stopProcess(convexProcess);
 		if (tempRoot) {
 			const safeTempRoot = resolve(tempRoot);
-			if (dirname(safeTempRoot) !== repoRoot || !safeTempRoot.split("/").at(-1)?.startsWith(tempPrefix))
-				throw new Error(`Refusing to remove unexpected temporary path: ${safeTempRoot}`);
-			await rm(safeTempRoot, { recursive: true, force: true });
+			if (dirname(safeTempRoot) !== repoRoot || !basename(safeTempRoot).startsWith(tempPrefix)) {
+				console.error(`Refusing to remove unexpected temporary path: ${safeTempRoot}`);
+				process.exitCode = 1;
+			}
+			else {
+				await rm(safeTempRoot, { recursive: true, force: true });
+			}
 		}
-		process.off("SIGINT", onInterrupt);
-		process.off("SIGTERM", onTerminate);
+		for (const signal of signals)
+			process.off(signal, onSignal);
 		if (receivedSignal)
 			process.exitCode = receivedSignal === "SIGINT" ? 130 : 143;
 	}
 }
 
-await main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url))
+	await main();

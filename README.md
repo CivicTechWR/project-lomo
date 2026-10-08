@@ -65,16 +65,18 @@ A platform for people to post asks and offers, matched with others in their comm
 ### Getting started
 
 ```bash
-bun install
-bun run dev
+bun run setup
 ```
 
-This starts all apps via Turborepo. Turbo's TUI keeps each process in its own log view. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+On a fresh checkout, one command installs dependencies, creates env files, configures an anonymous local Convex deployment (no account needed), seeds demo data, and starts the app at http://localhost:3000. Existing Convex deployment settings are reused. After that, `bun run dev` is all you need day to day.
+
+`bun run dev` starts all apps via Turborepo. Turbo's TUI keeps each process in its own log view. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ### Available commands
 
 | Command | Description |
 |---------|-------------|
+| `bun run setup` | One-time (and rerunnable) local setup, then starts the app |
 | `bun run dev` | Start all apps in Turbo's terminal UI |
 | `bun run build` | Build all packages |
 | `bun run typecheck` | Run type checking across all packages |
@@ -95,6 +97,7 @@ Key architectural decisions are recorded as Architecture Decision Records (ADRs)
 - [ADR-0003: Yellow CTA Button Treatment](docs/decisions/0003-yellow-cta-button-treatment.md)
 - [ADR-0004: Adaptive Three-Tier Responsive Navigation Layout](docs/decisions/0004-adaptive-three-tier-navigation.md)
 - [ADR-0005: Modular Domain Architecture and Custom Data Hooks Layer](docs/decisions/0005-modular-domain-architecture-and-data-hooks.md)
+- [ADR-0006: Integrate Reusable Custom UI Primitives into `@repo/ui`](docs/decisions/0006-integrate-custom-ui-primitives-into-repo-ui.md)
 
 ## AI Agents
 

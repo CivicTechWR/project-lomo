@@ -25,76 +25,71 @@ git clone https://github.com/CivicTechWR/project-lomo.git
 cd project-lomo
 ```
 
-### 2. Install dependencies
+### 2. Run setup
 
 ```bash
-bun install
+bun run setup
 ```
 
-### 3. Create the frontend environment file
+That one command does everything a new contributor needs:
 
-```bash
-cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
-```
+1. Installs dependencies (`bun install`)
+2. Creates `apps/lomoweb/.env.local` from the example (if it doesn't exist)
+3. Starts Convex and creates a local deployment — no Convex account or login needed on first run
+4. Sets any missing Convex environment variables: `SITE_URL`, a generated `BETTER_AUTH_SECRET`, and `ADMIN_EMAILS` (your `git config user.email`)
+5. Pushes the backend and seeds demo users, requests, messages, and notifications
+6. Copies the Convex URLs into `apps/lomoweb/.env.local`
+7. Starts the app stack with `bun run dev` — open http://localhost:3000
 
-This is the local Next.js env file for the app. The defaults work for local development.
+You can rerun setup after pulling or if something gets out of sync. Existing Convex environment variables are not overwritten. Seeding removes and recreates records owned by seeded demo users (including their requests and related messages/notifications) and resets the singleton admin settings document. Keep data you need to preserve under a non-seeded account; unrelated records are left alone, but records linked to seeded accounts or requests are subject to cleanup.
 
-### 4. Set the required Convex environment variables
+Options:
 
-From the repo root, set the variables the backend needs before starting the dev server:
+| Flag | Description |
+|------|-------------|
+| `--admin-email you@example.com` | Grant admin access to a different email than your git email (comma-separate multiple) |
+| `--no-dev` | Stop after setup instead of starting `bun run dev` |
+| `--no-seed` | Skip seeding demo data |
 
-```bash
-cd apps/convex-backend
-bunx convex env set SITE_URL http://localhost:3000
-bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32)
-```
+Pass flags directly, e.g. `bun run setup --admin-email you@example.com`.
 
-These values are stored in Convex's deployment config, not in a local file, so you typically only need to run this once per deployment. If the first `bun run dev` fails with `SITE_URL is missing or invalid`, this is the missing setup step.
+Signing up with the admin email gives you access to the admin panel at `/app/admin`.
 
-### 5. Grant yourself admin access
+The seed command inserts sample users, requests, messages, and notifications for development and admin dashboard testing in the currently configured Convex dev deployment. It is idempotent for demo data, but also resets the singleton admin settings document; use non-seeded accounts for data you need to preserve.
 
-Set your email as an admin in Convex's cloud config:
+Seeded requests cover several deadline-based attention cases (`neededByInDays` in `apps/convex-backend/convex/lib/seedData.ts`, resolved relative to seed time), including one overdue and unmatched and one with no deadline. The age-based attention case cannot be seeded because Convex controls record creation times; see the comments in `apps/convex-backend/convex/seed.ts`.
 
-```bash
-bunx convex env set ADMIN_EMAILS "your@email.com"
-```
+### Day-to-day
 
-Replace `your@email.com` with the email you'll use to sign up. You can add multiple admins as a comma-separated list (e.g. `"alice@example.com,bob@example.com"`).
-
-After this, signing in with that email gives you access to the admin panel at `/app/admin`.
-
-### 6. Start everything
+After the first setup, just run:
 
 ```bash
 bun run dev
 ```
 
-This starts the monorepo apps and launches the Convex local dev process for the backend.
+### Manual Convex commands
 
-### 7. Seed the database
-
-Once Convex is running and the backend has finished its initial push, seed the local database:
+You rarely need these, but they're available from `apps/convex-backend`:
 
 ```bash
 cd apps/convex-backend
-bunx convex run seed:run
+bunx convex env set ADMIN_EMAILS "alice@example.com,bob@example.com"  # change admins
+bunx convex run seed:run    # reset seeded demo data
+bunx convex run seed:clear  # remove seeded demo data
 ```
 
-This inserts sample users, requests, messages, and notifications used for local development and testing the admin dashboard. It's idempotent — safe to re-run anytime to reset the seeded data back to the default fixtures.
+`convex env set` and `convex run` need the Convex backend running (`bun run dev` in another terminal).
 
-Seeded requests carry a spread of deadlines (`neededByInDays` in `apps/convex-backend/convex/lib/seedData.ts`, resolved relative to seed time) — including one already overdue and unmatched, and one no-deadline request — so the admin dashboard has something to show under every "needs attention" case without waiting for real data to accumulate.
-
-### 8. Install Playwright browsers and CLI
+### Playwright and E2E tests
 
 ```bash
-bun playwright install
-bun playwright install-deps
-bun playwright-cli install
+bun x playwright install
+bun x playwright install-deps
 ```
 
-This installs Playwright browser binaries, system dependencies, and initializes the `.playwright-cli/` workspace configuration for CLI/agent-driven runs.
+This installs Playwright browser binaries and system dependencies. The committed `.playwright/cli.config.json` workspace configuration is used for CLI/agent-driven runs.
 
-### 9. Run E2E tests
+Run E2E tests with:
 
 ```bash
 bun run test:e2e
@@ -102,7 +97,7 @@ bun run test:e2e
 
 The runner starts a disposable local Convex database and removes its temporary project after the run. Your development database and `.env.local` are left untouched. Keep ports `3000`, `3210`, and `3211` free; stop the normal dev stack before running E2E if it is using them.
 
-The current suite checks the homepage and signup, then creates a requester account, completes onboarding, posts an "Other" help request, and confirms it appears under My Requests. The request uses a synthetic location; the backend may send it to OpenStreetMap Nominatim for geocoding. App data remains in the disposable local database.
+The current suite checks the homepage and signup, then creates a requester account, completes onboarding, posts an "Other" help request, and confirms it appears under My Requests. The request uses a synthetic location, and E2E geocoding is disabled. App data remains in the disposable local database.
 
 For AI agent browser testing, the workspace includes `@playwright/cli`. Agents can launch and inspect local pages interactively:
 
@@ -113,7 +108,7 @@ bunx playwright-cli click <ref>
 bunx playwright-cli close
 ```
 
-### 10. Optional cleanup
+### Optional cleanup
 
 To remove only the seeded rows without reinserting them:
 
@@ -136,6 +131,8 @@ project-lomo/
 ├── packages/
 │   ├── ui/                   # Component library (Tailwind v4 + react-aria-components)
 │   └── eslint-config/        # Shared ESLint configuration
+├── scripts/                  # Development and test-runner scripts
+├── tests/                    # Root-level end-to-end and runner tests
 └── package.json              # Root workspace config (Bun + Turborepo)
 ```
 
@@ -143,14 +140,19 @@ project-lomo/
 
 | Command | Description |
 |---------|-------------|
+| `bun run setup` | One-time (and rerunnable) local setup, then starts the app |
 | `bun run dev` | Start all apps in Turbo's terminal UI |
 | `bun run build` | Build all packages |
-| `bun run typecheck` | Run type checking across all packages |
-| `bun run test` | Run test suites across all monorepo packages |
+| `bun run typecheck` | Type check all packages plus the root (`playwright.config.ts`, `tests/`) |
+| `bun run test` | Run test suites across all packages plus the root runner tests |
 | `bun run test:e2e` | Run Playwright end-to-end tests |
-| `bun run lint` | Lint all packages |
+| `bun run lint` | Lint all packages plus root config, `scripts/`, and `tests/` |
 | `bun run lint:fix` | Auto-fix lint issues |
 | `bun --filter=@repo/lomoweb run test` | Run the Next.js app test suite |
+
+`lint`, `typecheck`, and `test` run through Turborepo, including root-level tasks (`//#lint:root`, `//#typecheck:root`, `//#test:root`), so unchanged work is replayed from the local cache (`.turbo/cache`). CI restores that cache between runs and sets `DO_NOT_TRACK=1`. To opt out of Turborepo telemetry locally, run `bunx turbo telemetry disable`.
+
+Root tests in `tests/` use Bun's runner (`bun test`) and `*.spec.ts` files are Playwright E2E tests; `vitest` is only available inside `apps/lomoweb`.
 
 ## Convex Backend
 

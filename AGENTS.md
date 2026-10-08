@@ -1,6 +1,6 @@
 # AGENTS.md
 
-AI agent instructions for the LoMo project. This is the single source of truth — `CLAUDE.md` symlinks here. Each app has its own `AGENTS.md` for app-specific conventions.
+Root-level AI agent instructions for the LoMo project. Each app and package may also have an `AGENTS.md` for more specific conventions.
 
 ## Project Overview
 
@@ -72,7 +72,7 @@ This keeps tests stable as the product evolves without turning them into a lock 
 
 ## Commands
 
-Run all commands from the repo root. **Always target specific packages** using `bun --filter=<package_name>` instead of running monorepo-wide commands or cd-ing into directories.
+Run commands from the repo root. For package-specific tasks, target the package with `bun --filter=<package_name>`. Use the root Turbo commands when a task intentionally covers the whole monorepo.
 
 ### Targeting a specific package
 
@@ -87,12 +87,13 @@ bun --filter=@repo/ui run lint:fix
 
 | Command | Description |
 |---------|-------------|
+| `bun run setup` | One-command local onboarding (see Local Dev Setup) |
 | `bun run dev` | Start all apps in Turbo TUI |
 | `bun run build` | Build all packages |
-| `bun run typecheck` | Run type checking across all packages |
-| `bun run test` | Run test suites across all packages |
+| `bun run typecheck` | Run type checking across all packages and the root |
+| `bun run test` | Run test suites across all packages and root runner tests (`bun test`) |
 | `bun run test:e2e` | Run Playwright end-to-end tests |
-| `bun run lint` | Lint all packages |
+| `bun run lint` | Lint all packages and root files (`scripts/`, `tests/`) |
 | `bun run lint:fix` | Auto-fix lint issues |
 
 ### Browser testing with playwright-cli
@@ -125,44 +126,23 @@ bunx playwright-cli close                         # Terminate browser session
 
 **Do NOT run `bun install` directly.** Ask the user to review dependency changes and run it themselves.
 
+`bun.lock` must only be generated or updated by Bun. Never edit it manually.
+
 ## Local Dev Setup
 
-When a user asks you to set up their local environment, run these steps in order:
+Local setup is a single command, implemented in `scripts/setup.ts`:
 
-**Step 1 — Copy the frontend env file** (skip if `apps/lomoweb/.env.local` already exists):
 ```bash
-cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
+bun run setup
 ```
 
-**Step 2 — Set the required Convex environment variables** (run from repo root):
-```bash
-bunx convex env set SITE_URL http://localhost:3000 --project-dir apps/convex-backend
-bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32) --project-dir apps/convex-backend
-bunx convex env set ADMIN_EMAILS "your@email.com" --project-dir apps/convex-backend
-```
+It installs dependencies, creates `apps/lomoweb/.env.local`, creates a local Convex deployment (anonymous on first run — no login), sets any missing Convex env vars (`SITE_URL`, generated `BETTER_AUTH_SECRET`, `ADMIN_EMAILS` from `git config user.email`), pushes the backend, seeds demo data, syncs the Convex URLs into the web env file, and then starts `bun run dev`. It is safe to rerun for setup, but seeding recreates records owned by seeded demo users and resets the singleton admin settings document; do not use the seeded accounts for data you need to keep. Existing Convex environment variables are not overwritten. Flags: `--admin-email <email>`, `--no-dev`, `--no-seed`.
 
-These are stored in Convex's deployment config, not in a local file. They only need to be set once per deployment; rerunning them is safe and simply replaces the existing values.
+Because it runs `bun install`, **ask the user to run `bun run setup` themselves** rather than running it for them (see "Do NOT" below).
 
-**Step 3 — Start the app stack**:
-```bash
-bun run dev
-```
+If you change what the backend needs at startup (a new required Convex env var, a new bootstrap step), update `scripts/setup.ts` and `GETTING_STARTED.md` in the same change so onboarding stays one command.
 
-This launches the monorepo apps, including the Convex backend.
-
-**Step 4 — Seed the local database** (after the backend has started successfully):
-```bash
-cd apps/convex-backend
-bunx convex run seed:run
-```
-
-This populates the local database with the built-in demo users, help requests, and notifications for local development. Rerunning it resets the seeded data to the default fixtures.
-
-If you want to remove only the seed data without reinserting it:
-```bash
-cd apps/convex-backend
-bunx convex run seed:clear
-```
+Manual Convex commands (from `apps/convex-backend`, with the backend running): `bunx convex env set NAME value`, `bunx convex run seed:run`, `bunx convex run seed:clear`.
 
 ## Do NOT
 
@@ -178,3 +158,14 @@ Architectural decisions are formally recorded in `docs/decisions/`. Before intro
 These are not yet decided. Do not introduce them without explicit instruction:
 
 - Frontend hosting: Vercel vs Cloudflare vs Railway
+
+<!-- BEGIN:turborepo-agent-rules -->
+
+# This is NOT the Turborepo you know
+
+Turborepo configuration, task behavior, and CLI commands can vary between installed versions and may differ from your training data. Resolve the `turbo` package from this file's directory or relevant workspace; in monorepos, it may not be visible from the repository root. For example, run `node -p "require.resolve('turbo/package.json')"` from a workspace that depends on `turbo`.
+
+Read `docs/README.md` inside that installed package first, then read the relevant pages from its `docs/` directory before changing Turborepo configuration or commands. Heed deprecation notices. These bundled docs match the installed package version and are available without network access.
+
+This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": false` in the root `turbo.json` or `turbo.jsonc` to opt out; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
+<!-- END:turborepo-agent-rules -->

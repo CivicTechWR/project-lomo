@@ -1,3 +1,4 @@
+/* eslint-disable node/prefer-global/process -- Convex exposes deployment environment variables through process.env. */
 import type { Doc, Id } from "../_generated/dataModel";
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
@@ -53,7 +54,7 @@ export const create = mutation({
 				: {}),
 		});
 
-		if (coords == null) {
+		if (coords == null && process.env.GEOCODING_ENABLED !== "false") {
 			const address = extractGeocodableAddress(args.category, args.payload);
 			if (address != null) {
 				await ctx.scheduler.runAfter(0, internal.requestGeocode.geocodeRequest, {

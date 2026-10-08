@@ -1,6 +1,7 @@
 {
 	"name": "@civictechwr/project-lomo",
 	"version": "0.1.0",
+	"packageManager": "bun@1.3.8",
 	"description": "LoMo - a calm, consent-based platform for asking for and offering help in the community",
 	"author": {
 		"name": "CivicTechWR",
@@ -17,7 +18,6 @@
 			"url": "https://civictechwr.org"
 		}
 	],
-	"packageManager": "bun@1.3.8",
 	"license": "MIT",
 	"homepage": "https://github.com/CivicTechWR/project-lomo",
 	"repository": {
@@ -41,12 +41,16 @@
 		"version": "echo 'Template version:' $npm_package_version",
 		"changelog": "echo 'See CHANGELOG.md for release notes'",
 		"release": "echo 'Use GitHub Releases for official releases'",
-		"lint": "turbo run lint",
-		"lint:fix": "turbo run lint:fix",
-		"typecheck": "turbo run typecheck",
-		"test": "turbo run test",
+		"lint": "turbo run lint lint:root",
+		"lint:root": "eslint --no-warn-ignored eslint.config.mjs playwright.config.ts scripts tests",
+		"lint:fix": "eslint --no-warn-ignored --fix eslint.config.mjs playwright.config.ts scripts tests && turbo run lint:fix",
+		"typecheck": "turbo run typecheck typecheck:root",
+		"typecheck:root": "tsc --noEmit",
+		"test": "turbo run test test:root",
+		"test:root": "bun test tests/run-e2e.test.mjs",
 		"test:e2e": "bun scripts/run-e2e.mjs",
 		"build": "turbo run build",
+		"setup": "bun scripts/setup.ts",
 		"dev": "turbo run dev --ui=tui",
 		"prepare": "lefthook install"
 	},
@@ -82,18 +86,20 @@
 		"tailwind-merge": "3.5.0",
 		"tailwind-variants": "3.3.1"
 	},
-	"devDependencies": {
-		"@playwright/cli": "^0.1.21",
-		"@playwright/test": "^1.63.0",
-		"actions-up": "1.20.0",
-		"eslint": "catalog:",
-		"lefthook": "^2.1.14",
-		"playwright": "^1.63.0",
-		"turbo": "^2.11.2"
-	},
 	"dependencies": {
 		"@zxcvbn-ts/core": "^4.2.0",
 		"@zxcvbn-ts/language-common": "^4.1.3",
 		"@zxcvbn-ts/language-en": "^4.1.1"
+	},
+	"devDependencies": {
+		"@playwright/cli": "^0.1.21",
+		"@playwright/test": "^1.63.0",
+		"@types/node": "catalog:",
+		"actions-up": "1.21.0",
+		"eslint": "catalog:",
+		"lefthook": "^2.1.16",
+		"playwright": "^1.63.0",
+		"turbo": "^2.11.7",
+		"typescript": "catalog:"
 	}
 }
