@@ -356,7 +356,7 @@ Loop 2.2 over the targeted scenarios one at a time, restarting the seed between 
 After generation, run the new tests once:
 
 ```bash
-PLAYWRIGHT_HTML_OPEN=never npx playwright test tests/<group>/<scenario>.spec.ts
+PLAYWRIGHT_HTML_OPEN=never bun run test:e2e tests/<group>/<scenario>.spec.ts
 ```
 
 Any failure goes to Section 3.

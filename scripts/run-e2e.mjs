@@ -15,16 +15,44 @@ const siteUrl = "http://localhost:3000";
 const processes = new Set();
 let receivedSignal;
 
+// Only these parent variables are forwarded so local/CI credentials never reach child processes.
+const inheritedEnvNames = [
+	"PATH",
+	"HOME",
+	"USER",
+	"LOGNAME",
+	"SHELL",
+	"LANG",
+	"LC_ALL",
+	"TZ",
+	"TMPDIR",
+	"TEMP",
+	"TMP",
+	"SystemRoot",
+	"USERPROFILE",
+	"APPDATA",
+	"LOCALAPPDATA",
+	"DISPLAY",
+	"XDG_RUNTIME_DIR",
+	"XDG_CACHE_HOME",
+	"XDG_CONFIG_HOME",
+	"XDG_DATA_HOME",
+	"BUN_INSTALL",
+	"PLAYWRIGHT_BROWSERS_PATH",
+	"PLAYWRIGHT_HTML_OPEN",
+];
+
 function isolatedEnvironment(extra = {}) {
-	const env = {
-		...process.env,
+	const env = {};
+	for (const name of inheritedEnvNames) {
+		if (process.env[name] !== undefined)
+			env[name] = process.env[name];
+	}
+	return {
+		...env,
 		...extra,
 		CI: "1",
 	};
-	delete env.CONVEX_DEPLOY_KEY;
-	delete env.CONVEX_DEPLOYMENT;
-	delete env.CONVEX_SELF_HOSTED_URL;
-	return env;
 }
 
 async function assertPortAvailable(port) {
