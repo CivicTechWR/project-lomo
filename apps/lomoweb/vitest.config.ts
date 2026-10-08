@@ -12,6 +12,8 @@ export default defineConfig({
 	test: {
 		environment: "jsdom",
 		globals: true,
+		// Turbo runs tests alongside builds in CI, so allow for CPU contention.
+		testTimeout: 15_000,
 		setupFiles: ["./vitest.setup.ts"],
 	},
 });

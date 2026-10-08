@@ -6,9 +6,12 @@ import { Description, FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
+import { isSupportedCountry } from "libphonenumber-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAdminSettings, useUpdateAdminSettings } from "@/lib/hooks/use-admin";
 import { AdminErrorBoundary } from "../components/AdminErrorBoundary";
+
+const COUNTRY_CODE_PATTERN = /^[A-Z]{2}$/;
 
 /* -------------------------------------------------------------------------- */
 /*                             SettingsSkeleton                                 */
@@ -80,6 +83,7 @@ interface SettingsData {
 	notifyOnNewPending: boolean;
 	notifyOnConcernReport: boolean;
 	notifyOnCancellation: boolean;
+	phoneNumberAllowedCountries: string[];
 }
 
 function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
@@ -89,8 +93,12 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 	const [notifyOnNewPending, setNotifyOnNewPending] = useState(initialSettings.notifyOnNewPending);
 	const [notifyOnConcernReport, setNotifyOnConcernReport] = useState(initialSettings.notifyOnConcernReport);
 	const [notifyOnCancellation, setNotifyOnCancellation] = useState(initialSettings.notifyOnCancellation);
+	const [phoneNumberCountries, setPhoneNumberCountries] = useState(
+		initialSettings.phoneNumberAllowedCountries.join(", "),
+	);
 
 	const [thresholdError, setThresholdError] = useState<string | null>(null);
+	const [phoneNumberCountriesError, setPhoneNumberCountriesError] = useState<string | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const [successMessage, setSuccessMessage] = useState<string | null>(null);
 	const successTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -125,10 +133,37 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 		}
 	}, [validateThreshold]);
 
+	const validatePhoneNumberCountries = useCallback((value: string): string | null => {
+		const countries = value.split(",").map(country => country.trim().toUpperCase()).filter(Boolean);
+		if (countries.length === 0) {
+			return "Enter at least one country code.";
+		}
+		if (new Set(countries).size !== countries.length) {
+			return "Country codes must not contain duplicates.";
+		}
+		if (countries.some(country => !COUNTRY_CODE_PATTERN.test(country))) {
+			return "Country codes must be two-letter ISO codes.";
+		}
+		if (countries.some(country => !isSupportedCountry(country))) {
+			return "One or more country codes are not supported.";
+		}
+		return null;
+	}, []);
+
+	const handlePhoneNumberCountriesChange = useCallback((raw: string) => {
+		setPhoneNumberCountries(raw);
+		setPhoneNumberCountriesError(validatePhoneNumberCountries(raw));
+	}, [validatePhoneNumberCountries]);
+
 	const handleSave = useCallback(async () => {
 		const error = validateThreshold(threshold);
 		if (error) {
 			setThresholdError(error);
+			return;
+		}
+		const countryError = validatePhoneNumberCountries(phoneNumberCountries);
+		if (countryError) {
+			setPhoneNumberCountriesError(countryError);
 			return;
 		}
 
@@ -141,6 +176,9 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 				notifyOnNewPending,
 				notifyOnConcernReport,
 				notifyOnCancellation,
+				phoneNumberAllowedCountries: phoneNumberCountries
+					.split(",")
+					.map(country => country.trim().toUpperCase()),
 			});
 			setSuccessMessage("Settings saved");
 
@@ -157,9 +195,18 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 		finally {
 			setIsSaving(false);
 		}
-	}, [threshold, notifyOnNewPending, notifyOnConcernReport, notifyOnCancellation, updateSettings, validateThreshold]);
+	}, [
+		threshold,
+		notifyOnNewPending,
+		notifyOnConcernReport,
+		notifyOnCancellation,
+		phoneNumberCountries,
+		updateSettings,
+		validatePhoneNumberCountries,
+		validateThreshold,
+	]);
 
-	const hasValidationError = thresholdError !== null;
+	const hasValidationError = thresholdError !== null || phoneNumberCountriesError !== null;
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -208,6 +255,28 @@ function SettingsForm({ initialSettings }: { initialSettings: SettingsData }) {
 						onChange={setNotifyOnCancellation}
 					/>
 				</div>
+			</Card>
+
+			<Card size={2} className="rounded-4 border border-gray-6">
+				<Heading level={2} size={5} weight="medium" className="mb-4">
+					Phone Number Countries
+				</Heading>
+				<TextField
+					name="phoneNumberAllowedCountries"
+					value={phoneNumberCountries}
+					isInvalid={!!phoneNumberCountriesError}
+					onChange={handlePhoneNumberCountriesChange}
+				>
+					<Label>Allowed country codes</Label>
+					<Description>
+						Separate supported two-letter country codes with commas. Users can enter
+						numbers for these countries during onboarding.
+					</Description>
+					<Group>
+						<Input type="text" inputMode="text" autoCapitalize="characters" />
+					</Group>
+					<FieldError>{phoneNumberCountriesError}</FieldError>
+				</TextField>
 			</Card>
 
 			<Card size={2} className="rounded-4 border border-gray-6">

@@ -43,7 +43,7 @@ A platform for people to post asks and offers, matched with others in their comm
 - Backend: Convex backend-as-a-service (`apps/convex-backend`)
 - Component library: Tailwind v4 + react-aria-components (`packages/ui`)
 - Shared lint config: ESLint with antfu preset (`packages/eslint-config`)
-- Package manager: Bun 1.3.8+ (monorepo workspaces)
+- Package manager: Bun 1.4.2+ (monorepo workspaces)
 - Orchestration: Turborepo
 - Runtime: Node >=22
 
@@ -59,7 +59,7 @@ A platform for people to post asks and offers, matched with others in their comm
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.3.8+
+- [Bun](https://bun.sh) 1.4.2+
 - [Node.js](https://nodejs.org) >=22
 
 ### Getting started
@@ -68,7 +68,7 @@ A platform for people to post asks and offers, matched with others in their comm
 bun run setup
 ```
 
-One command installs dependencies, creates env files, configures a local Convex backend (no account needed), seeds demo data, and starts the app at http://localhost:3000. After that, `bun run dev` is all you need day to day.
+On a fresh checkout, one command installs dependencies, creates env files, configures an anonymous local Convex deployment (no account needed), seeds demo data, and starts the app at http://localhost:3000. Existing Convex deployment settings are reused. After that, `bun run dev` is all you need day to day.
 
 `bun run dev` starts all apps via Turborepo. Turbo's TUI keeps each process in its own log view. See [GETTING_STARTED.md](GETTING_STARTED.md) for a full walkthrough, or [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
@@ -97,6 +97,7 @@ Key architectural decisions are recorded as Architecture Decision Records (ADRs)
 - [ADR-0003: Yellow CTA Button Treatment](docs/decisions/0003-yellow-cta-button-treatment.md)
 - [ADR-0004: Adaptive Three-Tier Responsive Navigation Layout](docs/decisions/0004-adaptive-three-tier-navigation.md)
 - [ADR-0005: Modular Domain Architecture and Custom Data Hooks Layer](docs/decisions/0005-modular-domain-architecture-and-data-hooks.md)
+- [ADR-0006: Integrate Reusable Custom UI Primitives into `@repo/ui`](docs/decisions/0006-integrate-custom-ui-primitives-into-repo-ui.md)
 
 ## AI Agents
 

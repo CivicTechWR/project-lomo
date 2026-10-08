@@ -26,7 +26,7 @@ import { join } from "node:path";
 import process from "node:process";
 import { parseArgs } from "node:util";
 
-const ROOT = join(import.meta.dir, "../../..");
+const ROOT = join(import.meta.dir, "..");
 const BACKEND_DIR = join(ROOT, "apps/convex-backend");
 const WEB_DIR = join(ROOT, "apps/lomoweb");
 const BACKEND_ENV = join(BACKEND_DIR, ".env.local");

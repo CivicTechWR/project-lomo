@@ -19,6 +19,7 @@
             ]
         },
         "lint": {
+            "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
             "outputs": []
         },
         "lint:fix": {
@@ -26,9 +27,23 @@
             "outputs": []
         },
         "typecheck": {
+            "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
             "outputs": []
         },
         "test": {
+            "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
+            "outputs": []
+        },
+        "//#lint:root": {
+            "inputs": ["eslint.config.mjs", "playwright.config.ts", "scripts/**", "tests/**", "packages/eslint-config/**"],
+            "outputs": []
+        },
+        "//#typecheck:root": {
+            "inputs": ["tsconfig.json", "playwright.config.ts", "tests/**/*.ts"],
+            "outputs": []
+        },
+        "//#test:root": {
+            "inputs": ["tests/run-e2e.test.mjs", "scripts/run-e2e.mjs"],
             "outputs": []
         }
     }
