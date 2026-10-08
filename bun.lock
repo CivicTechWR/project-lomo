@@ -12,6 +12,7 @@
       "devDependencies": {
         "@playwright/cli": "^0.1.21",
         "@playwright/test": "^1.63.0",
+        "@types/node": "catalog:",
         "actions-up": "1.21.0",
         "eslint": "catalog:",
         "lefthook": "^2.1.16",

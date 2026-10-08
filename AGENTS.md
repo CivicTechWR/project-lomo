@@ -126,6 +126,8 @@ bunx playwright-cli close                         # Terminate browser session
 
 **Do NOT run `bun install` directly.** Ask the user to review dependency changes and run it themselves.
 
+`bun.lock` must only be generated or updated by Bun. Never edit it manually.
+
 ## Local Dev Setup
 
 Local setup is a single command, implemented in `scripts/setup.ts`:
