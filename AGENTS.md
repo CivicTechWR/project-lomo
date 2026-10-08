@@ -90,10 +90,10 @@ bun --filter=@repo/ui run lint:fix
 | `bun run setup` | One-command local onboarding (see Local Dev Setup) |
 | `bun run dev` | Start all apps in Turbo TUI |
 | `bun run build` | Build all packages |
-| `bun run typecheck` | Run type checking across all packages |
-| `bun run test` | Run test suites across all packages |
+| `bun run typecheck` | Run type checking across all packages and the root |
+| `bun run test` | Run test suites across all packages and root runner tests (`bun test`) |
 | `bun run test:e2e` | Run Playwright end-to-end tests |
-| `bun run lint` | Lint all packages |
+| `bun run lint` | Lint all packages and root files (`scripts/`, `tests/`) |
 | `bun run lint:fix` | Auto-fix lint issues |
 
 ### Browser testing with playwright-cli

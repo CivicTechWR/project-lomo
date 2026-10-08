@@ -143,12 +143,16 @@ project-lomo/
 | `bun run setup` | One-time (and rerunnable) local setup, then starts the app |
 | `bun run dev` | Start all apps in Turbo's terminal UI |
 | `bun run build` | Build all packages |
-| `bun run typecheck` | Run type checking across all packages |
-| `bun run test` | Run test suites across all monorepo packages |
+| `bun run typecheck` | Type check all packages plus the root (`playwright.config.ts`, `tests/`) |
+| `bun run test` | Run test suites across all packages plus the root runner tests |
 | `bun run test:e2e` | Run Playwright end-to-end tests |
-| `bun run lint` | Lint all packages |
+| `bun run lint` | Lint all packages plus root config, `scripts/`, and `tests/` |
 | `bun run lint:fix` | Auto-fix lint issues |
 | `bun --filter=@repo/lomoweb run test` | Run the Next.js app test suite |
+
+`lint`, `typecheck`, and `test` run through Turborepo, including root-level tasks (`//#lint:root`, `//#typecheck:root`, `//#test:root`), so unchanged work is replayed from the local cache (`.turbo/cache`). CI restores that cache between runs and sets `DO_NOT_TRACK=1`. To opt out of Turborepo telemetry locally, run `bunx turbo telemetry disable`.
+
+Root tests in `tests/` use Bun's runner (`bun test`) and `*.spec.ts` files are Playwright E2E tests; `vitest` is only available inside `apps/lomoweb`.
 
 ## Convex Backend
 
