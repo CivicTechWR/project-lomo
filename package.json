@@ -46,6 +46,7 @@
     	"typecheck": "turbo run typecheck",
     	"test": "turbo run test",
     	"build": "turbo run build",
+    	"setup": "bun apps/convex-backend/scripts/setup.ts",
     	"dev": "turbo run dev --ui=tui",
     	"prepare": "lefthook install"
 	},

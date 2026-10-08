@@ -25,73 +25,58 @@ git clone https://github.com/CivicTechWR/project-lomo.git
 cd project-lomo
 ```
 
-### 2. Install dependencies
+### 2. Run setup
 
 ```bash
-bun install
+bun run setup
 ```
 
-### 3. Create the frontend environment file
+That one command does everything a new contributor needs:
 
-```bash
-cp apps/lomoweb/.env.local.example apps/lomoweb/.env.local
-```
+1. Installs dependencies (`bun install`)
+2. Creates `apps/lomoweb/.env.local` from the example (if it doesn't exist)
+3. Starts Convex and creates a local deployment — no Convex account or login needed on first run
+4. Sets any missing Convex environment variables: `SITE_URL`, a generated `BETTER_AUTH_SECRET`, and `ADMIN_EMAILS` (your `git config user.email`)
+5. Pushes the backend and seeds demo users, requests, messages, and notifications
+6. Copies the Convex URLs into `apps/lomoweb/.env.local`
+7. Starts the app stack with `bun run dev` — open http://localhost:3000
 
-This is the local Next.js env file for the app. The defaults work for local development.
+It's safe to rerun at any time (for example after pulling, or if something gets out of sync). Existing Convex env vars are never overwritten, and seeding only resets the seeded demo rows — data you created through the app is left alone.
 
-### 4. Set the required Convex environment variables
+Options:
 
-From the repo root, set the variables the backend needs before starting the dev server:
+| Flag | Description |
+|------|-------------|
+| `--admin-email you@example.com` | Grant admin access to a different email than your git email (comma-separate multiple) |
+| `--no-dev` | Stop after setup instead of starting `bun run dev` |
+| `--no-seed` | Skip seeding demo data |
 
-```bash
-cd apps/convex-backend
-bunx convex env set SITE_URL http://localhost:3000
-bunx convex env set BETTER_AUTH_SECRET=$(openssl rand -base64 32)
-```
+Pass flags directly, e.g. `bun run setup --admin-email you@example.com`.
 
-These values are stored in Convex's deployment config, not in a local file, so you typically only need to run this once per deployment. If the first `bun run dev` fails with `SITE_URL is missing or invalid`, this is the missing setup step.
+Signing up with the admin email gives you access to the admin panel at `/app/admin`.
 
-### 5. Grant yourself admin access
+Seeded requests carry a spread of deadlines (`neededByInDays` in `apps/convex-backend/convex/lib/seedData.ts`, resolved relative to seed time) — including one already overdue and unmatched, and one no-deadline request — so the admin dashboard has something to show under every "needs attention" case without waiting for real data to accumulate.
 
-Set your email as an admin in Convex's cloud config:
+### Day-to-day
 
-```bash
-bunx convex env set ADMIN_EMAILS "your@email.com"
-```
-
-Replace `your@email.com` with the email you'll use to sign up. You can add multiple admins as a comma-separated list (e.g. `"alice@example.com,bob@example.com"`).
-
-After this, signing in with that email gives you access to the admin panel at `/app/admin`.
-
-### 6. Start everything
+After the first setup, just run:
 
 ```bash
 bun run dev
 ```
 
-This starts the monorepo apps and launches the Convex local dev process for the backend.
+### Manual Convex commands
 
-### 7. Seed the database
-
-Once Convex is running and the backend has finished its initial push, seed the local database:
+You rarely need these, but they're available from `apps/convex-backend`:
 
 ```bash
 cd apps/convex-backend
-bunx convex run seed:run
+bunx convex env set ADMIN_EMAILS "alice@example.com,bob@example.com"  # change admins
+bunx convex run seed:run    # reset seeded demo data
+bunx convex run seed:clear  # remove seeded demo data
 ```
 
-This inserts sample users, requests, messages, and notifications used for local development and testing the admin dashboard. It's idempotent — safe to re-run anytime to reset the seeded data back to the default fixtures.
-
-Seeded requests carry a spread of deadlines (`neededByInDays` in `apps/convex-backend/convex/lib/seedData.ts`, resolved relative to seed time) — including one already overdue and unmatched, and one no-deadline request — so the admin dashboard has something to show under every "needs attention" case without waiting for real data to accumulate.
-
-### 8. Optional cleanup
-
-To remove only the seeded rows without reinserting them:
-
-```bash
-cd apps/convex-backend
-bunx convex run seed:clear
-```
+`convex env set` and `convex run` need the Convex backend running (`bun run dev` in another terminal).
 
 ## What `bun run dev` starts
 
@@ -114,6 +99,7 @@ project-lomo/
 
 | Command | Description |
 |---------|-------------|
+| `bun run setup` | One-time (and rerunnable) local setup, then starts the app |
 | `bun run dev` | Start all apps in Turbo's terminal UI |
 | `bun run build` | Build all packages |
 | `bun run typecheck` | Run type checking across all packages |
