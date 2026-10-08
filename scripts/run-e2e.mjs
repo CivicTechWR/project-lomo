@@ -172,6 +172,7 @@ async function main() {
 		checkInterrupted();
 		const backendDir = await createTempBackend(tempRoot);
 		const convexEnv = isolatedEnvironment({
+			CONVEX_AGENT_MODE: "anonymous",
 			SITE_URL: siteUrl,
 		});
 
