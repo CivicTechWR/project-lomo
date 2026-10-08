@@ -87,7 +87,7 @@ bun x playwright install
 bun x playwright install-deps
 ```
 
-This installs Playwright browser binaries and system dependencies. The committed `.playwright-cli/` workspace configuration is used for CLI/agent-driven runs.
+This installs Playwright browser binaries and system dependencies. The committed `.playwright/cli.config.json` workspace configuration is used for CLI/agent-driven runs.
 
 Run E2E tests with:
 

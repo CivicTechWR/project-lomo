@@ -1,13 +1,13 @@
 # Running Playwright Tests
 
-To run Playwright tests, use the `npx playwright test` command, or a package manager script. To avoid opening the interactive html report, use `PLAYWRIGHT_HTML_OPEN=never` environment variable.
+In this repository, run Playwright tests through the root wrapper `bun run test:e2e`; direct `npx playwright test` fails because `playwright.config.ts` requires the isolated environment the wrapper provisions. Extra arguments are passed through to `playwright test`. To avoid opening the interactive html report, use `PLAYWRIGHT_HTML_OPEN=never` environment variable.
 
 ```bash
 # Run all tests
-PLAYWRIGHT_HTML_OPEN=never npx playwright test
+PLAYWRIGHT_HTML_OPEN=never bun run test:e2e
 
-# Run all tests through a custom npm script
-PLAYWRIGHT_HTML_OPEN=never npm run special-test-command
+# Run a single spec (arguments pass through)
+PLAYWRIGHT_HTML_OPEN=never bun run test:e2e tests/Signup.spec.ts
 ```
 
 # Debugging Playwright Tests
@@ -20,7 +20,7 @@ Once instructions containing a session name are printed, use `playwright-cli` to
 
 ```bash
 # Run the test
-PLAYWRIGHT_HTML_OPEN=never npx playwright test --debug=cli
+PLAYWRIGHT_HTML_OPEN=never bun run test:e2e --debug=cli
 # ...
 # ... debugging instructions for "tw-abcdef" session ...
 # ...
