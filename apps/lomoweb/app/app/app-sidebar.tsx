@@ -24,7 +24,7 @@ interface NavTab {
 
 const APP_TABS: NavTab[] = [
 	{ id: "home", label: "Home", href: "/app", icon: "home", homeMode: "home" },
-	{ id: "my-requests", label: "My Requests", href: "/app", icon: "myRequests", homeMode: "request_help" },
+	{ id: "my-requests", label: "My Requests", href: "/app/my-requests", icon: "myRequests" },
 	{ id: "open-requests", label: "Open Requests", href: "/app", icon: "openRequests", homeMode: "offer_help" },
 	{ id: "notifications", label: "Notifications", href: "/app/notifications", icon: "notifications" },
 	{ id: "profile", label: "Profile", href: "/app/profile", icon: "profile" },
@@ -47,9 +47,9 @@ const ADMIN_EXIT_TAB: NavTab = {
 // --- Helpers ---
 
 function getActiveAppTabId(pathname: string, homeMode: string): string {
+	if (pathname === "/app/my-requests")
+		return "my-requests";
 	if (pathname === "/app") {
-		if (homeMode === "request_help")
-			return "my-requests";
 		if (homeMode === "offer_help")
 			return "open-requests";
 		return "home";

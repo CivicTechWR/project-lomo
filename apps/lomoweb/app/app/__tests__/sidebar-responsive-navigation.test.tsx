@@ -46,6 +46,7 @@ const ADMIN_REGEX = /^admin$/i;
 const BACK_TO_APP_REGEX = /back to app/i;
 const DASHBOARD_REGEX = /dashboard/i;
 const USERS_REGEX = /users/i;
+const MY_REQUESTS_REGEX = /^my requests$/i;
 
 beforeEach(() => {
 	sessionStorage.clear();
@@ -103,6 +104,19 @@ describe("responsive navigation tiers & admin exit", () => {
 		const userTabs = screen.getAllByRole("link", { name: USERS_REGEX });
 		for (const tab of userTabs) {
 			expect(tab).toHaveAttribute("aria-current", "page");
+		}
+	});
+
+	it("links My Requests to its own route and marks it active there", () => {
+		currentPathname = "/app/my-requests";
+
+		renderSidebar();
+
+		const myRequestsLinks = screen.getAllByRole("link", { name: MY_REQUESTS_REGEX });
+		expect(myRequestsLinks).toHaveLength(3);
+		for (const link of myRequestsLinks) {
+			expect(link).toHaveAttribute("href", "/app/my-requests");
+			expect(link).toHaveAttribute("aria-current", "page");
 		}
 	});
 });
