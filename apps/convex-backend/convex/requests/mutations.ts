@@ -8,7 +8,9 @@ import {
 	isAdminIdentity,
 	requireIdentity,
 } from "../lib/currentUser";
-import { markNotificationsReadForRequest } from "../lib/notificationHelpers";
+import {
+	markStaleMatchNotificationsRead,
+} from "../lib/notificationHelpers";
 import { purgeRequest } from "../lib/purgeRequest";
 import { extractGeocodableAddress, extractPayloadCoordinates } from "../lib/requestLocation";
 import { extractNeededBy, extractNeedsDelivery, resolveIsUrgent } from "../lib/requestMetadata";
@@ -79,17 +81,16 @@ export const accept = mutation({
 		if (doc.status !== "assigned" || doc.assignedHelperUserId !== user._id) {
 			throw new Error("This request is not currently assigned to you.");
 		}
-		await ctx.db.patch("helpRequests", requestId, {
-			status: "awaiting_requester_acceptance",
+		const next = {
+			...doc,
+			status: "awaiting_requester_acceptance" as const,
 			helperUserId: user._id,
+		};
+		await ctx.db.patch("helpRequests", requestId, {
+			status: next.status,
+			helperUserId: next.helperUserId,
 		});
-		await markNotificationsReadForRequest(
-			ctx,
-			requestId,
-			n =>
-				n.type === "volunteer_assigned"
-				&& n.recipientUserId === user._id,
-		);
+		await markStaleMatchNotificationsRead(ctx, next);
 		await createNotification(ctx, {
 			recipientUserId: doc.ownerUserId,
 			type: "requester_accept_match_prompt",
@@ -166,17 +167,16 @@ export const declineAssigned = mutation({
 		if (doc.status !== "assigned") {
 			throw new Error("Request is not pending your assignment.");
 		}
+		const next = {
+			...doc,
+			status: "pending" as const,
+			assignedHelperUserId: undefined,
+		};
 		await ctx.db.patch("helpRequests", requestId, {
-			status: "pending",
+			status: next.status,
 			assignedHelperUserId: undefined,
 		});
-		await markNotificationsReadForRequest(
-			ctx,
-			requestId,
-			n =>
-				n.type === "volunteer_assigned"
-				&& n.recipientUserId === user._id,
-		);
+		await markStaleMatchNotificationsRead(ctx, next);
 		await createNotification(ctx, {
 			recipientUserId: doc.ownerUserId,
 			type: "volunteer_assignment_declined",
@@ -198,18 +198,17 @@ export const requesterAcceptMatch = mutation({
 		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperUserId) {
 			throw new Error("No match to accept.");
 		}
+		const emailRelayToken = randomRelayToken();
+		const next = {
+			...doc,
+			status: "in_progress" as const,
+			emailRelayToken,
+		};
 		await ctx.db.patch("helpRequests", requestId, {
-			status: "in_progress",
-			emailRelayToken: randomRelayToken(),
+			status: next.status,
+			emailRelayToken,
 		});
-		await markNotificationsReadForRequest(
-			ctx,
-			requestId,
-			n =>
-				(n.type === "requester_accept_match_prompt"
-					|| n.type === "volunteer_offered_help")
-				&& n.recipientUserId === doc.ownerUserId,
-		);
+		await markStaleMatchNotificationsRead(ctx, next);
 		await createNotification(ctx, {
 			recipientUserId: doc.helperUserId,
 			type: "volunteer_accepted_match",
@@ -242,19 +241,18 @@ export const requesterDeclineMatch = mutation({
 			throw new Error("No match to decline.");
 		}
 		const helperUserId = doc.helperUserId;
+		const next = {
+			...doc,
+			status: "pending" as const,
+			helperUserId: undefined,
+			assignedHelperUserId: undefined,
+		};
 		await ctx.db.patch("helpRequests", requestId, {
-			status: "pending",
+			status: next.status,
 			helperUserId: undefined,
 			assignedHelperUserId: undefined,
 		});
-		await markNotificationsReadForRequest(
-			ctx,
-			requestId,
-			n =>
-				(n.type === "requester_accept_match_prompt"
-					|| n.type === "volunteer_offered_help")
-				&& n.recipientUserId === doc.ownerUserId,
-		);
+		await markStaleMatchNotificationsRead(ctx, next);
 		if (helperUserId) {
 			await createNotification(ctx, {
 				recipientUserId: helperUserId,
@@ -278,19 +276,18 @@ export const withdrawOffer = mutation({
 		if (doc.status !== "awaiting_requester_acceptance") {
 			throw new Error("There is no pending offer to withdraw.");
 		}
+		const next = {
+			...doc,
+			status: "pending" as const,
+			helperUserId: undefined,
+			assignedHelperUserId: undefined,
+		};
 		await ctx.db.patch("helpRequests", requestId, {
-			status: "pending",
+			status: next.status,
 			helperUserId: undefined,
 			assignedHelperUserId: undefined,
 		});
-		await markNotificationsReadForRequest(
-			ctx,
-			requestId,
-			n =>
-				(n.type === "requester_accept_match_prompt"
-					|| n.type === "volunteer_offered_help")
-				&& n.recipientUserId === doc.ownerUserId,
-		);
+		await markStaleMatchNotificationsRead(ctx, next);
 		await createNotification(ctx, {
 			recipientUserId: doc.ownerUserId,
 			type: "volunteer_withdrew_offer",
@@ -425,15 +422,9 @@ export const cancel = mutation({
 			const previousStatus = doc.status;
 			const helperUserId = doc.helperUserId;
 			const assignedHelperUserId = doc.assignedHelperUserId;
-			await ctx.db.patch("helpRequests", requestId, { status: "cancelled" });
-			await markNotificationsReadForRequest(
-				ctx,
-				requestId,
-				n =>
-					n.type === "volunteer_assigned"
-					|| n.type === "requester_accept_match_prompt"
-					|| n.type === "volunteer_offered_help",
-			);
+			const next = { ...doc, status: "cancelled" as const };
+			await ctx.db.patch("helpRequests", requestId, { status: next.status });
+			await markStaleMatchNotificationsRead(ctx, next);
 			const notifyHelperIds = new Set<Id<"users">>();
 			if (
 				previousStatus === "awaiting_requester_acceptance"

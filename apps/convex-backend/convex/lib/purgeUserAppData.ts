@@ -13,13 +13,20 @@ export async function purgeUserAppData(
 	const user = await ctx.db
 		.query("users")
 		.withIndex("by_subject", q => q.eq("subject", authUserId))
-		.unique();
-	if (!user) {
+		.take(8);
+	if (user.length === 0) {
 		return;
 	}
+	// Purge every matching app user row (handles rare duplicate subjects).
+	for (const row of user) {
+		await purgeOneUserAppData(ctx, row._id);
+	}
+}
 
-	const userId = user._id;
-
+async function purgeOneUserAppData(
+	ctx: MutationCtx,
+	userId: Id<"users">,
+): Promise<void> {
 	const notifications = await ctx.db
 		.query("notifications")
 		.withIndex("by_recipient", q => q.eq("recipientUserId", userId))

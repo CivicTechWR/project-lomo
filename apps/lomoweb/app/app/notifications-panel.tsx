@@ -4,7 +4,7 @@ import type { Id } from "@repo/convex-backend/convex/_generated/dataModel";
 import { Button } from "@repo/ui/button";
 import { Text } from "@repo/ui/text";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	useAcceptAssignedRequest,
 	useDeclineAssignedRequest,
@@ -12,6 +12,7 @@ import {
 	useRequesterDeclineMatch,
 } from "@/lib/hooks/use-help-requests";
 import {
+	useClearStaleNotifications,
 	useMarkNotificationRead,
 	useMyNotifications,
 } from "@/lib/hooks/use-notifications";
@@ -19,12 +20,17 @@ import {
 export function NotificationsList({ unreadOnly = false }: { unreadOnly?: boolean }) {
 	const notifications = useMyNotifications(unreadOnly);
 	const markRead = useMarkNotificationRead();
+	const clearStale = useClearStaleNotifications();
 	const acceptAssigned = useAcceptAssignedRequest();
 	const declineAssigned = useDeclineAssignedRequest();
 	const requesterAcceptMatch = useRequesterAcceptMatch();
 	const requesterDeclineMatch = useRequesterDeclineMatch();
 	const [busyId, setBusyId] = useState<string | null>(null);
 	type NotificationDoc = NonNullable<typeof notifications>[number];
+
+	useEffect(() => {
+		void clearStale({});
+	}, [clearStale]);
 
 	async function handleAction(n: NotificationDoc, action: "accept" | "decline") {
 		if (!n.requestId) {

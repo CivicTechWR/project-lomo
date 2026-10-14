@@ -1,8 +1,8 @@
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 
-export function useMyProfileRow(user?: unknown) {
-	return useQuery(api.users.getMyProfileRow, user ? {} : "skip");
+export function useMyProfileRow(gate: unknown = true) {
+	return useQuery(api.users.getMyProfileRow, gate ? {} : "skip");
 }
 
 export function useUpdatePublicProfile() {
