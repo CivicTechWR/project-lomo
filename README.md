@@ -43,7 +43,7 @@ A platform for people to post asks and offers, matched with others in their comm
 - Backend: Convex backend-as-a-service (`apps/convex-backend`)
 - Component library: Tailwind v4 + react-aria-components (`packages/ui`)
 - Shared lint config: ESLint with antfu preset (`packages/eslint-config`)
-- Package manager: Bun 1.3.8+ (monorepo workspaces)
+- Package manager: Bun 1.4.2+ (monorepo workspaces)
 - Orchestration: Turborepo
 - Runtime: Node >=22
 
@@ -59,7 +59,7 @@ A platform for people to post asks and offers, matched with others in their comm
 
 ### Prerequisites
 
-- [Bun](https://bun.sh) 1.3.8+
+- [Bun](https://bun.sh) 1.4.2+
 - [Node.js](https://nodejs.org) >=22
 
 ### Getting started

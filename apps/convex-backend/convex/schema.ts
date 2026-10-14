@@ -169,6 +169,8 @@ export default defineSchema(
 			notifyOnNewPending: v.boolean(),
 			notifyOnConcernReport: v.boolean(),
 			notifyOnCancellation: v.boolean(),
+			/** Supported phone-number countries; optional for backward compatibility. */
+			phoneNumberAllowedCountries: v.optional(v.array(v.string())),
 		}).index("by_key", ["key"]),
 	},
 	{ schemaValidation: true },

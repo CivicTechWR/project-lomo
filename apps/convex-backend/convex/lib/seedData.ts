@@ -104,6 +104,7 @@ export interface SeedAdminSettings {
 	notifyOnNewPending: boolean;
 	notifyOnConcernReport: boolean;
 	notifyOnCancellation: boolean;
+	phoneNumberAllowedCountries: ["CA", "US"];
 }
 
 // Volunteer profiles. `handle` doubles as a stable id so re-runs are clean.
@@ -350,4 +351,5 @@ export const ADMIN_SETTINGS: SeedAdminSettings = {
 	notifyOnNewPending: true,
 	notifyOnConcernReport: true,
 	notifyOnCancellation: true,
+	phoneNumberAllowedCountries: ["CA", "US"],
 };

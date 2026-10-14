@@ -4,6 +4,7 @@ import { authComponent, createAuth } from "../auth";
 import { requireAdmin } from "../lib/adminAuth";
 import { getOrCreateCurrentUser, requireIdentity } from "../lib/currentUser";
 import { normalizeHelpPreferences } from "../lib/helperPreferences";
+import { DEFAULT_PHONE_NUMBER_ALLOWED_COUNTRIES, validatePhoneNumber } from "../lib/phoneNumber";
 import { purgeUserAppData } from "../lib/purgeUserAppData";
 
 const MAX_ADMIN_ROWS = 200;
@@ -26,7 +27,23 @@ export const updatePublicProfile = mutation({
 			patch.pronouns = pronouns.trim() || undefined;
 		}
 		if (phone !== undefined) {
-			patch.phone = phone.trim() || undefined;
+			const normalizedPhone = phone.trim();
+			if (normalizedPhone.length > 0) {
+				const settings = await ctx.db
+					.query("adminSettings")
+					.withIndex("by_key", q => q.eq("key", "global"))
+					.unique();
+				const allowedCountries = settings?.phoneNumberAllowedCountries
+					?? [...DEFAULT_PHONE_NUMBER_ALLOWED_COUNTRIES];
+				const validation = validatePhoneNumber(normalizedPhone, allowedCountries);
+				if (!validation.isValid) {
+					throw new Error("Phone number is not allowed.");
+				}
+				patch.phone = validation.e164 ?? undefined;
+			}
+			else {
+				patch.phone = undefined;
+			}
 		}
 		await ctx.db.patch("users", user._id, patch);
 	},

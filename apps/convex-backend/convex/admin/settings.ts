@@ -1,6 +1,19 @@
 import { v } from "convex/values";
 import { mutation, query } from "../_generated/server";
 import { requireAdmin } from "../lib/adminAuth";
+import {
+	DEFAULT_PHONE_NUMBER_ALLOWED_COUNTRIES,
+	normalizeAllowedCountries,
+	PHONE_NUMBER_COUNTRY_LABELS,
+} from "../lib/phoneNumber";
+
+const DEFAULT_SETTINGS = {
+	attentionThresholdDays: 5,
+	notifyOnNewPending: true,
+	notifyOnConcernReport: true,
+	notifyOnCancellation: true,
+	phoneNumberAllowedCountries: [...DEFAULT_PHONE_NUMBER_ALLOWED_COUNTRIES],
+} as const;
 
 export const getSettings = query({
 	args: {},
@@ -10,12 +23,31 @@ export const getSettings = query({
 			.query("adminSettings")
 			.withIndex("by_key", q => q.eq("key", "global"))
 			.unique();
-		return doc ?? {
-			attentionThresholdDays: 5,
-			notifyOnNewPending: true,
-			notifyOnConcernReport: true,
-			notifyOnCancellation: true,
+		const phoneNumberAllowedCountries = normalizeAllowedCountries(
+			doc?.phoneNumberAllowedCountries ?? [...DEFAULT_SETTINGS.phoneNumberAllowedCountries],
+		) ?? [...DEFAULT_SETTINGS.phoneNumberAllowedCountries];
+		return {
+			...DEFAULT_SETTINGS,
+			...doc,
+			phoneNumberAllowedCountries,
 		};
+	},
+});
+
+export const getPublicPhoneNumberSettings = query({
+	args: {},
+	handler: async (ctx) => {
+		const doc = await ctx.db
+			.query("adminSettings")
+			.withIndex("by_key", q => q.eq("key", "global"))
+			.unique();
+		const allowedCountries = normalizeAllowedCountries(
+			doc?.phoneNumberAllowedCountries ?? [...DEFAULT_SETTINGS.phoneNumberAllowedCountries],
+		) ?? [...DEFAULT_SETTINGS.phoneNumberAllowedCountries];
+		return allowedCountries.map(country => ({
+			country,
+			label: PHONE_NUMBER_COUNTRY_LABELS[country] ?? country,
+		}));
 	},
 });
 
@@ -25,6 +57,7 @@ export const updateSettings = mutation({
 		notifyOnNewPending: v.optional(v.boolean()),
 		notifyOnConcernReport: v.optional(v.boolean()),
 		notifyOnCancellation: v.optional(v.boolean()),
+		phoneNumberAllowedCountries: v.optional(v.array(v.string())),
 	},
 	handler: async (ctx, args) => {
 		await requireAdmin(ctx);
@@ -34,6 +67,14 @@ export const updateSettings = mutation({
 				throw new Error("Threshold must be an integer between 1 and 30.");
 			}
 		}
+
+		const normalizedCountries = args.phoneNumberAllowedCountries === undefined
+			? undefined
+			: normalizeAllowedCountries(args.phoneNumberAllowedCountries);
+		if (args.phoneNumberAllowedCountries !== undefined && normalizedCountries === null) {
+			throw new Error("Phone number countries must be non-empty, unique, and supported.");
+		}
+
 		const existing = await ctx.db
 			.query("adminSettings")
 			.withIndex("by_key", q => q.eq("key", "global"))
@@ -44,6 +85,9 @@ export const updateSettings = mutation({
 			...(args.notifyOnNewPending !== undefined && { notifyOnNewPending: args.notifyOnNewPending }),
 			...(args.notifyOnConcernReport !== undefined && { notifyOnConcernReport: args.notifyOnConcernReport }),
 			...(args.notifyOnCancellation !== undefined && { notifyOnCancellation: args.notifyOnCancellation }),
+			...(normalizedCountries !== null && normalizedCountries !== undefined && {
+				phoneNumberAllowedCountries: normalizedCountries,
+			}),
 		};
 
 		if (existing) {
@@ -56,6 +100,7 @@ export const updateSettings = mutation({
 				notifyOnNewPending: args.notifyOnNewPending ?? true,
 				notifyOnConcernReport: args.notifyOnConcernReport ?? true,
 				notifyOnCancellation: args.notifyOnCancellation ?? true,
+				phoneNumberAllowedCountries: normalizedCountries ?? [...DEFAULT_SETTINGS.phoneNumberAllowedCountries],
 			});
 		}
 	},
