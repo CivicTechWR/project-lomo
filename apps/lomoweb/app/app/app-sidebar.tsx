@@ -24,7 +24,7 @@ interface NavTab {
 
 const APP_TABS: NavTab[] = [
 	{ id: "home", label: "Home", href: "/app", icon: "home", homeMode: "home" },
-	{ id: "my-requests", label: "My Requests", href: "/app", icon: "myRequests", homeMode: "request_help" },
+	{ id: "my-requests", label: "My Requests", href: "/app/my-requests", icon: "myRequests" },
 	{ id: "open-requests", label: "Open Requests", href: "/app", icon: "openRequests", homeMode: "offer_help" },
 	{ id: "notifications", label: "Notifications", href: "/app/notifications", icon: "notifications" },
 	{ id: "profile", label: "Profile", href: "/app/profile", icon: "profile" },
@@ -47,9 +47,9 @@ const ADMIN_EXIT_TAB: NavTab = {
 // --- Helpers ---
 
 function getActiveAppTabId(pathname: string, homeMode: string): string {
+	if (pathname === "/app/my-requests")
+		return "my-requests";
 	if (pathname === "/app") {
-		if (homeMode === "request_help")
-			return "my-requests";
 		if (homeMode === "offer_help")
 			return "open-requests";
 		return "home";
@@ -155,6 +155,7 @@ export function AppSidebar() {
 					isAdmin={isAdmin ?? false}
 					tabs={tabs}
 					activeTabId={activeTabId}
+					currentPathname={pathname}
 					onTabClick={handleTabClick}
 					onSignOut={handleSignOut}
 				/>
@@ -170,6 +171,7 @@ export function AppSidebar() {
 					isAdmin={isAdmin ?? false}
 					tabs={tabs}
 					activeTabId={activeTabId}
+					currentPathname={pathname}
 					onTabClick={handleTabClick}
 					onSignOut={handleSignOut}
 				/>
@@ -187,6 +189,7 @@ export function AppSidebar() {
 								<BottomTab
 									tab={tab}
 									isActive={activeTabId === tab.id}
+									isCurrentRoute={pathname === tab.href}
 									onTabClick={handleTabClick}
 								/>
 							</li>
@@ -205,6 +208,7 @@ function RailContent({
 	isAdmin,
 	tabs,
 	activeTabId,
+	currentPathname,
 	onTabClick,
 	onSignOut,
 }: {
@@ -212,6 +216,7 @@ function RailContent({
 	isAdmin: boolean;
 	tabs: NavTab[];
 	activeTabId: string;
+	currentPathname: string;
 	onTabClick: (tab: NavTab) => void;
 	onSignOut: () => Promise<void>;
 }) {
@@ -245,6 +250,7 @@ function RailContent({
 						<RailTab
 							tab={tab}
 							isActive={activeTabId === tab.id}
+							isCurrentRoute={currentPathname === tab.href}
 							onTabClick={onTabClick}
 						/>
 					</li>
@@ -281,10 +287,12 @@ function RailContent({
 function RailTab({
 	tab,
 	isActive,
+	isCurrentRoute,
 	onTabClick,
 }: {
 	tab: NavTab;
 	isActive: boolean;
+	isCurrentRoute: boolean;
 	onTabClick: (tab: NavTab) => void;
 }) {
 	const handleClick = useCallback(
@@ -294,12 +302,12 @@ function RailTab({
 				onTabClick(tab);
 				return;
 			}
-			if (isActive) {
+			if (isCurrentRoute) {
 				e.preventDefault();
 				onTabClick(tab);
 			}
 		},
-		[isActive, onTabClick, tab],
+		[isCurrentRoute, onTabClick, tab],
 	);
 
 	return (
@@ -329,10 +337,12 @@ function RailTab({
 function BottomTab({
 	tab,
 	isActive,
+	isCurrentRoute,
 	onTabClick,
 }: {
 	tab: NavTab;
 	isActive: boolean;
+	isCurrentRoute: boolean;
 	onTabClick: (tab: NavTab) => void;
 }) {
 	const handleClick = useCallback(
@@ -343,12 +353,12 @@ function BottomTab({
 				onTabClick(tab);
 				return;
 			}
-			if (isActive) {
+			if (isCurrentRoute) {
 				e.preventDefault();
 				onTabClick(tab);
 			}
 		},
-		[isActive, onTabClick, tab],
+		[isCurrentRoute, onTabClick, tab],
 	);
 
 	return (
