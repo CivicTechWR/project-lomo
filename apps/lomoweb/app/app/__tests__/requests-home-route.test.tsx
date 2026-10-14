@@ -8,8 +8,16 @@ const mocks = vi.hoisted(() => ({
 	push: vi.fn(),
 	homeDashboard: {
 		active: [],
-		pendingMine: [],
-		pendingMineTotal: 0,
+		pendingMine: [{
+			_id: "request-1",
+			_creationTime: 1,
+			title: "Need groceries",
+			summary: "A grocery delivery would help.",
+			status: "pending",
+			category: "food",
+			isUrgent: false,
+		}],
+		pendingMineTotal: 1,
 		openPreview: [],
 		openTotal: 0,
 		canHelpNow: false,
@@ -45,19 +53,6 @@ vi.mock("@/lib/home-mode-context", () => ({
 		mode: mocks.homeMode,
 		setMode: vi.fn(),
 	}),
-}));
-
-vi.mock("../home-dashboard-panel", () => ({
-	HomeDashboardPanel: ({
-		onViewAllMine,
-	}: {
-		onViewAllMine: () => void;
-	}) => (
-		<button type="button" onClick={onViewAllMine}>
-			View all my requests
-		</button>
-	),
-	RequestCardLink: () => null,
 }));
 
 describe("requestsHome routes", () => {
