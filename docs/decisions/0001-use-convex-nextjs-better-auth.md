@@ -25,7 +25,7 @@ Use Next.js 16 (App Router) as the web application framework, Convex as the serv
 
 ### Firebase / Firestore
 - Pros: Real-time document store, mature SDKs.
-- Cons: Lacks end-to-end TypeScript integration, complex security rules syntax, non-relational query limitations.
+- Cons: Does not provide the same generated end-to-end function-reference types as Convex; application types and access rules require Firebase-specific patterns.
 - Rejected: Convex offers end-to-end TypeScript safety and function-based queries with native auth integration.
 
 ## Consequences

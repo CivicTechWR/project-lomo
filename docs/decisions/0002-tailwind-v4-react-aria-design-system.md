@@ -9,7 +9,7 @@ Accepted
 ## Context
 LoMo requires a calm, trustworthy, mobile-first, and highly accessible user interface.
 Key design system requirements:
-- Full WCAG 2.1 AA accessibility out-of-the-box for screen readers, keyboard navigation, and touch interactions.
+- An accessibility target of WCAG 2.1 AA, including screen-reader, keyboard, and touch support. Accessible primitives help, but do not by themselves establish conformance; the product must still test each shipped flow.
 - A calm, warm, community-first visual identity (earthy tones, rounded containers, clear focus indicators, visible borders).
 - Reusable UI component library shared across monorepo applications (`packages/ui`).
 
@@ -21,7 +21,7 @@ Build `@repo/ui` as a shared design system package using Tailwind CSS v4 for sty
 ### Radix Primitives + Tailwind v3
 - Pros: Popular React component primitives.
 - Cons: React Aria Components offers better focus management, mobile touch handling, and integrated form state primitives.
-- Rejected: React Aria Components provides superior cross-device accessibility.
+- Rejected: For this project, React Aria Components' integrated focus, keyboard, and form-state behavior was a better fit for the requirements than the alternatives considered.
 
 ### Pre-styled Component Libraries (MUI, Shadcn UI copies)
 - Pros: Fast initial setup.

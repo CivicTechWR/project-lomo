@@ -271,3 +271,7 @@ dmypy.json
 .tanstack/
 
 .kiro/
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+*.auth-state.json
+.tmp-lomo-e2e-*/

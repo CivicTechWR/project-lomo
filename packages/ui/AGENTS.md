@@ -200,19 +200,20 @@ This is deliberate — apps consuming `@repo/ui` don't need
 dependencies (they're `@repo/ui`-only), and a plain object can't carry a
 timezone into a field that only ever means "a calendar day".
 
-**`@internationalized/date` must stay pinned to the exact version
-`react-aria-components` resolves** (currently `3.12.0`, from
-`react-aria-components`'s `^3.12.0`). A caret range like `^3.12.3` will
-install a _second_ copy; the two copies' `CalendarDate` classes have
-different private field brands, and TypeScript rejects one as not
-assignable to the other's `DateValue`. Check with:
+The DatePicker converts between this package's `PlainDate` API and
+`CalendarDate`. Keep `@internationalized/date`'s direct dependency compatible
+with the version resolved under `react-aria-components`; duplicate versions
+can give the `CalendarDate` classes different private field brands and cause
+TypeScript incompatibilities. The current manifest pins the direct dependency
+to `3.12.4`, while the lockfile resolves `3.12.3` under `react-aria-components`.
+Check the dependency tree after changing either version:
 
 ```bash
 readlink -f node_modules/@internationalized/date
 ```
 
-If more than one version shows up under
-`node_modules/.bun/@internationalized+date@*`, re-pin and reinstall.
+If multiple versions are present, verify type compatibility and update the
+direct dependency and lockfile deliberately rather than assuming they match.
 
 ## Component Review Workflow
 
