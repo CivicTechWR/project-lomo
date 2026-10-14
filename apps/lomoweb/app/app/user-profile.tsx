@@ -436,7 +436,7 @@ export function UserProfile({
 					variant="outline"
 					color="gray"
 					className="w-full"
-					onPress={() => router.push("/app")}
+					onPress={() => router.push("/app/my-requests")}
 				>
 					Back to requests
 				</Button>

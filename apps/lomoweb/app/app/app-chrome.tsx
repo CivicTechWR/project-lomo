@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { HomeModeProvider } from "@/lib/home-mode-context";
+import { RouteSkeleton } from "../route-state";
 import { AppSidebar } from "./app-sidebar";
 
 export function AppChrome({ children }: { children: ReactNode }) {
@@ -13,19 +14,31 @@ export function AppChrome({ children }: { children: ReactNode }) {
 	const router = useRouter();
 	const profileRow = useQuery(api.users.getMyProfileRow);
 	const isOnboarding = pathname.startsWith("/app/onboarding");
+	const onboardingCompleted = Boolean(profileRow?.onboardingCompletedAt);
+	const isProfileLoading = profileRow === undefined;
+	const shouldRedirectToOnboarding
+		= !isProfileLoading && !onboardingCompleted && !isOnboarding;
+	const shouldRedirectToApp
+		= !isProfileLoading && onboardingCompleted && isOnboarding;
+	const shouldShowLoading
+		= isProfileLoading || shouldRedirectToOnboarding || shouldRedirectToApp;
 
 	useEffect(() => {
-		if (profileRow === undefined) {
+		if (isProfileLoading) {
 			return;
 		}
-		if (!profileRow?.onboardingCompletedAt && !isOnboarding) {
+		if (shouldRedirectToOnboarding) {
 			router.replace("/app/onboarding/basics");
 			return;
 		}
-		if (profileRow?.onboardingCompletedAt && isOnboarding) {
+		if (shouldRedirectToApp) {
 			router.replace("/app");
 		}
-	}, [profileRow, isOnboarding, router]);
+	}, [isProfileLoading, shouldRedirectToApp, shouldRedirectToOnboarding, router]);
+
+	if (shouldShowLoading) {
+		return <RouteSkeleton />;
+	}
 
 	if (isOnboarding) {
 		return <>{children}</>;
