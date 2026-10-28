@@ -7,6 +7,7 @@ import { betterAuth } from "better-auth/minimal";
 import { components } from "./_generated/api";
 import { query } from "./_generated/server";
 import authConfig from "./auth.config";
+import { accountNameDatabaseHooks } from "./lib/accountName";
 import { getResendConfig, postResendEmail } from "./lib/resendEmail";
 import { getSiteEnv } from "./lib/siteEnv";
 
@@ -44,6 +45,7 @@ export function createAuth(ctx: GenericCtx<DataModel>) {
 				enabled: true,
 			},
 		},
+		databaseHooks: accountNameDatabaseHooks,
 		emailAndPassword: {
 			enabled: true,
 			requireEmailVerification: false,

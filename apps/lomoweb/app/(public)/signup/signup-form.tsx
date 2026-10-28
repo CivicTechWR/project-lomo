@@ -1,5 +1,11 @@
 "use client";
 
+import {
+	INVALID_PERSON_NAME_CODE,
+	PERSON_NAME_CHARACTERS_ERROR,
+	PERSON_NAME_REQUIRED_ERROR,
+	validatePersonName,
+} from "@repo/convex-backend/convex/lib/personName";
 import { Button } from "@repo/ui/button";
 import { FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
@@ -14,7 +20,14 @@ import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
 // Phone number is collected later, in the onboarding "Stay in touch" step
 // (/app/onboarding/contact), so sign-up stays down to the essentials.
 const signupSchema = z.object({
-	name: z.string().min(1, "Name is required"),
+	name: z.string().transform((value, ctx) => {
+		const validation = validatePersonName(value, { required: true });
+		if (validation.error !== null || validation.value === undefined) {
+			ctx.addIssue({ code: "custom", message: validation.error ?? PERSON_NAME_REQUIRED_ERROR });
+			return z.NEVER;
+		}
+		return validation.value;
+	}),
 	email: z.string().email("Please enter a valid email address"),
 	password: z.string().min(8, "Password must be at least 8 characters"),
 });
@@ -84,7 +97,10 @@ export function SignUpForm() {
 		}
 
 		if (error) {
-			const mapped = SERVER_ERROR_MAP[error.code ?? ""];
+			// Name errors carry the specific rule that failed, so show the server's message.
+			const mapped = error.code === INVALID_PERSON_NAME_CODE
+				? { field: "name" as const, message: error.message ?? PERSON_NAME_CHARACTERS_ERROR }
+				: SERVER_ERROR_MAP[error.code ?? ""];
 			if (mapped?.field) {
 				setFieldErrors({ [mapped.field]: mapped.message });
 			}

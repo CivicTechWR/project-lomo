@@ -9,13 +9,13 @@ test("a requester can create a request and find it in My Requests", async ({ pag
 	const requestTitle = `E2E request ${Date.now()}`;
 
 	await page.goto("/signup");
-	await page.getByLabel("Preferred name").fill("E2E Requester");
+	await page.getByLabel("Preferred name").fill("Erin Requester");
 	await page.getByLabel("Email address").fill(email);
 	await page.getByLabel("Password").fill("E2e-test-password-123!");
 	await page.getByRole("button", { name: "Sign up" }).click();
 
 	await expect(page).toHaveURL(ONBOARDING_URL);
-	await page.getByLabel("First name").fill("E2E Requester");
+	await page.getByLabel("First name").fill("Erin Requester");
 	await page.getByRole("button", { name: "Continue" }).click();
 
 	await expect(page.getByRole("heading", { name: "Stay in touch" })).toBeVisible();

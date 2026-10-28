@@ -1,7 +1,8 @@
 "use client";
 
 import { api } from "@repo/convex-backend/convex/_generated/api";
-import { Description, Group, Label } from "@repo/ui/field";
+import { validatePersonName } from "@repo/convex-backend/convex/lib/personName";
+import { Description, FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
@@ -26,11 +27,16 @@ export function BasicsStep() {
 		setPronouns(profileRow.pronouns ?? "");
 	}
 
+	const firstNameValidation = validatePersonName(firstName);
+
 	async function handleContinue() {
+		if (firstNameValidation.error) {
+			return;
+		}
 		setSaving(true);
 		try {
 			await updatePublicProfile({
-				firstName: firstName.trim() || undefined,
+				firstName: firstNameValidation.value,
 				pronouns: pronouns.trim() || undefined,
 			});
 			router.push("/app/onboarding/contact");
@@ -61,11 +67,13 @@ export function BasicsStep() {
 					autoComplete="given-name"
 					value={firstName}
 					onChange={setFirstName}
+					isInvalid={!!firstNameValidation.error}
 				>
 					<Label className={fieldLabel}>First name</Label>
 					<Group className={fieldGroup}>
 						<Input placeholder="e.g. Sam" />
 					</Group>
+					<FieldError>{firstNameValidation.error}</FieldError>
 				</TextField>
 				<TextField
 					name="pronouns"
@@ -83,7 +91,7 @@ export function BasicsStep() {
 			<OnboardingStepFooter
 				onBack={() => router.push("/signin")}
 				onNext={handleContinue}
-				nextDisabled={saving || profileRow === undefined}
+				nextDisabled={saving || profileRow === undefined || !!firstNameValidation.error}
 				nextLabel={saving ? "Saving…" : "Continue"}
 			/>
 		</div>
