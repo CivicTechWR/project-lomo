@@ -6,6 +6,8 @@
 
 A calm, consent-based platform for asking for and offering help in the community — without pressure, rage, or performance.
 
+[Visit the website](https://www.lomosupport.ca/)
+
 ## Problem Statement
 
 **What is the problem?**
