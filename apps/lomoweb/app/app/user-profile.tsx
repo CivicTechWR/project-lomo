@@ -4,10 +4,11 @@ import type { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
+import { validatePersonName } from "@repo/convex-backend/convex/lib/personName";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
-import { Group, Label } from "@repo/ui/field";
+import { FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
@@ -36,8 +37,12 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 	const [phone, setPhone] = useState(() => profileRow.phone ?? "");
 	const [savingProfile, setSavingProfile] = useState(false);
 	const updatePublicProfile = useUpdatePublicProfile();
+	const firstNameValidation = validatePersonName(firstName);
 
 	async function handleSaveVolunteerFields() {
+		if (firstNameValidation.error) {
+			return;
+		}
 		setSavingProfile(true);
 		try {
 			await updatePublicProfile({
@@ -63,12 +68,14 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 				name="firstName"
 				value={firstName}
 				onChange={setFirstName}
+				isInvalid={!!firstNameValidation.error}
 				className="w-full"
 			>
 				<Label>First name (shown to requesters)</Label>
 				<Group>
 					<Input placeholder="e.g. Sam" />
 				</Group>
+				<FieldError>{firstNameValidation.error}</FieldError>
 			</TextField>
 			<TextField
 				name="pronouns"
@@ -98,7 +105,7 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 				variant="solid"
 				color="sage"
 				className="w-full"
-				isDisabled={savingProfile}
+				isDisabled={savingProfile || !!firstNameValidation.error}
 				onPress={handleSaveVolunteerFields}
 			>
 				{savingProfile ? "Saving…" : "Save profile"}

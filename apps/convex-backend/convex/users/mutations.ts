@@ -4,6 +4,7 @@ import { authComponent, createAuth } from "../auth";
 import { requireAdmin } from "../lib/adminAuth";
 import { getOrCreateCurrentUser, requireIdentity } from "../lib/currentUser";
 import { normalizeHelpPreferences } from "../lib/helperPreferences";
+import { validatePersonName } from "../lib/personName";
 import { DEFAULT_PHONE_NUMBER_ALLOWED_COUNTRIES, validatePhoneNumber } from "../lib/phoneNumber";
 import { purgeUserAppData } from "../lib/purgeUserAppData";
 
@@ -21,7 +22,11 @@ export const updatePublicProfile = mutation({
 		const { user } = await getOrCreateCurrentUser(ctx);
 		const patch: Record<string, string | undefined> = {};
 		if (firstName !== undefined) {
-			patch.firstName = firstName.trim() || undefined;
+			const validation = validatePersonName(firstName);
+			if (validation.error !== null) {
+				throw new Error(validation.error);
+			}
+			patch.firstName = validation.value;
 		}
 		if (pronouns !== undefined) {
 			patch.pronouns = pronouns.trim() || undefined;
