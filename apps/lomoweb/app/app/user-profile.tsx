@@ -3,11 +3,12 @@
 import type { api } from "@repo/convex-backend/convex/_generated/api";
 import type { Doc } from "@repo/convex-backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
+import { validatePronouns } from "@repo/convex-backend/convex/lib/pronouns";
 import { usePreloadedAuthQuery } from "@convex-dev/better-auth/nextjs/client";
 import { Badge } from "@repo/ui/badge";
 import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
-import { Group, Label } from "@repo/ui/field";
+import { FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
@@ -37,12 +38,17 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 	const [savingProfile, setSavingProfile] = useState(false);
 	const updatePublicProfile = useUpdatePublicProfile();
 
+	const pronounsValidation = validatePronouns(pronouns);
+
 	async function handleSaveVolunteerFields() {
+		if (pronounsValidation.error) {
+			return;
+		}
 		setSavingProfile(true);
 		try {
 			await updatePublicProfile({
 				firstName,
-				pronouns,
+				pronouns: pronounsValidation.value ?? "",
 				phone: phone.trim() || undefined,
 			});
 		}
@@ -74,12 +80,14 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 				name="pronouns"
 				value={pronouns}
 				onChange={setPronouns}
+					isInvalid={!!pronounsValidation.error}
 				className="w-full"
 			>
 				<Label>Pronouns (optional)</Label>
 				<Group>
 					<Input placeholder="e.g. they/them" />
 				</Group>
+				<FieldError>{pronounsValidation.error}</FieldError>
 			</TextField>
 			<TextField
 				name="phone"
@@ -98,7 +106,7 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 				variant="solid"
 				color="sage"
 				className="w-full"
-				isDisabled={savingProfile}
+				isDisabled={savingProfile || !!pronounsValidation.error}
 				onPress={handleSaveVolunteerFields}
 			>
 				{savingProfile ? "Saving…" : "Save profile"}

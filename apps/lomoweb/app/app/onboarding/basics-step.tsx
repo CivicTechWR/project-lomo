@@ -1,7 +1,8 @@
 "use client";
 
 import { api } from "@repo/convex-backend/convex/_generated/api";
-import { Description, Group, Label } from "@repo/ui/field";
+import { validatePronouns } from "@repo/convex-backend/convex/lib/pronouns";
+import { Description, FieldError, Group, Label } from "@repo/ui/field";
 import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
@@ -26,12 +27,17 @@ export function BasicsStep() {
 		setPronouns(profileRow.pronouns ?? "");
 	}
 
+	const pronounsValidation = validatePronouns(pronouns);
+
 	async function handleContinue() {
+		if (pronounsValidation.error) {
+			return;
+		}
 		setSaving(true);
 		try {
 			await updatePublicProfile({
 				firstName: firstName.trim() || undefined,
-				pronouns: pronouns.trim() || undefined,
+				pronouns: pronounsValidation.value ?? "",
 			});
 			router.push("/app/onboarding/contact");
 		}
@@ -71,19 +77,21 @@ export function BasicsStep() {
 					name="pronouns"
 					value={pronouns}
 					onChange={setPronouns}
+					isInvalid={!!pronounsValidation.error}
 				>
 					<Label className={fieldLabel}>Pronouns</Label>
 					<Description className={fieldHint}>Optional</Description>
 					<Group className={fieldGroup}>
 						<Input placeholder="e.g. they/them" />
 					</Group>
+					<FieldError>{pronounsValidation.error}</FieldError>
 				</TextField>
 			</div>
 
 			<OnboardingStepFooter
 				onBack={() => router.push("/signin")}
 				onNext={handleContinue}
-				nextDisabled={saving || profileRow === undefined}
+				nextDisabled={saving || profileRow === undefined || !!pronounsValidation.error}
 				nextLabel={saving ? "Saving…" : "Continue"}
 			/>
 		</div>
