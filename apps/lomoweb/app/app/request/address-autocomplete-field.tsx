@@ -25,6 +25,8 @@ interface AddressAutocompleteFieldProps {
 	onChange: (value: string) => void;
 	onSelect: (selection: AddressSelection) => void;
 	onClearSelection: () => void;
+	/** Shown after a suggestion is chosen. */
+	confirmedMessage?: string;
 }
 
 export function AddressAutocompleteField({
@@ -38,6 +40,7 @@ export function AddressAutocompleteField({
 	onChange,
 	onSelect,
 	onClearSelection,
+	confirmedMessage = "Address verified — ready for delivery matching.",
 }: AddressAutocompleteFieldProps) {
 	const listId = useId();
 	const wrapRef = useRef<HTMLDivElement>(null);
@@ -201,7 +204,7 @@ export function AddressAutocompleteField({
 			{isVerified
 				? (
 						<Text size={1} className="text-sage-11">
-							Address verified — ready for delivery matching.
+							{confirmedMessage}
 						</Text>
 					)
 				: query.trim().length > 0

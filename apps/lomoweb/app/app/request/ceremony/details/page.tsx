@@ -5,6 +5,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { NeededByField } from "../../needed-by-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
@@ -15,8 +16,16 @@ export default function CeremonyDetailsPage() {
 	const d = draft.ceremonyDetails;
 
 	function handleNext() {
-		if (!d.whatNeed.trim() || !d.whenText.trim() || !d.locationAddress.trim()) {
-			window.alert("Please share what you need, when, and location.");
+		if (
+			!d.whatNeed.trim()
+			|| !d.whenText.trim()
+			|| !d.locationAddress.trim()
+			|| d.locationLat == null
+			|| d.locationLng == null
+		) {
+			window.alert(
+				"Please share what you need, when, and choose a location from the suggestions.",
+			);
 			return;
 		}
 		router.push("/app/request/ceremony/preview");
@@ -86,14 +95,27 @@ export default function CeremonyDetailsPage() {
 					<Group><Input placeholder="e.g., Saturday at dawn" /></Group>
 				</TextField>
 
-				<TextField
+				<AddressAutocompleteField
 					name="locationAddress"
+					label="Location of ceremony"
+					placeholder="Start typing an address or place…"
+					confirmedMessage="Location verified."
 					value={d.locationAddress}
+					selectedLat={d.locationLat}
+					selectedLng={d.locationLng}
 					onChange={v => setCeremonyDetails({ locationAddress: v })}
-				>
-					<Label>Location of ceremony</Label>
-					<Group><Input placeholder="Address" /></Group>
-				</TextField>
+					onSelect={({ label, lat, lng }) =>
+						setCeremonyDetails({
+							locationAddress: label,
+							locationLat: lat,
+							locationLng: lng,
+						})}
+					onClearSelection={() =>
+						setCeremonyDetails({
+							locationLat: undefined,
+							locationLng: undefined,
+						})}
+				/>
 
 				<TextField
 					name="locationDirections"

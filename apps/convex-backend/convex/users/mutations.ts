@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation } from "../_generated/server";
 import { authComponent, createAuth } from "../auth";
 import { requireAdmin } from "../lib/adminAuth";
@@ -101,7 +101,7 @@ export const deleteMyAccount = mutation({
 	},
 	handler: async (ctx, { password }) => {
 		if (password.trim().length === 0) {
-			throw new Error("Password is required");
+			throw new ConvexError("Password is required.");
 		}
 		const identity = await requireIdentity(ctx);
 		const subject = identity.subject;
@@ -115,16 +115,15 @@ export const deleteMyAccount = mutation({
 		catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			if (INVALID_PASSWORD_RE.test(message)) {
-				throw new Error("Incorrect password.");
+				throw new ConvexError("Incorrect password.");
 			}
 			if (SESSION_EXPIRED_RE.test(message)) {
-				throw new Error(
+				throw new ConvexError(
 					"Your session is too old to delete your account. Sign out, sign back in, and try again.",
 				);
 			}
-			throw new Error(
-				message.length > 0 ? message : "Could not delete your account.",
-			);
+			console.error(error);
+			throw new ConvexError("Could not delete your account.");
 		}
 		await purgeUserAppData(ctx, subject);
 	},

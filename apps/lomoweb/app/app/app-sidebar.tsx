@@ -7,8 +7,8 @@ import { useQuery } from "convex/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback } from "react";
-import { authClient } from "@/lib/auth-client";
 import { useHomeMode } from "@/lib/home-mode-context";
+import { signOutToSignIn } from "@/lib/sign-out";
 import { canOfferHelp } from "@/lib/user-status";
 
 // --- Tab Configuration ---
@@ -139,8 +139,7 @@ export function AppSidebar() {
 	);
 
 	async function handleSignOut() {
-		await authClient.signOut();
-		router.push("/signin");
+		await signOutToSignIn();
 	}
 
 	return (

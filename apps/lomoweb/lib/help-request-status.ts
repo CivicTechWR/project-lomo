@@ -31,20 +31,51 @@ export const HELP_REQUEST_FILTER_CHIPS: {
 	{ value: "cancelled", label: "Cancelled" },
 ];
 
-export function statusBadgeColor(
-	status: HelpRequestStatus,
-): "gray" | "amber" | "red" | "sage" | "terracotta" {
+export type StatusBadgeColor
+	= | "gray"
+		| "amber"
+		| "red"
+		| "sage"
+		| "terracotta"
+		| "yellow"
+		| "darkred";
+
+export interface StatusBadgeProps {
+	color: StatusBadgeColor;
+	variant: "soft" | "solid";
+	/** Optional override (e.g. blue complete — not a Badge color token yet). */
+	className?: string;
+}
+
+/**
+ * Visual treatment for request status pills.
+ *
+ * pending → grey, in progress → green, awaiting → orange, cancelled → black,
+ * complete → blue. Urgent is handled separately (bright red solid).
+ */
+export function statusBadgeProps(status: HelpRequestStatus): StatusBadgeProps {
 	switch (status) {
 		case "pending":
-			return "amber";
+			return { color: "gray", variant: "soft" };
 		case "assigned":
 		case "awaiting_requester_acceptance":
-			return "terracotta";
+			return { color: "amber", variant: "soft" };
 		case "in_progress":
-			return "terracotta";
+			return { color: "sage", variant: "soft" };
 		case "complete":
-			return "sage";
+			return {
+				color: "gray",
+				variant: "soft",
+				className: "!bg-blue-3 !text-blue-11",
+			};
 		case "cancelled":
-			return "gray";
+			return { color: "gray", variant: "solid" };
 	}
+}
+
+/** @deprecated Prefer `statusBadgeProps` when variant/className matter. */
+export function statusBadgeColor(
+	status: HelpRequestStatus,
+): StatusBadgeColor {
+	return statusBadgeProps(status).color;
 }

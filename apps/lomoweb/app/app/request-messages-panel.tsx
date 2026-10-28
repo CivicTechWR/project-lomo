@@ -57,9 +57,9 @@ export function RequestMessagesPanel({
 	if (messages === undefined || relay === undefined) {
 		return (
 			<section
-				className={`flex flex-col rounded-[max(var(--radius-4),12px)] border-2 border-terracotta-9 bg-white p-4 shadow-brand sm:p-5 ${className}`}
+				className={`flex flex-col rounded-5 bg-white p-5 shadow-brand sm:p-6 ${className}`}
 			>
-				<Text size={2} color="gray">
+				<Text size={2} className="text-black/70">
 					Loading messages…
 				</Text>
 			</section>
@@ -103,18 +103,18 @@ export function RequestMessagesPanel({
 	return (
 		<section
 			aria-label="Messages"
-			className={`flex min-h-0 flex-col rounded-[max(var(--radius-4),12px)] border-2 border-terracotta-9 bg-white shadow-brand ${className}`}
+			className={`flex min-h-0 flex-col rounded-5 bg-white shadow-brand ${className}`}
 		>
-			<div className="border-b-2 border-terracotta-6 px-4 py-3 sm:px-5">
-				<Heading level={2} size={5}>
+			<div className="px-5 pb-2 pt-5 sm:px-6 sm:pt-6">
+				<Heading level={2} size={5} className="font-display font-extrabold text-black">
 					Messages
 				</Heading>
-				<Text size={1} color="gray" className="mt-0.5">
+				<Text size={2} className="mt-1 font-medium text-black/70">
 					Chat with your match about this request.
 				</Text>
 			</div>
 
-			<div className="flex max-h-[min(28rem,55vh)] min-h-52 flex-1 flex-col gap-3 overflow-y-auto bg-terracotta-1/40 px-3 py-4 sm:px-4">
+			<div className="flex max-h-[min(28rem,55vh)] min-h-52 flex-1 flex-col gap-3 overflow-y-auto bg-surface-warm/60 px-4 py-4 sm:px-5">
 				{messages.length === 0
 					? (
 							<div className="flex flex-1 items-center justify-center px-2 py-8 text-center">
@@ -163,7 +163,7 @@ export function RequestMessagesPanel({
 				<div ref={threadEndRef} />
 			</div>
 
-			<div className="flex flex-col gap-3 border-t-2 border-terracotta-6 px-4 py-4 sm:px-5">
+			<div className="flex flex-col gap-3 px-5 py-5 sm:px-6">
 				<TextField className="w-full">
 					<Label>Message</Label>
 					<Group>
@@ -193,22 +193,22 @@ export function RequestMessagesPanel({
 					>
 						{submitting ? "Sending…" : "Send"}
 					</Button>
-					<Text size={1} color="gray">
+					<Text size={1} className="text-black/50">
 						⌘/Ctrl + Enter to send
 					</Text>
 				</div>
 
-				<div className="border-t border-gray-6 pt-3">
+				<div className="border-t border-black/10 pt-3">
 					<button
 						type="button"
-						className="flex w-full items-center justify-between gap-2 rounded-2 px-1 py-1 text-left outline-none ring-gray-8 hover:bg-terracotta-1 focus-visible:ring-2"
+						className="flex w-full items-center justify-between gap-2 rounded-2 px-1 py-1 text-left outline-none ring-gray-8 hover:bg-surface-warm focus-visible:ring-2"
 						aria-expanded={relayOpen}
 						onClick={() => setRelayOpen(open => !open)}
 					>
-						<Text size={2} weight="medium">
+						<Text size={2} weight="medium" className="text-black">
 							Masked email
 						</Text>
-						<span className="text-(length:--text-1) text-gray-10" aria-hidden>
+						<span className="text-(length:--text-1) text-black/50" aria-hidden>
 							{relayOpen ? "Hide" : "Show"}
 						</span>
 					</button>

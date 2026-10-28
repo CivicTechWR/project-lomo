@@ -26,8 +26,18 @@ export default function CeremonyPreviewPage() {
 	const body = summarizeCeremonyDraftBody(draft);
 
 	async function postRequest() {
-		if (!draft.ceremonyDetails.role || !draft.ceremonyDetails.whatNeed.trim()) {
-			window.alert("Please choose a role and tell us what you need.");
+		const { role, whatNeed, locationAddress, locationLat, locationLng }
+			= draft.ceremonyDetails;
+		if (
+			!role
+			|| !whatNeed.trim()
+			|| !locationAddress.trim()
+			|| locationLat == null
+			|| locationLng == null
+		) {
+			window.alert(
+				"Please choose a role, tell us what you need, and pick a location from the suggestions.",
+			);
 			return;
 		}
 		setPosting(true);

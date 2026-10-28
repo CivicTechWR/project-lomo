@@ -21,6 +21,8 @@ import {
 	useUpdateHelperPreferences,
 	useUpdatePublicProfile,
 } from "@/lib/hooks/use-user-profile";
+import { mutationErrorMessage } from "@/lib/mutation-error-message";
+import { profileExit } from "@/lib/onboarding-gate";
 import { useServerRowSync } from "@/lib/use-server-row-sync";
 import {
 	HelperPreferencesFields,
@@ -30,10 +32,10 @@ import { SafetyAcknowledgment } from "./onboarding/safety-acknowledgment";
 
 type ProfileRow = Doc<"users">;
 
-function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
-	const [firstName, setFirstName] = useState(() => profileRow.firstName ?? "");
-	const [pronouns, setPronouns] = useState(() => profileRow.pronouns ?? "");
-	const [phone, setPhone] = useState(() => profileRow.phone ?? "");
+function ProfileForm({ profileRow }: { profileRow: ProfileRow | null }) {
+	const [firstName, setFirstName] = useState(() => profileRow?.firstName ?? "");
+	const [pronouns, setPronouns] = useState(() => profileRow?.pronouns ?? "");
+	const [phone, setPhone] = useState(() => profileRow?.phone ?? "");
 	const [savingProfile, setSavingProfile] = useState(false);
 	const updatePublicProfile = useUpdatePublicProfile();
 
@@ -107,7 +109,7 @@ function ProfileForm({ profileRow }: { profileRow: ProfileRow }) {
 	);
 }
 
-function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
+function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow | null }) {
 	const [preferenceValues, setPreferenceValues] = useState(() =>
 		helperPreferencesFromProfile(profileRow),
 	);
@@ -190,9 +192,9 @@ function HelperPreferencesForm({ profileRow }: { profileRow: ProfileRow }) {
 	);
 }
 
-function SafetyForm({ profileRow }: { profileRow: ProfileRow }) {
+function SafetyForm({ profileRow }: { profileRow: ProfileRow | null }) {
 	const [safetyAcknowledged, setSafetyAcknowledged] = useState(() =>
-		Boolean(profileRow.safetyAcknowledgedAt),
+		Boolean(profileRow?.safetyAcknowledgedAt),
 	);
 	const [savingSafety, setSavingSafety] = useState(false);
 	const acknowledgeSafety = useAcknowledgeSafety();
@@ -218,7 +220,7 @@ function SafetyForm({ profileRow }: { profileRow: ProfileRow }) {
 
 	return (
 		<div className="flex flex-col gap-4">
-			{profileRow.safetyAcknowledgedAt
+			{profileRow?.safetyAcknowledgedAt
 				? (
 						<Badge variant="soft" size={1} color="sage">
 							Acknowledged
@@ -236,11 +238,11 @@ function SafetyForm({ profileRow }: { profileRow: ProfileRow }) {
 				isDisabled={
 					!safetyAcknowledged
 					|| savingSafety
-					|| !!profileRow.safetyAcknowledgedAt
+					|| !!profileRow?.safetyAcknowledgedAt
 				}
 				onPress={handleSaveSafety}
 			>
-				{profileRow.safetyAcknowledgedAt
+				{profileRow?.safetyAcknowledgedAt
 					? "Safety notices on file"
 					: savingSafety
 						? "Saving…"
@@ -268,6 +270,12 @@ export function UserProfile({
 		return null;
 	}
 
+	const exit = profileExit(
+		profileRow === undefined
+			? undefined
+			: profileRow?.onboardingCompletedAt != null,
+	);
+
 	async function handleDeleteAccount() {
 		if (deletePassword.trim().length === 0) {
 			setDeleteError("Enter your password to confirm.");
@@ -287,9 +295,7 @@ export function UserProfile({
 		}
 		catch (e) {
 			console.error(e);
-			setDeleteError(
-				e instanceof Error ? e.message : "Could not delete your account.",
-			);
+			setDeleteError(mutationErrorMessage(e, "Could not delete your account."));
 			setDeletingAccount(false);
 		}
 	}
@@ -317,14 +323,14 @@ export function UserProfile({
 						leave it blank, matched volunteers will email you through a masked
 						address so your real email stays private.
 					</Text>
-					{profileRow == null
+					{profileRow === undefined
 						? (
 								<Text size={2} color="gray">
 									Loading…
 								</Text>
 							)
 						: (
-								<ProfileForm key={profileRow._id} profileRow={profileRow} />
+								<ProfileForm key={profileRow?._id ?? "new"} profileRow={profileRow} />
 							)}
 				</div>
 
@@ -332,7 +338,7 @@ export function UserProfile({
 					<Heading level={3} size={4} className="mb-3">
 						Helper preferences
 					</Heading>
-					{profileRow == null
+					{profileRow === undefined
 						? (
 								<Text size={2} color="gray">
 									Loading…
@@ -340,7 +346,7 @@ export function UserProfile({
 							)
 						: (
 								<HelperPreferencesForm
-									key={profileRow._id}
+									key={profileRow?._id ?? "new"}
 									profileRow={profileRow}
 								/>
 
@@ -351,14 +357,14 @@ export function UserProfile({
 					<Heading level={3} size={4} className="mb-3">
 						Safety &amp; Boundaries
 					</Heading>
-					{profileRow == null
+					{profileRow === undefined
 						? (
 								<Text size={2} color="gray">
 									Loading…
 								</Text>
 							)
 						: (
-								<SafetyForm key={profileRow._id} profileRow={profileRow} />
+								<SafetyForm key={profileRow?._id ?? "new"} profileRow={profileRow} />
 							)}
 				</div>
 
@@ -436,9 +442,9 @@ export function UserProfile({
 					variant="outline"
 					color="gray"
 					className="w-full"
-					onPress={() => router.push("/app")}
+					onPress={() => router.push(exit.href)}
 				>
-					Back to requests
+					{exit.label}
 				</Button>
 			</div>
 		</Card>

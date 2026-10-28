@@ -3,32 +3,45 @@
 import type { ReactNode } from "react";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import {
+	ALREADY_SIGNED_IN_NOTICE,
+	pathWithAlreadySignedInNotice,
+} from "@/lib/already-signed-in";
 import { HomeModeProvider } from "@/lib/home-mode-context";
+import { onboardingRedirectPath } from "@/lib/onboarding-gate";
 import { AppSidebar } from "./app-sidebar";
 
 export function AppChrome({ children }: { children: ReactNode }) {
 	const pathname = usePathname() ?? "";
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const profileRow = useQuery(api.users.getMyProfileRow);
 	const isOnboarding = pathname.startsWith("/app/onboarding");
+	const showAlreadySignedIn
+		= searchParams.get("notice") === ALREADY_SIGNED_IN_NOTICE;
 
 	useEffect(() => {
 		if (profileRow === undefined) {
 			return;
 		}
-		if (!profileRow?.onboardingCompletedAt && !isOnboarding) {
-			router.replace("/app/onboarding/basics");
+		const destination = onboardingRedirectPath(
+			pathname,
+			profileRow?.onboardingCompletedAt != null,
+		);
+		if (!destination) {
 			return;
 		}
-		if (profileRow?.onboardingCompletedAt && isOnboarding) {
-			router.replace("/app");
-		}
-	}, [profileRow, isOnboarding, router]);
+		router.replace(
+			showAlreadySignedIn
+				? pathWithAlreadySignedInNotice(destination)
+				: destination,
+		);
+	}, [profileRow, pathname, router, showAlreadySignedIn]);
 
 	if (isOnboarding) {
-		return <>{children}</>;
+		return children;
 	}
 
 	return (

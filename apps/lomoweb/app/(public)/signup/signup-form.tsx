@@ -7,9 +7,10 @@ import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { z } from "zod";
 import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
+import { leaveAuthFormIfSignedIn, useGuestAuthEntry } from "@/lib/use-guest-auth-entry";
 
 // Phone number is collected later, in the onboarding "Stay in touch" step
 // (/app/onboarding/contact), so sign-up stays down to the essentials.
@@ -49,6 +50,27 @@ export function SignUpForm() {
 	const [formError, setFormError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const resetFields = useCallback(() => {
+		setName("");
+		setEmail("");
+		setPassword("");
+		setFieldErrors({});
+		setFormError(null);
+	}, []);
+	const { formKey, markEdited, signedIn } = useGuestAuthEntry(resetFields);
+
+	function clearFieldError(field: keyof FieldErrors) {
+		setFieldErrors((errors) => {
+			if (!errors[field]) {
+				return errors;
+			}
+			const next = { ...errors };
+			delete next[field];
+			return next;
+		});
+		setFormError(null);
+	}
+
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setFieldErrors({});
@@ -64,6 +86,10 @@ export function SignUpForm() {
 				}
 			}
 			setFieldErrors(errors);
+			return;
+		}
+
+		if (await leaveAuthFormIfSignedIn(path => router.replace(path))) {
 			return;
 		}
 
@@ -108,7 +134,12 @@ export function SignUpForm() {
 		: "/signin";
 
 	return (
-		<form onSubmit={handleSubmit} className="auth-stagger flex flex-col gap-6">
+		<form
+			key={formKey}
+			autoComplete="off"
+			onSubmit={handleSubmit}
+			className="auth-stagger flex flex-col gap-6"
+		>
 			{/* Header */}
 			<div className="flex flex-col gap-2">
 				<Heading level={2} size={8} className="font-display">
@@ -127,7 +158,11 @@ export function SignUpForm() {
 				isRequired
 				isInvalid={!!fieldErrors.name}
 				value={name}
-				onChange={setName}
+				onChange={(value) => {
+					markEdited();
+					setName(value);
+					clearFieldError("name");
+				}}
 			>
 				<Label>Preferred name</Label>
 				<Group>
@@ -142,11 +177,15 @@ export function SignUpForm() {
 				isRequired
 				isInvalid={!!fieldErrors.email}
 				value={email}
-				onChange={setEmail}
+				onChange={(value) => {
+					markEdited();
+					setEmail(value);
+					clearFieldError("email");
+				}}
 			>
 				<Label>Email address</Label>
 				<Group>
-					<Input placeholder="you@example.com" />
+					<Input autoComplete="off" placeholder="you@example.com" />
 				</Group>
 				{fieldErrors.email && <FieldError>{fieldErrors.email}</FieldError>}
 			</TextField>
@@ -157,11 +196,15 @@ export function SignUpForm() {
 				isRequired
 				isInvalid={!!fieldErrors.password}
 				value={password}
-				onChange={setPassword}
+				onChange={(value) => {
+					markEdited();
+					setPassword(value);
+					clearFieldError("password");
+				}}
 			>
 				<Label>Password</Label>
 				<Group>
-					<Input placeholder="At least 8 characters" />
+					<Input autoComplete="off" placeholder="At least 8 characters" />
 				</Group>
 				{fieldErrors.password && (
 					<FieldError>{fieldErrors.password}</FieldError>
@@ -182,7 +225,7 @@ export function SignUpForm() {
 				type="submit"
 				variant="solid"
 				color="yellow"
-				isDisabled={isSubmitting}
+				isDisabled={isSubmitting || signedIn}
 				className="mt-2"
 				size={3}
 				border="large"

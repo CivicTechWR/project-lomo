@@ -97,6 +97,9 @@ export interface OtherRequestDetails {
 	whatNeed: string;
 	whenText: string;
 	location: string;
+	/** Set when the requester picks a location from autocomplete. */
+	locationLat?: number;
+	locationLng?: number;
 }
 
 export function emptyOtherDetails(): OtherRequestDetails {
@@ -104,6 +107,8 @@ export function emptyOtherDetails(): OtherRequestDetails {
 		whatNeed: "",
 		whenText: "",
 		location: "",
+		locationLat: undefined,
+		locationLng: undefined,
 	};
 }
 
@@ -119,6 +124,9 @@ export interface PublicWalkRequestDetails {
 	preferredTime: string;
 	walkLength: PublicWalkLengthId | null;
 	location: string;
+	/** Set when the requester picks a location from autocomplete. */
+	locationLat?: number;
+	locationLng?: number;
 	walkTypes: PublicWalkTypeId[];
 }
 
@@ -127,6 +135,8 @@ export function emptyPublicWalkDetails(): PublicWalkRequestDetails {
 		preferredTime: "",
 		walkLength: null,
 		location: "",
+		locationLat: undefined,
+		locationLng: undefined,
 		walkTypes: [],
 	};
 }
@@ -186,6 +196,9 @@ export interface CeremonyRequestDetails {
 	helperNotes: string;
 	whenText: string;
 	locationAddress: string;
+	/** Set when the requester picks a location from autocomplete. */
+	locationLat?: number;
+	locationLng?: number;
 	locationDirections: string;
 }
 
@@ -198,6 +211,8 @@ export function emptyCeremonyDetails(): CeremonyRequestDetails {
 		helperNotes: "",
 		whenText: "",
 		locationAddress: "",
+		locationLat: undefined,
+		locationLng: undefined,
 		locationDirections: "",
 	};
 }

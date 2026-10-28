@@ -12,6 +12,8 @@
 @import "@radix-ui/colors/red-alpha.css";
 @import "@radix-ui/colors/amber.css";
 @import "@radix-ui/colors/amber-alpha.css";
+@import "@radix-ui/colors/blue.css";
+@import "@radix-ui/colors/blue-alpha.css";
 
 /* Scan UI package source for Tailwind class usage */
 @source "../../src";
@@ -114,6 +116,20 @@
 	--color-amber-10: var(--amber-10);
 	--color-amber-11: var(--amber-11);
 	--color-amber-12: var(--amber-12);
+
+	/* ── Blue 1-12 (Radix semantic) ── */
+	--color-blue-1: var(--blue-1);
+	--color-blue-2: var(--blue-2);
+	--color-blue-3: var(--blue-3);
+	--color-blue-4: var(--blue-4);
+	--color-blue-5: var(--blue-5);
+	--color-blue-6: var(--blue-6);
+	--color-blue-7: var(--blue-7);
+	--color-blue-8: var(--blue-8);
+	--color-blue-9: var(--blue-9);
+	--color-blue-10: var(--blue-10);
+	--color-blue-11: var(--blue-11);
+	--color-blue-12: var(--blue-12);
 
 	/* ── Terracotta Alpha a1-a12 ── */
 	--color-terracotta-a1: var(--terracotta-a1);

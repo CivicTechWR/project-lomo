@@ -14,7 +14,7 @@ import { useState } from "react";
 import { RequestMessagesPanel } from "@/app/app/request-messages-panel";
 import {
 	HELP_REQUEST_STATUS_LABEL,
-	statusBadgeColor,
+	statusBadgeProps,
 } from "@/lib/help-request-status";
 import { useHomeMode } from "@/lib/home-mode-context";
 import { REQUEST_CATEGORIES } from "@/lib/request-flow/categories";
@@ -231,6 +231,7 @@ export function OfferRequestDetailView() {
 	const summary = doc.summary?.trim() ?? "";
 	const details = doc.details?.trim() ?? "";
 	const showSummary = summary.length > 0 && summary !== details;
+	const statusBadge = statusBadgeProps(st);
 
 	return (
 		<div className="flex w-full max-w-full flex-col gap-5">
@@ -259,15 +260,16 @@ export function OfferRequestDetailView() {
 							<div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
 								{isRequestUrgent(doc)
 									? (
-											<Badge variant="soft" size={2} color="red">
+											<Badge variant="solid" size={2} color="red">
 												Urgent
 											</Badge>
 										)
 									: null}
 								<Badge
-									variant="soft"
+									variant={statusBadge.variant}
 									size={2}
-									color={statusBadgeColor(st)}
+									color={statusBadge.color}
+									className={statusBadge.className}
 								>
 									{st === "awaiting_requester_acceptance"
 										? "Awaiting confirmation"
