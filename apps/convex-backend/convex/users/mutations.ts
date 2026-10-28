@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { validatePronouns } from "../lib/pronouns";
 import { mutation } from "../_generated/server";
 import { authComponent, createAuth } from "../auth";
 import { requireAdmin } from "../lib/adminAuth";
@@ -24,7 +25,11 @@ export const updatePublicProfile = mutation({
 			patch.firstName = firstName.trim() || undefined;
 		}
 		if (pronouns !== undefined) {
-			patch.pronouns = pronouns.trim() || undefined;
+			const validation = validatePronouns(pronouns);
+			if (validation.error) {
+				throw new Error(validation.error);
+			}
+			patch.pronouns = validation.value;
 		}
 		if (phone !== undefined) {
 			const normalizedPhone = phone.trim();
