@@ -26,9 +26,16 @@ export default function OtherPreviewPage() {
 	const body = summarizeOtherDraftBody(draft);
 
 	async function postRequest() {
-		const { whatNeed, whenText, location } = draft.otherDetails;
-		if (!whatNeed.trim() || !whenText.trim() || !location.trim()) {
-			window.alert("Please add what you need, when, and location.");
+		const { whatNeed, location, locationLat, locationLng } = draft.otherDetails;
+		if (
+			!whatNeed.trim()
+			|| !location.trim()
+			|| locationLat == null
+			|| locationLng == null
+		) {
+			window.alert(
+				"Please add what you need and choose a location from the suggestions.",
+			);
 			return;
 		}
 		setPosting(true);

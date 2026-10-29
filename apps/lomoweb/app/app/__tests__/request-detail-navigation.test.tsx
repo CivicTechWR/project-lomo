@@ -56,6 +56,7 @@ describe("request detail navigation", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.spyOn(window, "confirm").mockReturnValue(true);
+		Element.prototype.scrollIntoView = vi.fn();
 		mocks.document = {
 			_id: "request-1",
 			category: "food",

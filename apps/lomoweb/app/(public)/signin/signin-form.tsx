@@ -7,9 +7,10 @@ import { Link } from "@repo/ui/link";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import * as z from "zod";
+import { useCallback, useState } from "react";
+import { z } from "zod";
 import { AUTH_CONNECTION_ERROR_MESSAGE, authClient } from "@/lib/auth-client";
+import { leaveAuthFormIfSignedIn, useGuestAuthEntry } from "@/lib/use-guest-auth-entry";
 
 const signinSchema = z.object({
 	email: z.string().email("Please enter a valid email address"),
@@ -60,6 +61,14 @@ export function SignInForm() {
 	);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const resetFields = useCallback(() => {
+		setEmail("");
+		setPassword("");
+		setFieldErrors({});
+		setFormError(null);
+	}, []);
+	const { formKey, markEdited, signedIn } = useGuestAuthEntry(resetFields);
+
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setFieldErrors({});
@@ -75,6 +84,10 @@ export function SignInForm() {
 				}
 			}
 			setFieldErrors(errors);
+			return;
+		}
+
+		if (await leaveAuthFormIfSignedIn(path => router.replace(path))) {
 			return;
 		}
 
@@ -118,7 +131,12 @@ export function SignInForm() {
 		: "/signup";
 
 	return (
-		<form onSubmit={handleSubmit} className="auth-stagger flex flex-col gap-6">
+		<form
+			key={formKey}
+			autoComplete="off"
+			onSubmit={handleSubmit}
+			className="auth-stagger flex flex-col gap-6"
+		>
 			{/* Header */}
 			<div className="flex flex-col gap-2">
 				<Heading level={2} size={8} className="font-display">
@@ -136,11 +154,14 @@ export function SignInForm() {
 				isRequired
 				isInvalid={!!fieldErrors.email}
 				value={email}
-				onChange={setEmail}
+				onChange={(value) => {
+					markEdited();
+					setEmail(value);
+				}}
 			>
 				<Label>Email address</Label>
 				<Group>
-					<Input placeholder="you@example.com" />
+					<Input autoComplete="off" placeholder="you@example.com" />
 				</Group>
 				{fieldErrors.email && <FieldError>{fieldErrors.email}</FieldError>}
 			</TextField>
@@ -151,7 +172,10 @@ export function SignInForm() {
 				isRequired
 				isInvalid={!!fieldErrors.password}
 				value={password}
-				onChange={setPassword}
+				onChange={(value) => {
+					markEdited();
+					setPassword(value);
+				}}
 			>
 				<div className="flex items-center justify-between gap-2">
 					<Label>Password</Label>
@@ -160,7 +184,7 @@ export function SignInForm() {
 					</Link>
 				</div>
 				<Group>
-					<Input placeholder="Enter your password" />
+					<Input autoComplete="off" placeholder="Enter your password" />
 				</Group>
 				{fieldErrors.password && (
 					<FieldError>{fieldErrors.password}</FieldError>
@@ -187,7 +211,7 @@ export function SignInForm() {
 				type="submit"
 				variant="solid"
 				color="yellow"
-				isDisabled={isSubmitting}
+				isDisabled={isSubmitting || signedIn}
 				className="mt-2"
 				size={3}
 				border="large"

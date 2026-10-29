@@ -5,6 +5,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextArea, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { NeededByField } from "../../needed-by-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
@@ -17,8 +18,15 @@ export default function OtherDetailsPage() {
 	function handleNext() {
 		// `whenText` is no longer required: timing is now captured by the deadline
 		// field, and this box is for optional nuance on top of it.
-		if (!d.whatNeed.trim() || !d.location.trim()) {
-			window.alert("Please fill in what you need and a location.");
+		if (
+			!d.whatNeed.trim()
+			|| !d.location.trim()
+			|| d.locationLat == null
+			|| d.locationLng == null
+		) {
+			window.alert(
+				"Please fill in what you need and choose a location from the suggestions.",
+			);
 			return;
 		}
 		router.push("/app/request/other/preview");
@@ -62,16 +70,27 @@ export default function OtherDetailsPage() {
 					</Group>
 				</TextField>
 
-				<TextField
+				<AddressAutocompleteField
 					name="location"
+					label="Location"
+					placeholder="Start typing a neighbourhood, landmark, or address…"
+					confirmedMessage="Location verified."
 					value={d.location}
+					selectedLat={d.locationLat}
+					selectedLng={d.locationLng}
 					onChange={v => setOtherDetails({ location: v })}
-				>
-					<Label>Location</Label>
-					<Group>
-						<Input placeholder="Neighbourhood, landmark, or address" />
-					</Group>
-				</TextField>
+					onSelect={({ label, lat, lng }) =>
+						setOtherDetails({
+							location: label,
+							locationLat: lat,
+							locationLng: lng,
+						})}
+					onClearSelection={() =>
+						setOtherDetails({
+							locationLat: undefined,
+							locationLng: undefined,
+						})}
+				/>
 			</div>
 
 			<div className="flex w-full flex-col gap-3 pt-6">

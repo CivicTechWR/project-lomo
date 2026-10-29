@@ -1,8 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { usePathname } from "next/navigation";
+import { Link } from "@repo/ui/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import { ALREADY_SIGNED_IN_NOTICE } from "@/lib/already-signed-in";
 import { ONBOARDING_STEP_PATHS } from "@/lib/helper-preferences";
+import { AlreadySignedInNotice } from "../already-signed-in-notice";
 import { OnboardingProgress } from "./onboarding-progress";
 
 function filledSegmentsForPath(pathname: string): number {
@@ -12,7 +15,10 @@ function filledSegmentsForPath(pathname: string): number {
 
 export function OnboardingFlowShell({ children }: { children: ReactNode }) {
 	const pathname = usePathname() ?? "";
+	const searchParams = useSearchParams();
 	const filled = filledSegmentsForPath(pathname);
+	const showAlreadySignedIn
+		= searchParams.get("notice") === ALREADY_SIGNED_IN_NOTICE;
 
 	return (
 		// `w-full flex-1` is load-bearing: the parent `/app` layout is a flex *row*,
@@ -26,6 +32,12 @@ export function OnboardingFlowShell({ children }: { children: ReactNode }) {
 			  than stretching to the full height of a laptop screen.
 			*/}
 			<div className="m-auto flex w-full max-w-lg flex-col gap-5 min-h-152">
+				{showAlreadySignedIn ? <AlreadySignedInNotice /> : null}
+				<div className="flex justify-end">
+					<Link href="/app/profile" color="terracotta" size={2}>
+						Profile
+					</Link>
+				</div>
 				<OnboardingProgress filledCount={filled} />
 				<div className="flex min-h-0 flex-1 flex-col">
 					{children}

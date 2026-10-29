@@ -13,6 +13,14 @@ export function useMarkAllNotificationsRead() {
 	return useMutation(api.notifications.markAllRead);
 }
 
+export function useClearStaleNotifications() {
+	return useMutation(api.notifications.clearStaleMine);
+}
+
+export function useMarkRequestThreadRead() {
+	return useMutation(api.notifications.markRequestThreadRead);
+}
+
 export function useAdminNotifications(unreadOnly?: boolean) {
 	return useQuery(api.notifications.listForAdmin, unreadOnly ? { unreadOnly: true } : {});
 }

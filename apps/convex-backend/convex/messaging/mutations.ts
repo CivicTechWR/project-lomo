@@ -10,6 +10,7 @@ import {
 	formatMessageEmailBody,
 	messageEmailSubject,
 } from "../lib/messageEmail";
+import { markMessageNotificationsRead } from "../lib/notificationHelpers";
 import { assertNotBlocked } from "../lib/userStatus";
 import { assertCanMessage } from "./queries";
 
@@ -82,6 +83,9 @@ export const post = mutation({
 			body: trimmed,
 			source: "web",
 		});
+
+		// Author has engaged the thread — clear their unread message pings.
+		await markMessageNotificationsRead(ctx, requestId, user._id);
 
 		const helperUserId = doc.helperUserId!;
 		const otherUserId

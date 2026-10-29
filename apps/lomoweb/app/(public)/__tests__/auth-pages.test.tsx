@@ -42,8 +42,8 @@ describe("authentication pages", () => {
 		mocks.isAuthenticated.mockResolvedValue(true);
 		const Page = await loadPage();
 
-		await expect(Promise.resolve().then(() => Page())).rejects.toThrow("NEXT_REDIRECT:/app");
-		expect(mocks.redirect).toHaveBeenCalledWith("/app");
+		await expect(Promise.resolve().then(() => Page())).rejects.toThrow("NEXT_REDIRECT:/app?notice=already-signed-in");
+		expect(mocks.redirect).toHaveBeenCalledWith("/app?notice=already-signed-in");
 	});
 
 	it.each(authPages)("renders the %s page for unauthenticated visitors", async (_label, loadPage) => {

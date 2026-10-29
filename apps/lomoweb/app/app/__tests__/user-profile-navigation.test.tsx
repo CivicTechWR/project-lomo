@@ -17,8 +17,11 @@ vi.mock("@convex-dev/better-auth/nextjs/client", () => ({
 }));
 
 vi.mock("@/lib/hooks/use-user-profile", () => ({
-	useMyProfileRow: () => null,
+	useAcknowledgeSafety: () => vi.fn(),
 	useDeleteMyAccount: () => vi.fn(),
+	useMyProfileRow: () => ({ onboardingCompletedAt: 1_700_000_000_000 }),
+	useUpdateHelperPreferences: () => vi.fn(),
+	useUpdatePublicProfile: () => vi.fn(),
 }));
 
 vi.mock("@/lib/auth-client", () => ({

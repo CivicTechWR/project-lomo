@@ -13,6 +13,12 @@ describe("badgeVariants", () => {
 		expect(classes).toContain("inline-flex");
 	});
 
+	it("applies soft amber background styles", () => {
+		const classes = badgeVariants({ variant: "soft", color: "amber" });
+		expect(classes).toContain("bg-amber-3");
+		expect(classes).toContain("text-amber-11");
+	});
+
 	it("applies border sizes correctly", () => {
 		const smallBorder = badgeVariants({ border: "small" });
 		const mediumBorder = badgeVariants({ border: "medium" });

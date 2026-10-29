@@ -60,8 +60,28 @@ function readCoord(value: unknown): number | null {
 	return value;
 }
 
+function readLatLng(
+	details: Record<string, unknown> | undefined,
+	latKey: string,
+	lngKey: string,
+): { lat: number; lng: number } | null {
+	if (details == null) {
+		return null;
+	}
+	const lat = readCoord(details[latKey]);
+	const lng = readCoord(details[lngKey]);
+	if (lat == null || lng == null) {
+		return null;
+	}
+	if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+		return null;
+	}
+	return { lat, lng };
+}
+
 /**
- * Lat/lng chosen via address autocomplete on food/items delivery.
+ * Lat/lng chosen from address suggestions.
+ * Food and items only count when delivery was requested.
  * Prefer this over async geocoding when present.
  */
 export function extractPayloadCoordinates(
@@ -80,28 +100,26 @@ export function extractPayloadCoordinates(
 			return null;
 		}
 
-		const fromDetails = (
+		const fromDelivery = (
 			details: Record<string, unknown> | undefined,
 		): { lat: number; lng: number } | null => {
 			if (details == null || details.needsDelivery !== true) {
 				return null;
 			}
-			const lat = readCoord(details.addressLat);
-			const lng = readCoord(details.addressLng);
-			if (lat == null || lng == null) {
-				return null;
-			}
-			if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-				return null;
-			}
-			return { lat, lng };
+			return readLatLng(details, "addressLat", "addressLng");
 		};
 
 		switch (category) {
 			case "food":
-				return fromDetails(draft.foodDetails);
+				return fromDelivery(draft.foodDetails);
 			case "items":
-				return fromDetails(draft.itemsDetails);
+				return fromDelivery(draft.itemsDetails);
+			case "other":
+				return readLatLng(draft.otherDetails, "locationLat", "locationLng");
+			case "support":
+				return readLatLng(draft.publicWalkDetails, "locationLat", "locationLng");
+			case "ceremony":
+				return readLatLng(draft.ceremonyDetails, "locationLat", "locationLng");
 			default:
 				return null;
 		}

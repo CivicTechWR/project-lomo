@@ -6,6 +6,7 @@ import { Heading } from "@repo/ui/heading";
 import { Text } from "@repo/ui/text";
 import { Input, TextField } from "@repo/ui/text-field";
 import { useRouter } from "next/navigation";
+import { AddressAutocompleteField } from "../../address-autocomplete-field";
 import { NeededByField } from "../../needed-by-field";
 import { useRequestDraft } from "../../request-draft-context";
 import { RequestStepFooter } from "../../request-step-footer";
@@ -61,8 +62,15 @@ export default function SupportDetailsPage() {
 	function handleNext() {
 		// A walk is a meeting, so it needs a day. The time-of-day box stays optional
 		// — "sometime that afternoon" is a reasonable thing not to have pinned down.
-		if (draft.neededBy == null || !d.location.trim()) {
-			window.alert("Please choose a day for the walk and a public walk location.");
+		if (
+			draft.neededBy == null
+			|| !d.location.trim()
+			|| d.locationLat == null
+			|| d.locationLng == null
+		) {
+			window.alert(
+				"Please choose a day for the walk and pick a public location from the suggestions.",
+			);
 			return;
 		}
 		router.push("/app/request/support/preview");
@@ -120,17 +128,28 @@ export default function SupportDetailsPage() {
 					<Text size={1} color="gray">This is just a guide, not a commitment.</Text>
 				</div>
 
-				<TextField
+				<AddressAutocompleteField
 					name="location"
+					label="Where should the walk be?"
+					description="Please choose a public, well-lit place."
+					placeholder="Start typing a park, street, or address…"
+					confirmedMessage="Location verified."
 					value={d.location}
+					selectedLat={d.locationLat}
+					selectedLng={d.locationLng}
 					onChange={v => setPublicWalkDetails({ location: v })}
-				>
-					<Label>Where should the walk be?</Label>
-					<Group>
-						<Input placeholder="e.g., park, main street, trail entrance" />
-					</Group>
-				</TextField>
-				<Text size={1} color="gray">Please choose a public, well-lit place.</Text>
+					onSelect={({ label, lat, lng }) =>
+						setPublicWalkDetails({
+							location: label,
+							locationLat: lat,
+							locationLng: lng,
+						})}
+					onClearSelection={() =>
+						setPublicWalkDetails({
+							locationLat: undefined,
+							locationLng: undefined,
+						})}
+				/>
 
 				<div className="rounded-2 border border-gray-6 bg-gray-2 p-4">
 					<Text size={3} weight="medium">

@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useEffect, useReducer } from "react";
 import {
 	HELP_REQUEST_STATUS_LABEL,
-	statusBadgeColor,
+	statusBadgeProps,
 } from "@/lib/help-request-status";
 import { isRequestUrgent } from "@/lib/request-urgency";
 
@@ -265,13 +265,21 @@ export function HomeDashboardPanel(props: {
 																>
 																	{activeRoleLabel(item)}
 																</Badge>
-																<Badge
-																	variant="soft"
-																	size={1}
-																	color={statusBadgeColor(item.status as HelpRequestStatus)}
-																>
-																	{HELP_REQUEST_STATUS_LABEL[item.status as HelpRequestStatus]}
-																</Badge>
+																{(() => {
+																	const statusBadge = statusBadgeProps(
+																		item.status as HelpRequestStatus,
+																	);
+																	return (
+																		<Badge
+																			variant={statusBadge.variant}
+																			size={1}
+																			color={statusBadge.color}
+																			className={statusBadge.className}
+																		>
+																			{HELP_REQUEST_STATUS_LABEL[item.status as HelpRequestStatus]}
+																		</Badge>
+																	);
+																})()}
 															</>
 														)}
 													/>
@@ -311,12 +319,12 @@ export function HomeDashboardPanel(props: {
 																<>
 																	{isRequestUrgent(item)
 																		? (
-																				<Badge variant="soft" size={1} color="red">
+																				<Badge variant="solid" size={1} color="red">
 																					Urgent
 																				</Badge>
 																			)
 																		: null}
-																	<Badge variant="soft" size={1} color="amber">
+																	<Badge variant="soft" size={1} color="gray">
 																		Pending
 																	</Badge>
 																</>
@@ -375,7 +383,7 @@ export function HomeDashboardPanel(props: {
 																		: null}
 																	{isRequestUrgent(item)
 																		? (
-																				<Badge variant="soft" size={1} color="red">
+																				<Badge variant="solid" size={1} color="red">
 																					Urgent
 																				</Badge>
 																			)

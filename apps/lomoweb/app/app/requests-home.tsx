@@ -28,7 +28,7 @@ import {
 import {
 	HELP_REQUEST_FILTER_CHIPS,
 	HELP_REQUEST_STATUS_LABEL,
-	statusBadgeColor,
+	statusBadgeProps,
 } from "@/lib/help-request-status";
 import { useHomeMode } from "@/lib/home-mode-context";
 import {
@@ -258,18 +258,26 @@ function RequestingHelpPanel(props: {
 									<>
 										{isRequestUrgent(r)
 											? (
-													<Badge variant="soft" size={1} color="red">
+													<Badge variant="solid" size={1} color="red">
 														Urgent
 													</Badge>
 												)
 											: null}
-										<Badge
-											variant="soft"
-											size={1}
-											color={statusBadgeColor(r.status as HelpRequestStatus)}
-										>
-											{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
-										</Badge>
+										{(() => {
+											const statusBadge = statusBadgeProps(
+												r.status as HelpRequestStatus,
+											);
+											return (
+												<Badge
+													variant={statusBadge.variant}
+													size={1}
+													color={statusBadge.color}
+													className={statusBadge.className}
+												>
+													{HELP_REQUEST_STATUS_LABEL[r.status as HelpRequestStatus]}
+												</Badge>
+											);
+										})()}
 									</>
 								)}
 							/>
@@ -678,7 +686,7 @@ function OfferingHelpPanel() {
 											: null}
 										{isRequestUrgent(r)
 											? (
-													<Badge variant="soft" size={1} color="red">
+													<Badge variant="solid" size={1} color="red">
 														Urgent
 													</Badge>
 												)

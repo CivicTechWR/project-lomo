@@ -51,11 +51,16 @@ export async function getUserByTokenIdentifier(
 	ctx: Pick<QueryCtx, "db">,
 	tokenIdentifier: string,
 ): Promise<Doc<"users"> | null> {
-	return ctx.db
+	const matches = await ctx.db
 		.query("users")
 		.withIndex("by_token_identifier", q =>
 			q.eq("tokenIdentifier", tokenIdentifier))
-		.unique();
+		.take(8);
+	if (matches.length === 0) {
+		return null;
+	}
+	// Prefer the newest row if a prior migration left duplicates.
+	return matches.sort((a, b) => b._creationTime - a._creationTime)[0] ?? null;
 }
 
 export async function getCurrentUserRow(

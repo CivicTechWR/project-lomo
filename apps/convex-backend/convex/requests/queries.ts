@@ -314,7 +314,13 @@ export const getOfferHelperPreview = query({
 		if (!doc || doc.ownerUserId !== user._id) {
 			return null;
 		}
-		if (doc.status !== "awaiting_requester_acceptance" || !doc.helperUserId) {
+		const helperVisible
+			= (
+				doc.status === "awaiting_requester_acceptance"
+				|| doc.status === "in_progress"
+			)
+			&& doc.helperUserId != null;
+		if (!helperVisible || doc.helperUserId == null) {
 			return null;
 		}
 		const helper = await ctx.db.get("users", doc.helperUserId);

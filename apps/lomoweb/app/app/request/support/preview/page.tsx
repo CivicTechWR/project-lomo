@@ -26,9 +26,9 @@ export default function SupportPreviewPage() {
 	const body = summarizeSupportDraftBody(draft);
 
 	async function postRequest() {
-		const { preferredTime, location } = draft.publicWalkDetails;
-		if (!preferredTime.trim() || !location.trim()) {
-			window.alert("Please add a preferred time and location.");
+		const { location, locationLat, locationLng } = draft.publicWalkDetails;
+		if (!location.trim() || locationLat == null || locationLng == null) {
+			window.alert("Please choose a public walk location from the suggestions.");
 			return;
 		}
 		setPosting(true);

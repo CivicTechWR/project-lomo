@@ -1,7 +1,10 @@
 import { v } from "convex/values";
 import { query } from "../_generated/server";
 import { requireAdmin } from "../lib/adminAuth";
-import { getCurrentUserRow } from "../lib/currentUser";
+import {
+	getCurrentUserRow,
+	getUserByTokenIdentifier,
+} from "../lib/currentUser";
 import { enrichNotification } from "../lib/notificationHelpers";
 
 export const listMine = query({
@@ -29,6 +32,12 @@ export const listMine = query({
 				return enrichNotification(n, req, user._id);
 			}),
 		);
+
+		// Unread list should not surface match CTAs that are no longer actionable;
+		// clearStaleMine persists the same rule when the panel loads.
+		if (unreadOnly) {
+			return enriched.filter(n => !n.isStale);
+		}
 		return enriched;
 	},
 });
@@ -37,11 +46,7 @@ export const listForAdmin = query({
 	args: { unreadOnly: v.optional(v.boolean()) },
 	handler: async (ctx, { unreadOnly }) => {
 		const identity = await requireAdmin(ctx);
-		const adminUser = await ctx.db
-			.query("users")
-			.withIndex("by_token_identifier", q =>
-				q.eq("tokenIdentifier", identity.tokenIdentifier))
-			.unique();
+		const adminUser = await getUserByTokenIdentifier(ctx, identity.tokenIdentifier);
 		if (!adminUser)
 			return [];
 

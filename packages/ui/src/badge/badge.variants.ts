@@ -52,6 +52,7 @@ function createColorCompoundVariants() {
 		"yellow",
 		"gray",
 		"red",
+		"amber",
 		"darkred",
 	] as const;
 

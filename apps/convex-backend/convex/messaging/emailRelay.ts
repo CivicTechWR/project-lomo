@@ -8,6 +8,7 @@ import {
 	formatMessageEmailBody,
 	messageEmailReplySubject,
 } from "../lib/messageEmail";
+import { markMessageNotificationsRead } from "../lib/notificationHelpers";
 import { extractNewReplyText } from "../lib/stripEmailReply";
 
 const MAX_BODY_LEN = 8000;
@@ -115,6 +116,10 @@ export const ingestInboundEmail = internalMutation({
 			body,
 			source: "email",
 		});
+
+		if (authorUserId != null) {
+			await markMessageNotificationsRead(ctx, req._id, authorUserId);
+		}
 
 		await ctx.db.insert("processedInboundEmails", {
 			resendEmailId: args.resendEmailId,

@@ -1,12 +1,12 @@
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { isAuthenticated } from "@/lib/auth-server";
+import { redirectIfAuthenticated } from "@/lib/redirect-if-authenticated";
 import { SignUpForm } from "./signup-form";
 
+/** Session check must run per request so a signed-in visitor never sees this form. */
+export const dynamic = "force-dynamic";
+
 export default async function SignUpPage() {
-	if (await isAuthenticated()) {
-		redirect("/app");
-	}
+	await redirectIfAuthenticated();
 
 	return (
 		<Suspense>

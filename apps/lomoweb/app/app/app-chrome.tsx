@@ -3,45 +3,52 @@
 import type { ReactNode } from "react";
 import { api } from "@repo/convex-backend/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import {
+	ALREADY_SIGNED_IN_NOTICE,
+	pathWithAlreadySignedInNotice,
+} from "@/lib/already-signed-in";
 import { HomeModeProvider } from "@/lib/home-mode-context";
+import { onboardingRedirectPath } from "@/lib/onboarding-gate";
 import { RouteSkeleton } from "../route-state";
 import { AppSidebar } from "./app-sidebar";
 
 export function AppChrome({ children }: { children: ReactNode }) {
 	const pathname = usePathname() ?? "";
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const profileRow = useQuery(api.users.getMyProfileRow);
 	const isOnboarding = pathname.startsWith("/app/onboarding");
-	const onboardingCompleted = Boolean(profileRow?.onboardingCompletedAt);
+	const showAlreadySignedIn
+		= searchParams.get("notice") === ALREADY_SIGNED_IN_NOTICE;
 	const isProfileLoading = profileRow === undefined;
-	const shouldRedirectToOnboarding
-		= !isProfileLoading && !onboardingCompleted && !isOnboarding;
-	const shouldRedirectToApp
-		= !isProfileLoading && onboardingCompleted && isOnboarding;
-	const shouldShowLoading
-		= isProfileLoading || shouldRedirectToOnboarding || shouldRedirectToApp;
+	const destination = isProfileLoading
+		? null
+		: onboardingRedirectPath(
+				pathname,
+				profileRow?.onboardingCompletedAt != null,
+			);
 
 	useEffect(() => {
-		if (isProfileLoading) {
+		if (!destination) {
 			return;
 		}
-		if (shouldRedirectToOnboarding) {
-			router.replace("/app/onboarding/basics");
-			return;
-		}
-		if (shouldRedirectToApp) {
-			router.replace("/app");
-		}
-	}, [isProfileLoading, shouldRedirectToApp, shouldRedirectToOnboarding, router]);
+		router.replace(
+			showAlreadySignedIn
+				? pathWithAlreadySignedInNotice(destination)
+				: destination,
+		);
+	}, [destination, router, showAlreadySignedIn]);
 
-	if (shouldShowLoading) {
+	// Hold the shell until we know whether this path is allowed. Otherwise a
+	// refresh can flash the app before the onboarding redirect runs.
+	if (isProfileLoading || destination) {
 		return <RouteSkeleton />;
 	}
 
 	if (isOnboarding) {
-		return <>{children}</>;
+		return children;
 	}
 
 	return (
