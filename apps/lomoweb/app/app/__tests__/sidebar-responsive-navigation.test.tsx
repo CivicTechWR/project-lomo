@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { createEvent, fireEvent, render, screen } from "@testing-library/react";
 import { getFunctionName } from "convex/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { HomeModeProvider } from "@/lib/home-mode-context";
@@ -46,6 +46,7 @@ const ADMIN_REGEX = /^admin$/i;
 const BACK_TO_APP_REGEX = /back to app/i;
 const DASHBOARD_REGEX = /dashboard/i;
 const USERS_REGEX = /users/i;
+const MY_REQUESTS_REGEX = /^my requests$/i;
 
 beforeEach(() => {
 	sessionStorage.clear();
@@ -103,6 +104,34 @@ describe("responsive navigation tiers & admin exit", () => {
 		const userTabs = screen.getAllByRole("link", { name: USERS_REGEX });
 		for (const tab of userTabs) {
 			expect(tab).toHaveAttribute("aria-current", "page");
+		}
+	});
+
+	it("links My Requests to its own route and marks it active there", () => {
+		currentPathname = "/app/my-requests";
+
+		renderSidebar();
+
+		const myRequestsLinks = screen.getAllByRole("link", { name: MY_REQUESTS_REGEX });
+		expect(myRequestsLinks).toHaveLength(3);
+		for (const link of myRequestsLinks) {
+			expect(link).toHaveAttribute("href", "/app/my-requests");
+			expect(link).toHaveAttribute("aria-current", "page");
+		}
+	});
+
+	it("navigates to My Requests from a request detail page", () => {
+		currentPathname = "/app/requests/request-1";
+
+		renderSidebar();
+
+		const myRequestsLinks = screen.getAllByRole("link", { name: MY_REQUESTS_REGEX });
+		expect(myRequestsLinks).toHaveLength(3);
+		for (const link of myRequestsLinks) {
+			const click = createEvent.click(link);
+			fireEvent(link, click);
+
+			expect(click.defaultPrevented).toBe(false);
 		}
 	});
 });

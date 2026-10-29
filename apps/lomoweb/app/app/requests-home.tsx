@@ -55,12 +55,17 @@ const HelpAreaMap = dynamic(
 
 export function RequestsHome({
 	preloadedUser,
+	view,
 }: {
 	preloadedUser: Preloaded<typeof api.auth.getCurrentUser>;
+	view: "home" | "my-requests";
 }) {
 	const router = useRouter();
 	const user = usePreloadedAuthQuery(preloadedUser);
-	const { mode, setMode } = useHomeMode();
+	const { mode: savedMode, setMode } = useHomeMode();
+	const mode = view === "my-requests"
+		? "request_help"
+		: savedMode === "request_help" ? "home" : savedMode;
 	const [statusFilter, setStatusFilter] = useState<HelpRequestStatusFilter>(null);
 
 	const listArgs
@@ -97,7 +102,7 @@ export function RequestsHome({
 			{mode === "home" && (
 				<HomeDashboardPanel
 					dashboard={dashboard}
-					onViewAllMine={() => setMode("request_help")}
+					onViewAllMine={() => router.push("/app/my-requests")}
 					onViewAllOpen={() => setMode("offer_help")}
 					onNewRequest={() => router.push("/app/request?fresh=1")}
 				/>

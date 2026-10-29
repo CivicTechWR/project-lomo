@@ -15,7 +15,7 @@ export default async function AppPage({
 	return (
 		<div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:py-10">
 			{isAlreadySignedInNotice(notice) ? <AlreadySignedInNotice /> : null}
-			<RequestsHome preloadedUser={preloadedUser} />
+			<RequestsHome preloadedUser={preloadedUser} view="home" />
 		</div>
 	);
 }

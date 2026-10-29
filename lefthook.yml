@@ -1,6 +1,27 @@
 pre-commit:
   commands:
-    lint:
+    lint-root:
+      root: ./
       glob: "*.{js,ts,jsx,tsx}"
-      run: bunx eslint --fix {staged_files}
+      run: bunx eslint --no-warn-ignored --fix {staged_files}
+      stage_fixed: true
+    lint-convex-backend:
+      root: apps/convex-backend/
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx eslint --no-warn-ignored --fix {staged_files}
+      stage_fixed: true
+    lint-lomoweb:
+      root: apps/lomoweb/
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx eslint --no-warn-ignored --fix {staged_files}
+      stage_fixed: true
+    lint-ui:
+      root: packages/ui/
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx eslint --no-warn-ignored --fix {staged_files}
+      stage_fixed: true
+    lint-eslint-config:
+      root: packages/eslint-config/
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bunx eslint --no-warn-ignored --fix {staged_files}
       stage_fixed: true

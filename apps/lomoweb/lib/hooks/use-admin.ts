@@ -15,6 +15,10 @@ export function useAdminSettings() {
 	return useQuery(api.adminSettings.getSettings);
 }
 
+export function usePublicPhoneNumberSettings() {
+	return useQuery(api.adminSettings.getPublicPhoneNumberSettings);
+}
+
 export function useUpdateAdminSettings() {
 	return useMutation(api.adminSettings.updateSettings);
 }

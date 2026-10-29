@@ -128,7 +128,7 @@ export function RequestDetailView() {
 		setCancelling(true);
 		try {
 			await cancelRequest({ requestId: requestId as Id<"helpRequests"> });
-			router.push("/app");
+			router.push("/app/my-requests");
 		}
 		catch (e) {
 			console.error(e);
@@ -167,7 +167,7 @@ export function RequestDetailView() {
 		setUpdatingMatch(true);
 		try {
 			await declineMatch({ requestId: requestId as Id<"helpRequests"> });
-			router.push("/app");
+			router.push("/app/my-requests");
 		}
 		catch (e) {
 			console.error(e);
@@ -187,7 +187,7 @@ export function RequestDetailView() {
 		setCompleting(true);
 		try {
 			await markComplete({ requestId: requestId as Id<"helpRequests"> });
-			router.push("/app");
+			router.push("/app/my-requests");
 		}
 		catch (e) {
 			console.error(e);
@@ -222,7 +222,7 @@ export function RequestDetailView() {
 				<Text size={3} className="text-black/70">
 					This request doesn&apos;t exist or you don&apos;t have access.
 				</Text>
-				<Button variant="outline" onPress={() => router.push("/app")}>
+				<Button variant="outline" onPress={() => router.push("/app/my-requests")}>
 					Back to requests
 				</Button>
 			</div>
@@ -249,6 +249,14 @@ export function RequestDetailView() {
 
 	return (
 		<div className="flex w-full max-w-full flex-col gap-6">
+			<Button
+				variant="ghost"
+				color="gray"
+				className="self-start px-0"
+				onPress={() => router.push("/app/my-requests")}
+			>
+				← Back to requests
+			</Button>
 			{showMatchOffer
 				? (
 						<section
@@ -418,14 +426,6 @@ export function RequestDetailView() {
 							: null}
 					</article>
 
-					<Button
-						variant="outline"
-						color="gray"
-						className="self-start"
-						onPress={() => router.push("/app")}
-					>
-						← Back home
-					</Button>
 				</div>
 
 				{showMessages

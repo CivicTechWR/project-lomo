@@ -11,6 +11,7 @@ import {
 } from "@/lib/already-signed-in";
 import { HomeModeProvider } from "@/lib/home-mode-context";
 import { onboardingRedirectPath } from "@/lib/onboarding-gate";
+import { RouteSkeleton } from "../route-state";
 import { AppSidebar } from "./app-sidebar";
 
 export function AppChrome({ children }: { children: ReactNode }) {
@@ -21,15 +22,15 @@ export function AppChrome({ children }: { children: ReactNode }) {
 	const isOnboarding = pathname.startsWith("/app/onboarding");
 	const showAlreadySignedIn
 		= searchParams.get("notice") === ALREADY_SIGNED_IN_NOTICE;
+	const isProfileLoading = profileRow === undefined;
+	const destination = isProfileLoading
+		? null
+		: onboardingRedirectPath(
+				pathname,
+				profileRow?.onboardingCompletedAt != null,
+			);
 
 	useEffect(() => {
-		if (profileRow === undefined) {
-			return;
-		}
-		const destination = onboardingRedirectPath(
-			pathname,
-			profileRow?.onboardingCompletedAt != null,
-		);
 		if (!destination) {
 			return;
 		}
@@ -38,7 +39,13 @@ export function AppChrome({ children }: { children: ReactNode }) {
 				? pathWithAlreadySignedInNotice(destination)
 				: destination,
 		);
-	}, [profileRow, pathname, router, showAlreadySignedIn]);
+	}, [destination, router, showAlreadySignedIn]);
+
+	// Hold the shell until we know whether this path is allowed. Otherwise a
+	// refresh can flash the app before the onboarding redirect runs.
+	if (isProfileLoading || destination) {
+		return <RouteSkeleton />;
+	}
 
 	if (isOnboarding) {
 		return children;

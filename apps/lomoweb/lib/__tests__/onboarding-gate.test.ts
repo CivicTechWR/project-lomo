@@ -32,11 +32,11 @@ describe("profileExit", () => {
 
 	it("returns to requests once setup is finished or still loading", () => {
 		expect(profileExit(true)).toEqual({
-			href: "/app",
+			href: "/app/my-requests",
 			label: "Back to requests",
 		});
 		expect(profileExit(undefined)).toEqual({
-			href: "/app",
+			href: "/app/my-requests",
 			label: "Back to requests",
 		});
 	});

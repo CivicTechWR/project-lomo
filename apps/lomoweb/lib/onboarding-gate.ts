@@ -28,5 +28,5 @@ export function profileExit(onboardingCompleted: boolean | undefined): {
 	if (onboardingCompleted === false) {
 		return { href: ONBOARDING_START, label: "Back to setup" };
 	}
-	return { href: "/app", label: "Back to requests" };
+	return { href: "/app/my-requests", label: "Back to requests" };
 }

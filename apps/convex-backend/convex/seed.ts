@@ -197,6 +197,7 @@ export const run = internalMutation({
 			notifyOnNewPending: ADMIN_SETTINGS.notifyOnNewPending,
 			notifyOnConcernReport: ADMIN_SETTINGS.notifyOnConcernReport,
 			notifyOnCancellation: ADMIN_SETTINGS.notifyOnCancellation,
+			phoneNumberAllowedCountries: ADMIN_SETTINGS.phoneNumberAllowedCountries,
 		});
 
 		return {
